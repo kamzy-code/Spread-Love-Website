@@ -1,0 +1,15 @@
+# Root
+.env
+
+# Node
+node_modules/
+
+# Backend
+/backend/dist/
+/backend/node_modules/
+/backend/.env
+
+# Frontend
+/frontend/.next/
+/frontend/node_modules/
+/frontend/.env.local
