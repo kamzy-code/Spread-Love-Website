@@ -11,7 +11,7 @@ class AuthService {
     hashedPassword: string,
     role: adminRole
   ) {
-    return await Admin.create({ email, firstName, lastName, hashedPassword, role });
+    return await Admin.create({ email, firstName, lastName, password: hashedPassword, role });
   }
 
 // Check if an admin exists in the database by email
