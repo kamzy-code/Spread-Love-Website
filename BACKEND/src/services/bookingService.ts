@@ -1,3 +1,4 @@
+import { Types } from "mongoose";
 import { Booking } from "../models/bookingModel";
 
 class BookingService {
@@ -33,8 +34,12 @@ class BookingService {
     });
   }
 
-  async getBooking(bookingId: string) {
-    return await Booking.findOne({ bookingId });
+  async getBookingByBookingId(bookingId: string) {
+    return await Booking.findOne({  bookingId });
+  }
+
+    async getBookingById(bookingId: string) {
+    return await Booking.findById(bookingId);
   }
 
   async getAllBooking(filter?: string) {

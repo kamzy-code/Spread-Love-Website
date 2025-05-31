@@ -2,20 +2,20 @@ import mongoose, { Schema, Document, mongo } from "mongoose";
 import { callStatus, callType, callTypes } from "../types/genralTypes";
 
 export interface IBooking extends Document {
-  bookingId?: string;
+  bookingId: string;
   callerName: string;
   callerPhone: string;
-  callerEmail: string;
+  callerEmail?: string;
   ReceiverName: string;
   ReceiverPhone: string;
   ReceiverCountry: string;
   callType: string;
   callDate: Date;
-  callTime: string;
-  SpecialMessage: string;
-  relationshipWithReceiver?: string;
+  callTime?: string;
+  SpecialMessage?: string;
+  relationshipWithReceiver: string;
   extraInfo?: string;
-  status: callStatus;
+  status?: callStatus;
   assignedRep?: mongoose.Types.ObjectId;
 }
 
@@ -32,7 +32,7 @@ const bookingSchema: Schema = new Schema<IBooking>(
     callDate: { type: Date, required: true },
     callTime: { type: String, required: false },
     SpecialMessage: { type: String, required: false },
-    relationshipWithReceiver: { type: String, required: false },
+    relationshipWithReceiver: { type: String, required: true },
     extraInfo: { type: String, required: false },
     status: {
       type: String,
