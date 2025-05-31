@@ -1,5 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import bookingService from "../services/bookingService";
+import { getLeastLoadedRep } from "../utils/getLeastLoadedRep";
+import { callStatus } from "../types/genralTypes";
 
 class BookingController {
   async createBooking(req: Request, res: Response, next: NextFunction) {
@@ -37,6 +39,10 @@ class BookingController {
         bookingId
       );
 
+      if (!newBooking) {
+        res.status(500).json({ message: "Failed to create booking" });
+        return;
+      }
       res.status(201).json({
         message: "Booking created successfully",
         bookingID: newBooking.bookingId,
@@ -74,7 +80,6 @@ class BookingController {
       return;
     }
   }
-
 
   async getBookingById(req: Request, res: Response, next: NextFunction) {
     const bookingId = req.params.bookingId;
@@ -124,7 +129,46 @@ class BookingController {
     }
   }
 
+  async assignCallToRep(req: Request, res: Response, next: NextFunction) {
+    const bookingId = req.params.bookingId;
+    const { repId, autoAssign } = req.body;
 
+    repId as string | undefined;
+    autoAssign as boolean;
+
+    if (!bookingId) {
+      res.status(400).json({ message: "Booking ID required" });
+      return;
+    }
+
+    const booking = await bookingService.getBookingById(bookingId);
+
+    if (!booking) {
+      res.status(404).json({ message: "Booking not found" });
+      return;
+    }
+
+    try {
+      const targetRep = autoAssign ? await getLeastLoadedRep() : repId;
+
+      if (!targetRep) {
+        res.status(500).json({ message: "No available representatives" });
+        return;
+      }
+
+      booking.assignedRep = targetRep;
+      booking.status = "assigned" as callStatus;
+      await booking.save();
+
+      res.status(200).json({ message: "Booking assigned", repId: targetRep });
+      return;
+    } catch (error) {
+      next(error);
+      console.error("Error assigning Call to Rep:", error);
+      res.status(500).json({ message: "Error assigning Call to Rep", error });
+      return;
+    }
+  }
 }
 
 const bookingController = new BookingController();

@@ -1,5 +1,6 @@
 import { Types } from "mongoose";
 import { Booking } from "../models/bookingModel";
+import { getLeastLoadedRep } from "../utils/getLeastLoadedRep";
 
 class BookingService {
   async createBooking(
@@ -17,7 +18,7 @@ class BookingService {
     extraInfo: string,
     bookingId: string
   ) {
-    return await Booking.create({
+    const newBooking = await Booking.create({
       bookingId,
       callerName,
       callerPhone,
@@ -32,7 +33,18 @@ class BookingService {
       relationshipWithReceiver,
       extraInfo,
     });
+
+     if (newBooking) {
+            const assignedRep = getLeastLoadedRep();
+            if (!assignedRep) {
+             return newBooking;
+              };
+              newBooking.assignedRep = new Types.ObjectId(assignedRep.toString());
+              return await newBooking.save();
   }
+
+  return null;
+}
 
   async getBookingByBookingId(bookingId: string) {
     return await Booking.findOne({  bookingId });
