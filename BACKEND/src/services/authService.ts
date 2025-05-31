@@ -1,5 +1,5 @@
 import { Admin } from "../models/adminModel";
-import { adminRole } from "../types/authType";
+import { adminRole } from "../types/genralTypes";
 
 class AuthService {
 
