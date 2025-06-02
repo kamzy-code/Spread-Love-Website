@@ -18,16 +18,16 @@ router.get(
   bookingController.getBookingById
 );
 router.put(
-  "/admin/assign/:bookingId ",
+  "/admin/assign/:bookingId",
   authMiddlewrare,
   checkRole("superadmin", "salesrep"),
   bookingController.assignCallToRep
 );
 router.put(
-  "/admin/:bookingId/status ",
+  "/admin/:bookingId/status",
   authMiddlewrare,
   checkRole("superadmin", "salesrep", "callrep"),
-  bookingController.assignCallToRep
+  bookingController.updateBookingStatus
 );
 
 // customer endpoints

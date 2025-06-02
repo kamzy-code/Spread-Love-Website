@@ -187,7 +187,7 @@ class BookingController {
     next: NextFunction
   ) {
     const { bookingId } = req.params;
-    const status = req.body;
+    const {status} = req.body;
     const user = req.user!;
 
     try {
@@ -229,11 +229,11 @@ class BookingController {
 
   async assignCallToRep(req: AuthRequest, res: Response, next: NextFunction) {
     const bookingId = req.params.bookingId;
-    const { repId, autoAssign } = req.body;
+    const { repId, autoAssign} = req.body;
     const user = req.user!;
+    const isAutoAssign = autoAssign === true || autoAssign === "true";
 
-    repId as string | undefined;
-    autoAssign as boolean;
+   
 
     if (!bookingId) {
       res.status(400).json({ message: "Booking ID required" });
@@ -252,7 +252,7 @@ class BookingController {
     }
 
     try {
-      const targetRep = autoAssign ? await getLeastLoadedRep() : repId;
+      const targetRep = isAutoAssign ? await getLeastLoadedRep() : repId;
 
       if (!targetRep) {
         res.status(500).json({ message: "No available representatives" });
@@ -260,6 +260,13 @@ class BookingController {
       }
 
       booking.assignedRep = targetRep;
+      const disallowedFields = ["successful", "refunded"];
+
+      if (disallowedFields.includes((booking.status as string))){
+         res.status(400).json({ message: "Can't re-assign this Booking"});
+      return;
+      }
+
       booking.status = "assigned" as callStatus;
       await booking.save();
 

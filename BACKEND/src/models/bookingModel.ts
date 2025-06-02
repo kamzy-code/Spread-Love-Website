@@ -36,7 +36,7 @@ const bookingSchema: Schema = new Schema<IBooking>(
     extraInfo: { type: String, required: false, default: "" },
     status: {
       type: String,
-      enum: ["pending", "placed", "successful", "rejected", "rescheduled"],
+      enum: ["pending", "assigned", "placed", "successful", "rejected", "rescheduled"],
       default: "pending",
     },
     assignedRep: { type: mongoose.Types.ObjectId, ref: "Admin" },
