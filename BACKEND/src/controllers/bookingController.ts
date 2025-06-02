@@ -2,8 +2,10 @@ import { Request, Response, NextFunction } from "express";
 import bookingService from "../services/bookingService";
 import { getLeastLoadedRep } from "../utils/getLeastLoadedRep";
 import { callStatus } from "../types/genralTypes";
+import { AuthRequest } from "../middlewares/authMiddleware";
 
 class BookingController {
+  // Customer Endpoints
   async createBooking(req: Request, res: Response, next: NextFunction) {
     const {
       callerName,
@@ -81,8 +83,45 @@ class BookingController {
     }
   }
 
-  async getBookingById(req: Request, res: Response, next: NextFunction) {
+  async updateBookingByCustomer(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    const { bookingId } = req.params;
+    const info = req.body;
+
+    try {
+      const booking = await bookingService.getBookingByBookingId(bookingId);
+
+      if (!booking) {
+        res.status(404).json({ message: "Booking not found" });
+        return;
+      }
+
+      const disallowedFields = ["bookingId", "status", "assingedRep"];
+
+      Object.keys(info).forEach((field) => {
+        if (!disallowedFields.includes(field)) {
+          (booking as any)[field] = info[field];
+        }
+      });
+
+      await booking.save();
+      res.status(200).json({ message: "Uppdate " });
+    } catch (error) {
+      next(error);
+      console.error(`Booking update failed: ${error}`);
+      res.status(500).json({ message: "Booking update failed", error });
+      return;
+    }
+  }
+
+  // Admin Endpoints
+
+  async getBookingById(req: AuthRequest, res: Response, next: NextFunction) {
     const bookingId = req.params.bookingId;
+    const user = req.user!;
 
     if (!bookingId) {
       res.status(400).json({ message: "Booking ID required" });
@@ -90,7 +129,11 @@ class BookingController {
     }
 
     try {
-      const booking = await bookingService.getBookingById(bookingId);
+      const booking = await bookingService.getBookingById(
+        bookingId,
+        user.userId,
+        user.role
+      );
       if (!booking) {
         res.status(404).json({ message: "Booking not found" });
         return;
@@ -107,15 +150,20 @@ class BookingController {
     }
   }
 
-  async getAllBooking(req: Request, res: Response, next: NextFunction) {
+  async getAllBooking(req: AuthRequest, res: Response, next: NextFunction) {
     const filter = req.query.filter as string;
+    const user = req.user!;
 
     let booking: any;
     try {
       if (filter) {
-        booking = await bookingService.getAllBooking(filter);
+        booking = await bookingService.getAllBooking(
+          user.userId,
+          user.role,
+          filter
+        );
       } else {
-        booking = await bookingService.getAllBooking();
+        booking = await bookingService.getAllBooking(user.role, user.userId);
       }
       res
         .status(200)
@@ -129,9 +177,56 @@ class BookingController {
     }
   }
 
-  async assignCallToRep(req: Request, res: Response, next: NextFunction) {
+  async updateBookingStatus(
+    req: AuthRequest,
+    res: Response,
+    next: NextFunction
+  ) {
+    const { bookingId } = req.params;
+    const status = req.body;
+    const user = req.user!;
+
+    try {
+      const allowedStatus = [
+        "placed",
+        "successful",
+        "rejected",
+        "rescheduled",
+        "refunded",
+      ];
+
+      if (!allowedStatus.includes(status)) {
+        res.status(400).json({ message: "Invalid status" });
+        return;
+      }
+
+      const booking = await bookingService.getBookingById(
+        bookingId,
+        user.userId,
+        user.role
+      );
+
+      if (!booking) {
+        res.status(404).json({ message: "Booking not found" });
+        return;
+      }
+
+      booking.status = status;
+      await booking.save();
+
+      res.status(201).json({ message: "Status updated" });
+      return;
+    } catch (error) {
+      next(error);
+      console.error(`Error Updating Booking Status: ${error}`);
+      res.status(500).json({ message: "Error Updating Booking status", error });
+    }
+  }
+
+  async assignCallToRep(req: AuthRequest, res: Response, next: NextFunction) {
     const bookingId = req.params.bookingId;
     const { repId, autoAssign } = req.body;
+    const user = req.user!;
 
     repId as string | undefined;
     autoAssign as boolean;
@@ -141,7 +236,11 @@ class BookingController {
       return;
     }
 
-    const booking = await bookingService.getBookingById(bookingId);
+    const booking = await bookingService.getBookingById(
+      bookingId,
+      user.userId,
+      user.role
+    );
 
     if (!booking) {
       res.status(404).json({ message: "Booking not found" });

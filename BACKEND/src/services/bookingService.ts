@@ -34,27 +34,44 @@ class BookingService {
       extraInfo,
     });
 
-     if (newBooking) {
-            const assignedRep = getLeastLoadedRep();
-            if (!assignedRep) {
-             return newBooking;
-              };
-              newBooking.assignedRep = new Types.ObjectId(assignedRep.toString());
-              return await newBooking.save();
-  }
+    if (newBooking) {
+      const assignedRep = getLeastLoadedRep();
+      if (!assignedRep) {
+        return newBooking;
+      }
+      newBooking.assignedRep = new Types.ObjectId(assignedRep.toString());
+      return await newBooking.save();
+    }
 
-  return null;
-}
+    return null;
+  }
 
   async getBookingByBookingId(bookingId: string) {
-    return await Booking.findOne({  bookingId });
+    return await Booking.findOne({ bookingId });
   }
 
-    async getBookingById(bookingId: string) {
+  async getBookingById(bookingId: string, userId: string, role: string) {
+    if (role === "callRep") {
+      return await Booking.findOne({
+        _id: new Types.ObjectId(bookingId),
+        assignedRep: userId,
+      });
+    }
     return await Booking.findById(bookingId);
   }
 
-  async getAllBooking(filter?: string) {
+  async getAllBooking(userId: string, role: string, filter?: string) {
+    if (role === "callRep") {
+      if (filter) {
+        return await Booking.find({
+          assignedRep: new Types.ObjectId(userId),
+        }).sort({ [filter]: -1 });
+      }
+      return await Booking.find({
+        assignedRep: new Types.ObjectId(userId),
+      }).sort({ createdAt: -1 });
+    }
+
     if (filter) {
       return await Booking.find().sort({ [filter]: -1 });
     }

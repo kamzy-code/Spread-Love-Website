@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import { NextFunction, Request, Response } from "express";
 import { adminRole } from "../types/genralTypes";
 
-interface AuthRequest extends Request {
+export interface AuthRequest extends Request {
   user?: { userId: string; role: adminRole };
 }
 
