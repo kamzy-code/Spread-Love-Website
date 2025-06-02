@@ -104,11 +104,14 @@ class BookingController {
       Object.keys(info).forEach((field) => {
         if (!disallowedFields.includes(field)) {
           (booking as any)[field] = info[field];
+        }else{
+          res.status(403).json({ message: "You can't update this field" });
+          return;
         }
       });
 
       await booking.save();
-      res.status(200).json({ message: "Uppdate " });
+      res.status(200).json({ message: "Update Succesfull" });
     } catch (error) {
       next(error);
       console.error(`Booking update failed: ${error}`);
@@ -163,8 +166,9 @@ class BookingController {
           filter
         );
       } else {
-        booking = await bookingService.getAllBooking(user.role, user.userId);
+        booking = await bookingService.getAllBooking(user.userId, user.role);
       }
+  
       res
         .status(200)
         .json({ message: "Booking fetched successfully", booking });

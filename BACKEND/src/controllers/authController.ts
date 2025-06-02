@@ -6,7 +6,7 @@ import { IAdmin } from "../models/adminModel";
 
 class AuthController {
   async registerAdmin(req: Request, res: Response, next: NextFunction) {
-    const { email, firstName, lastName, password, role } = req.body;
+    const { firstName, lastName, email, phone, password, role } = req.body;
 
     try {
       // check is user already exists
@@ -23,9 +23,10 @@ class AuthController {
 
       // create a new admin
       const newAdmin = await authService.createAdmin(
-        email,
         firstName,
         lastName,
+        email,
+        phone,
         hashedPassword,
         role
       );

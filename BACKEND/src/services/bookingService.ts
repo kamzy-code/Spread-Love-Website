@@ -35,10 +35,11 @@ class BookingService {
     });
 
     if (newBooking) {
-      const assignedRep = getLeastLoadedRep();
+      const assignedRep = await getLeastLoadedRep();
       if (!assignedRep) {
         return newBooking;
       }
+      console.log(`assignedRep: ${assignedRep}`);
       newBooking.assignedRep = new Types.ObjectId(assignedRep.toString());
       return await newBooking.save();
     }
@@ -51,7 +52,7 @@ class BookingService {
   }
 
   async getBookingById(bookingId: string, userId: string, role: string) {
-    if (role === "callRep") {
+    if (role === "callrep") {
       return await Booking.findOne({
         _id: new Types.ObjectId(bookingId),
         assignedRep: userId,
@@ -61,7 +62,7 @@ class BookingService {
   }
 
   async getAllBooking(userId: string, role: string, filter?: string) {
-    if (role === "callRep") {
+    if (role === "callrep") {
       if (filter) {
         return await Booking.find({
           assignedRep: new Types.ObjectId(userId),

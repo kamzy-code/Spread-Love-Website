@@ -5,13 +5,14 @@ class AuthService {
 
 //  Create a new admin and store to DB 
   async createAdmin(
-    email: string,
     firstName: string,
     lastName: string,
+    email: string,
+    phone: string,
     hashedPassword: string,
     role: adminRole
   ) {
-    return await Admin.create({ email, firstName, lastName, password: hashedPassword, role });
+    return await Admin.create({ firstName, lastName, email, phone, password: hashedPassword, role });
   }
 
 // Check if an admin exists in the database by email

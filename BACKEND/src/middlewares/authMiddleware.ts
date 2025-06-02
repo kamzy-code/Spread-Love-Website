@@ -48,5 +48,7 @@ export const checkRole = (...roles: adminRole[]) => {
             return;
         }
 
+        next();
+
     }
 }

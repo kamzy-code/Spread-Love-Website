@@ -4,23 +4,18 @@ import { authMiddlewrare, checkRole } from "../middlewares/authMiddleware";
 import { adminRole } from "../types/genralTypes";
 
 const router = express.Router();
-// customer endpoints
-router.post("/create", bookingController.createBooking);
-router.get("/:bookingId", bookingController.getBookingByBookingId);
-router.put("/:bookingId/update", bookingController.updateBookingByCustomer);
 
 // admin endpoint
+router.get(
+  "/admin",
+  authMiddlewrare,
+  checkRole("superadmin", "salesrep", "callrep"), bookingController.getAllBooking
+);
 router.get(
   "/admin/:bookingId",
   authMiddlewrare,
   checkRole("superadmin", "salesrep", "callrep"),
   bookingController.getBookingById
-);
-router.get(
-  "/admin/",
-  authMiddlewrare,
-  checkRole("superadmin", "salesrep", "callrep"),
-  bookingController.getAllBooking
 );
 router.put(
   "/admin/assign/:bookingId ",
@@ -35,7 +30,9 @@ router.put(
   bookingController.assignCallToRep
 );
 
-export default router;
+// customer endpoints
+router.post("/create", bookingController.createBooking);
+router.get("/:bookingId", bookingController.getBookingByBookingId);
+router.put("/:bookingId/update", bookingController.updateBookingByCustomer);
 
-// add authMiddleware before using checkRole
-// format get methods
+export default router;
