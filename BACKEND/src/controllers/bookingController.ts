@@ -3,6 +3,8 @@ import bookingService from "../services/bookingService";
 import { getLeastLoadedRep } from "../utils/getLeastLoadedRep";
 import { callStatus } from "../types/genralTypes";
 import { AuthRequest } from "../middlewares/authMiddleware";
+import { SortOrder } from "mongoose";
+import { castSortOder } from "../utils/castSortOrder";
 
 class BookingController {
   // Customer Endpoints
@@ -104,7 +106,7 @@ class BookingController {
       Object.keys(info).forEach((field) => {
         if (!disallowedFields.includes(field)) {
           (booking as any)[field] = info[field];
-        }else{
+        } else {
           res.status(403).json({ message: "You can't update this field" });
           return;
         }
@@ -153,22 +155,50 @@ class BookingController {
     }
   }
 
-  async getAllBooking(req: AuthRequest, res: Response, next: NextFunction) {
-    const filter = req.query.filter as string;
+    async getAllBooking(req: AuthRequest, res: Response, next: NextFunction) {
+    
+       const {
+      status,
+      assignedRep,
+      startDate,
+      endDate,
+      callType,
+      ReceiverCountry,
+      sortParam,
+      sortOrder
+    } = req.query;
+
+    const sortOrderCast = castSortOder(sortOrder as string);
+
     const user = req.user!;
+
+    const searchQuery: any = {};
+
+    if (status) searchQuery.status = status;
+    if (assignedRep) searchQuery.assignedRep = assignedRep;
+    if(callType) searchQuery.callType = callType;
+    if (ReceiverCountry) searchQuery.ReceiverCountry = ReceiverCountry;
+
+    if (startDate || endDate){
+      searchQuery.callDate = {};
+          if (startDate) searchQuery.callDate.$gte = new Date(startDate as string);
+          if (endDate) searchQuery.callDate.$lte = new Date (endDate as string);
+    };
 
     let booking: any;
     try {
-      if (filter) {
+      if (sortParam) {
         booking = await bookingService.getAllBooking(
           user.userId,
           user.role,
-          filter
+          searchQuery,
+          (sortOrderCast),
+          (sortParam as string)
         );
       } else {
-        booking = await bookingService.getAllBooking(user.userId, user.role);
+        booking = await bookingService.getAllBooking(user.userId, user.role, searchQuery, sortOrderCast);
       }
-  
+
       res
         .status(200)
         .json({ message: "Booking fetched successfully", booking });
@@ -187,7 +217,7 @@ class BookingController {
     next: NextFunction
   ) {
     const { bookingId } = req.params;
-    const {status} = req.body;
+    const { status } = req.body;
     const user = req.user!;
 
     try {
@@ -229,11 +259,9 @@ class BookingController {
 
   async assignCallToRep(req: AuthRequest, res: Response, next: NextFunction) {
     const bookingId = req.params.bookingId;
-    const { repId, autoAssign} = req.body;
+    const { repId, autoAssign } = req.body;
     const user = req.user!;
     const isAutoAssign = autoAssign === true || autoAssign === "true";
-
-   
 
     if (!bookingId) {
       res.status(400).json({ message: "Booking ID required" });
@@ -262,9 +290,9 @@ class BookingController {
       booking.assignedRep = targetRep;
       const disallowedFields = ["successful", "refunded"];
 
-      if (disallowedFields.includes((booking.status as string))){
-         res.status(400).json({ message: "Can't re-assign this Booking"});
-      return;
+      if (disallowedFields.includes(booking.status as string)) {
+        res.status(400).json({ message: "Can't re-assign this Booking" });
+        return;
       }
 
       booking.status = "assigned" as callStatus;
@@ -283,3 +311,7 @@ class BookingController {
 
 const bookingController = new BookingController();
 export default bookingController;
+
+
+
+

@@ -1,4 +1,4 @@
-import { Types } from "mongoose";
+import { SortOrder, Types } from "mongoose";
 import { Booking } from "../models/bookingModel";
 import { getLeastLoadedRep } from "../utils/getLeastLoadedRep";
 
@@ -39,8 +39,8 @@ class BookingService {
       if (!assignedRep) {
         return newBooking;
       }
-      console.log(`assignedRep: ${assignedRep}`);
       newBooking.assignedRep = new Types.ObjectId(assignedRep.toString());
+      newBooking.status = "assigned";
       return await newBooking.save();
     }
 
@@ -61,22 +61,25 @@ class BookingService {
     return await Booking.findById(bookingId);
   }
 
-  async getAllBooking(userId: string, role: string, filter?: string) {
+    async getAllBooking(userId: string, role: string, query:any, sortOrder?: SortOrder, sortParam?: string, ) {
+
+    if (!sortOrder) sortOrder = -1;
+
     if (role === "callrep") {
-      if (filter) {
-        return await Booking.find({
-          assignedRep: new Types.ObjectId(userId),
-        }).sort({ [filter]: -1 });
+      if (sortParam) {
+        return await Booking.find({...query,
+          assignedRep: new Types.ObjectId(userId)}
+        ).sort({ [sortParam]: sortOrder });
       }
-      return await Booking.find({
-        assignedRep: new Types.ObjectId(userId),
-      }).sort({ createdAt: -1 });
+      return await Booking.find({...query,
+          assignedRep: new Types.ObjectId(userId)}
+        ).sort({ createdAt: sortOrder });
     }
 
-    if (filter) {
-      return await Booking.find().sort({ [filter]: -1 });
+    if (sortParam) {
+      return await Booking.find(query).sort({ [sortParam]: sortOrder });
     }
-    return await Booking.find().sort({ createdAt: -1 });
+    return await Booking.find(query).sort({ createdAt: sortOrder});
   }
 
   async generateBookingId(): Promise<string> {
