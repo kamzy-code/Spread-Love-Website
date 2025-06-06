@@ -11,12 +11,21 @@ router.get(
   authMiddlewrare,
   checkRole("superadmin", "salesrep", "callrep"), bookingController.getAllBooking
 );
+
+router.get(
+  "/admin/analytics",
+  authMiddlewrare,
+  checkRole("superadmin", "salesrep", "callrep"),
+  bookingController.getBookingAnalytics
+);
+
 router.get(
   "/admin/:bookingId",
   authMiddlewrare,
   checkRole("superadmin", "salesrep", "callrep"),
   bookingController.getBookingById
 );
+
 router.put(
   "/admin/assign/:bookingId",
   authMiddlewrare,
