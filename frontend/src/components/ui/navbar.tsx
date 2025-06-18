@@ -29,7 +29,7 @@ function Navbar() {
             {/* Logo */}
             <Link href="/" className="flex flex-row items-center gap-2">
               <Image width={48} height={48} src="/logo.png" alt="Logo" />
-              <span className="font-bold text-xl gradient-text">
+              <span className="font-handwritten font-bold text-xl gradient-text">
                 Spread Love Network
               </span>
             </Link>

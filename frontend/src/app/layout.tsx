@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Navbar from "@/components/ui/navbar";
+import Footer from "@/components/ui/footer";
 
 export const metadata: Metadata = {
   title: "Spread Love Network",
@@ -21,7 +22,7 @@ export default function RootLayout({
         
         <Navbar/>
         <main>{children}</main>
-        
+        <Footer/>
       </body>
     </html>
   );
