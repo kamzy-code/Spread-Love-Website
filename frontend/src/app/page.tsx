@@ -2,7 +2,9 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState, useRef } from "react";
+import CTA from "@/components/cta-btn";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Heart,
@@ -19,6 +21,9 @@ import {
 } from "lucide-react";
 
 export default function Home() {
+  const router = useRouter();
+  const CTAonClick = () => router.push("/book");
+
   const [playingVid, setPlayingVid] = useState<number | null>(null);
   const videoRefs = [
     useRef<HTMLVideoElement>(null),
@@ -43,7 +48,7 @@ export default function Home() {
       icon: <Phone className="h-12 w-12" />,
       title: "We Call",
       description:
-        "Our trained representatives make the call at your preferred time.",
+        "Our trained representatives make the call.",
     },
     {
       icon: <Smile className="h-12 w-12" />,
@@ -70,6 +75,7 @@ export default function Home() {
       description: "Cherish your friendship with a surprise call.",
     },
   ];
+
   const features = [
     {
       icon: <Heart className="h-8 w-8" />,
@@ -97,6 +103,30 @@ export default function Home() {
     },
   ];
 
+  const testimonials = [
+    {
+      name: "Sarah Johnson",
+      image:
+        "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop",
+      text: "My mom was so surprised and happy! She couldn't stop talking about the birthday call for weeks. Thank you for making her day special!",
+      rating: 5,
+    },
+    {
+      name: "Michael Chen",
+      image:
+        "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop",
+      text: "The anniversary call was perfect! My wife was in tears of joy. The representative was so professional and heartfelt.",
+      rating: 5,
+    },
+    {
+      name: "Emily Rodriguez",
+      image:
+        "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop",
+      text: "I live abroad and wanted to surprise my best friend. This service made it possible to be part of her special day!",
+      rating: 5,
+    },
+  ];
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -113,7 +143,7 @@ export default function Home() {
           className="container-max section-padding flex flex-col items-center justify-center text-white text-center gap-4 "
         >
           <h1 className="text-5xl sm:text-6xl md:text-8xl font-handwritten font-bold mb-4">
-            Spread Love
+            Spread Love Network
           </h1>
           <p className="text-2xl md:text-4xl font-semibold mb-4 text-primary-200">
             Make Someone's Day with a Surprise Call
@@ -130,11 +160,20 @@ export default function Home() {
           transition={{ duration: 0.8 }}
           className="bg-white flex flex-col sm:flex-row gap-8 w-full justify-center p-10 mt-10"
         >
-          <button className="btn-primary sm:w-auto w-full">Book a call</button>
-          <button className="btn-secondary sm:w-auto w-full">
+          <CTA onClickBook={CTAonClick} />
+        </motion.div>
+
+        {/* <motion.div
+          initial={{ y: 30, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.8 }}
+          className="bg-white flex flex-col sm:flex-row gap-8 w-full justify-center p-10 mt-10"
+        >
+          <button className="btn-primary sm:w-auto w-full" onClick={()=>router.push("/book")}>Book a call</button>
+          <button className="btn-secondary sm:w-auto w-full" onClick={() => document.getElementById("sample-section")?.scrollIntoView({ behavior: "smooth" })}>
             View call Samples
           </button>
-        </motion.div>
+        </motion.div> */}
       </section>
 
       {/* How it Works */}
@@ -171,7 +210,10 @@ export default function Home() {
       </section>
 
       {/* Experience the Magic */}
-      <section className="flex flex-col items-center justify-center gap-4 py-20 text-center section-padding gradient-background-soft">
+      <section
+        id="sample-section"
+        className="flex flex-col items-center justify-center gap-4 py-20 text-center section-padding gradient-background-soft"
+      >
         <h1 className="text-4xl sm:text-5xl font-bold gradient-text pb-4 ">
           Experience the Magic
         </h1>
@@ -232,6 +274,109 @@ export default function Home() {
             );
           })}
         </div>
+      </section>
+
+      {/* Why Choose us */}
+      <section className="flex flex-col items-center justify-center gap-4 py-20 text-center section-padding">
+        <h1 className="text-4xl sm:text-5xl font-bold gradient-text pb-4 ">
+          Why Choose Spread Love
+        </h1>
+        <p className="text-md sm:text-xl  text-gray-700 ">
+          We're committed to creating authentic, heartfelt connections that
+          matter
+        </p>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 items-center justify-center section-padding mt-10">
+          {features.map((feature, index) => {
+            return (
+              <motion.div
+                key={index}
+                initial={{ y: 30, opacity: 0 }}
+                whileInView={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                viewport={{ once: true }}
+                className="col-span-1 card"
+              >
+                <div className="flex flex-col items-center justify-center gap-8 p-6 h-70 lg:h-90 ">
+                  <div className="text-brand-end">{feature.icon}</div>
+                  <h2 className="text-xl font-semibold text-brand-start">
+                    {feature.title}
+                  </h2>
+                  <p className="text-gray-700">{feature.description}</p>
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* Stories of Joy */}
+      <section className="flex flex-col items-center justify-center gap-4 py-20 text-center section-padding gradient-background-soft">
+        <h1 className="text-4xl sm:text-5xl font-bold gradient-text pb-4 ">
+          Stories of Joy
+        </h1>
+        <p className="text-md sm:text-xl  text-gray-700 ">
+          Real stories from customers who spread love and created unforgettable
+          moments
+        </p>
+
+        <div className="flex flex-row flex-wrap gap-12 items-center justify-center section-padding mt-10">
+          {testimonials.map((testimonial, index) => {
+            return (
+              <motion.div
+                key={index}
+                initial={{ y: 30, opacity: 0 }}
+                whileInView={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                viewport={{ once: true }}
+                className="card h-70 sm:h-60 container-max section-padding py-5"
+              >
+                <div className="flex flex-col py-6 text-start">
+                  <h2 className="text-lg font-semibold text-brand-start mb-2 ">
+                    {testimonial.name}
+                  </h2>
+                  <div className="flex text-yellow-400">
+                    {[...Array(testimonial.rating)].map((_, i) => (
+                      <Star key={i} className="h-4 w-4 fill-current" />
+                    ))}
+                  </div>
+                </div>
+
+                <p className=" w-60 sm:w-80 text-start text-gray-700 italic">
+                  "{testimonial.text}"
+                </p>
+              </motion.div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* Ready to spread love*/}
+      <section className="flex flex-col items-center justify-center gap-4 py-20 text-center section-padding gradient-background text-white">
+        <motion.div
+          initial={{ y: 30, opacity: 0 }}
+          whileInView={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.5, delay: 1 * 0.1 }}
+          viewport={{ once: true }}
+        >
+          <h1 className="text-4xl sm:text-5xl font-bold pb-4 ">
+            Ready to Spread Some Love?
+          </h1>
+          <p className="text-md sm:text-xl w-auto md:w-150 text-primary-200">
+            Create a magical moment for someone special today. It only takes a
+            few minutes to set up.
+          </p>
+        </motion.div>
+
+        <motion.div
+          initial={{ y: 30, opacity: 0 }}
+          whileInView={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.5, delay: 1 * 0.1 }}
+          viewport={{ once: true }}
+          className="flex flex-col sm:flex-row gap-8 w-full justify-center mt-5"
+        >
+          <CTA onClickBook={CTAonClick} />
+        </motion.div>
       </section>
     </motion.div>
   );

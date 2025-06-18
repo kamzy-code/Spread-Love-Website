@@ -81,9 +81,13 @@ function Footer() {
           <div className="col-span-1">
             <h1 className="font-bold text-xl mb-4">Contact Us</h1>
             <ul className="space-y-2">
-              <li key="1" className="space-x-2">
-                <Phone className="h-6 w-6 text-brand-end inline" />
-                <h1 className="inline">+234 905 815 0728</h1>
+              <li key="1" className="space-x-2 flex flex-row items-center">
+                <Phone className="h-6 w-6 text-brand-end" />
+                <div>
+                    <h1 >+234 901 753 9148</h1>
+                    <h1 >+234 812 851 1397</h1>
+                </div>
+                
               </li>
 
               <li key="2" className="space-x-2">
