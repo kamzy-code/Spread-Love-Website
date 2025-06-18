@@ -12,6 +12,9 @@
   /* Colors */
   --color-primary-50: #fdf2f8;
   --color-primary-100: #fce7f3;
+  --color-primary-200: #fbcfe8;
+  --color-primary-300: #f9a8d4;
+  --color-primary-400: #f472b6;
   --color-primary-500: #ec4899;
   --color-primary-600: #db2777;
   --color-primary-700: #be185d;
@@ -124,6 +127,14 @@ body {
 
   .container-max {
     @apply max-w-7xl mx-auto;
+  }
+
+  .gradient-background{
+    background: var(--gradient-brand);
+  }
+
+  .gradient-background-soft{
+    background: var(--gradient-soft);
   }
 }
 

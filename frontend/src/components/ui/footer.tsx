@@ -65,7 +65,7 @@ function Footer() {
             <h1 className="font-bold text-xl mb-4">Quick Links</h1>
             <ul className="space-y-2">
               {navItems.map((item) => (
-                <li>
+                <li key={item.name}>
 
                   <Link
                     key={item.name}
