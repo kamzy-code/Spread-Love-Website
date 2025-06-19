@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useRef } from "react";
-import CTA from "@/components/cta-btn";
+import CTA from "@/components/ui/cta-btn";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Heart,
@@ -47,8 +47,7 @@ export default function Home() {
     {
       icon: <Phone className="h-12 w-12" />,
       title: "We Call",
-      description:
-        "Our trained representatives make the call.",
+      description: "Our trained representatives make the call.",
     },
     {
       icon: <Smile className="h-12 w-12" />,
@@ -135,7 +134,7 @@ export default function Home() {
       className="min-h-screen"
     >
       {/* Hero Section */}
-      <section className="gradient-background py-40 ">
+      <section className="gradient-background py-40 min-h-screen flex flex-col justify-center items-center ">
         <motion.div
           initial={{ y: 30, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -266,7 +265,7 @@ export default function Home() {
                       }}
                     />
                   )}
-                  <h2 className="text-2xl font-semibold text-brand-start">
+                  <h2 className="text-xl md:text-2xl font-semibold text-brand-start">
                     {sample.title}
                   </h2>
                 </div>
@@ -278,40 +277,44 @@ export default function Home() {
 
       {/* Why Choose us */}
       <section className="flex flex-col items-center justify-center gap-4 py-20 text-center section-padding">
-        <h1 className="text-4xl sm:text-5xl font-bold gradient-text pb-4 ">
-          Why Choose Spread Love
-        </h1>
-        <p className="text-md sm:text-xl  text-gray-700 ">
-          We're committed to creating authentic, heartfelt connections that
-          matter
-        </p>
+        <div className="container-max section-padding">
+          <h1 className="text-4xl sm:text-5xl font-bold gradient-text pb-4 ">
+            Why Choose Spread Love
+          </h1>
+          <p className="text-md sm:text-xl  text-gray-700 ">
+            We're committed to creating authentic, heartfelt connections that
+            matter
+          </p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 items-center justify-center section-padding mt-10">
-          {features.map((feature, index) => {
-            return (
-              <motion.div
-                key={index}
-                initial={{ y: 30, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="col-span-1 card"
-              >
-                <div className="flex flex-col items-center justify-center gap-8 p-6 h-70 lg:h-90 ">
-                  <div className="text-brand-end">{feature.icon}</div>
-                  <h2 className="text-xl font-semibold text-brand-start">
-                    {feature.title}
-                  </h2>
-                  <p className="text-gray-700">{feature.description}</p>
-                </div>
-              </motion.div>
-            );
-          })}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 items-center justify-center section-padding mt-10">
+            {features.map((feature, index) => {
+              return (
+                <motion.div
+                  key={index}
+                  initial={{ y: 30, opacity: 0 }}
+                  whileInView={{ y: 0, opacity: 1 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                  className="col-span-1 card"
+                >
+                  <div className="flex flex-col items-center justify-center gap-8 p-6 h-70 lg:h-90 ">
+                    <div className="text-brand-end">{feature.icon}</div>
+                    <h2 className="text-xl font-semibold text-brand-start">
+                      {feature.title}
+                    </h2>
+                    <p className="text-gray-700">{feature.description}</p>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
         </div>
       </section>
 
       {/* Stories of Joy */}
       <section className="flex flex-col items-center justify-center gap-4 py-20 text-center section-padding gradient-background-soft">
+        <div className="container-max section-padding">
+
         <h1 className="text-4xl sm:text-5xl font-bold gradient-text pb-4 ">
           Stories of Joy
         </h1>
@@ -320,7 +323,7 @@ export default function Home() {
           moments
         </p>
 
-        <div className="flex flex-row flex-wrap gap-12 items-center justify-center section-padding mt-10">
+        <div className="flex flex-col lg:flex-row gap-12 items-center justify-center px-10 mt-10 sm:mx-10">
           {testimonials.map((testimonial, index) => {
             return (
               <motion.div
@@ -329,25 +332,28 @@ export default function Home() {
                 whileInView={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 viewport={{ once: true }}
-                className="card h-70 sm:h-60 container-max section-padding py-5"
+                className="card h-auto lg:h-70 lg:max-w-70 px-5 py-10 lg:py-5 flex flex-col justify-center"
               >
-                <div className="flex flex-col py-6 text-start">
+                <div className="text-start">
                   <h2 className="text-lg font-semibold text-brand-start mb-2 ">
                     {testimonial.name}
                   </h2>
-                  <div className="flex text-yellow-400">
+                  <div className="flex text-yellow-400 mb-3">
                     {[...Array(testimonial.rating)].map((_, i) => (
                       <Star key={i} className="h-4 w-4 fill-current" />
                     ))}
                   </div>
-                </div>
 
-                <p className=" w-60 sm:w-80 text-start text-gray-700 italic">
+                  <p className=" text-start text-gray-700 italic">
                   "{testimonial.text}"
                 </p>
+                </div>
+
+                
               </motion.div>
             );
           })}
+        </div>
         </div>
       </section>
 
