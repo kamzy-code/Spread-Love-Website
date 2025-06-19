@@ -1,7 +1,5 @@
 "use client";
 
-import Image from "next/image";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useRef } from "react";
 import CTA from "@/components/ui/cta-btn";
@@ -14,7 +12,6 @@ import {
   Star,
   Play,
   Pause,
-  CheckCircle,
   Gift,
   Smile,
   MessageCircle,
@@ -127,6 +124,7 @@ export default function Home() {
   ];
 
   return (
+    <AnimatePresence mode="wait">
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -295,7 +293,7 @@ export default function Home() {
                   whileInView={{ y: 0, opacity: 1 }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                   viewport={{ once: true }}
-                  className="col-span-1 card"
+                  className="col-span-1 card "
                 >
                   <div className="flex flex-col items-center justify-center gap-8 p-6 h-70 lg:h-90 ">
                     <div className="text-brand-end">{feature.icon}</div>
@@ -385,5 +383,6 @@ export default function Home() {
         </motion.div>
       </section>
     </motion.div>
+      </AnimatePresence>
   );
 }
