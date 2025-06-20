@@ -3,34 +3,34 @@ import { motion } from "framer-motion";
 function Journey() {
   const timeline = [
     {
-      year: "2020",
+      year: "2022",
       title: "The Idea",
       description:
         "Founded with a simple mission: to help people connect and spread love across distances.",
     },
     {
-      year: "2021",
+      year: "2023",
       title: "First Calls",
       description:
-        "Made our first 100 surprise calls, bringing smiles to faces around the world.",
-    },
-    {
-      year: "2022",
-      title: "Going Global",
-      description:
-        "Expanded to serve customers internationally, connecting hearts across continents.",
-    },
-    {
-      year: "2023",
-      title: "10,000 Smiles",
-      description:
-        "Reached the milestone of 10,000 successful surprise calls and counting.",
+        "We successfully called over 300 different persons.",
     },
     {
       year: "2024",
+      title: "Going Global",
+      description:
+        "We made our first 100 calls in 1 day during valentines day.",
+    },
+    {
+      year: "2024",
+      title: "1,000 Smiles",
+      description:
+        "We reached out to over 1000 persons across the country.",
+    },
+    {
+      year: "2025",
       title: "Innovation",
       description:
-        "Launched video calls and enhanced personalization features for even more magical moments.",
+        "Through innovation and improvements,  we made our 200 calls in 1 day during international Father's day celebration.",
     },
   ];
 
@@ -47,8 +47,7 @@ function Journey() {
           Our Journey
         </h1>
         <p className="text-gray-700 text-lg lg:text-xl md:max-w-[60%] ">
-          Born from a simple belief: that everyone deserves to feel loved and
-          remembered on their special day
+          From a smile idea to thousands of smiles created worldwide
         </p>
       </motion.div>
 
