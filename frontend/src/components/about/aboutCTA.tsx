@@ -12,7 +12,7 @@ function AboutCTA(prop: { handleBook: () => void, border?: boolean }) {
       </button>
 
       <button
-        className={`btn-secondary sm:w-auto w-full mt-4 flex items-center ${prop.border? '': 'border-0'}`}
+        className={`btn-secondary sm:w-auto w-full mt-4 flex justify-center items-center ${prop.border? '': 'border-0'}`}
         onClick={() =>
           window.open(
             "https://wa.me/+2349017539148?text=Hi! I need help with Spread Love services.",
