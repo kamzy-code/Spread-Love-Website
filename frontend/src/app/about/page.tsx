@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { Heart, Users, Globe, Award, MessageCircle } from "lucide-react";
 import Image from "next/image";
-import AboutCTA from "@/components/ui/aboutCTA";
+import AboutCTA from "@/components/about/aboutCTA";
 
 export default function About() {
   const router = useRouter();
