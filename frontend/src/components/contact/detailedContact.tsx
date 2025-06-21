@@ -1,18 +1,20 @@
+'use client'
 import { motion } from "framer-motion";
 import { MessageCircle, Clock } from "lucide-react";
+import ContactForm from "./form";
 
 function DetailedContact() {
   return (
     <section className="">
-      <div className="container-max flex flex-col lg:flex-row items-center justify-center gap-12 md:gap-4 section-padding py-20">
+      <div className="container-max flex flex-col lg:flex-row justify-center gap-12 md:gap-4 section-padding py-20">
         <motion.div
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -50 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="container-max section-padding card py-6 flex flex-col gap-4 w-full lg:w-[50%]"
+          className="container-max py-6 flex flex-col gap-4 w-full lg:w-[50%]"
         >
-          left
+          <ContactForm></ContactForm>
         </motion.div>
 
         {/* right div */}
