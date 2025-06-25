@@ -1,0 +1,393 @@
+import { services, callType } from "../services/serviceList";
+import { useState } from "react";
+
+export default function BookingDetails({ data }: { data: any }) {
+  type serviceType = "regular" | "special";
+
+  const countries = [
+    "Nigeria",
+    "United States",
+    "Canada",
+    "United Kingdom",
+    "Australia",
+    "Germany",
+    "France",
+    "Spain",
+    "Italy",
+    "Japan",
+    "South Korea",
+    "India",
+    "Brazil",
+    "Mexico",
+    "Argentina",
+    "South Africa",
+    "Other",
+  ];
+
+  const [booking, setBooking] = useState(data);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [editForm, setEditForm] = useState(false);
+
+  const handleOnChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
+    const { name, value } = e.target;
+    setBooking((prev: any) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!editForm) {
+      setIsSubmitting(true);
+      setTimeout(() => {
+        setIsSubmitting(false);
+        setEditForm(true);
+      }, 1000);
+      return;
+    }
+
+    setIsSubmitting(true);
+    setTimeout(() => {
+      setIsSubmitting(false);
+      setEditForm(false);
+    }, 1000);
+  };
+
+  return (
+    <section className="container-max section-padding flex justify-center py-20 px-7 md:px-10 sm:px-25 lg:px-50">
+      <div className={`card p-6 md:p-8 w-full space-y-4`}>
+        <div className="flex flex-col md:flex-row justify-between md:items-center gap-2">
+          <div>
+            <h2 className="gradient-text font-bold text-xl md:text-2xl">
+              Booking Details
+            </h2>
+            <p className="text-gray-700 text-md">ID: {booking?.id}</p>
+          </div>
+          <div className="flex">
+            <p className="px-6 py-2 rounded-full bg-blue-100 text-blue-700">
+              {booking?.status}
+            </p>
+          </div>
+        </div>
+
+        <div className="">
+          <form
+            onSubmit={handleSubmit}
+            className={`space-y-6 text-brand-start`}
+          >
+            {/* Personal and Recipiet info */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              {/* Personal info */}
+              <div>
+                <h2 className="gradient-text text-xl font-semibold mb-4 pb-2">
+                  {" "}
+                  Personal Information
+                </h2>
+                <div className="grid grid-cols-1 gap-4">
+                  <div className="flex flex-col space-y-2">
+                    <label className="text-gray-700 font-medium">Name:</label>
+                    <input
+                      className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent placeholder:text-gray-400 disabled:border-0 disabled:pl-0"
+                      type="text"
+                      name="caller_name"
+                      value={booking.caller_name}
+                      onChange={handleOnChange}
+                      required
+                      placeholder="Your full name"
+                      disabled={!editForm}
+                    />
+                  </div>
+
+                  <div className="flex flex-col space-y-2">
+                    <label className="text-gray-700 font-medium">Email:</label>
+                    <input
+                      className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent placeholder:text-gray-400 disabled:border-0 disabled:pl-0"
+                      type="email"
+                      name="caller_email"
+                      value={booking.caller_email}
+                      onChange={handleOnChange}
+                      required
+                      placeholder="your.email@example.com"
+                      disabled={!editForm}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Recipient Info */}
+              <div>
+                <h2 className="gradient-text text-xl font-semibold mb-4 pb-2">
+                  {" "}
+                  Recipient Information
+                </h2>
+                <div className="grid grid-cols-1 gap-4">
+                  <div className="flex flex-col space-y-2">
+                    <label className="text-gray-700 font-medium">
+                      Recipients Name:
+                    </label>
+                    <input
+                      className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent placeholder:text-gray-400 disabled:border-0 disabled:pl-0"
+                      type="text"
+                      name="recipient_name"
+                      value={booking.recipient_name}
+                      onChange={handleOnChange}
+                      required
+                      placeholder="who should we call?"
+                      disabled={!editForm}
+                    />
+                  </div>
+
+                  <div className="flex flex-col space-y-2">
+                    <label className="text-gray-700 font-medium">Phone:</label>
+                    <input
+                      className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent placeholder:text-gray-400 disabled:border-0 disabled:pl-0"
+                      type="text"
+                      name="recipient_phone"
+                      value={booking.recipient_phone}
+                      onChange={handleOnChange}
+                      required
+                      placeholder="+234 801 234 5678"
+                      disabled={!editForm}
+                    />
+                  </div>
+
+                  <div className="flex flex-col space-y-2">
+                    <label className="text-gray-700 font-medium">
+                      Recipient Country:
+                    </label>
+                    <select
+                      name="country"
+                      id="country"
+                      className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent disabled:border-0 disabled:pl-0"
+                      onChange={handleOnChange}
+                      value={booking.country}
+                      required
+                      disabled={!editForm || booking.country === "Nigeria"}
+                    >
+                      {countries.map((country) => {
+                        return (
+                          <option key={country} value={country}>
+                            {country}
+                          </option>
+                        );
+                      })}
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Call Details */}
+            <div className="">
+              <h2 className="gradient-text text-xl font-semibold mb-4 pb-2">
+                {" "}
+                Call Details
+              </h2>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                {/* occasion label */}
+                <div className="flex flex-col space-y-2">
+                  <label className="text-gray-700 font-medium">
+                    Occassion:
+                  </label>
+                  <select
+                    name="occassion"
+                    id="occassion"
+                    className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent disabled:border-0 disabled:pl-0"
+                    onChange={handleOnChange}
+                    value={booking.occassion}
+                    required
+                    disabled={!editForm}
+                  >
+                    <option value="">Select Occassion</option>
+                    {services.map((service) => {
+                      return (
+                        <option key={service.id} value={service.title}>
+                          {service.title}
+                        </option>
+                      );
+                    })}
+                  </select>
+                </div>
+
+                {/* Call Type */}
+                <div className="flex flex-col space-y-2">
+                  <label className="text-gray-700 font-medium">
+                    Call Type:
+                  </label>
+                  <input
+                    type="text"
+                    name="call_type"
+                    id="call_type"
+                    className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent disabled:border-0 disabled:pl-0"
+                    onChange={handleOnChange}
+                    value={
+                      booking.call_type === "regular" ? "Regular" : "Special"
+                    }
+                    required
+                    disabled
+                  />
+                </div>
+
+                {/* Date */}
+                <div className="flex flex-col space-y-2">
+                  <label className="text-gray-700 font-medium">
+                    Preferred Date:
+                  </label>
+                  <input
+                    className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent placeholder:text-gray-400 disabled:border-0 disabled:pl-0"
+                    type="date"
+                    name="call_date"
+                    value={booking.call_date}
+                    onChange={handleOnChange}
+                    required
+                    min={new Date().toISOString().split("T")[0]}
+                    disabled={!editForm}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Personal Touch */}
+            {editForm ? (
+              <div className="">
+                <h2 className="gradient-text text-xl font-semibold mb-4 pb-2">
+                  {" "}
+                  Personal Touch
+                </h2>
+                <div className="grid grid-cols-1 gap-4">
+                  {/* message */}
+
+                  <div className="flex flex-col space-y-2">
+                    <label className="text-gray-700 font-medium">
+                      Message:
+                    </label>
+                    <textarea
+                      name="message"
+                      value={booking.message}
+                      onChange={handleOnChange}
+                      required
+                      rows={5}
+                      placeholder="What would you like us to say? Share your heartfelt message"
+                      className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent placeholder:text-gray-400 resize-none disabled:border-0 disabled:pl-0"
+                      disabled={!editForm}
+                    ></textarea>
+                  </div>
+
+                  <div className="flex flex-col space-y-2">
+                    <label className="text-gray-700 font-medium">
+                      Special Instructions(Optional):
+                    </label>
+                    <textarea
+                      name="special_instruction"
+                      value={booking?.special_instruction}
+                      onChange={handleOnChange}
+                      rows={3}
+                      placeholder="Any Special requests, favorite songs, or important details we should know"
+                      className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent placeholder:text-gray-400 resize-none disabled:border-0 disabled:pl-0"
+                      disabled={!editForm}
+                    ></textarea>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {booking.message && (
+                  <div>
+                    <h2 className="gradient-text text-xl font-semibold mb-4 pb-2">
+                      {" "}
+                      Message
+                    </h2>
+
+                    <p className="p-3 gradient-background-soft rounded-md text-gray-700">
+                      {booking.message}
+                    </p>
+                  </div>
+                )}
+
+                {booking.special_instruction && (
+                  <div>
+                    <h2 className="gradient-text text-xl font-semibold mb-4 pb-2">
+                      {" "}
+                      Special Instruction
+                    </h2>
+
+                    <p className="p-3 gradient-background-soft rounded-md text-gray-700">
+                      {booking.special_instruction}
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* pricing summary */}
+            {
+              <div className="mt-6 p-4 md:p-6 gradient-background-soft space-y-2">
+                <h3 className="font-semibold">Pricing Summary</h3>
+                <div className="flex justify-between">
+                  {
+                    <h2 className="text-sm sm:text-md md:text-lg font-bold text-brand-end max-w-[50%] md:max-w-full">{`${
+                      booking.occassion
+                    } (${
+                      booking.call_type === "regular" ? "Regular" : "Special"
+                    })`}</h2>
+                  }
+                  {
+                    <h2 className="text-sm sm:text-md md:text-lg font-bold text-brand-end">
+                      {booking.price}
+                    </h2>
+                  }
+                </div>
+              </div>
+            }
+
+            {/* submit button */}
+            {
+              <div className="w-full flex justify-center">
+                <button
+                  type="submit"
+                  className="btn-primary w-full md:w-[50%]"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? (
+                    <div>
+                      <svg
+                        className="animate-spin h-5 w-5 text-white mx-auto"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                        ></path>
+                      </svg>
+                      <span className="sr-only">Loading...</span>
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-center">
+                      <p>
+                        {editForm ? "Save my Booking" : "Update Booking Info"}
+                      </p>
+                    </div>
+                  )}
+                </button>
+              </div>
+            }
+          </form>
+        </div>
+      </div>
+    </section>
+  );
+}

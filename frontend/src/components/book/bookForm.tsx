@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
 import { services, callType } from "../services/serviceList";
+
 export default function BookingForm() {
   type serviceType = "regular" | "special";
 
@@ -73,56 +73,58 @@ export default function BookingForm() {
   if (!mounted) return null; // Avoid SSR
   return (
     <section className="container-max section-padding flex justify-center py-20 px-7 md:px-10 sm:px-25 lg:px-50">
-      <div className={`card p-6 md:p-8 ${isSubmitted? 'w-full md:w-[70%]' : 'w-full'}`}>
+      <div
+        className={`card p-6 md:p-8 ${
+          isSubmitted ? "w-full md:w-[70%]" : "w-full"
+        }`}
+      >
         {isSubmitted ? (
-            <div className=" w-full text-center">
-              <div className="text-6xl mb-6">🎉</div>
-              <h1 className="text-3xl font-bold gradient-text mb-4">
-                You're All Set to Spread Love!
-              </h1>
-              <p className="text-gray-600 mb-6">
-                Your surprise call has been booked successfully. We'll make sure
-                it's absolutely perfect!
-              </p>
-              <div className="gradient-background-soft p-4 rounded-lg mb-6">
-                <p className="text-sm text-gray-600 mb-2">Your Booking ID:</p>
-                <p className="text-2xl font-bold text-brand-end">{bookingId}</p>
-              </div>
-              <p className="text-sm text-gray-600 mb-6">
-                Save this ID to manage your booking. We'll also send
-                confirmation details to your email.
-              </p>
-              <div className="space-y-3">
-                <button
-                  onClick={() => {
-                    setIsSubmitted(false);
-                    setFormData({
-                      caller_name: "",
-                      caller_email: "",
-                      recipient_name: "",
-                      recipient_phone: "",
-                      country: "",
-                      occassion: "",
-                      call_type: "regular",
-                      call_date: "",
-                      message: "",
-                      special_instruction: "",
-                    });
-                  }}
-                  className="w-full btn-primary"
-                >
-                  Book Another Call
-                </button>
-                <button
-                  onClick={() =>
-                    window.open(`/manage?id=${bookingId}`, "_blank")
-                  }
-                  className="w-full btn-secondary"
-                >
-                  Manage This Booking
-                </button>
-              </div>
+          <div className=" w-full text-center">
+            <div className="text-6xl mb-6">🎉</div>
+            <h1 className="text-3xl font-bold gradient-text mb-4">
+              You're All Set to Spread Love!
+            </h1>
+            <p className="text-gray-600 mb-6">
+              Your surprise call has been booked successfully. We'll make sure
+              it's absolutely perfect!
+            </p>
+            <div className="gradient-background-soft p-4 rounded-lg mb-6">
+              <p className="text-sm text-gray-600 mb-2">Your Booking ID:</p>
+              <p className="text-2xl font-bold text-brand-end">{bookingId}</p>
             </div>
+            <p className="text-sm text-gray-600 mb-6">
+              Save this ID to manage your booking. We'll also send confirmation
+              details to your email.
+            </p>
+            <div className="space-y-3">
+              <button
+                onClick={() => {
+                  setIsSubmitted(false);
+                  setFormData({
+                    caller_name: "",
+                    caller_email: "",
+                    recipient_name: "",
+                    recipient_phone: "",
+                    country: "",
+                    occassion: "",
+                    call_type: "regular",
+                    call_date: "",
+                    message: "",
+                    special_instruction: "",
+                  });
+                }}
+                className="w-full btn-primary"
+              >
+                Book Another Call
+              </button>
+              <button
+                onClick={() => window.open(`/manage?id=${bookingId}`, "_blank")}
+                className="w-full btn-secondary"
+              >
+                Manage This Booking
+              </button>
+            </div>
+          </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-6 text-brand-start">
             {/* Personal and Recipiet info */}
