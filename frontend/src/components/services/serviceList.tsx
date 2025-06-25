@@ -18,302 +18,312 @@ import {
   MapPin,
 } from "lucide-react";
 
+
+export const services = [
+  {
+    id: 1,
+    icon: <Cake className="h-8 w-8" />,
+    title: "Birthday Surprise Calls",
+    description:
+      "Make their special day unforgettable with a personalized birthday call filled with wishes, songs, and joy.",
+
+    type: {
+      regular: {
+        features: [
+          "Personalized birthday song",
+          "Custom message delivery",
+          "Photo sharing option",
+        ],
+        localPrice: "N2500",
+        internationalPrice: "N3500",
+      },
+      special: {
+        features: [
+          "Personalized birthday song",
+          "Custom message delivery",
+          "Photo sharing option",
+        ],
+        localPrice: "N2500",
+        internationalPrice: "N3500",
+      },
+    },
+
+    category: "celebration",
+    thumbnail:
+      "https://images.pexels.com/photos/1729931/pexels-photo-1729931.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop",
+  },
+  {
+    id: 2,
+    icon: <Heart className="h-8 w-8" />,
+    title: "Anniversary Wishes",
+    description:
+      "Celebrate love and milestones with heartfelt anniversary calls that honor special relationships.",
+    type: {
+      regular: {
+        features: [
+          "Romantic message delivery",
+          "Memory sharing",
+          "Couple's blessing",
+        ],
+        localPrice: "N3000",
+        internationalPrice: "N3500",
+      },
+      special: {
+        features: [
+          "Romantic message delivery",
+          "Memory sharing",
+          "Couple's blessing",
+        ],
+        localPrice: "N3000",
+        internationalPrice: "N3500",
+      },
+    },
+
+    category: "celebration",
+    thumbnail:
+      "https://images.pexels.com/photos/265722/pexels-photo-265722.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop",
+  },
+  {
+    id: 3,
+    icon: <Users className="h-8 w-8" />,
+    title: "Friendship Reconnection",
+    description:
+      "Surprise old friends and strengthen bonds with unexpected calls that bring back beautiful memories.",
+    type: {
+      regular: {
+        features: [
+          "Memory lane conversation",
+          "Friendship appreciation",
+          "Future plans discussion",
+        ],
+        localPrice: "N2500",
+        internationalPrice: "N3500",
+      },
+      special: {
+        features: [
+          "Memory lane conversation",
+          "Friendship appreciation",
+          "Future plans discussion",
+        ],
+        localPrice: "N2500",
+        internationalPrice: "N3500",
+      },
+    },
+
+    category: "relationship",
+    thumbnail:
+      "https://images.pexels.com/photos/1024993/pexels-photo-1024993.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop",
+  },
+  {
+    id: 4,
+    icon: <GraduationCap className="h-8 w-8" />,
+    title: "Graduation Congratulations",
+    description:
+      "Honor academic achievements with congratulatory calls that celebrate hard work and success.",
+    type: {
+      regular: {
+        features: [
+          "Achievement recognition",
+          "Future wishes",
+          "Motivational message",
+        ],
+        localPrice: "N2000",
+        internationalPrice: "N3000",
+      },
+      special: {
+        features: [
+          "Achievement recognition",
+          "Future wishes",
+          "Motivational message",
+        ],
+        localPrice: "N2000",
+        internationalPrice: "N3000",
+      },
+    },
+
+    category: "achievement",
+    thumbnail:
+      "https://images.pexels.com/photos/267885/pexels-photo-267885.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop",
+  },
+  {
+    id: 5,
+    icon: <PartyPopper className="h-8 w-8" />,
+    title: "Congratulatory Calls",
+    description:
+      "Welcome new arrivals and achievements with joyful calls that celebrate success.",
+    type: {
+      regular: {
+        features: ["Baby blessing", "Parenting wishes", "Family celebration"],
+        localPrice: "N2000",
+        internationalPrice: "N3000",
+      },
+      special: {
+        features: ["Baby blessing", "Parenting wishes", "Family celebration"],
+        localPrice: "N2000",
+        internationalPrice: "N3000",
+      },
+    },
+
+    category: "celebration",
+    thumbnail:
+      "https://images.unsplash.com/photo-1527529482837-4698179dc6ce?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  },
+  {
+    id: 6,
+    icon: <Gift className="h-8 w-8" />,
+    title: "Holiday Greetings",
+    description:
+      "Spread holiday cheer with seasonal calls that bring warmth and joy during special times of year.",
+    type: {
+      regular: {
+        features: [
+          "Holiday-themed messages",
+          "Seasonal songs",
+          "Cultural celebrations",
+        ],
+        localPrice: "N2000",
+        internationalPrice: "N3000",
+      },
+      special: {
+        features: [
+          "Holiday-themed messages",
+          "Seasonal songs",
+          "Cultural celebrations",
+        ],
+        localPrice: "N2000",
+        internationalPrice: "N3000",
+      },
+    },
+
+    category: "holiday",
+    thumbnail:
+      "https://images.pexels.com/photos/1303081/pexels-photo-1303081.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop",
+  },
+  {
+    id: 7,
+    icon: <Heart className="h-8 w-8" />,
+    title: "Romantic Calls",
+    description:
+      "Express your love and affection with a heartfelt romantic call, perfect for anniversaries, proposals, or just because.",
+    type: {
+      regular: {
+        features: [
+          "Personalized love message",
+          "Poetry or song option",
+          "Special date reminders",
+        ],
+        localPrice: "N3000",
+        internationalPrice: "N4000",
+      },
+      special: {
+        features: [
+          "Personalized love message",
+          "Poetry or song option",
+          "Special date reminders",
+        ],
+        localPrice: "N3000",
+        internationalPrice: "N4000",
+      },
+    },
+
+    category: "relationship",
+    thumbnail:
+      "https://images.pexels.com/photos/1024993/pexels-photo-1024993.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop",
+  },
+  {
+    id: 8,
+    icon: <Phone className="h-8 w-8" />,
+    title: "Apology Calls",
+    description:
+      "Mend relationships and say sorry with a sincere apology call, delivered with empathy and understanding.",
+    type: {
+      regular: {
+        features: [
+          "Custom apology message",
+          "Mediation support",
+          "Follow-up encouragement",
+        ],
+        localPrice: "N2500",
+        internationalPrice: "N3500",
+      },
+      special: {
+        features: [
+          "Custom apology message",
+          "Mediation support",
+          "Follow-up encouragement",
+        ],
+        localPrice: "N2500",
+        internationalPrice: "N3500",
+      },
+    },
+
+    category: "relationship",
+    thumbnail:
+      "https://cdn.pixabay.com/photo/2020/06/05/16/27/excuse-me-5263696_960_720.jpg",
+  },
+  {
+    id: 9,
+    icon: <Sun className="h-8 w-8" />,
+    title: "Encouragement/Cheer Up Calls",
+    description:
+      "Lift spirits and motivate loved ones with uplifting calls designed to encourage and inspire.",
+    type: {
+      regular: {
+        features: [
+          "Motivational message",
+          "Positive affirmations",
+          "Personalized support",
+        ],
+        localPrice: "N2000",
+        internationalPrice: "N3000",
+      },
+      special: {
+        features: [
+          "Motivational message",
+          "Positive affirmations",
+          "Personalized support",
+        ],
+        localPrice: "N2000",
+        internationalPrice: "N3000",
+      },
+    },
+
+    category: "achievement",
+    thumbnail:
+      "https://images.unsplash.com/photo-1721059050927-dfad8ff13e07?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  },
+];
+
+const categories = [
+  { id: "all", name: "All Services", count: services.length },
+  {
+    id: "celebration",
+    name: "Celebrations",
+    count: services.filter((s) => s.category === "celebration").length,
+  },
+  {
+    id: "relationship",
+    name: "Relationship",
+    count: services.filter((s) => s.category === "relationship").length,
+  },
+  {
+    id: "achievement",
+    name: "Achievements",
+    count: services.filter((s) => s.category === "achievement").length,
+  },
+  {
+    id: "holiday",
+    name: "Holidays",
+    count: services.filter((s) => s.category === "holiday").length,
+  },
+];
+
+export const callType = [
+  { id: "regular", name: "Regular" },
+  { id: "special", name: "Special" },
+];
+
 function Services() {
-  const services = [
-    {
-      id: 1,
-      icon: <Cake className="h-8 w-8" />,
-      title: "Birthday Surprise Calls",
-      description:
-        "Make their special day unforgettable with a personalized birthday call filled with wishes, songs, and joy.",
-
-      type: {
-        regular: {
-          features: [
-            "Personalized birthday song",
-            "Custom message delivery",
-            "Photo sharing option",
-          ],
-          localPrice: "N2500",
-          internationalPrice: "N3500",
-        },
-        special: {
-          features: [
-            "Personalized birthday song",
-            "Custom message delivery",
-            "Photo sharing option",
-          ],
-          localPrice: "N2500",
-          internationalPrice: "N3500",
-        },
-      },
-
-      category: "celebration",
-      thumbnail: "https://images.pexels.com/photos/1729931/pexels-photo-1729931.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop",
-    },
-    {
-      id: 2,
-      icon: <Heart className="h-8 w-8" />,
-      title: "Anniversary Wishes",
-      description:
-        "Celebrate love and milestones with heartfelt anniversary calls that honor special relationships.",
-      type: {
-        regular: {
-          features: [
-            "Romantic message delivery",
-            "Memory sharing",
-            "Couple's blessing",
-          ],
-          localPrice: "N3000",
-          internationalPrice: "N3500",
-        },
-        special: {
-          features: [
-            "Romantic message delivery",
-            "Memory sharing",
-            "Couple's blessing",
-          ],
-          localPrice: "N3000",
-          internationalPrice: "N3500",
-        },
-      },
-
-      category: "celebration",
-      thumbnail: "https://images.pexels.com/photos/265722/pexels-photo-265722.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop",
-    },
-    {
-      id: 3,
-      icon: <Users className="h-8 w-8" />,
-      title: "Friendship Reconnection",
-      description:
-        "Surprise old friends and strengthen bonds with unexpected calls that bring back beautiful memories.",
-      type: {
-        regular: {
-          features: [
-            "Memory lane conversation",
-            "Friendship appreciation",
-            "Future plans discussion",
-          ],
-          localPrice: "N2500",
-          internationalPrice: "N3500",
-        },
-        special: {
-          features: [
-            "Memory lane conversation",
-            "Friendship appreciation",
-            "Future plans discussion",
-          ],
-          localPrice: "N2500",
-          internationalPrice: "N3500",
-        },
-      },
-
-      category: "relationship",
-      thumbnail: "https://images.pexels.com/photos/1024993/pexels-photo-1024993.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop",
-    },
-    {
-      id: 4,
-      icon: <GraduationCap className="h-8 w-8" />,
-      title: "Graduation Congratulations",
-      description:
-        "Honor academic achievements with congratulatory calls that celebrate hard work and success.",
-      type: {
-        regular: {
-          features: [
-            "Achievement recognition",
-            "Future wishes",
-            "Motivational message",
-          ],
-          localPrice: "N2000",
-          internationalPrice: "N3000",
-        },
-        special: {
-          features: [
-            "Achievement recognition",
-            "Future wishes",
-            "Motivational message",
-          ],
-          localPrice: "N2000",
-          internationalPrice: "N3000",
-        },
-      },
-
-      category: "achievement",
-      thumbnail: "https://images.pexels.com/photos/267885/pexels-photo-267885.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop",
-    },
-    {
-      id: 5,
-      icon: <PartyPopper className="h-8 w-8" />,
-      title: "Congratulatory Calls",
-      description:
-        "Welcome new arrivals and achievements with joyful calls that celebrate success.",
-      type: {
-        regular: {
-          features: ["Baby blessing", "Parenting wishes", "Family celebration"],
-          localPrice: "N2000",
-          internationalPrice: "N3000",
-        },
-        special: {
-          features: ["Baby blessing", "Parenting wishes", "Family celebration"],
-          localPrice: "N2000",
-          internationalPrice: "N3000",
-        },
-      },
-
-      category: "celebration",
-      thumbnail: "https://images.unsplash.com/photo-1527529482837-4698179dc6ce?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    },
-    {
-      id: 6,
-      icon: <Gift className="h-8 w-8" />,
-      title: "Holiday Greetings",
-      description:
-        "Spread holiday cheer with seasonal calls that bring warmth and joy during special times of year.",
-      type: {
-        regular: {
-          features: [
-            "Holiday-themed messages",
-            "Seasonal songs",
-            "Cultural celebrations",
-          ],
-          localPrice: "N2000",
-          internationalPrice: "N3000",
-        },
-        special: {
-          features: [
-            "Holiday-themed messages",
-            "Seasonal songs",
-            "Cultural celebrations",
-          ],
-          localPrice: "N2000",
-          internationalPrice: "N3000",
-        },
-      },
-
-      category: "holiday",
-      thumbnail: "https://images.pexels.com/photos/1303081/pexels-photo-1303081.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop",
-    },
-    {
-      id: 7,
-      icon: <Heart className="h-8 w-8" />,
-      title: "Romantic Calls",
-      description:
-        "Express your love and affection with a heartfelt romantic call, perfect for anniversaries, proposals, or just because.",
-      type: {
-        regular: {
-          features: [
-            "Personalized love message",
-            "Poetry or song option",
-            "Special date reminders",
-          ],
-          localPrice: "N3000",
-          internationalPrice: "N4000",
-        },
-        special: {
-          features: [
-            "Personalized love message",
-            "Poetry or song option",
-            "Special date reminders",
-          ],
-          localPrice: "N3000",
-          internationalPrice: "N4000",
-        },
-      },
-
-      category: "relationship",
-      thumbnail: "https://images.pexels.com/photos/1024993/pexels-photo-1024993.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop",
-    },
-    {
-      id: 8,
-      icon: <Phone className="h-8 w-8" />,
-      title: "Apology Calls",
-      description:
-        "Mend relationships and say sorry with a sincere apology call, delivered with empathy and understanding.",
-      type: {
-        regular: {
-          features: [
-            "Custom apology message",
-            "Mediation support",
-            "Follow-up encouragement",
-          ],
-          localPrice: "N2500",
-          internationalPrice: "N3500",
-        },
-        special: {
-          features: [
-            "Custom apology message",
-            "Mediation support",
-            "Follow-up encouragement",
-          ],
-          localPrice: "N2500",
-          internationalPrice: "N3500",
-        },
-      },
-
-      category: "relationship",
-      thumbnail: "https://cdn.pixabay.com/photo/2020/06/05/16/27/excuse-me-5263696_960_720.jpg",
-    },
-    {
-      id: 9,
-      icon: <Sun className="h-8 w-8" />,
-      title: "Encouragement/Cheer Up Calls",
-      description:
-        "Lift spirits and motivate loved ones with uplifting calls designed to encourage and inspire.",
-      type: {
-        regular: {
-          features: [
-            "Motivational message",
-            "Positive affirmations",
-            "Personalized support",
-          ],
-          localPrice: "N2000",
-          internationalPrice: "N3000",
-        },
-        special: {
-          features: [
-            "Motivational message",
-            "Positive affirmations",
-            "Personalized support",
-          ],
-          localPrice: "N2000",
-          internationalPrice: "N3000",
-        },
-      },
-
-      category: "achievement",
-      thumbnail: "https://images.unsplash.com/photo-1721059050927-dfad8ff13e07?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    },
-  ];
-
-  const categories = [
-    { id: "all", name: "All Services", count: services.length },
-    {
-      id: "celebration",
-      name: "Celebrations",
-      count: services.filter((s) => s.category === "celebration").length,
-    },
-    {
-      id: "relationship",
-      name: "Relationship",
-      count: services.filter((s) => s.category === "relationship").length,
-    },
-    {
-      id: "achievement",
-      name: "Achievements",
-      count: services.filter((s) => s.category === "achievement").length,
-    },
-    {
-      id: "holiday",
-      name: "Holidays",
-      count: services.filter((s) => s.category === "holiday").length,
-    },
-  ];
-
-  const callType = [
-    { id: "regular", name: "Regular" },
-    { id: "special", name: "Special" },
-  ];
-
   const [activeTab, setActiveTab] = useState("all");
 
   type serviceType = "regular" | "special";
@@ -385,13 +395,11 @@ function Services() {
                     </div>
 
                     <p className="text-gray-600 mb-4">{service.description}</p>
-
-                  
                   </div>
 
                   <div className="w-full px-6 bottom-0 mb-6">
                     {/* Pricing */}
-                      {/* filter buttons */}
+                    {/* filter buttons */}
                     <div className="flex flex-row gap-4 mb-4">
                       {callType.map((type, index) => {
                         return (
