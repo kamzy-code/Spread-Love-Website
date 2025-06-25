@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Send } from "lucide-react";
+import {  Search, Phone, Calendar, Clock, User, MessageCircle, CheckCircle, AlertCircle, XCircle } from "lucide-react";
 import BookingDetails from "@/components/manage/bookingDetails";
 
 export default function SearchForm() {
@@ -11,21 +11,6 @@ export default function SearchForm() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
-    // Simulate API call
-    setTimeout(() => {
-      if (bookingID.toUpperCase().includes("SL")) {
-        setBooking(mockBooking);
-      } else {
-        setBooking(null);
-      }
-      setIsSubmitting(false);
-    }, 1000);
-  };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
