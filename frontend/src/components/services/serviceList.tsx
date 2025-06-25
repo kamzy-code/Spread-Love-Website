@@ -8,10 +8,11 @@ import {
   Heart,
   Users,
   GraduationCap,
-  Baby,
+  PartyPopper,
   Cake,
   Play,
   Phone,
+  Sun,
   Video,
   Globe,
   MapPin,
@@ -48,7 +49,7 @@ function Services() {
       },
 
       category: "celebration",
-      thumbnail: "/about-pic.jpg",
+      thumbnail: "https://images.pexels.com/photos/1729931/pexels-photo-1729931.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop",
     },
     {
       id: 2,
@@ -78,7 +79,7 @@ function Services() {
       },
 
       category: "celebration",
-      thumbnail: "/about-pic.jpg",
+      thumbnail: "https://images.pexels.com/photos/265722/pexels-photo-265722.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop",
     },
     {
       id: 3,
@@ -108,7 +109,7 @@ function Services() {
       },
 
       category: "relationship",
-      thumbnail: "/about-pic.jpg",
+      thumbnail: "https://images.pexels.com/photos/1024993/pexels-photo-1024993.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop",
     },
     {
       id: 4,
@@ -138,11 +139,11 @@ function Services() {
       },
 
       category: "achievement",
-      thumbnail: "/about-pic.jpg",
+      thumbnail: "https://images.pexels.com/photos/267885/pexels-photo-267885.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop",
     },
     {
       id: 5,
-      icon: <Baby className="h-8 w-8" />,
+      icon: <PartyPopper className="h-8 w-8" />,
       title: "Congratulatory Calls",
       description:
         "Welcome new arrivals and achievements with joyful calls that celebrate success.",
@@ -160,7 +161,7 @@ function Services() {
       },
 
       category: "celebration",
-      thumbnail: "/about-pic.jpg",
+      thumbnail: "https://images.unsplash.com/photo-1527529482837-4698179dc6ce?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     },
     {
       id: 6,
@@ -190,7 +191,7 @@ function Services() {
       },
 
       category: "holiday",
-      thumbnail: "/about-pic.jpg",
+      thumbnail: "https://images.pexels.com/photos/1303081/pexels-photo-1303081.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop",
     },
     {
       id: 7,
@@ -220,7 +221,7 @@ function Services() {
       },
 
       category: "relationship",
-      thumbnail: "/about-pic.jpg",
+      thumbnail: "https://images.pexels.com/photos/1024993/pexels-photo-1024993.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop",
     },
     {
       id: 8,
@@ -250,11 +251,11 @@ function Services() {
       },
 
       category: "relationship",
-      thumbnail: "/about-pic.jpg",
+      thumbnail: "https://cdn.pixabay.com/photo/2020/06/05/16/27/excuse-me-5263696_960_720.jpg",
     },
     {
       id: 9,
-      icon: <Play className="h-8 w-8" />,
+      icon: <Sun className="h-8 w-8" />,
       title: "Encouragement/Cheer Up Calls",
       description:
         "Lift spirits and motivate loved ones with uplifting calls designed to encourage and inspire.",
@@ -280,7 +281,7 @@ function Services() {
       },
 
       category: "achievement",
-      thumbnail: "/about-pic.jpg",
+      thumbnail: "https://images.unsplash.com/photo-1721059050927-dfad8ff13e07?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     },
   ];
 
@@ -369,8 +370,8 @@ function Services() {
                 >
                   <div>
                     <Image
-                      width={48}
-                      height={48}
+                      width={300}
+                      height={300}
                       src={service.thumbnail}
                       alt={service.title}
                       className="w-full h-48 object-cover"
@@ -409,7 +410,7 @@ function Services() {
                             }`}
                           >
                             {" "}
-                            {type.name}
+                            {type.name} Call
                           </button>
                         );
                       })}
