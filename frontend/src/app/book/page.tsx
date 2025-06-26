@@ -7,7 +7,6 @@ export default async function BookingPage({
   searchParams: Promise<{ occassion?: string; call_type?: string }>;
 }) {
   const {occassion, call_type} = await searchParams; 
-  console.log(occassion, call_type)
   return (
     <div>
       <BookHero></BookHero>

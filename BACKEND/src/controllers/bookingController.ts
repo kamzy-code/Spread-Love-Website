@@ -5,44 +5,44 @@ import { callStatus } from "../types/genralTypes";
 import { AuthRequest } from "../middlewares/authMiddleware";
 import { Types } from "mongoose";
 import { castSortOder } from "../utils/castSortOrder";
+import { callType, occassionType } from "../types/genralTypes";
 
 class BookingController {
   // Customer Endpoints
   async createBooking(req: Request, res: Response, next: NextFunction) {
     const {
+      bookingId,
       callerName,
       callerPhone,
       callerEmail,
-      ReceiverName,
-      ReceiverPhone,
-      ReceiverCountry,
+      recipientName,
+      recipientPhone,
+      country,
+      occassion,
       callType,
       callDate,
-      callTime,
-      SpecialMessage,
-      relationshipWithReceiver,
-      extraInfo,
+      price,
+      message,
+      specialInstruction,
     } = req.body;
 
-    // generate the booking ID
-    const bookingId = await bookingService.generateBookingId();
-
+    console.log(`ID: ${bookingId}, ${callerName}`)
     try {
       // call the service class to create a new booking and save in the DB
       const newBooking = await bookingService.createBooking(
+        bookingId,
         callerName,
         callerPhone,
         callerEmail,
-        ReceiverName,
-        ReceiverPhone,
-        ReceiverCountry,
-        callType,
+        recipientName,
+        recipientPhone,
+        country,
+        occassion as occassionType,
+        callType as callType,
         callDate,
-        callTime,
-        SpecialMessage,
-        relationshipWithReceiver,
-        extraInfo,
-        bookingId
+        price,
+        message,
+        specialInstruction
       );
 
       // return failed if booking creation was unsuccessful
@@ -54,7 +54,7 @@ class BookingController {
       // retrun successful with Booking ID if successful
       res.status(201).json({
         message: "Booking created successfully",
-        bookingID: newBooking.bookingId,
+        bookingId: newBooking.bookingId,
       });
     } catch (error) {
       next(error);
@@ -68,7 +68,7 @@ class BookingController {
     // extract BookingID from url
     const bookingId = req.params.bookingId;
 
-    // return ID reuired if ID wasn't submitted 
+    // return ID reuired if ID wasn't submitted
     if (!bookingId) {
       res.status(400).json({ message: "Booking ID required" });
       return;
@@ -117,22 +117,34 @@ class BookingController {
       }
 
       // create an array of fields that shouldn't be updated by the customer
-      const disallowedFields = ["bookingId", "status", "assingedRep"];
+      const disallowedFields = [
+        "bookingId",
+        "status",
+        "assingedRep",
+        "callType",
+      ];
 
       // Object.Keys() extract the keys in the info object and store in an array
       Object.keys(info).forEach((field) => {
-        
         // map through the array and check if any of the fields are in the disallowed fields array and only proceed if that field is not
         if (!disallowedFields.includes(field)) {
+          // create an array of booking that can't be updated based on their status
+          const disallowedStatus = ["successful"];
 
-          // use the bracket notation syntax to dynamically access the keys in the Booking object via the field variable and update it. 
-          
+          // check if the booking has a status that's part of the disallowed statuses and return error message without saving the updated booking object.
+          if (disallowedStatus.includes(booking.status as string)) {
+            res.status(400).json({ message: "Can't update this Booking" });
+            return;
+          }
+          // use the bracket notation syntax to dynamically access the keys in the Booking object via the field variable and update it.
+
           //E.g if field = id then the output will be Booking[id] = info[id] updating the id key of the booking object to that of the info object.
           (booking as any)[field] = info[field];
-
         } else {
           // return error message if the field is in the disallowed array
-          res.status(403).json({ message: "You can't update this field" });
+          res
+            .status(403)
+            .json({ message: "You can't update this field", field });
           return;
         }
       });
@@ -144,6 +156,28 @@ class BookingController {
       next(error);
       console.error(`Booking update failed: ${error}`);
       res.status(500).json({ message: "Booking update failed", error });
+      return;
+    }
+  }
+
+   async generateBookingID(req: Request, res: Response, next: NextFunction) {
+    try {
+      // call service method to generate ID
+      const ID = await bookingService.generateBookingId();
+
+      if (!ID) {
+        res.status(400).json({ message: "error generating Booking ID" });
+        return;
+      }
+
+      // return the booking ID
+      res.status(200).json({
+        ID,
+      });
+    } catch (error) {
+      next(error);
+      console.error(`Error generating Booking ID: ${error}`);
+      res.status(500).json({ message: "Error generating Booking ID", error });
       return;
     }
   }
@@ -190,7 +224,6 @@ class BookingController {
   }
 
   async getAllBooking(req: AuthRequest, res: Response, next: NextFunction) {
-    
     // extract all possible filtering parameters from the request query object.
     const {
       status,
@@ -198,12 +231,12 @@ class BookingController {
       startDate,
       endDate,
       callType,
-      ReceiverCountry,
+      country,
       sortParam,
       sortOrder,
     } = req.query;
 
-    // cast the sort order variable from a string to a valid sort Order type. 
+    // cast the sort order variable from a string to a valid sort Order type.
     // i.e from sortorder: string = "1" or "-1" to sortorder: SortOrder = 1 or -1
     const sortOrderCast = castSortOder(sortOrder as string);
 
@@ -217,7 +250,7 @@ class BookingController {
     if (status) searchQuery.status = status;
     if (assignedRep) searchQuery.assignedRep = assignedRep;
     if (callType) searchQuery.callType = callType;
-    if (ReceiverCountry) searchQuery.ReceiverCountry = ReceiverCountry;
+    if (country) searchQuery.country = country;
 
     if (startDate || endDate) {
       // if the date filter exists add them as greater than and less than parameters to the callDate key. the query will basically fetch bookings where the date is either greater than or less thanor equeal to the sumitte dates.
@@ -273,11 +306,11 @@ class BookingController {
     try {
       // create an array of allowed status value
       const allowedStatus = [
-        "placed",
+        "pending",
         "successful",
         "rejected",
         "rescheduled",
-        "refunded",
+        "unsuccessful",
       ];
 
       // return error message if new status is not in the allowed status array
@@ -315,8 +348,8 @@ class BookingController {
     const bookingId = req.params.bookingId;
     const { repId, autoAssign } = req.body;
     const user = req.user!;
-    
-    // check the auto assign status 
+
+    // check the auto assign status
     const isAutoAssign = autoAssign === true || autoAssign === "true";
 
     // return error message if no bookng ID was found
@@ -352,7 +385,7 @@ class BookingController {
       booking.assignedRep = targetRep;
 
       // create an array of booking that can't be updated based on their status
-      const disallowedFields = ["successful", "refunded"];
+      const disallowedFields = ["successful"];
 
       // check if the booking has a status that's part of the disallowed statuses and return error message without saving the updated booking object.
       if (disallowedFields.includes(booking.status as string)) {
@@ -361,7 +394,7 @@ class BookingController {
       }
 
       // else update the booking status to assigned if the booking status is not part of the disallowed statuses, save and return success message with the new rep ID
-      booking.status = "assigned" as callStatus;
+      booking.status = "pending" as callStatus;
       await booking.save();
 
       res.status(200).json({ message: "Booking assigned", repId: targetRep });
@@ -381,11 +414,12 @@ class BookingController {
   ) {
     const user = req.user!;
 
-    // create an empty matchStage/Filter object for filtering the aggregation query. 
+    // create an empty matchStage/Filter object for filtering the aggregation query.
     const matchStage: any = {};
 
     // check if the user is a callrep and add the assigned rep key to the matchstage object so it peforms aggregation based on only bookings assinged to the rep
-    if (user.role === "callrep") matchStage.assignedRep = new Types.ObjectId(user.userId);
+    if (user.role === "callrep")
+      matchStage.assignedRep = new Types.ObjectId(user.userId);
 
     try {
       // call service classto get the analytics and total booking count
@@ -404,6 +438,8 @@ class BookingController {
       return;
     }
   }
+
+ 
 }
 
 const bookingController = new BookingController();

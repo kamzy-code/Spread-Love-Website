@@ -1,41 +1,42 @@
 import { SortOrder, Types } from "mongoose";
 import { Booking } from "../models/bookingModel";
+import { callType, occassionType } from "../types/genralTypes";
 import { getLeastLoadedRep } from "../utils/getLeastLoadedRep";
 
 class BookingService {
   async createBooking(
+    bookingId: string,
     callerName: string,
     callerPhone: string,
     callerEmail: string,
-    ReceiverName: string,
-    ReceiverPhone: string,
-    ReceiverCountry: string,
-    callType: string,
+    recipientName: string,
+    recipientPhone: string,
+    country: string,
+    occassion: occassionType,
+    callType: callType,
     callDate: Date,
-    callTime: string,
-    SpecialMessage: string,
-    relationshipWithReceiver: string,
-    extraInfo: string,
-    bookingId: string
+    price: string,
+    message: string,
+    specialInstruction: string
   ) {
-     // create a new booking and save in the DB
+    // create a new booking and save in the DB
     const newBooking = await Booking.create({
       bookingId,
       callerName,
       callerPhone,
       callerEmail,
-      ReceiverName,
-      ReceiverPhone,
-      ReceiverCountry,
+      recipientName,
+      recipientPhone,
+      country,
+      occassion,
       callType,
       callDate,
-      callTime,
-      SpecialMessage,
-      relationshipWithReceiver,
-      extraInfo,
+      price,
+      message,
+      specialInstruction,
     });
 
-      // assign booking to a rep if Booking was created successfully
+    // assign booking to a rep if Booking was created successfully
     if (newBooking) {
       // get the rep with the lest amount of bookings
       const assignedRep = await getLeastLoadedRep();
@@ -47,14 +48,13 @@ class BookingService {
 
       // assign the rep to the booking and change the booking status to assigned
       newBooking.assignedRep = new Types.ObjectId(assignedRep.toString());
-      newBooking.status = "assigned";
       return await newBooking.save();
     }
     // return null if booking couldn't be created
     return null;
   }
 
-// fetch bookng by generated ID
+  // fetch bookng by generated ID
   async getBookingByBookingId(bookingId: string) {
     // fetch the booking from DB and return
     return await Booking.findOne({ bookingId });
@@ -62,7 +62,7 @@ class BookingService {
 
   // fetch booking by MongoDB ID
   async getBookingById(bookingId: string, userId: string, role: string) {
-    // check users role 
+    // check users role
     if (role === "callrep") {
       // if the admin is a call rep, return the booking if the iD is found and the booking was assigned to the call rep
       return await Booking.findOne({
@@ -88,7 +88,7 @@ class BookingService {
     // check user role and fetch bookings via the role
     if (role === "callrep") {
       if (sortParam) {
-        // if the sort parameter was submitted fetch the bookings via the query object and sort it via the the sort parameter and the sort order 
+        // if the sort parameter was submitted fetch the bookings via the query object and sort it via the the sort parameter and the sort order
         return await Booking.find({
           // destructure the query object and the assigned rep field to make sure the bookings fetched are assigned to the rep requesting it.
           ...query,
@@ -96,7 +96,7 @@ class BookingService {
         }).sort({ [sortParam]: sortOrder });
       }
 
-      // else fetch the booking via the query object and sort it via the the default sort parameter (createdAt) and the sort order 
+      // else fetch the booking via the query object and sort it via the the default sort parameter (createdAt) and the sort order
       return await Booking.find({
         ...query,
         assignedRep: new Types.ObjectId(userId),
@@ -140,7 +140,7 @@ class BookingService {
     ]);
   }
 
-  async getTotalBooking (matchStage: any){
+  async getTotalBooking(matchStage: any) {
     return await Booking.countDocuments(matchStage);
   }
 }

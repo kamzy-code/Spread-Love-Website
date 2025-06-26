@@ -1,8 +1,47 @@
 export type adminRole = "superadmin" | "callrep" | "salesrep";
 
-export type callType = "Birthday Call" | "Appreciation Call" | "Anniversary Call" | "Congratultory Call" | "Apology Call" | "Romantic Call"  | "Encouragement Call" | "Customer Appreciation Call" | "Other";
+export type occassionType =
+  | "Birthday Surprise Calls"
+  | "Anniversary Wishes"
+  | "Friendship Reconnection"
+  | "Graduation Congratulations"
+  | "Congratulatory Calls"
+  | "Holiday Greetings"
+  | "Romantic Calls"
+  | "Apology Calls"
+  | "Encouragement/Cheer Up Calls"
+  | "Appreciation Call"
+  | "Father's Day Call"
+  | "Mother's Day Call"
+  | "Valentine's Day Call"
+  | "Conference Surprise Call";
 
-export const callTypes: callType[] = [
-  "Birthday Call" , "Appreciation Call" , "Anniversary Call" , "Congratultory Call" , "Apology Call" , "Romantic Call"  , "Encouragement Call" , "Customer Appreciation Call"]
+export const occassion: occassionType[] = [
+  "Birthday Surprise Calls",
+  "Anniversary Wishes",
+  "Friendship Reconnection",
+  "Graduation Congratulations",
+  "Congratulatory Calls",
+  "Holiday Greetings",
+  "Romantic Calls",
+  "Apology Calls",
+  "Encouragement/Cheer Up Calls",
+  "Appreciation Call",
+  "Father's Day Call",
+  "Mother's Day Call",
+  "Valentine's Day Call",
+  "Conference Surprise Call",
+];
 
-export type callStatus = "pending" | "placed" | "assigned" | "successful" | "rejected" | "rescheduled" | "refunded";
+export type callStatus =
+  | "pending"
+  | "assigned"
+  | "successful"
+  | "rejected"
+  | "rescheduled"
+  | "unsuccessful";
+
+  export type callType =
+  | "regular"
+  | "special"
+

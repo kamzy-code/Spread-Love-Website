@@ -41,6 +41,7 @@ router.put(
 
 // customer endpoints
 router.post("/create", bookingController.createBooking);
+router.get("/id/generate", bookingController.generateBookingID);
 router.get("/:bookingId", bookingController.getBookingByBookingId);
 router.put("/:bookingId/update", bookingController.updateBookingByCustomer);
 

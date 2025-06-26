@@ -1,20 +1,20 @@
 import mongoose, { Schema, Document, mongo } from "mongoose";
-import { callStatus, callType, callTypes } from "../types/genralTypes";
+import { callStatus, callType, occassion, occassionType } from "../types/genralTypes";
 
 export interface IBooking extends Document {
   bookingId: string;
   callerName: string;
   callerPhone: string;
   callerEmail?: string;
-  ReceiverName: string;
-  ReceiverPhone: string;
-  ReceiverCountry: string;
-  callType: string;
+  recipientName: string;
+  recipientPhone: string;
+  country: string;
+  occassion: occassionType;
+  callType: callType;
   callDate: Date;
-  callTime?: string;
-  SpecialMessage?: string;
-  relationshipWithReceiver: string;
-  extraInfo?: string;
+  price: string;
+  message?: string;
+  specialInstruction?: string;
   status?: callStatus;
   assignedRep?: mongoose.Types.ObjectId;
 }
@@ -25,18 +25,18 @@ const bookingSchema: Schema = new Schema<IBooking>(
     callerName: { type: String, required: true },
     callerPhone: { type: String, required: true },
     callerEmail: { type: String, required: false, default: "" },
-    ReceiverName: { type: String, required: true },
-    ReceiverPhone: { type: String, required: true },
-    ReceiverCountry: { type: String, required: true },
-    callType: { type: String, enum: Object.values(callTypes), required: true },
+    recipientName: { type: String, required: true },
+    recipientPhone: { type: String, required: true },
+    country: { type: String, required: true },
+    occassion: { type: String, enum: Object.values(occassion), required: true },
+    callType: {type: String, required: true},
     callDate: { type: Date, required: true },
-    callTime: { type: String, required: false },
-    SpecialMessage: { type: String, required: false, default: ""},
-    relationshipWithReceiver: { type: String, required: true },
-    extraInfo: { type: String, required: false, default: "" },
+    price: {type: String, required: true},
+    message: { type: String, required: true, default: ""},
+    specialInstruction: { type: String, required: false, default: "" },
     status: {
       type: String,
-      enum: ["pending", "assigned", "placed", "successful", "rejected", "rescheduled"],
+      enum: ["pending", "assigned", "successful", "rejected", "rescheduled", "unsuccessful"],
       default: "pending",
     },
     assignedRep: { type: mongoose.Types.ObjectId, ref: "Admin" },
