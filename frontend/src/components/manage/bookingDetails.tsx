@@ -145,7 +145,7 @@ export default function BookingDetails({ data }: { data: any }) {
             <h2 className="gradient-text font-bold text-xl md:text-2xl">
               Booking Details
             </h2>
-            <p className="text-gray-700 text-md">ID: {booking?.id}</p>
+            <p className="text-gray-700 text-md">ID: {booking?.bookingId}</p>
           </div>
 
           <div className="flex flex-col md:items-end gap-1">
@@ -190,8 +190,8 @@ export default function BookingDetails({ data }: { data: any }) {
                     <input
                       className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent placeholder:text-gray-400 disabled:border-0 disabled:pl-0"
                       type="text"
-                      name="caller_name"
-                      value={booking.caller_name}
+                      name="callerName"
+                      value={booking.callerName}
                       onChange={handleOnChange}
                       required
                       placeholder="Your full name"
@@ -200,12 +200,26 @@ export default function BookingDetails({ data }: { data: any }) {
                   </div>
 
                   <div className="flex flex-col space-y-2">
+                    <label className="text-gray-700 font-medium">Phone:</label>
+                    <input
+                      className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent placeholder:text-gray-400 disabled:border-0 disabled:pl-0"
+                      type="text"
+                      name="callerPhone"
+                      value={booking.callerPhone}
+                      onChange={handleOnChange}
+                      required
+                      placeholder="+234 123 456 7890"
+                      disabled={!editForm}
+                    />
+                  </div>
+
+                                    <div className="flex flex-col space-y-2">
                     <label className="text-gray-700 font-medium">Email:</label>
                     <input
                       className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent placeholder:text-gray-400 disabled:border-0 disabled:pl-0"
                       type="email"
-                      name="caller_email"
-                      value={booking.caller_email}
+                      name="callerEmail"
+                      value={booking.callerEmail}
                       onChange={handleOnChange}
                       required
                       placeholder="your.email@example.com"
@@ -229,8 +243,8 @@ export default function BookingDetails({ data }: { data: any }) {
                     <input
                       className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent placeholder:text-gray-400 disabled:border-0 disabled:pl-0"
                       type="text"
-                      name="recipient_name"
-                      value={booking.recipient_name}
+                      name="recipientName"
+                      value={booking.recipientName}
                       onChange={handleOnChange}
                       required
                       placeholder="who should we call?"
@@ -243,8 +257,8 @@ export default function BookingDetails({ data }: { data: any }) {
                     <input
                       className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent placeholder:text-gray-400 disabled:border-0 disabled:pl-0"
                       type="text"
-                      name="recipient_phone"
-                      value={booking.recipient_phone}
+                      name="recipientPhone"
+                      value={booking.recipientPhone}
                       onChange={handleOnChange}
                       required
                       placeholder="+234 801 234 5678"
@@ -317,12 +331,12 @@ export default function BookingDetails({ data }: { data: any }) {
                   </label>
                   <input
                     type="text"
-                    name="call_type"
+                    name="callType"
                     id="call_type"
                     className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent disabled:border-0 disabled:pl-0"
                     onChange={handleOnChange}
                     value={
-                      booking.call_type === "regular" ? "Regular" : "Special"
+                      booking.callType === "regular" ? "Regular" : "Special"
                     }
                     required
                     disabled
@@ -337,8 +351,8 @@ export default function BookingDetails({ data }: { data: any }) {
                   <input
                     className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent placeholder:text-gray-400 disabled:border-0 disabled:pl-0"
                     type="date"
-                    name="call_date"
-                    value={booking.call_date}
+                    name="callDate"
+                    value={booking.callDate}
                     onChange={handleOnChange}
                     required
                     min={new Date().toISOString().split("T")[0]}
@@ -379,8 +393,8 @@ export default function BookingDetails({ data }: { data: any }) {
                       Special Instructions(Optional):
                     </label>
                     <textarea
-                      name="special_instruction"
-                      value={booking?.special_instruction}
+                      name="specialInstruction"
+                      value={booking?.specialInstruction}
                       onChange={handleOnChange}
                       rows={3}
                       placeholder="Any Special requests, favorite songs, or important details we should know"
@@ -405,7 +419,7 @@ export default function BookingDetails({ data }: { data: any }) {
                   </div>
                 )}
 
-                {booking.special_instruction && (
+                {booking.specialInstruction && (
                   <div>
                     <h2 className="gradient-text text-xl font-semibold mb-4 pb-2">
                       {" "}
@@ -413,7 +427,7 @@ export default function BookingDetails({ data }: { data: any }) {
                     </h2>
 
                     <p className="p-3 gradient-background-soft rounded-md text-gray-700">
-                      {booking.special_instruction}
+                      {booking.specialInstruction}
                     </p>
                   </div>
                 )}
@@ -429,7 +443,7 @@ export default function BookingDetails({ data }: { data: any }) {
                     <h2 className="text-sm sm:text-md md:text-lg font-bold text-brand-end max-w-[50%] md:max-w-full">{`${
                       booking.occassion
                     } (${
-                      booking.call_type === "regular" ? "Regular" : "Special"
+                      booking.callType === "regular" ? "Regular" : "Special"
                     })`}</h2>
                   }
                   {

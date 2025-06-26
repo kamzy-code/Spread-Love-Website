@@ -5,6 +5,17 @@ import { motion } from "framer-motion";
 import BookingDetails from "@/components/manage/bookingDetails";
 import BookingNotFound from "./searchNotFound";
 
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+const getBooking = async (bookingId: string) => {
+  const response = await fetch(`${apiUrl}/booking/${bookingId}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  return response.json();
+};
+
 export default function SearchForm() {
   const [mounted, setMounted] = useState(false);
   const [bookingID, setBookingID] = useState("");
@@ -32,24 +43,26 @@ export default function SearchForm() {
     price: "3000",
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setTimeout(() => {
-      try {
-        if (bookingID.toUpperCase().includes("SL")) {
-          setBooking(mockBooking);
-          setError("");
-        } else {
-          setBooking(null);
-          throw new Error("Booking not Found");
-        }
-      } catch (error: any) {
-        setError(error.message);
-      }
 
+    try {
+      const data = await getBooking(bookingID);
+      if (data && data.booking) {
+        console.log(data.booking)
+        setBooking(data.booking);
+        setError("");
+      } else {
+        setBooking(null);
+        setError(data.message);
+      }
       setIsSubmitting(false);
-    }, 1000);
+    } catch (error: any) {
+      console.log(error);
+      setError(error.message);
+      setIsSubmitting(false);
+    }
   };
 
   useEffect(() => {

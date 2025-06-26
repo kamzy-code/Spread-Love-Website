@@ -39,7 +39,7 @@ class BookingController {
         country,
         occassion as occassionType,
         callType as callType,
-        callDate,
+        callDate as Date,
         price,
         message,
         specialInstruction
