@@ -1,46 +1,16 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import {  Search, Phone, Calendar, Clock, User, MessageCircle, CheckCircle, AlertCircle, XCircle } from "lucide-react";
+import { motion } from "framer-motion";
+
 import BookingDetails from "@/components/manage/bookingDetails";
+import BookingNotFound from "./searchNotFound";
 
 export default function SearchForm() {
   const [mounted, setMounted] = useState(false);
-
   const [bookingID, setBookingID] = useState("");
+  const [error, setError] = useState("");
   const [booking, setBooking] = useState<any>(null);
-
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
-
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case "pending":
-        return <AlertCircle className="h-5 w-5 text-yellow-500" />;
-      case "scheduled":
-        return <Calendar className="h-5 w-5 text-blue-500" />;
-      case "completed":
-        return <CheckCircle className="h-5 w-5 text-green-500" />;
-      case "rejected":
-        return <XCircle className="h-5 w-5 text-red-500" />;
-      default:
-        return <AlertCircle className="h-5 w-5 text-gray-500" />;
-    }
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "pending":
-        return "bg-yellow-100 text-yellow-800";
-      case "scheduled":
-        return "bg-blue-100 text-blue-800";
-      case "completed":
-        return "bg-green-100 text-green-800";
-      case "rejected":
-        return "bg-red-100 text-red-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  };
 
   // Mock booking data
   const mockBooking = {
@@ -56,24 +26,30 @@ export default function SearchForm() {
     preferredTime: "14:00",
     message: "Happy birthday Sarah! Hope your day is filled with love and joy.",
     special_instruction: "call at night",
-    status: "rejected",
+    status: "completed",
     assignedRep: "Emily Rodriguez",
     createdAt: "2024-02-10",
-    price: "$15",
+    price: "3000",
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     setTimeout(() => {
-      if (bookingID.toUpperCase().includes("SL")) {
-        setBooking(mockBooking);
-      } else {
-        setBooking(null);
+      try {
+        if (bookingID.toUpperCase().includes("SL")) {
+          setBooking(mockBooking);
+          setError("");
+        } else {
+          setBooking(null);
+          throw new Error("Booking not Found");
+        }
+      } catch (error: any) {
+        setError(error.message);
       }
 
       setIsSubmitting(false);
-    }, 3000);
+    }, 1000);
   };
 
   useEffect(() => {
@@ -85,7 +61,12 @@ export default function SearchForm() {
     <div>
       {/* form */}
       <section className="gradient-background-soft py-20">
-        <div className=" container-max section-padding px-10 flex justify-center">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className=" container-max section-padding px-10 flex justify-center"
+        >
           <div className="card p-8 w-full md:w-[70%] lg:w-[60%] flex flex-col items-center justify-center text-center">
             <h2 className="gradient-text text-3xl font-semibold  pb-2">
               {" "}
@@ -101,8 +82,8 @@ export default function SearchForm() {
               onSubmit={handleSubmit}
               className="space-y-6 text-brand-start w-full"
             >
-              <div className="flex flex-row items-center lg:px-10 w-full gap-4">
-                <div className="flex flex-col flex-1 space-y-2">
+              <div className="flex flex-col md:flex-row items-center lg:px-10 w-full gap-4">
+                <div className="flex flex-col flex-1 w-full space-y-2">
                   <input
                     className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent placeholder:text-gray-400"
                     type="text"
@@ -126,11 +107,13 @@ export default function SearchForm() {
               </div>
             </form>
           </div>
-        </div>
+        </motion.div>
       </section>
 
       {/* booking details */}
       {booking && <BookingDetails data={booking}></BookingDetails>}
+
+      {error && <BookingNotFound id={bookingID}></BookingNotFound>}
     </div>
   );
 }

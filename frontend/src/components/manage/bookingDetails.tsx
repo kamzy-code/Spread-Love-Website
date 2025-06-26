@@ -1,5 +1,18 @@
 import { services, callType } from "../services/serviceList";
 import { useState } from "react";
+import { motion } from "framer-motion";
+import UpdateConfirmationModal from "./updateModal";
+import {
+  Search,
+  Phone,
+  Calendar,
+  Clock,
+  User,
+  MessageCircle,
+  CheckCircle,
+  AlertCircle,
+  XCircle,
+} from "lucide-react";
 
 export default function BookingDetails({ data }: { data: any }) {
   type serviceType = "regular" | "special";
@@ -27,6 +40,8 @@ export default function BookingDetails({ data }: { data: any }) {
   const [booking, setBooking] = useState(data);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editForm, setEditForm] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [error, setError] = useState("");
 
   const handleOnChange = (
     e: React.ChangeEvent<
@@ -52,13 +67,60 @@ export default function BookingDetails({ data }: { data: any }) {
     setIsSubmitting(true);
     setTimeout(() => {
       setIsSubmitting(false);
-      setEditForm(false);
+      try {
+        const num = Math.floor(Math.random() * 2) + 1;
+        if (num % 2 === 0) {
+          setEditForm(false);
+          setError("");
+        } else {
+          throw new Error("Error Updating your Booking Information");
+        }
+      } catch (error: any) {
+        setError(error.message);
+      } finally {
+        setShowModal(true);
+      }
     }, 1000);
   };
 
+   const getStatusIcon = (status: string) => {
+      switch (status) {
+        case "pending":
+          return <AlertCircle className="h-5 w-5 text-yellow-500" />;
+        case "scheduled":
+          return <Calendar className="h-5 w-5 text-blue-500" />;
+        case "completed":
+          return <CheckCircle className="h-5 w-5 text-green-500" />;
+        case "rejected":
+          return <XCircle className="h-5 w-5 text-red-500" />;
+        default:
+          return <AlertCircle className="h-5 w-5 text-gray-500" />;
+      }
+    };
+  
+    const getStatusColor = (status: string) => {
+      switch (status) {
+        case "pending":
+          return "bg-yellow-100 text-yellow-800";
+        case "scheduled":
+          return "bg-blue-100 text-blue-800";
+        case "completed":
+          return "bg-green-100 text-green-800";
+        case "rejected":
+          return "bg-red-100 text-red-800";
+        default:
+          return "bg-gray-100 text-gray-800";
+      }
+    };
+
   return (
     <section className="container-max section-padding flex justify-center py-20 px-7 md:px-10 sm:px-25 lg:px-50">
-      <div className={`card p-6 md:p-8 w-full space-y-4`}>
+      <motion.div
+        initial={{ y: 30, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        className={`card p-6 md:p-8 w-full space-y-4`}
+      >
         <div className="flex flex-col md:flex-row justify-between md:items-center gap-2">
           <div>
             <h2 className="gradient-text font-bold text-xl md:text-2xl">
@@ -67,7 +129,8 @@ export default function BookingDetails({ data }: { data: any }) {
             <p className="text-gray-700 text-md">ID: {booking?.id}</p>
           </div>
           <div className="flex">
-            <p className="px-6 py-2 rounded-full bg-blue-100 text-blue-700">
+            <p className={`px-4 py-2 rounded-full flex flex-row gap-2 items-center ${getStatusColor(booking.status)}`}>
+              {getStatusIcon(booking.status)}
               {booking?.status}
             </p>
           </div>
@@ -336,7 +399,7 @@ export default function BookingDetails({ data }: { data: any }) {
                   }
                   {
                     <h2 className="text-sm sm:text-md md:text-lg font-bold text-brand-end">
-                      {booking.price}
+                      N{booking.price}
                     </h2>
                   }
                 </div>
@@ -387,7 +450,14 @@ export default function BookingDetails({ data }: { data: any }) {
             }
           </form>
         </div>
-      </div>
+
+        {showModal && (
+          <UpdateConfirmationModal
+            setShowModal={() => setShowModal(false)}
+            error={error}
+          ></UpdateConfirmationModal>
+        )}
+      </motion.div>
     </section>
   );
 }

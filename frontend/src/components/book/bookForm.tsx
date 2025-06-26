@@ -3,6 +3,9 @@ import React, { useState, useEffect } from "react";
 import { services, callType } from "../services/serviceList";
 
 export default function BookingForm() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [bookingId, setBookingId] = useState("");
   type serviceType = "regular" | "special";
 
   const countries = [
@@ -40,10 +43,6 @@ export default function BookingForm() {
     special_instruction: "",
   });
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const [bookingId, setBookingId] = useState("");
-
   const handleOnChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -63,7 +62,7 @@ export default function BookingForm() {
     setTimeout(() => {
       setIsSubmitting(false);
       setIsSubmitted(true);
-    }, 3000);
+    }, 1000);
   };
 
   useEffect(() => {
