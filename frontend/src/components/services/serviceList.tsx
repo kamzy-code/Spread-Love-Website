@@ -1,8 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
-import { RefObject } from "react";
 import Image from "next/image";
-import { useEffect, useState, useRef } from "react";
+import { useState } from "react";
 import {
   Gift,
   Heart,
@@ -10,14 +9,12 @@ import {
   GraduationCap,
   PartyPopper,
   Cake,
-  Play,
   Phone,
   Sun,
-  Video,
   Globe,
   MapPin,
 } from "lucide-react";
-
+import { useRouter } from "next/navigation";
 
 export const services = [
   {
@@ -26,28 +23,25 @@ export const services = [
     title: "Birthday Surprise Calls",
     description:
       "Make their special day unforgettable with a personalized birthday call filled with wishes, songs, and joy.",
-
     type: {
       regular: {
         features: [
-          "Personalized birthday song",
-          "Custom message delivery",
-          "Photo sharing option",
+          "Deliver your heartfelt birthday message",
+          "Includes a cheerful celebration tip",
         ],
-        localPrice: "N2500",
-        internationalPrice: "N3500",
+        localPrice: "2000",
+        internationalPrice: "3000",
       },
       special: {
         features: [
-          "Personalized birthday song",
-          "Custom message delivery",
-          "Photo sharing option",
+          "Deliver your heartfelt birthday message",
+          "Includes a cheerful celebration tip",
+          "Personalized birthday song option",
         ],
-        localPrice: "N2500",
-        internationalPrice: "N3500",
+        localPrice: "2500",
+        internationalPrice: "3500",
       },
     },
-
     category: "celebration",
     thumbnail:
       "https://images.pexels.com/photos/1729931/pexels-photo-1729931.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop",
@@ -61,24 +55,22 @@ export const services = [
     type: {
       regular: {
         features: [
-          "Romantic message delivery",
-          "Memory sharing",
-          "Couple's blessing",
+          "Deliver your loving anniversary message",
+          "Includes a romantic memory highlight",
         ],
-        localPrice: "N3000",
-        internationalPrice: "N3500",
+        localPrice: "2000",
+        internationalPrice: "3000",
       },
       special: {
         features: [
-          "Romantic message delivery",
-          "Memory sharing",
-          "Couple's blessing",
+          "Deliver your loving anniversary message",
+          "Includes a romantic memory highlight",
+          "Personalized anniversary song option",
         ],
-        localPrice: "N3000",
-        internationalPrice: "N3500",
+        localPrice: "2500",
+        internationalPrice: "3500",
       },
     },
-
     category: "celebration",
     thumbnail:
       "https://images.pexels.com/photos/265722/pexels-photo-265722.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop",
@@ -92,24 +84,22 @@ export const services = [
     type: {
       regular: {
         features: [
-          "Memory lane conversation",
-          "Friendship appreciation",
-          "Future plans discussion",
+          "Deliver your thoughtful friendship message",
+          "Includes a fun memory share",
         ],
-        localPrice: "N2500",
-        internationalPrice: "N3500",
+        localPrice: "2500",
+        internationalPrice: "3000",
       },
       special: {
         features: [
-          "Memory lane conversation",
-          "Friendship appreciation",
-          "Future plans discussion",
+          "Deliver your thoughtful friendship message",
+          "Includes a fun memory share",
+          "Personalized friendship song option",
         ],
-        localPrice: "N2500",
-        internationalPrice: "N3500",
+        localPrice: "3000",
+        internationalPrice: "3500",
       },
     },
-
     category: "relationship",
     thumbnail:
       "https://images.pexels.com/photos/1024993/pexels-photo-1024993.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop",
@@ -123,24 +113,22 @@ export const services = [
     type: {
       regular: {
         features: [
-          "Achievement recognition",
-          "Future wishes",
-          "Motivational message",
+          "Deliver your congratulatory graduation message",
+          "Includes a motivational quote",
         ],
-        localPrice: "N2000",
-        internationalPrice: "N3000",
+        localPrice: "2000",
+        internationalPrice: "3000",
       },
       special: {
         features: [
-          "Achievement recognition",
-          "Future wishes",
-          "Motivational message",
+          "Deliver your congratulatory graduation message",
+          "Includes a motivational quote",
+          "Personalized graduation song option",
         ],
-        localPrice: "N2000",
-        internationalPrice: "N3000",
+        localPrice: "2500",
+        internationalPrice: "3500",
       },
     },
-
     category: "achievement",
     thumbnail:
       "https://images.pexels.com/photos/267885/pexels-photo-267885.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop",
@@ -153,17 +141,23 @@ export const services = [
       "Welcome new arrivals and achievements with joyful calls that celebrate success.",
     type: {
       regular: {
-        features: ["Baby blessing", "Parenting wishes", "Family celebration"],
-        localPrice: "N2000",
-        internationalPrice: "N3000",
+        features: [
+          "Deliver your congratulatory message",
+          "Includes a joyful celebration tip",
+        ],
+        localPrice: "2000",
+        internationalPrice: "3000",
       },
       special: {
-        features: ["Baby blessing", "Parenting wishes", "Family celebration"],
-        localPrice: "N2000",
-        internationalPrice: "N3000",
+        features: [
+          "Deliver your congratulatory message",
+          "Includes a joyful celebration tip",
+          "Personalized congratulatory song option",
+        ],
+        localPrice: "2500",
+        internationalPrice: "3500",
       },
     },
-
     category: "celebration",
     thumbnail:
       "https://images.unsplash.com/photo-1527529482837-4698179dc6ce?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
@@ -177,24 +171,22 @@ export const services = [
     type: {
       regular: {
         features: [
-          "Holiday-themed messages",
-          "Seasonal songs",
-          "Cultural celebrations",
+          "Deliver your festive holiday message",
+          "Includes a seasonal greeting",
         ],
-        localPrice: "N2000",
-        internationalPrice: "N3000",
+        localPrice: "2000",
+        internationalPrice: "3000",
       },
       special: {
         features: [
-          "Holiday-themed messages",
-          "Seasonal songs",
-          "Cultural celebrations",
+          "Deliver your festive holiday message",
+          "Includes a seasonal greeting",
+          "Personalized holiday song option",
         ],
-        localPrice: "N2000",
-        internationalPrice: "N3000",
+        localPrice: "2500",
+        internationalPrice: "3500",
       },
     },
-
     category: "holiday",
     thumbnail:
       "https://images.pexels.com/photos/1303081/pexels-photo-1303081.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop",
@@ -208,24 +200,22 @@ export const services = [
     type: {
       regular: {
         features: [
-          "Personalized love message",
-          "Poetry or song option",
-          "Special date reminders",
+          "Deliver your romantic message",
+          "Includes a sweet compliment",
         ],
-        localPrice: "N3000",
-        internationalPrice: "N4000",
+        localPrice: "3000",
+        internationalPrice: "3500",
       },
       special: {
         features: [
-          "Personalized love message",
-          "Poetry or song option",
-          "Special date reminders",
+          "Deliver your romantic message",
+          "Includes a sweet compliment",
+          "Personalized romantic song option",
         ],
-        localPrice: "N3000",
-        internationalPrice: "N4000",
+        localPrice: "3500",
+        internationalPrice: "4000",
       },
     },
-
     category: "relationship",
     thumbnail:
       "https://images.pexels.com/photos/1024993/pexels-photo-1024993.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop",
@@ -239,24 +229,22 @@ export const services = [
     type: {
       regular: {
         features: [
-          "Custom apology message",
-          "Mediation support",
-          "Follow-up encouragement",
+          "Deliver your heartfelt apology message",
+          "Includes a gesture of reconciliation",
         ],
-        localPrice: "N2500",
-        internationalPrice: "N3500",
+        localPrice: "2500",
+        internationalPrice: "3500",
       },
       special: {
         features: [
-          "Custom apology message",
-          "Mediation support",
-          "Follow-up encouragement",
+          "Deliver your heartfelt apology message",
+          "Includes a gesture of reconciliation",
+          "Personalized apology song option",
         ],
-        localPrice: "N2500",
-        internationalPrice: "N3500",
+        localPrice: "3000",
+        internationalPrice: "4000",
       },
     },
-
     category: "relationship",
     thumbnail:
       "https://cdn.pixabay.com/photo/2020/06/05/16/27/excuse-me-5263696_960_720.jpg",
@@ -270,28 +258,172 @@ export const services = [
     type: {
       regular: {
         features: [
-          "Motivational message",
-          "Positive affirmations",
-          "Personalized support",
+          "Deliver your encouraging message",
+          "Includes a positive affirmation",
         ],
-        localPrice: "N2000",
-        internationalPrice: "N3000",
+        localPrice: "2000",
+        internationalPrice: "3000",
       },
       special: {
         features: [
-          "Motivational message",
-          "Positive affirmations",
-          "Personalized support",
+          "Deliver your encouraging message",
+          "Includes a positive affirmation",
+          "Personalized encouragement song option",
         ],
-        localPrice: "N2000",
-        internationalPrice: "N3000",
+        localPrice: "2500",
+        internationalPrice: "3500",
       },
     },
-
     category: "achievement",
     thumbnail:
       "https://images.unsplash.com/photo-1721059050927-dfad8ff13e07?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   },
+  {
+    id: 10,
+    icon: <Heart className="h-8 w-8" />,
+    title: "Appreciation Call",
+    description:
+      "Show gratitude and appreciation to someone special with a heartfelt call that makes their day.",
+    type: {
+      regular: {
+        features: [
+          "Deliver your appreciation message",
+          "Includes a thank you note",
+        ],
+        localPrice: "2000",
+        internationalPrice: "3000",
+      },
+      special: {
+        features: [
+          "Deliver your appreciation message",
+          "Includes a thank you note",
+          "Personalized appreciation song option",
+        ],
+        localPrice: "2500",
+        internationalPrice: "3500",
+      },
+    },
+    category: "relationship",
+    thumbnail:
+      "https://cdn.pixabay.com/photo/2015/09/17/13/18/thank-you-944086_1280.jpg",
+  },
+  {
+    id: 11,
+    icon: <Users className="h-8 w-8" />,
+    title: "Father's Day Call",
+    description:
+      "Honor fathers with a special call filled with love, gratitude, and memorable moments.",
+    type: {
+      regular: {
+        features: [
+          "Deliver your Father's Day message",
+          "Includes a special dad tribute",
+        ],
+        localPrice: "2500",
+        internationalPrice: "3000",
+      },
+      special: {
+        features: [
+          "Deliver your Father's Day message",
+          "Includes a special dad tribute",
+          "Personalized Father's Day song option",
+        ],
+        localPrice: "3000",
+        internationalPrice: "3500",
+      },
+    },
+    category: "celebration",
+    thumbnail:
+      "https://images.unsplash.com/photo-1605812830455-2fadc55bc4ba?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  },
+  {
+    id: 12,
+    icon: <Users className="h-8 w-8" />,
+    title: "Mother's Day Call",
+    description:
+      "Celebrate mothers with a loving call that expresses gratitude, love, and admiration.",
+    type: {
+      regular: {
+        features: [
+          "Deliver your Mother's Day message",
+          "Includes a special mom tribute",
+        ],
+        localPrice: "2500",
+        internationalPrice: "3000",
+      },
+      special: {
+        features: [
+          "Deliver your Mother's Day message",
+          "Includes a special mom tribute",
+          "Personalized Mother's Day song option",
+        ],
+        localPrice: "3000",
+        internationalPrice: "3500",
+      },
+    },
+    category: "celebration",
+    thumbnail:
+      "https://images.unsplash.com/photo-1628191013085-990d39ec25b8?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  },
+  {
+    id: 13,
+    icon: <Heart className="h-8 w-8" />,
+    title: "Valentine's Day Call",
+    description:
+      "Express your love and affection with a romantic call, perfect for Valentine's Day.",
+    type: {
+      regular: {
+        features: [
+          "Deliver your Valentine's Day message",
+          "Includes a romantic gesture",
+        ],
+        localPrice: "2500",
+        internationalPrice: "3500",
+      },
+      special: {
+        features: [
+          "Deliver your Valentine's Day message",
+          "Includes a romantic gesture",
+          "Personalized Valentine's Day song option",
+        ],
+        localPrice: "3000",
+        internationalPrice: "4000",
+      },
+    },
+    category: "relationship",
+    thumbnail:
+      "https://images.unsplash.com/photo-1487035242901-d419a42d17af?q=80&w=727&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  },
+
+  {
+  id: 14,
+  icon: <Users className="h-8 w-8" />,
+  title: "Conference Surprise Call",
+  description:
+    "A group surprise call that brings multiple loved ones together to celebrate or cheer someone on—all at once. Perfect for creating unforgettable moments with a personal touch.",
+  type: {
+    regular: {
+      features: [
+        "Deliver your group celebration message",
+        "Nigerian calls use standard phone networks; International calls are via WhatsApp"
+      ],
+      localPrice: "5000",
+      internationalPrice: "6000",
+    },
+    special: {
+      features: [
+        "Deliver your group celebration message",
+        "Nigerian calls use standard phone networks; International calls are via WhatsApp",
+        "Personalized group song option"
+      ],
+      localPrice: "6000",
+      internationalPrice: "7000",
+    },
+  },
+  category: "group",
+  thumbnail:
+    "https://images.unsplash.com/photo-1491438590914-bc09fcaaf77a?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+},
 ];
 
 const categories = [
@@ -316,6 +448,11 @@ const categories = [
     name: "Holidays",
     count: services.filter((s) => s.category === "holiday").length,
   },
+  {
+    id: "group",
+    name: "Group",
+    count: services.filter((s) => s.category === "group").length,
+  },
 ];
 
 export const callType = [
@@ -325,6 +462,7 @@ export const callType = [
 
 function Services() {
   const [activeTab, setActiveTab] = useState("all");
+  const router = useRouter();
 
   type serviceType = "regular" | "special";
   const [activeTypes, setActiveTypes] = useState<Record<number, serviceType>>(
@@ -375,7 +513,6 @@ function Services() {
                   initial={{ y: 30, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
-                  layout
                   className="card overflow-hidden hover:shadow-2xl transition-all duration-300 w-full h-full relative flex flex-col"
                 >
                   <div>
@@ -395,11 +532,28 @@ function Services() {
                     </div>
 
                     <p className="text-gray-600 mb-4">{service.description}</p>
+              
+                    {/* Features */}
+                    <ul className="space-y-2 ">
+                      {service.type[activeType].features?.map(
+                        (feature, idx) => {
+                          return (
+                            <li
+                              key={idx}
+                              className="flex items-center text-sm text-gray-600"
+                            >
+                              <div className="w-2 h-2 bg-brand-end rounded-full mr-3 shrink-0"></div>
+                              {feature}
+                            </li>
+                          );
+                        }
+                      )}
+                    </ul>
                   </div>
 
                   <div className="w-full px-6 bottom-0 mb-6">
-                    {/* Pricing */}
-                    {/* filter buttons */}
+
+                         {/* filter buttons */}
                     <div className="flex flex-row gap-4 mb-4">
                       {callType.map((type, index) => {
                         return (
@@ -423,21 +577,8 @@ function Services() {
                         );
                       })}
                     </div>
-                    {/* Features */}
-                    <h2>{activeType}</h2>
-                    <ul className="space-y-2 mb-4">
-                      {service.type[activeType].features.map((feature, idx) => {
-                        return (
-                          <li
-                            key={idx}
-                            className="flex items-center text-sm text-gray-600"
-                          >
-                            <div className="w-2 h-2 bg-brand-end rounded-full mr-3"></div>
-                            {feature}
-                          </li>
-                        );
-                      })}
-                    </ul>
+                    
+                    {/* Pricing */}
                     <div className="border-t pt-4">
                       <div className="flex justify-between items-center mb-4">
                         <div className="flex items-center text-sm text-gray-600">
@@ -445,7 +586,7 @@ function Services() {
                           Local
                         </div>
                         <span className="text-lg font-bold text-brand-end">
-                          {service.type[activeType].localPrice}
+                          N{service.type[activeType].localPrice}
                         </span>
                       </div>
                       <div className="flex justify-between items-center mb-4">
@@ -454,11 +595,16 @@ function Services() {
                           International
                         </div>
                         <span className="text-lg font-bold text-brand-end">
-                          {service.type[activeType].internationalPrice}
+                          N{service.type[activeType].internationalPrice}
                         </span>
                       </div>
 
-                      <button className="w-full btn-primary">
+                      <button
+                        className="w-full btn-primary"
+                        onClick={() => {
+                          router.push(`/book?occassion=${service.title}&call_type=${activeType}`);
+                        }}
+                      >
                         Book This Service
                       </button>
                     </div>

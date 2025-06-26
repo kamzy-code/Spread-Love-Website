@@ -83,35 +83,54 @@ export default function BookingDetails({ data }: { data: any }) {
     }, 1000);
   };
 
-   const getStatusIcon = (status: string) => {
-      switch (status) {
-        case "pending":
-          return <AlertCircle className="h-5 w-5 text-yellow-500" />;
-        case "scheduled":
-          return <Calendar className="h-5 w-5 text-blue-500" />;
-        case "completed":
-          return <CheckCircle className="h-5 w-5 text-green-500" />;
-        case "rejected":
-          return <XCircle className="h-5 w-5 text-red-500" />;
-        default:
-          return <AlertCircle className="h-5 w-5 text-gray-500" />;
-      }
-    };
-  
-    const getStatusColor = (status: string) => {
-      switch (status) {
-        case "pending":
-          return "bg-yellow-100 text-yellow-800";
-        case "scheduled":
-          return "bg-blue-100 text-blue-800";
-        case "completed":
-          return "bg-green-100 text-green-800";
-        case "rejected":
-          return "bg-red-100 text-red-800";
-        default:
-          return "bg-gray-100 text-gray-800";
-      }
-    };
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case "pending":
+        return <AlertCircle className="h-5 w-5 text-yellow-500" />;
+      case "rescheduled":
+        return <Calendar className="h-5 w-5 text-blue-500" />;
+      case "successful":
+        return <CheckCircle className="h-5 w-5 text-green-500" />;
+      case "rejected":
+      case "unsuccessful":
+        return <XCircle className="h-5 w-5 text-red-500" />;
+      default:
+        return <AlertCircle className="h-5 w-5 text-gray-500" />;
+    }
+  };
+
+  const getStatusColor = (status: string, useCase: string) => {
+    switch (status) {
+      case "pending":
+        return `${useCase === "badge" ? "bg-yellow-100" : ""} text-yellow-800`;
+      case "rescheduled":
+        return `${useCase === "badge" ? "bg-blue-100" : ""} text-blue-800`;
+      case "successful":
+        return `${useCase === "badge" ? "bg-green-100" : ""} text-green-800`;
+      case "rejected":
+      case "unsuccessful":
+        return `${useCase === "badge" ? "bg-red-100" : ""} text-red-800`;
+      default:
+        return `${useCase === "badge" ? "bg-gray-100" : ""} text-gray-800`;
+    }
+  };
+
+  const getCallStatusMessage = (status: string) => {
+    switch (status) {
+      case "pending":
+        return "Your call is pending and will be placed soon.";
+      case "successful":
+        return "Your call was successfully placed!";
+      case "unsuccessful":
+        return "We weren't able to reach the recipient. Please check the details or contact support.";
+      case "rejected":
+        return "Your call was rejected by the recipient.";
+      case "rescheduled":
+        return "Your call has been rescheduled due to the recipients inability to take calls at the moment.";
+      default:
+        return "Call status unknown. Please contact support for more information.";
+    }
+  };
 
   return (
     <section className="container-max section-padding flex justify-center py-20 px-7 md:px-10 sm:px-25 lg:px-50">
@@ -121,17 +140,33 @@ export default function BookingDetails({ data }: { data: any }) {
         transition={{ duration: 0.5 }}
         className={`card p-6 md:p-8 w-full space-y-4`}
       >
-        <div className="flex flex-col md:flex-row justify-between md:items-center gap-2">
+        <div className="flex flex-col md:flex-row justify-between md:items-center gap-4">
           <div>
             <h2 className="gradient-text font-bold text-xl md:text-2xl">
               Booking Details
             </h2>
             <p className="text-gray-700 text-md">ID: {booking?.id}</p>
           </div>
-          <div className="flex">
-            <p className={`px-4 py-2 rounded-full flex flex-row gap-2 items-center ${getStatusColor(booking.status)}`}>
-              {getStatusIcon(booking.status)}
-              {booking?.status}
+
+          <div className="flex flex-col md:items-end gap-1">
+            <div className={`flex `}>
+              <p
+                className={`flex flex-row gap-2 px-4 py-2 rounded-full items-center ${getStatusColor(
+                  booking.status,
+                  "badge"
+                )}`}
+              >
+                {getStatusIcon(booking.status)}
+                {booking?.status}
+              </p>
+            </div>
+            <p
+              className={` ${getStatusColor(
+                booking.status,
+                "message"
+              )} text-sm font-medium italic max-w-80 md:text-right`}
+            >
+              {getCallStatusMessage(booking.status)}
             </p>
           </div>
         </div>

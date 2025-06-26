@@ -2,7 +2,13 @@
 import React, { useState, useEffect } from "react";
 import { services, callType } from "../services/serviceList";
 
-export default function BookingForm() {
+export default function BookingForm({
+  occassion,
+  call_type,
+}: {
+  occassion?: string;
+  call_type?: string;
+}) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [bookingId, setBookingId] = useState("");
@@ -67,6 +73,12 @@ export default function BookingForm() {
 
   useEffect(() => {
     setMounted(true);
+    if (occassion) {
+      setFormData((prev) => ({ ...prev, occassion }));
+    }
+    if (call_type) {
+      setFormData((prev) => ({ ...prev, call_type }));
+    }
   }, []);
 
   if (!mounted) return null; // Avoid SSR
@@ -326,7 +338,7 @@ export default function BookingForm() {
                     value={formData.special_instruction}
                     onChange={handleOnChange}
                     rows={3}
-                    placeholder="Any Special requests, favorite songs, or important details we should know"
+                    placeholder="Any Special requests, or important details we should know"
                     className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent placeholder:text-gray-400 resize-none"
                   ></textarea>
                 </div>
@@ -347,6 +359,7 @@ export default function BookingForm() {
                   )}
                   {formData.occassion && (
                     <h2 className="text-sm sm:text-md md:text-lg font-bold text-brand-end">
+                      N
                       {formData.country === "Nigeria"
                         ? `${
                             services.find(
@@ -403,6 +416,16 @@ export default function BookingForm() {
                   </div>
                 )}
               </button>
+            </div>
+
+            <div className="flex w-full justify-center">
+              <p className="text-sm font-medium italic text-gray-700 text-center mt-2 md:w-[80%]">
+                {" "}
+                Note: Please note that songs performed during the call session
+                are selected by our team. This is because the songs are not
+                played from recordings but are sung live to create a more
+                personal and engaging experience.{" "}
+              </p>
             </div>
           </form>
         )}

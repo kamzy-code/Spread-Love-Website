@@ -89,7 +89,7 @@ function DetailedContact() {
 
               <p className="text-sm text-gray-600">
                 {
-                "We recommend booking at least 24 hours in advance, but we also offer same-day calls for urgent surprises (additional fees may apply)."
+                "We recommend booking a call immediately no matter the month the recipient has to receive the call. This is because the earlier you call slot is secured, the earlier the recipient can receive their call. "
               }
               </p>
               
@@ -102,8 +102,8 @@ function DetailedContact() {
 
               <p className=" text-sm text-gray-600">
                {
-                "We'll make up to 3 attempts to reach them. If unsuccessful, we'll reschedule at no extra cost or provide a full refund."
-              }
+                "We'll make up to 3 attempts to reach them. If Unsuccessful, we'll reschedule at no extra cost. If the call doesn't go through, you can use that slot for another person."
+              } <span className="font-medium">No Refund is provided.</span>
               </p>
               
             </div>
