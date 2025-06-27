@@ -12,7 +12,12 @@ const getID = async () => {
       "Content-Type": "application/json",
     },
   });
-  return response.json();
+  const data = await response.json();
+  if (!response.ok) {
+    // Attach status and statusText for more context if needed
+    throw new Error(data.message || response.statusText || "Unknown error");
+  }
+  return data;
 };
 
 const createBooking = async (body: any) => {
@@ -23,7 +28,12 @@ const createBooking = async (body: any) => {
     },
     body: JSON.stringify(body),
   });
-  return response.json();
+  const data = await response.json();
+  if (!response.ok) {
+    // Attach status and statusText for more context if needed
+    throw new Error(data.message || response.statusText || "Unknown error");
+  }
+  return data;
 };
 
 export default function BookingForm({
@@ -37,7 +47,7 @@ export default function BookingForm({
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isError, setIsError] = useState(false);
   const [createBookingStatus, setCreateBookingStatus] = useState("");
-  const [showModal, setShowModal] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
   const [bookingId, setBookingId] = useState("");
   type serviceType = "regular" | "special";
 
@@ -94,6 +104,13 @@ export default function BookingForm({
     try {
       const data = await getID();
       const id = data?.ID;
+      if (!id) {
+        setIsError(true);
+        setCreateBookingStatus("Failed to generate booking ID.");
+        setIsSubmitting(false);
+        setShowErrorModal(true);
+        return;
+      }
       const saveBooking = await createBooking({ bookingId: id, ...formData });
       setBookingId(id);
 
@@ -103,12 +120,17 @@ export default function BookingForm({
           setBookingId(saveBooking.bookingId);
           setIsSubmitting(false);
           setIsSubmitted(true);
-           setCreateBookingStatus(saveBooking.message);
+          setCreateBookingStatus(saveBooking.message);
         } else {
           setIsError(true);
+          setCreateBookingStatus(
+            `${saveBooking.message}${
+              saveBooking.error ? `:${saveBooking.error.message}` : ""
+            }`
+          );
           setIsSubmitting(false);
-          setShowModal(true);
-          setCreateBookingStatus(`${saveBooking.message} ${saveBooking.error? `:${saveBooking.error.message}`:''}`);
+          setShowErrorModal(true);
+          return;
         }
       }
     } catch (error: any) {
@@ -116,7 +138,7 @@ export default function BookingForm({
       setIsError(true);
       setCreateBookingStatus(error.message);
       setIsSubmitting(false);
-      setShowModal(true);
+      setShowErrorModal(true);
     }
   };
 
@@ -151,9 +173,9 @@ export default function BookingForm({
   if (!mounted) return null; // Avoid SSR
   return (
     <div>
-      {isError && showModal && (
+      {isError && showErrorModal && (
         <CreateErrorModal
-          setShowModal={() => setShowModal(false)}
+          setShowModal={() => setShowErrorModal(false)}
           error={createBookingStatus}
         ></CreateErrorModal>
       )}
@@ -199,6 +221,8 @@ export default function BookingForm({
                       message: "",
                       specialInstruction: "",
                     });
+                    setBookingId("");
+                    setCreateBookingStatus("");
                   }}
                   className="w-full btn-primary"
                 >

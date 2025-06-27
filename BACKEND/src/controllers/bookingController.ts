@@ -26,7 +26,7 @@ class BookingController {
       specialInstruction,
     } = req.body;
 
-    console.log(`ID: ${bookingId}, ${callerName}`)
+    console.log(`ID: ${bookingId}, ${callerName}`);
     try {
       // call the service class to create a new booking and save in the DB
       const newBooking = await bookingService.createBooking(
@@ -124,34 +124,34 @@ class BookingController {
         "callType",
       ];
 
-      // Object.Keys() extract the keys in the info object and store in an array
-      Object.keys(info).forEach((field) => {
-        // map through the array and check if any of the fields are in the disallowed fields array and only proceed if that field is not
+      // Loop through each key in the info object to check which fields can be updated
+      for (const field of Object.keys(info)) {
+        // If the field is not in the disallowedFields array, proceed to update
         if (!disallowedFields.includes(field)) {
-          // create an array of booking that can't be updated based on their status
+          // Define statuses for which bookings cannot be updated
           const disallowedStatus = ["successful"];
 
-          // check if the booking has a status that's part of the disallowed statuses and return error message without saving the updated booking object.
+          // If the booking status is in the disallowedStatus array, return an error and stop further processing
           if (disallowedStatus.includes(booking.status as string)) {
             res.status(400).json({ message: "Can't update this Booking" });
             return;
           }
-          // use the bracket notation syntax to dynamically access the keys in the Booking object via the field variable and update it.
-
-          //E.g if field = id then the output will be Booking[id] = info[id] updating the id key of the booking object to that of the info object.
+          // Dynamically update the booking object with the new value for the allowed field
+          // E.g., if field = "callerName", then booking["callerName"] = info["callerName"]
           (booking as any)[field] = info[field];
         } else {
-          // return error message if the field is in the disallowed array
+          // If the field is in the disallowedFields array, return an error and stop further processing
           res
             .status(403)
             .json({ message: "You can't update this field", field });
           return;
         }
-      });
+      }
 
       // save the updated booking object and return success message
       await booking.save();
-      res.status(200).json({ message: "Update Successfull" });
+      res.status(200).json({ message: "Update Successful" });
+      return;
     } catch (error) {
       next(error);
       console.error(`Booking update failed: ${error}`);
@@ -160,7 +160,7 @@ class BookingController {
     }
   }
 
-   async generateBookingID(req: Request, res: Response, next: NextFunction) {
+  async generateBookingID(req: Request, res: Response, next: NextFunction) {
     try {
       // call service method to generate ID
       const ID = await bookingService.generateBookingId();
@@ -438,8 +438,6 @@ class BookingController {
       return;
     }
   }
-
- 
 }
 
 const bookingController = new BookingController();

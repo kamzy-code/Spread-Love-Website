@@ -16,12 +16,12 @@ export default function CreateErrorModal({
       ></div>
 
       <div className="fixed z-15 top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]">
-        <div className="w-75 md:w-auto max-w-2xl text-center">
+        <div className="w-80 md:min-w-120 max-w-2xl text-center p-8">
           <motion.div
             initial={{ y: 30, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.5 }}
-            className="card p-8"
+            className="card p-8 w-full"
           >
             {(
               <div>

@@ -28,8 +28,7 @@ export default function UpdateConfirmationModal({
                 <XCircle className="h-16 w-16 text-red-500 mx-auto mb-4" />
                 <h3 className="text-2xl font-semibold mb-4">Error</h3>
                 <p className="text-gray-700 mb-6">
-                  There was an error updating your Booking Information. Please
-                  try again.
+                  {error}
                 </p>
               </div>
             ) : (

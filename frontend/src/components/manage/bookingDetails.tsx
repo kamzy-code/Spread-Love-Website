@@ -13,10 +13,41 @@ import {
   AlertCircle,
   XCircle,
 } from "lucide-react";
+import { formatToYMD } from "@/lib/formatDate";
+import { deepEqual } from "@/lib/hasBookingChanged";
+
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+const updateBooking = async (booking: any) => {
+  const disallowedFields = ["bookingId", "status", "assignedRep", "callType"];
+
+  const allowedUpdate = Object.fromEntries(
+    Object.entries(booking).filter(([key]) => !disallowedFields.includes(key))
+  );
+
+  const response = await fetch(
+    `${apiUrl}/booking/${booking.bookingId}/update`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(allowedUpdate),
+    }
+  );
+  const data = await response.json();
+  if (!response.ok) {
+    // Attach status and statusText for more context if needed
+    throw new Error(
+      `${data.message}${data.field ? `: ${data.field}` : ""}` ||
+        response.statusText ||
+        "Unknown error"
+    );
+  }
+  return data;
+};
 
 export default function BookingDetails({ data }: { data: any }) {
   type serviceType = "regular" | "special";
-
   const countries = [
     "Nigeria",
     "United States",
@@ -36,8 +67,8 @@ export default function BookingDetails({ data }: { data: any }) {
     "South Africa",
     "Other",
   ];
-
-  const [booking, setBooking] = useState(data);
+  const [initialBooking, setInitialBooking] = useState(data);
+  const [formData, setFormData] = useState(data);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editForm, setEditForm] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -49,38 +80,42 @@ export default function BookingDetails({ data }: { data: any }) {
     >
   ) => {
     const { name, value } = e.target;
-    setBooking((prev: any) => ({ ...prev, [name]: value }));
+    setFormData((prev: any) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
 
     if (!editForm) {
-      setIsSubmitting(true);
-      setTimeout(() => {
-        setIsSubmitting(false);
-        setEditForm(true);
-      }, 1000);
+      setEditForm(true);
+      setIsSubmitting(false);
       return;
     }
 
-    setIsSubmitting(true);
-    setTimeout(() => {
+    const hasNotChanged = deepEqual(initialBooking, formData);
+    if (hasNotChanged) {
+      setEditForm(false);
+      setError("");
       setIsSubmitting(false);
-      try {
-        const num = Math.floor(Math.random() * 2) + 1;
-        if (num % 2 === 0) {
-          setEditForm(false);
-          setError("");
-        } else {
-          throw new Error("Error Updating your Booking Information");
-        }
-      } catch (error: any) {
-        setError(error.message);
-      } finally {
-        setShowModal(true);
+      setShowModal(true);
+      return;
+    }
+
+    try {
+      const status = await updateBooking(formData);
+      if (status && status.message === "Update Successful") {
+        setEditForm(false);
+        setError("");
+      } else {
+        setError(status.message);
       }
-    }, 1000);
+    } catch (error: any) {
+      setError(error.message);
+    } finally {
+      setIsSubmitting(false);
+      setShowModal(true);
+    }
   };
 
   const getStatusIcon = (status: string) => {
@@ -145,28 +180,28 @@ export default function BookingDetails({ data }: { data: any }) {
             <h2 className="gradient-text font-bold text-xl md:text-2xl">
               Booking Details
             </h2>
-            <p className="text-gray-700 text-md">ID: {booking?.bookingId}</p>
+            <p className="text-gray-700 text-md">ID: {formData?.bookingId}</p>
           </div>
 
           <div className="flex flex-col md:items-end gap-1">
             <div className={`flex `}>
               <p
                 className={`flex flex-row gap-2 px-4 py-2 rounded-full items-center ${getStatusColor(
-                  booking.status,
+                  formData.status,
                   "badge"
                 )}`}
               >
-                {getStatusIcon(booking.status)}
-                {booking?.status}
+                {getStatusIcon(formData.status)}
+                {formData?.status}
               </p>
             </div>
             <p
               className={` ${getStatusColor(
-                booking.status,
+                formData.status,
                 "message"
               )} text-sm font-medium italic max-w-80 md:text-right`}
             >
-              {getCallStatusMessage(booking.status)}
+              {getCallStatusMessage(formData.status)}
             </p>
           </div>
         </div>
@@ -191,7 +226,7 @@ export default function BookingDetails({ data }: { data: any }) {
                       className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent placeholder:text-gray-400 disabled:border-0 disabled:pl-0"
                       type="text"
                       name="callerName"
-                      value={booking.callerName}
+                      value={formData.callerName}
                       onChange={handleOnChange}
                       required
                       placeholder="Your full name"
@@ -205,7 +240,7 @@ export default function BookingDetails({ data }: { data: any }) {
                       className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent placeholder:text-gray-400 disabled:border-0 disabled:pl-0"
                       type="text"
                       name="callerPhone"
-                      value={booking.callerPhone}
+                      value={formData.callerPhone}
                       onChange={handleOnChange}
                       required
                       placeholder="+234 123 456 7890"
@@ -213,13 +248,13 @@ export default function BookingDetails({ data }: { data: any }) {
                     />
                   </div>
 
-                                    <div className="flex flex-col space-y-2">
+                  <div className="flex flex-col space-y-2">
                     <label className="text-gray-700 font-medium">Email:</label>
                     <input
                       className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent placeholder:text-gray-400 disabled:border-0 disabled:pl-0"
                       type="email"
                       name="callerEmail"
-                      value={booking.callerEmail}
+                      value={formData.callerEmail}
                       onChange={handleOnChange}
                       required
                       placeholder="your.email@example.com"
@@ -244,7 +279,7 @@ export default function BookingDetails({ data }: { data: any }) {
                       className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent placeholder:text-gray-400 disabled:border-0 disabled:pl-0"
                       type="text"
                       name="recipientName"
-                      value={booking.recipientName}
+                      value={formData.recipientName}
                       onChange={handleOnChange}
                       required
                       placeholder="who should we call?"
@@ -258,7 +293,7 @@ export default function BookingDetails({ data }: { data: any }) {
                       className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent placeholder:text-gray-400 disabled:border-0 disabled:pl-0"
                       type="text"
                       name="recipientPhone"
-                      value={booking.recipientPhone}
+                      value={formData.recipientPhone}
                       onChange={handleOnChange}
                       required
                       placeholder="+234 801 234 5678"
@@ -275,9 +310,9 @@ export default function BookingDetails({ data }: { data: any }) {
                       id="country"
                       className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent disabled:border-0 disabled:pl-0"
                       onChange={handleOnChange}
-                      value={booking.country}
+                      value={formData.country}
                       required
-                      disabled={!editForm || booking.country === "Nigeria"}
+                      disabled={!editForm || formData.country === "Nigeria"}
                     >
                       {countries.map((country) => {
                         return (
@@ -309,7 +344,7 @@ export default function BookingDetails({ data }: { data: any }) {
                     id="occassion"
                     className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent disabled:border-0 disabled:pl-0"
                     onChange={handleOnChange}
-                    value={booking.occassion}
+                    value={formData.occassion}
                     required
                     disabled={!editForm}
                   >
@@ -336,7 +371,7 @@ export default function BookingDetails({ data }: { data: any }) {
                     className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent disabled:border-0 disabled:pl-0"
                     onChange={handleOnChange}
                     value={
-                      booking.callType === "regular" ? "Regular" : "Special"
+                      formData.callType === "regular" ? "Regular" : "Special"
                     }
                     required
                     disabled
@@ -352,7 +387,7 @@ export default function BookingDetails({ data }: { data: any }) {
                     className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent placeholder:text-gray-400 disabled:border-0 disabled:pl-0"
                     type="date"
                     name="callDate"
-                    value={booking.callDate}
+                    value={formatToYMD(formData.callDate)}
                     onChange={handleOnChange}
                     required
                     min={new Date().toISOString().split("T")[0]}
@@ -378,7 +413,7 @@ export default function BookingDetails({ data }: { data: any }) {
                     </label>
                     <textarea
                       name="message"
-                      value={booking.message}
+                      value={formData.message}
                       onChange={handleOnChange}
                       required
                       rows={5}
@@ -394,7 +429,7 @@ export default function BookingDetails({ data }: { data: any }) {
                     </label>
                     <textarea
                       name="specialInstruction"
-                      value={booking?.specialInstruction}
+                      value={formData?.specialInstruction}
                       onChange={handleOnChange}
                       rows={3}
                       placeholder="Any Special requests, favorite songs, or important details we should know"
@@ -406,7 +441,7 @@ export default function BookingDetails({ data }: { data: any }) {
               </div>
             ) : (
               <div className="space-y-4">
-                {booking.message && (
+                {formData.message && (
                   <div>
                     <h2 className="gradient-text text-xl font-semibold mb-4 pb-2">
                       {" "}
@@ -414,12 +449,12 @@ export default function BookingDetails({ data }: { data: any }) {
                     </h2>
 
                     <p className="p-3 gradient-background-soft rounded-md text-gray-700">
-                      {booking.message}
+                      {formData.message}
                     </p>
                   </div>
                 )}
 
-                {booking.specialInstruction && (
+                {formData.specialInstruction && (
                   <div>
                     <h2 className="gradient-text text-xl font-semibold mb-4 pb-2">
                       {" "}
@@ -427,7 +462,7 @@ export default function BookingDetails({ data }: { data: any }) {
                     </h2>
 
                     <p className="p-3 gradient-background-soft rounded-md text-gray-700">
-                      {booking.specialInstruction}
+                      {formData.specialInstruction}
                     </p>
                   </div>
                 )}
@@ -441,14 +476,14 @@ export default function BookingDetails({ data }: { data: any }) {
                 <div className="flex justify-between">
                   {
                     <h2 className="text-sm sm:text-md md:text-lg font-bold text-brand-end max-w-[50%] md:max-w-full">{`${
-                      booking.occassion
+                      formData.occassion
                     } (${
-                      booking.callType === "regular" ? "Regular" : "Special"
+                      formData.callType === "regular" ? "Regular" : "Special"
                     })`}</h2>
                   }
                   {
                     <h2 className="text-sm sm:text-md md:text-lg font-bold text-brand-end">
-                      N{booking.price}
+                      N{formData.price}
                     </h2>
                   }
                 </div>

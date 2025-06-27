@@ -1,11 +1,11 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-
 import BookingDetails from "@/components/manage/bookingDetails";
 import BookingNotFound from "./searchNotFound";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+// Fetch Request
 const getBooking = async (bookingId: string) => {
   const response = await fetch(`${apiUrl}/booking/${bookingId}`, {
     method: "GET",
@@ -13,7 +13,12 @@ const getBooking = async (bookingId: string) => {
       "Content-Type": "application/json",
     },
   });
-  return response.json();
+  const data = await response.json();
+  if (!response.ok) {
+    // Attach status and statusText for more context if needed
+    throw new Error(data.message || response.statusText || "Unknown error");
+  }
+  return data;
 };
 
 export default function SearchForm() {
@@ -43,6 +48,7 @@ export default function SearchForm() {
     price: "3000",
   };
 
+  // submit function
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -50,7 +56,6 @@ export default function SearchForm() {
     try {
       const data = await getBooking(bookingID);
       if (data && data.booking) {
-        console.log(data.booking)
         setBooking(data.booking);
         setError("");
       } else {
