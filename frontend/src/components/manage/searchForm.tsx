@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import BookingDetails from "@/components/manage/bookingDetails";
 import BookingNotFound from "./searchNotFound";
+import { useQuery } from "@tanstack/react-query";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 // Fetch Request
@@ -24,9 +25,7 @@ const getBooking = async (bookingId: string) => {
 export default function SearchForm() {
   const [mounted, setMounted] = useState(false);
   const [bookingID, setBookingID] = useState("");
-  const [error, setError] = useState("");
-  const [booking, setBooking] = useState<any>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [searchID, setSearchID] = useState("");
 
   // Mock booking data
   const mockBooking = {
@@ -48,33 +47,37 @@ export default function SearchForm() {
     price: "3000",
   };
 
+  // useQuery to manage get booking fetch request
+  const { data, error, isFetching, refetch } = useQuery({
+    queryKey: ["booking", searchID],
+    queryFn: () => getBooking(searchID),
+    enabled: !!searchID,
+  });
+
   // submit function
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
-
-    try {
-      const data = await getBooking(bookingID);
-      if (data && data.booking) {
-        setBooking(data.booking);
-        setError("");
-      } else {
-        setBooking(null);
-        setError(data.message);
-      }
-      setIsSubmitting(false);
-    } catch (error: any) {
-      console.log(error);
-      setError(error.message);
-      setIsSubmitting(false);
+    if (searchID === bookingID) {
+      // If searching for the same ID, force refetch
+      refetch();
+    } else {
+      setSearchID(bookingID);
     }
   };
 
+  // mount the component
   useEffect(() => {
     setMounted(true);
   }, []);
 
+  useEffect(() => {
+    document
+      .getElementById("booking-details")
+      ?.scrollIntoView({ behavior: "smooth" });
+  }, [data]);
+
   if (!mounted) return null; // Avoid SSR
+
   return (
     <div>
       {/* form */}
@@ -118,9 +121,9 @@ export default function SearchForm() {
                 <button
                   type="submit"
                   className="btn-primary disabled:opacity-50"
-                  disabled={isSubmitting}
+                  disabled={isFetching}
                 >
-                  {isSubmitting ? "Searching..." : "Search"}
+                  {isFetching ? "Searching..." : "Search"}
                 </button>
               </div>
             </form>
@@ -128,10 +131,17 @@ export default function SearchForm() {
         </motion.div>
       </section>
 
-      {/* booking details */}
-      {booking && <BookingDetails data={booking}></BookingDetails>}
+      <section id="booking-details">
+        {/* booking details */}
+        {data?.booking && (
+          <BookingDetails
+            data={data?.booking}
+            key={searchID + (isFetching ? "-fetching" : "")}
+          ></BookingDetails>
+        )}
 
-      {error && <BookingNotFound id={bookingID}></BookingNotFound>}
+        {error && <BookingNotFound id={searchID} error={error.message}></BookingNotFound>}
+      </section>
     </div>
   );
 }

@@ -15,17 +15,20 @@ import {
 } from "lucide-react";
 import { formatToYMD } from "@/lib/formatDate";
 import { deepEqual } from "@/lib/hasBookingChanged";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-const updateBooking = async (booking: any) => {
+
+
+const updateBooking = async (updatedData: any) => {
   const disallowedFields = ["bookingId", "status", "assignedRep", "callType"];
 
   const allowedUpdate = Object.fromEntries(
-    Object.entries(booking).filter(([key]) => !disallowedFields.includes(key))
+    Object.entries(updatedData).filter(([key]) => !disallowedFields.includes(key))
   );
 
   const response = await fetch(
-    `${apiUrl}/booking/${booking.bookingId}/update`,
+    `${apiUrl}/booking/${updatedData.bookingId}/update`,
     {
       method: "PUT",
       headers: {
@@ -47,7 +50,6 @@ const updateBooking = async (booking: any) => {
 };
 
 export default function BookingDetails({ data }: { data: any }) {
-  type serviceType = "regular" | "special";
   const countries = [
     "Nigeria",
     "United States",
@@ -83,6 +85,28 @@ export default function BookingDetails({ data }: { data: any }) {
     setFormData((prev: any) => ({ ...prev, [name]: value }));
   };
 
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: (updatedData) => updateBooking(updatedData),
+    onSuccess: (data) => {
+      if (data && data.message === "Update Successful") {
+        setEditForm(false);
+        setError("");
+      }
+      // Refetch the booking details after update
+      queryClient.invalidateQueries({
+        queryKey: ["booking", initialBooking.bookingId],
+      });
+    },
+    onError: (error) => {
+      if (error) setError(error.message);
+    },
+    onSettled: () => {
+      setIsSubmitting(false);
+      setShowModal(true);
+    },
+  });
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -102,20 +126,21 @@ export default function BookingDetails({ data }: { data: any }) {
       return;
     }
 
-    try {
-      const status = await updateBooking(formData);
-      if (status && status.message === "Update Successful") {
-        setEditForm(false);
-        setError("");
-      } else {
-        setError(status.message);
-      }
-    } catch (error: any) {
-      setError(error.message);
-    } finally {
-      setIsSubmitting(false);
-      setShowModal(true);
-    }
+    await mutation.mutateAsync(formData);
+    // try {
+    //   const status = await updateBooking(formData);
+    //   if (status && status.message === "Update Successful") {
+    //     setEditForm(false);
+    //     setError("");
+    //   } else {
+    //     setError(status.message);
+    //   }
+    // } catch (error: any) {
+    //   setError(error.message);
+    // } finally {
+    //   setIsSubmitting(false);
+    //   setShowModal(true);
+    // }
   };
 
   const getStatusIcon = (status: string) => {
@@ -170,9 +195,6 @@ export default function BookingDetails({ data }: { data: any }) {
   return (
     <section className="container-max section-padding flex justify-center py-20 px-7 md:px-10 sm:px-25 lg:px-50">
       <motion.div
-        initial={{ y: 30, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.5 }}
         className={`card p-6 md:p-8 w-full space-y-4`}
       >
         <div className="flex flex-col md:flex-row justify-between md:items-center gap-4">
@@ -496,10 +518,10 @@ export default function BookingDetails({ data }: { data: any }) {
                 <button
                   type="submit"
                   className="btn-primary w-full md:w-[50%]"
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || mutation.isPending}
                 >
-                  {isSubmitting ? (
-                    <div>
+                  {(isSubmitting || mutation.isPending) ? (
+                    <div> 
                       <svg
                         className="animate-spin h-5 w-5 text-white mx-auto"
                         xmlns="http://www.w3.org/2000/svg"

@@ -65,6 +65,7 @@ class BookingController {
   }
 
   async getBookingByBookingId(req: Request, res: Response, next: NextFunction) {
+    console.log('get api hit')
     // extract BookingID from url
     const bookingId = req.params.bookingId;
 
@@ -80,7 +81,7 @@ class BookingController {
 
       // if no booking was found return error message
       if (!booking) {
-        res.status(404).json({ message: "Booking not found" });
+        res.status(404).json({ message: "Booking Not found" });
         return;
       }
 
@@ -102,6 +103,7 @@ class BookingController {
     res: Response,
     next: NextFunction
   ) {
+    console.log('update api hit');
     // extract the booking ID from URL and the update info from the request body
     const { bookingId } = req.params;
     const info = req.body;
@@ -298,6 +300,7 @@ class BookingController {
     res: Response,
     next: NextFunction
   ) {
+    
     // extract the booking ID, new status and user object.
     const { bookingId } = req.params;
     const { status } = req.body;
