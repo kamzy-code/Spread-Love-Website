@@ -42,7 +42,7 @@ export default function SearchForm() {
     preferredTime: "14:00",
     message: "Happy birthday Sarah! Hope your day is filled with love and joy.",
     special_instruction: "call at night",
-    status: "pending",
+    status: "unsuccessful",
     assignedRep: "Emily Rodriguez",
     createdAt: "2024-02-10",
     price: "3000",

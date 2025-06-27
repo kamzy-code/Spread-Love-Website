@@ -157,7 +157,7 @@ export default function BookingDetails({ data }: { data: any }) {
       case "successful":
         return "Your call was successfully placed!";
       case "unsuccessful":
-        return "We weren't able to reach the recipient. Please check the details or contact support.";
+        return "After several attempts, we were unable to reach the recipient. Please check the details or contact support via whatsapp.";
       case "rejected":
         return "Your call was rejected by the recipient.";
       case "rescheduled":
@@ -199,7 +199,7 @@ export default function BookingDetails({ data }: { data: any }) {
               className={` ${getStatusColor(
                 formData.status,
                 "message"
-              )} text-sm font-medium italic max-w-80 md:text-right`}
+              )} text-sm font-medium italic md:max-w-90 md:text-right`}
             >
               {getCallStatusMessage(formData.status)}
             </p>
