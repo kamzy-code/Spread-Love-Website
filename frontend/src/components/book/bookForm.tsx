@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { services, callType } from "../services/serviceList";
 import CreateErrorModal from "./errorModal";
+import { useMutation } from "@tanstack/react-query";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
@@ -88,6 +89,27 @@ export default function BookingForm({
     specialInstruction: "",
   });
 
+  const mutation = useMutation({
+    mutationFn: (updatedData) => createBooking(updatedData),
+    onSuccess: (data) => {
+      if (data && data.bookingId) {
+        setBookingId(data.bookingId);
+        setCreateBookingStatus(data.message);
+        setIsSubmitted(true);
+      }
+    },
+    onError: (error) => {
+      if (error) {
+        setIsError(true);
+        setCreateBookingStatus(error.message);
+        setShowErrorModal(true);
+      }
+    },
+    onSettled: () => {
+      setIsSubmitting(false);
+    },
+  });
+
   const handleOnChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -111,28 +133,31 @@ export default function BookingForm({
         setShowErrorModal(true);
         return;
       }
-      const saveBooking = await createBooking({ bookingId: id, ...formData });
+
+      await mutation.mutateAsync({ bookingId: id, ...formData } as any);
       setBookingId(id);
 
-      if (saveBooking) {
-        setCreateBookingStatus(saveBooking.message);
-        if (saveBooking.bookingId) {
-          setBookingId(saveBooking.bookingId);
-          setIsSubmitting(false);
-          setIsSubmitted(true);
-          setCreateBookingStatus(saveBooking.message);
-        } else {
-          setIsError(true);
-          setCreateBookingStatus(
-            `${saveBooking.message}${
-              saveBooking.error ? `:${saveBooking.error.message}` : ""
-            }`
-          );
-          setIsSubmitting(false);
-          setShowErrorModal(true);
-          return;
-        }
-      }
+      // const saveBooking = await createBooking({ bookingId: id, ...formData });
+
+      // if (saveBooking) {
+      //   setCreateBookingStatus(saveBooking.message);
+      //   if (saveBooking.bookingId) {
+      //     setBookingId(saveBooking.bookingId);
+      //     setIsSubmitting(false);
+      //     setIsSubmitted(true);
+      //     setCreateBookingStatus(saveBooking.message);
+      //   } else {
+      //     setIsError(true);
+      //     setCreateBookingStatus(
+      //       `${saveBooking.message}${
+      //         saveBooking.error ? `:${saveBooking.error.message}` : ""
+      //       }`
+      //     );
+      //     setIsSubmitting(false);
+      //     setShowErrorModal(true);
+      //     return;
+      //   }
+      // }
     } catch (error: any) {
       console.log(error);
       setIsError(true);
@@ -142,6 +167,7 @@ export default function BookingForm({
     }
   };
 
+  // set price
   useEffect(() => {
     let price = "";
     const selectedService = services.find(
