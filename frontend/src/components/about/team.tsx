@@ -19,13 +19,13 @@ function Team(){
     {
       name: "Njoku Victoria",
       role: "Sales Representative",
-      image: "/team/lead-rep.jpg",
+      image: "/team/sales-rep.jpg",
       description: "Dedicated to making every customer experience exceptional.",
     },
     {
       name: "Somtochukwu Favour",
       role: "Call Representative",
-      image: "/team/lead-rep.jpg",
+      image: "/team/call-rep.jpg",
       description:
         "Master of creating heartfelt connections through every call.",
     },

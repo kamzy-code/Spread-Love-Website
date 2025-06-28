@@ -44,7 +44,7 @@ export const services = [
     },
     category: "celebration",
     thumbnail:
-      "https://images.pexels.com/photos/1729931/pexels-photo-1729931.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop",
+      "https://images.unsplash.com/photo-1545696563-af8f6ec2295a?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8YmlydGhkYXklMjBjYWtlfGVufDB8fDB8fHww",
   },
   {
     id: 2,
@@ -102,7 +102,7 @@ export const services = [
     },
     category: "relationship",
     thumbnail:
-      "https://images.pexels.com/photos/1024993/pexels-photo-1024993.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop",
+      "https://images.unsplash.com/photo-1665686377065-08ba896d16fd?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fGZyaWVuZHNoaXB8ZW58MHx8MHx8fDA%3D",
   },
   {
     id: 4,
@@ -481,7 +481,7 @@ function Services() {
 
   return (
     <section>
-      <div className="container-max px-2 flex flex-wrap justify-center items-center py-20  gap-4 md:gap-8">
+      <div className="container-max px-2 flex flex-wrap justify-center items-center py-20  gap-4 md:gap-8 border-t-2 border-gray-100">
         {categories.map((category, index) => {
           return (
             <button
@@ -502,7 +502,7 @@ function Services() {
       <div className="gradient-background-soft">
         <motion.div
           layout
-          className="container-max section-padding grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 px-10 py-20  gap-8"
+          className="container-max section-padding grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 px-10 py-20  gap-8"
         >
           {filteredServices.map((service, index) => {
             const activeType = activeTypes[service.id];

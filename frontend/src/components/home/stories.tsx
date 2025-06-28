@@ -4,24 +4,23 @@ import { Star } from "lucide-react";
 function Stories() {
   const testimonials = [
     {
-      name: "Sarah Johnson",
-      image:
-        "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop",
-      text: "My mom was so surprised and happy! She couldn't stop talking about the birthday call for weeks. Thank you for making her day special!",
+      name: "Mr. Gozeman",
+      text: "Thank you so much. It was really a surprise to her, she never expected it. The moment gave her a perfect night. She loved it. Thank you so much @ spread love network.",
       rating: 5,
     },
     {
-      name: "Michael Chen",
-      image:
-        "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop",
-      text: "The anniversary call was perfect! My wife was in tears of joy. The representative was so professional and heartfelt.",
+      name: "Mr. Tobi",
+      text: "Thank you very much she was literally crying when she called me and I think it will bring us back together. Thank you ❤ God bless your service",
       rating: 5,
     },
     {
-      name: "Emily Rodriguez",
-      image:
-        "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop",
-      text: "I live abroad and wanted to surprise my best friend. This service made it possible to be part of her special day!",
+      name: "Mrs. Sobola",
+      text: "You guys are the best thank you so much 🥰🥰🥰🥰🥰. Please tell me why I’m crying when I’m not the birthday girl 🥹🥹🥹. Thank you, thank you thank you. It’s was like you guys opened my heart to copy the words 🤭",
+      rating: 5,
+    },
+    {
+      name: "Mrs. Bisola",
+      text: "Thanks so much, I’m so happy for that. He was just smiling and appreciating me, honestly I don’t know what to say because you just lifted my husband mood tonight. He hasn’t been happy for the past 3days now but tonight he is happy and was just hugging and kissing me. Thanks so much.",
       rating: 5,
     },
   ];
@@ -37,7 +36,7 @@ function Stories() {
           moments
         </p>
 
-        <div className="flex flex-col lg:flex-row gap-12 items-center justify-center px-10 mt-10 sm:mx-10">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 px-10 mt-10 sm:mx-10">
           {testimonials.map((testimonial, index) => {
             return (
               <motion.div
@@ -46,7 +45,7 @@ function Stories() {
                 whileInView={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 viewport={{ once: true }}
-                className="card h-auto lg:h-70 lg:max-w-70 px-5 py-10 lg:py-5 flex flex-col justify-center"
+                className="card w-full h-full px-5 py-10 lg:py-5 flex flex-col justify-center"
               >
                 <div className="text-start">
                   <h2 className="text-lg font-semibold text-brand-start mb-2 ">
