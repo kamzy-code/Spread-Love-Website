@@ -127,20 +127,7 @@ export default function BookingDetails({ data }: { data: any }) {
     }
 
     await mutation.mutateAsync(formData);
-    // try {
-    //   const status = await updateBooking(formData);
-    //   if (status && status.message === "Update Successful") {
-    //     setEditForm(false);
-    //     setError("");
-    //   } else {
-    //     setError(status.message);
-    //   }
-    // } catch (error: any) {
-    //   setError(error.message);
-    // } finally {
-    //   setIsSubmitting(false);
-    //   setShowModal(true);
-    // }
+ 
   };
 
   const getStatusIcon = (status: string) => {

@@ -55,6 +55,7 @@ export default function SearchForm() {
     queryKey: ["booking", searchID],
     queryFn:  ({signal}) => getBooking(searchID, signal),
     enabled: !!searchID,
+    staleTime: 3 * 60 * 1000 // 5 mins
   });
 
   // submit function
