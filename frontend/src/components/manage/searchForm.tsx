@@ -3,12 +3,14 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import BookingDetails from "@/components/manage/bookingDetails";
 import BookingNotFound from "./searchNotFound";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 // Fetch Request
-const getBooking = async (bookingId: string) => {
+const getBooking = async (bookingId: string, signal: AbortSignal) => {
   const response = await fetch(`${apiUrl}/booking/${bookingId}`, {
+    signal,
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -26,6 +28,7 @@ export default function SearchForm() {
   const [mounted, setMounted] = useState(false);
   const [bookingID, setBookingID] = useState("");
   const [searchID, setSearchID] = useState("");
+  const queryClient = useQueryClient()
 
   // Mock booking data
   const mockBooking = {
@@ -50,13 +53,14 @@ export default function SearchForm() {
   // useQuery to manage get booking fetch request
   const { data, error, isFetching, refetch } = useQuery({
     queryKey: ["booking", searchID],
-    queryFn: () => getBooking(searchID),
+    queryFn:  ({signal}) => getBooking(searchID, signal),
     enabled: !!searchID,
   });
 
   // submit function
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    queryClient.cancelQueries({ queryKey: ["booking", searchID] })
     if (searchID === bookingID) {
       // If searching for the same ID, force refetch
       refetch();

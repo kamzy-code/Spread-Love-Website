@@ -11,18 +11,18 @@ function ExperienceMagic() {
 
       const samples = [
     {
-      video: "/call-samples/call-sample-1.mp4",
+      video: "/call-samples/birthday.mp4",
       title: "Birthday Call",
       description: "A heartfelt birthday surprise for your loved one.",
     },
     {
-      video: "/call-samples/call-sample-1.mp4",
-      title: "Anniversary Call",
+      video: "/call-samples/appreciation.mp4",
+      title: "Appreciation Call",
       description: "Celebrate love with a special anniversary message.",
     },
     {
-      video: "/call-samples/call-sample-1.mp4",
-      title: "Friendship Call",
+      video: "/call-samples/celebration.mp4",
+      title: "Celebration Call",
       description: "Cherish your friendship with a surprise call.",
     },
   ];
