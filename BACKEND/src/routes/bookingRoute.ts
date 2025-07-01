@@ -1,6 +1,6 @@
 import express from "express";
 import bookingController from "../controllers/bookingController";
-import { authMiddlewrare, checkRole } from "../middlewares/authMiddleware";
+import { authMiddleware, checkRole } from "../middlewares/authMiddleware";
 import { adminRole } from "../types/genralTypes";
 
 const router = express.Router();
@@ -8,33 +8,33 @@ const router = express.Router();
 // admin endpoint
 router.get(
   "/admin",
-  authMiddlewrare,
+  authMiddleware,
   checkRole("superadmin", "salesrep", "callrep"), bookingController.getAllBooking
 );
 
 router.get(
   "/admin/analytics",
-  authMiddlewrare,
+  authMiddleware,
   checkRole("superadmin", "salesrep", "callrep"),
   bookingController.getBookingAnalytics
 );
 
 router.get(
   "/admin/:bookingId",
-  authMiddlewrare,
+  authMiddleware,
   checkRole("superadmin", "salesrep", "callrep"),
   bookingController.getBookingById
 );
 
 router.put(
   "/admin/assign/:bookingId",
-  authMiddlewrare,
+  authMiddleware,
   checkRole("superadmin", "salesrep"),
   bookingController.assignCallToRep
 );
 router.put(
   "/admin/:bookingId/status",
-  authMiddlewrare,
+  authMiddleware,
   checkRole("superadmin", "salesrep", "callrep"),
   bookingController.updateBookingStatus
 );

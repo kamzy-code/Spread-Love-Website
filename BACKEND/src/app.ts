@@ -1,16 +1,21 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import { authMiddlewrare, checkRole } from "./middlewares/authMiddleware";
+import { authMiddleware, checkRole } from "./middlewares/authMiddleware";
 import authRouter from "./routes/authRoute";
 import bookingRouter from "./routes/bookingRoute";
 import rateLimit from "express-rate-limit";
+import cookieParser from "cookie-parser";
 
 dotenv.config();
 
 const app = express();
-app.use(cors());
+app.use(cors({
+    origin: "http://localhost:3000", // Replace with your frontend domain in production
+    credentials: true,
+  }));
 app.use(express.json());
+app.use(cookieParser());
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes

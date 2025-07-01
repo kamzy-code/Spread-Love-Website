@@ -12,6 +12,7 @@ const getBooking = async (bookingId: string, signal: AbortSignal) => {
   const response = await fetch(`${apiUrl}/booking/${bookingId}`, {
     signal,
     method: "GET",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
     },

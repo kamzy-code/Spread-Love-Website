@@ -1,18 +1,17 @@
 import type { Metadata } from "next";
 import "@/app/globals.css";
-import Navbar from "@/components/ui/navbar";
-import Footer from "@/components/ui/footer";
 import Providers from "./providers";
+import { AdminAuthProvider } from "@/hooks/authContext";
 
 export const metadata: Metadata = {
-  title: "Spread Love Network",
+  title: "Admin - Spread Love Network",
   description: "Make someone's day with a surprise call",
   icons: {
     icon: "./logo.png",
   },
 };
 
-export default function RootLayout({
+export default function AdminLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -21,9 +20,11 @@ export default function RootLayout({
     <html lang="en">
       <body className={`antialiased`}>
         <Providers>
-          {/* <Navbar /> */}
-          <main>{children}</main>
-          {/* <Footer /> */}
+          <main>
+          <AdminAuthProvider>
+            {children}
+          </AdminAuthProvider>
+          </main>
         </Providers>
       </body>
     </html>

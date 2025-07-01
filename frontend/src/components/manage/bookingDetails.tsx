@@ -31,6 +31,7 @@ const updateBooking = async (updatedData: any) => {
     `${apiUrl}/booking/${updatedData.bookingId}/update`,
     {
       method: "PUT",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },

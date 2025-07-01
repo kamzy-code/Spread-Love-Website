@@ -1,3 +1,4 @@
+import { Types } from "mongoose";
 import { Admin } from "../models/adminModel";
 import { adminRole } from "../types/genralTypes";
 
@@ -16,8 +17,12 @@ class AuthService {
   }
 
 // Check if an admin exists in the database by email
-  async getAdmin(email: string) {
+  async getAdminByEmail(email: string) {
    return await Admin.findOne({ email });
+  }
+
+  async getAdminByID(id: string) {
+   return await Admin.findOne({ _id: new Types.ObjectId(id) });
   }
 }
 

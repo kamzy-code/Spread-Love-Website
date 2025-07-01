@@ -9,6 +9,7 @@ const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 const getID = async () => {
   const response = await fetch(`${apiUrl}/booking/id/generate`, {
     method: "GET",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
     },
@@ -24,6 +25,7 @@ const getID = async () => {
 const createBooking = async (body: any) => {
   const response = await fetch(`${apiUrl}/booking/create`, {
     method: "POST",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
     },
@@ -137,27 +139,7 @@ export default function BookingForm({
       await mutation.mutateAsync({ bookingId: id, ...formData } as any);
       setBookingId(id);
 
-      // const saveBooking = await createBooking({ bookingId: id, ...formData });
-
-      // if (saveBooking) {
-      //   setCreateBookingStatus(saveBooking.message);
-      //   if (saveBooking.bookingId) {
-      //     setBookingId(saveBooking.bookingId);
-      //     setIsSubmitting(false);
-      //     setIsSubmitted(true);
-      //     setCreateBookingStatus(saveBooking.message);
-      //   } else {
-      //     setIsError(true);
-      //     setCreateBookingStatus(
-      //       `${saveBooking.message}${
-      //         saveBooking.error ? `:${saveBooking.error.message}` : ""
-      //       }`
-      //     );
-      //     setIsSubmitting(false);
-      //     setShowErrorModal(true);
-      //     return;
-      //   }
-      // }
+    
     } catch (error: any) {
       console.log(error);
       setIsError(true);
