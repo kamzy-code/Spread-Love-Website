@@ -21,9 +21,7 @@ export default function AdminLayout({
       <body className={`antialiased`}>
         <Providers>
           <main>
-          <AdminAuthProvider>
-            {children}
-          </AdminAuthProvider>
+            <AdminAuthProvider>{children}</AdminAuthProvider>
           </main>
         </Providers>
       </body>

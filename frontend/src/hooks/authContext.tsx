@@ -87,12 +87,25 @@ export const AdminAuthProvider = ({
   };
 
   const logout = async () => {
-    await fetch(`${apiUrl}/auth/logout`, {
+    
+    const response = await fetch(`${apiUrl}/auth/logout`, {
       method: "POST",
       credentials: "include",
     });
+
+    if (!response.ok) {
+    let errorMessage = "Logout failed";
+    try {
+      const errorData = await response.json();
+      errorMessage = errorData.message || errorMessage;
+    } catch (jsonErr) {
+      // silently ignore, fallback to default error message
+    }
+    throw new Error(errorMessage);
+  }
+
     setUser(null);
-    router.push("/admin/login");
+    router.push("/admin");
   };
 
   return (
