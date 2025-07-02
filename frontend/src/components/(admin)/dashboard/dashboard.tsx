@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import AdminShell from "../ui/AdminShell";
 import PageError from "../ui/pageError";
 import PageLoading from "../ui/pageLoading";
+import Analytics from "./analytics";
 
 export default function Dashboard() {
   const { user, authStatus, isAuthenticated, authError, loading, logout } =
@@ -35,15 +36,14 @@ export default function Dashboard() {
 
   return (
     <AdminShell>
-      <div className="py-6 md:py-8 ">
-        <h1 className="text-xl font-semibold">
-          Welcome back, {user?.firstName} 👋
+      <div className="py-6 md:py-8 space-y-8">
+        <h1 className="text-3xl font-bold"> 
+          Dashboard
         </h1>
-        <p className="text-gray-600 mt-2">Email: {user?.email}</p>
 
-        <button className="btn-primary mt-6" onClick={() => logout()}>
-          Logout
-        </button>
+        <Analytics></Analytics>
+        
+
       </div>
     </AdminShell>
   );

@@ -2,6 +2,7 @@
 
 import { useState, useContext, createContext, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 
 type AdminUser = {
   firstName: string;
@@ -56,6 +57,7 @@ export const AdminAuthProvider = ({
   const [authStatus, setAuthStatus] = useState<AuthStatus>("checking");
 
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const fetchUser = async (isMounted = true) => {
     let retries = 2;
@@ -151,6 +153,7 @@ export const AdminAuthProvider = ({
     }
 
     setUser(null);
+    queryClient.clear();
     router.push("/admin");
   };
 

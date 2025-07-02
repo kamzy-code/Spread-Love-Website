@@ -417,6 +417,7 @@ class BookingController {
   res: Response,
   next: NextFunction
 ) {
+  console.log("analytics hit")
   const user = req.user!;
   const matchStage: any = {};
   if (user.role === "callrep")
