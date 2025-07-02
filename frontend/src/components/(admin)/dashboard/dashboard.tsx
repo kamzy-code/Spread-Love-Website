@@ -8,26 +8,30 @@ import PageError from "../ui/pageError";
 import PageLoading from "../ui/pageLoading";
 
 export default function Dashboard() {
-  const { user, authStatus, isAuthenticated, authError, loading, logout } = useAdminAuth();
+  const { user, authStatus, isAuthenticated, authError, loading, logout } =
+    useAdminAuth();
   const [mounted, setMounted] = useState(false);
   const router = useRouter();
-
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  if (!mounted || loading || (authStatus === "checking")) {
+  if (!mounted) {
+    return null;
+  }
+
+  if (loading || authStatus === "checking") {
     return <PageLoading></PageLoading>;
   }
 
-  if ((authStatus === 'error') && authError) {
+  if (authStatus === "error" && authError) {
     return <PageError></PageError>;
   }
 
   if (authStatus !== "authenticated") {
-  return null;
-}
+    return null;
+  }
 
   return (
     <AdminShell>

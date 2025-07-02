@@ -1,7 +1,9 @@
 import AdminShell from "./AdminShell";
 import { TriangleAlert } from "lucide-react";
+import { useAdminAuth } from "@/hooks/authContext";
 
 export default function PageError() {
+  const {reload} = useAdminAuth();
   return (
     <AdminShell>
       <div className="flex flex-col justify-center items-center h-full w-full gap-4">
@@ -9,7 +11,7 @@ export default function PageError() {
         <p className="text-gray-700">Error Loading Page. Try again</p>
         <button
           className="btn-primary rounded-lg"
-          onClick={() => window.location.reload()}
+          onClick={() => reload()}
         >
           {" "}
           Reload{" "}

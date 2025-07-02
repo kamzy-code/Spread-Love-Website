@@ -36,6 +36,7 @@ interface AdminAuthContextType {
   logout: () => Promise<void>;
   authError: string | null;
   authStatus: AuthStatus;
+   reload: () => Promise<void>;
 }
 
 const AdminAuthContext = createContext<AdminAuthContextType | undefined>(
@@ -153,16 +154,24 @@ export const AdminAuthProvider = ({
     router.push("/admin");
   };
 
+  const reload = async () => {
+    setAuthStatus("checking");
+    setLoading(true);
+    await fetchUser();
+    console.log("fetch reload ran!!!");
+  };
+
   return (
     <AdminAuthContext.Provider
       value={{
         user,
-        isAuthenticated: (authStatus === "authenticated"),
+        isAuthenticated: authStatus === "authenticated",
         loading,
         login,
         logout,
         authError,
         authStatus,
+        reload,
       }}
     >
       {children}
