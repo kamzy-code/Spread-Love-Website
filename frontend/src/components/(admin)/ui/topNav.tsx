@@ -57,6 +57,7 @@ export default function TopNav() {
 
   const mutation = useMutation({
     mutationFn: () => logout(),
+    retry: 3,
     onError: (error) => {
       setShowErrorModal(true);
     },
@@ -134,7 +135,7 @@ export default function TopNav() {
                   pathname === item.href
                     ? "gradient-background text-white"
                     : "text-gray-700 hover:bg-gray-100"
-                }`}
+                } ${item.label==="Reps" && user?.role === 'callrep' ? 'hidden' : ''}`}
               >
                 {item.icon} {item.label}
               </button>

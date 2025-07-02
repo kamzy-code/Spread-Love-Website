@@ -54,11 +54,12 @@ const links = [
 export default function SideNav() {
   const pathname = usePathname();
   const router = useRouter();
-  const { logout, loading } = useAdminAuth();
+  const { user, logout, loading } = useAdminAuth();
   const [showErrorModal, setShowErrorModal] = useState(false);
 
   const mutation = useMutation({
     mutationFn: () => logout(),
+    retry: 3,
     onError: (error) => {
       setShowErrorModal(true);
     },
@@ -81,8 +82,8 @@ export default function SideNav() {
             className={`flex items-center gap-3 py-2 px-3 rounded-lg text-sm font-medium ${
               pathname === href
                 ? "gradient-background text-white"
-                : "text-gray-700 hover:bg-gray-100"
-            }`}
+                : "text-gray-700 hover:bg-gray-100" 
+            } ${label==="Reps" && user?.role === 'callrep' ? 'hidden' : ''}`}
           >
             {icon} {label}
           </button>

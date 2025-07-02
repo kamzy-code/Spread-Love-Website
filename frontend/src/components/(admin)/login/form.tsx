@@ -28,6 +28,8 @@ export default function LoginForm() {
       rememberMe: boolean;
     }) => login(formBody),
 
+    retry: 3,
+
     onError: (error) => {
       if (error.message.includes("Email")) {
         console.error("invalid Email:", error);

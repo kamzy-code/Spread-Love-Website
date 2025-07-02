@@ -17,12 +17,25 @@ type AdminUser = {
   __v: number;
 };
 
+type AuthStatus =
+  | "idle"
+  | "checking"
+  | "authenticated"
+  | "unauthenticated"
+  | "error";
+
 interface AdminAuthContextType {
   user: AdminUser | null;
   isAuthenticated: boolean;
   loading: boolean;
-  login: (body: { email: string; password: string, rememberMe: boolean }) => Promise<void>;
+  login: (body: {
+    email: string;
+    password: string;
+    rememberMe: boolean;
+  }) => Promise<void>;
   logout: () => Promise<void>;
+  authError: string | null;
+  authStatus: AuthStatus;
 }
 
 const AdminAuthContext = createContext<AdminAuthContextType | undefined>(
@@ -38,30 +51,63 @@ export const AdminAuthProvider = ({
 }) => {
   const [user, setUser] = useState<AdminUser | null>(null);
   const [loading, setLoading] = useState(true);
+  const [authError, setAuthError] = useState<null | string>(null);
+  const [authStatus, setAuthStatus] = useState<AuthStatus>("checking");
+
   const router = useRouter();
 
   const fetchUser = async (isMounted = true) => {
-    try {
-      const res = await fetch(`${apiUrl}/auth/me`, { credentials: "include" });
-      if (!res.ok) throw new Error("Unauthorized");
-      const data = await res.json();
-      if (isMounted) setUser(data.user);
-    } catch (err) {
-      if (isMounted) setUser(null);
-    } finally {
-      if (isMounted) setLoading(false);
+    let retries = 2;
+
+    while (retries >= 0) {
+      try {
+        const res = await fetch(`${apiUrl}/auth/me`, {
+          credentials: "include",
+        });
+
+        if (res.status === 401) {
+          if (isMounted) {
+            setUser(null);
+            setAuthStatus("unauthenticated");
+            setAuthError(null);
+          }
+          break;
+        }
+        if (!res.ok) {
+          throw new Error("Server error");
+        }
+        const data = await res.json();
+        if (isMounted) {
+          setUser(data.user);
+          setAuthStatus("authenticated");
+          setAuthError(null);
+          break;
+        }
+      } catch (err: any) {
+        if (retries === 0) {
+          setAuthError(err.message || "Network error");
+          setAuthStatus("error");
+        }
+      }
+      retries--;
     }
+    if (isMounted) setLoading(false);
   };
 
   useEffect(() => {
     let isMounted = true;
     fetchUser(isMounted);
+    console.log("fetch ran!!!");
     return () => {
       isMounted = false;
     };
   }, []);
 
-  const login = async (body: { email: string; password: string, rememberMe: boolean }) => {
+  const login = async (body: {
+    email: string;
+    password: string;
+    rememberMe: boolean;
+  }) => {
     const response = await fetch(`${apiUrl}/auth/login`, {
       method: "POST",
       credentials: "include",
@@ -72,37 +118,36 @@ export const AdminAuthProvider = ({
     });
 
     if (!response.ok) {
-    let errorMessage = "Login failed";
-    try {
-      const errorData = await response.json();
-      errorMessage = errorData.message || errorMessage;
-    } catch (jsonErr) {
-      // silently ignore, fallback to default error message
+      let errorMessage = "Login failed";
+      try {
+        const errorData = await response.json();
+        errorMessage = errorData.message || errorMessage;
+      } catch (jsonErr) {
+        // silently ignore, fallback to default error message
+      }
+      throw new Error(errorMessage);
     }
-    throw new Error(errorMessage);
-  }
 
     await fetchUser(); // no need to pass isMounted here
     router.push("/admin/dashboard");
   };
 
   const logout = async () => {
-    
     const response = await fetch(`${apiUrl}/auth/logout`, {
       method: "POST",
       credentials: "include",
     });
 
     if (!response.ok) {
-    let errorMessage = "Logout failed";
-    try {
-      const errorData = await response.json();
-      errorMessage = errorData.message || errorMessage;
-    } catch (jsonErr) {
-      // silently ignore, fallback to default error message
+      let errorMessage = "Logout failed";
+      try {
+        const errorData = await response.json();
+        errorMessage = errorData.message || errorMessage;
+      } catch (jsonErr) {
+        // silently ignore, fallback to default error message
+      }
+      throw new Error(errorMessage);
     }
-    throw new Error(errorMessage);
-  }
 
     setUser(null);
     router.push("/admin");
@@ -110,7 +155,15 @@ export const AdminAuthProvider = ({
 
   return (
     <AdminAuthContext.Provider
-      value={{ user, isAuthenticated: !!user, loading, login, logout }}
+      value={{
+        user,
+        isAuthenticated: (authStatus === "authenticated"),
+        loading,
+        login,
+        logout,
+        authError,
+        authStatus,
+      }}
     >
       {children}
     </AdminAuthContext.Provider>
