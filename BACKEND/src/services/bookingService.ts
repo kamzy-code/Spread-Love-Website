@@ -143,6 +143,20 @@ class BookingService {
   async getTotalBooking(matchStage: any) {
     return await Booking.countDocuments(matchStage);
   }
+
+  async getTotalRevenue(matchStage: any) {
+    const result = await Booking.aggregate([
+      { $match: matchStage },
+      {
+        $group: {
+          _id: null,
+          totalRevenue: { $sum: { $toDouble: "$price" } },
+        },
+      },
+    ]);
+
+    return result[0]?.totalRevenue || 0;
+  }
 }
 
 const bookingService = new BookingService();

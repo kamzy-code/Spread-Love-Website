@@ -6,6 +6,9 @@ import { AuthRequest } from "../middlewares/authMiddleware";
 import { Types } from "mongoose";
 import { castSortOder } from "../utils/castSortOrder";
 import { callType, occassionType } from "../types/genralTypes";
+import getDateRange from "../utils/getDateRange";
+import adminService from "../services/adminService";
+import { subDays, subMonths, subWeeks, startOfDay, endOfDay, startOfMonth, endOfMonth, startOfWeek, endOfWeek } from "date-fns";
 
 class BookingController {
   // Customer Endpoints
@@ -65,7 +68,7 @@ class BookingController {
   }
 
   async getBookingByBookingId(req: Request, res: Response, next: NextFunction) {
-    console.log('get api hit')
+    console.log("get api hit");
     // extract BookingID from url
     const bookingId = req.params.bookingId;
 
@@ -103,7 +106,7 @@ class BookingController {
     res: Response,
     next: NextFunction
   ) {
-    console.log('update api hit');
+    console.log("update api hit");
     // extract the booking ID from URL and the update info from the request body
     const { bookingId } = req.params;
     const info = req.body;
@@ -300,7 +303,6 @@ class BookingController {
     res: Response,
     next: NextFunction
   ) {
-    
     // extract the booking ID, new status and user object.
     const { bookingId } = req.params;
     const { status } = req.body;
@@ -410,37 +412,119 @@ class BookingController {
     }
   }
 
-  async getBookingAnalytics(
-    req: AuthRequest,
-    res: Response,
-    next: NextFunction
-  ) {
-    const user = req.user!;
+ async getBookingAnalytics(
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) {
+  const user = req.user!;
+  const matchStage: any = {};
+  if (user.role === "callrep")
+    matchStage.assignedRep = new Types.ObjectId(user.userId);
 
-    // create an empty matchStage/Filter object for filtering the aggregation query.
-    const matchStage: any = {};
+  const { filterType, date, startDate, endDate } = req.query;
 
-    // check if the user is a callrep and add the assigned rep key to the matchstage object so it peforms aggregation based on only bookings assinged to the rep
-    if (user.role === "callrep")
-      matchStage.assignedRep = new Types.ObjectId(user.userId);
+  // Get current period range
+  const dateRange = getDateRange(
+    filterType as string,
+    date as string,
+    startDate as string,
+    endDate as string
+  );
 
-    try {
-      // call service classto get the analytics and total booking count
-      const analytics = await bookingService.getAnalytics(matchStage);
-      const totalBookings = await bookingService.getTotalBooking(matchStage);
-
-      // return the analytics
-      res.status(200).json({
-        totalBookings,
-        breakdown: analytics,
-      });
-    } catch (error) {
-      next(error);
-      console.error(`Error fetching analytics: ${error}`);
-      res.status(500).json({ message: "Error fetching analytics", error });
-      return;
+  // Get previous period range
+  let prevDateRange = undefined;
+  if (dateRange) {
+    if (filterType === "daily") {
+      const prev = subDays(dateRange.start, 1);
+      prevDateRange = {
+        start: startOfDay(prev),
+        end: endOfDay(prev),
+      };
+    } else if (filterType === "monthly") {
+      const prev = subMonths(dateRange.start, 1);
+      prevDateRange = {
+        start: startOfMonth(prev),
+        end: endOfMonth(prev),
+      };
+    } else if (filterType === "weekly") {
+      const prev = subWeeks(dateRange.start, 1);
+      prevDateRange = {
+        start: startOfWeek(prev),
+        end: endOfWeek(prev),
+      };
     }
+    // Add more as needed
   }
+
+  if (dateRange) {
+    matchStage.callDate = {
+      $gte: dateRange.start,
+      $lte: dateRange.end,
+    };
+  }
+
+  // Build previous period match stage
+  const matchStagePrev = { ...matchStage };
+  if (prevDateRange) {
+    matchStagePrev.callDate = {
+      $gte: prevDateRange.start,
+      $lte: prevDateRange.end,
+    };
+  }
+
+  try {
+    // Current period
+    const analytics = await bookingService.getAnalytics(matchStage);
+    const totalBookings = await bookingService.getTotalBooking(matchStage);
+
+    // Previous period
+    const prevTotalBookings = prevDateRange
+      ? await bookingService.getTotalBooking(matchStagePrev)
+      : 0;
+
+    // Calculate percentage increase
+    const percentageIncrease =
+      prevTotalBookings === 0
+        ? 100
+        : ((totalBookings - prevTotalBookings) / prevTotalBookings) * 100;
+
+    let totalRevenue = undefined;
+    let prevTotalRevenue = undefined;
+    let revenuePercentageIncrease = undefined;
+    let activeRepsCount = undefined;
+
+    if (user.role === "superadmin" || user.role === "salesrep") {
+      activeRepsCount = await adminService.countActiveReps(user.role);
+    }
+    if (user.role === "superadmin") {
+      totalRevenue = await bookingService.getTotalRevenue(matchStage);
+      prevTotalRevenue = prevDateRange
+        ? await bookingService.getTotalRevenue(matchStagePrev)
+        : 0;
+      revenuePercentageIncrease =
+        prevTotalRevenue === 0
+          ? 100
+          : ((totalRevenue - prevTotalRevenue) / prevTotalRevenue) * 100;
+    }
+
+    res.status(200).json({
+      totalBookings,
+      breakdown: analytics,
+      percentageIncrease,
+      ...(user.role === "superadmin" && {
+        totalRevenue,
+        revenuePercentageIncrease,
+      }),
+      ...(activeRepsCount !== undefined && { activeRepsCount }),
+    });
+  } catch (error) {
+    next(error);
+    console.error(`Error fetching analytics: ${error}`);
+    res.status(500).json({ message: "Error fetching analytics", error });
+    return;
+  }
+}
 }
 
 const bookingController = new BookingController();
