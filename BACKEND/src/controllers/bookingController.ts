@@ -8,7 +8,17 @@ import { castSortOder } from "../utils/castSortOrder";
 import { callType, occassionType } from "../types/genralTypes";
 import getDateRange from "../utils/getDateRange";
 import adminService from "../services/adminService";
-import { subDays, subMonths, subWeeks, startOfDay, endOfDay, startOfMonth, endOfMonth, startOfWeek, endOfWeek } from "date-fns";
+import {
+  subDays,
+  subMonths,
+  subWeeks,
+  startOfDay,
+  endOfDay,
+  startOfMonth,
+  endOfMonth,
+  startOfWeek,
+  endOfWeek,
+} from "date-fns";
 
 class BookingController {
   // Customer Endpoints
@@ -233,19 +243,22 @@ class BookingController {
     const {
       status,
       assignedRep,
-      startDate,
-      endDate,
       callType,
       country,
       sortParam,
       sortOrder,
+      page = "1",
+      limit = "10",
+      startDate,
+      endDate,
+      singleDate,
+      filterType,
     } = req.query;
 
     // cast the sort order variable from a string to a valid sort Order type.
     // i.e from sortorder: string = "1" or "-1" to sortorder: SortOrder = 1 or -1
     const sortOrderCast = castSortOder(sortOrder as string);
 
-    //  get user object from request object.
     const user = req.user!;
 
     // create an empty query object for the DB search
@@ -257,38 +270,50 @@ class BookingController {
     if (callType) searchQuery.callType = callType;
     if (country) searchQuery.country = country;
 
-    if (startDate || endDate) {
-      // if the date filter exists add them as greater than and less than parameters to the callDate key. the query will basically fetch bookings where the date is either greater than or less thanor equeal to the sumitte dates.
-      searchQuery.callDate = {};
-      if (startDate) searchQuery.callDate.$gte = new Date(startDate as string);
-      if (endDate) searchQuery.callDate.$lte = new Date(endDate as string);
+    const dateRange = getDateRange(
+      filterType as string,
+      singleDate as string,
+      startDate as string,
+      endDate as string
+    );
+
+    if (dateRange) {
+      searchQuery.callDate = {
+        $gte: dateRange.start,
+        $lte: dateRange.end,
+      };
     }
+
+    const skip = (parseInt(page as string) - 1) * parseInt(limit as string);
+    const numericLimit = parseInt(limit as string);
 
     let booking: any;
     try {
       // call service clas to fetch the booking and sort it via the sort parameter if it exists
-      if (sortParam) {
-        booking = await bookingService.getAllBooking(
-          user.userId,
-          user.role,
-          searchQuery,
-          sortOrderCast,
-          sortParam as string
-        );
-      } else {
-        // call service clas to fetch the booking and with the default sort settings
-        booking = await bookingService.getAllBooking(
-          user.userId,
-          user.role,
-          searchQuery,
-          sortOrderCast
-        );
-      }
+     
+    const bookings = await bookingService.getAllBooking(
+      user.userId,
+      user.role,
+      searchQuery,
+      sortOrderCast,
+      sortParam as string,
+      skip,
+      numericLimit
+    );
+
+     const total = await bookingService.getTotalBookingsCount(searchQuery)
 
       // return booking list
-      res
-        .status(200)
-        .json({ message: "Booking fetched successfully", booking });
+     res.status(200).json({
+      message: "Bookings fetched successfully",
+      data: bookings,
+      meta: {
+        total,
+        page: Number(page),
+        limit: numericLimit,
+        totalPages: Math.ceil(total / numericLimit),
+      },
+    });
       return;
     } catch (error) {
       next(error);
@@ -412,120 +437,123 @@ class BookingController {
     }
   }
 
- async getBookingAnalytics(
-  req: AuthRequest,
-  res: Response,
-  next: NextFunction
-) {
-  console.log("analytics hit")
-  const user = req.user!;
-  const matchStage: any = {};
-  if (user.role === "callrep")
-    matchStage.assignedRep = new Types.ObjectId(user.userId);
+  async getBookingAnalytics(
+    req: AuthRequest,
+    res: Response,
+    next: NextFunction
+  ) {
+    const user = req.user!;
+    const matchStage: any = {};
+    if (user.role === "callrep")
+      matchStage.assignedRep = new Types.ObjectId(user.userId);
 
-  const { filterType, date, startDate, endDate } = req.query;
+    const { filterType, date, startDate, endDate } = req.query;
 
-  // Get current period range
-  const dateRange = getDateRange(
-    filterType as string,
-    date as string,
-    startDate as string,
-    endDate as string
-  );
+    // Get current period range
+    const dateRange = getDateRange(
+      filterType as string,
+      date as string,
+      startDate as string,
+      endDate as string
+    );
 
-  // Get previous period range
-  let prevDateRange = undefined;
-  if (dateRange) {
-    if (filterType === "daily") {
-      const prev = subDays(dateRange.start, 1);
-      prevDateRange = {
-        start: startOfDay(prev),
-        end: endOfDay(prev),
-      };
-    } else if (filterType === "monthly") {
-      const prev = subMonths(dateRange.start, 1);
-      prevDateRange = {
-        start: startOfMonth(prev),
-        end: endOfMonth(prev),
-      };
-    } else if (filterType === "weekly") {
-      const prev = subWeeks(dateRange.start, 1);
-      prevDateRange = {
-        start: startOfWeek(prev),
-        end: endOfWeek(prev),
+    // Get previous period range
+    let prevDateRange = undefined;
+    if (dateRange) {
+      if (filterType === "daily") {
+        const prev = subDays(dateRange.start, 1);
+        prevDateRange = {
+          start: startOfDay(prev),
+          end: endOfDay(prev),
+        };
+      } else if (filterType === "monthly") {
+        const prev = subMonths(dateRange.start, 1);
+        prevDateRange = {
+          start: startOfMonth(prev),
+          end: endOfMonth(prev),
+        };
+      } else if (filterType === "weekly") {
+        const prev = subWeeks(dateRange.start, 1);
+        prevDateRange = {
+          start: startOfWeek(prev),
+          end: endOfWeek(prev),
+        };
+      }
+      // Add more as needed
+    }
+
+    if (dateRange) {
+      matchStage.callDate = {
+        $gte: dateRange.start,
+        $lte: dateRange.end,
       };
     }
-    // Add more as needed
-  }
 
-  if (dateRange) {
-    matchStage.callDate = {
-      $gte: dateRange.start,
-      $lte: dateRange.end,
-    };
-  }
-
-  // Build previous period match stage
-  const matchStagePrev = { ...matchStage };
-  if (prevDateRange) {
-    matchStagePrev.callDate = {
-      $gte: prevDateRange.start,
-      $lte: prevDateRange.end,
-    };
-  }
-
-  try {
-    // Current period
-    const analytics = await bookingService.getAnalytics(matchStage);
-    const totalBookings = await bookingService.getTotalBooking(matchStage);
-
-    // Previous period
-    const prevTotalBookings = prevDateRange
-      ? await bookingService.getTotalBooking(matchStagePrev)
-      : 0;
-
-    // Calculate percentage increase
-    const percentageIncrease =
-      prevTotalBookings === 0
-        ? 100
-        : ((totalBookings - prevTotalBookings) / prevTotalBookings) * 100;
-
-    let totalRevenue = undefined;
-    let prevTotalRevenue = undefined;
-    let revenuePercentageIncrease = undefined;
-    let activeRepsCount = undefined;
-
-    if (user.role === "superadmin" || user.role === "salesrep") {
-      activeRepsCount = await adminService.countActiveReps(user.role);
+    // Build previous period match stage
+    const matchStagePrev = { ...matchStage };
+    if (prevDateRange) {
+      matchStagePrev.callDate = {
+        $gte: prevDateRange.start,
+        $lte: prevDateRange.end,
+      };
     }
-    if (user.role === "superadmin") {
-      totalRevenue = await bookingService.getTotalRevenue(matchStage);
-      prevTotalRevenue = prevDateRange
-        ? await bookingService.getTotalRevenue(matchStagePrev)
+
+    try {
+      // Current period
+      const analytics = await bookingService.getAnalytics(matchStage);
+      const totalBookings = await bookingService.getTotalBookingsCount(matchStage);
+
+      // Previous period
+      const prevTotalBookings = prevDateRange
+        ? await bookingService.getTotalBookingsCount(matchStagePrev)
         : 0;
-      revenuePercentageIncrease =
-        prevTotalRevenue === 0
-          ? 100
-          : ((totalRevenue - prevTotalRevenue) / prevTotalRevenue) * 100;
-    }
 
-    res.status(200).json({
-      totalBookings,
-      breakdown: analytics,
-      percentageIncrease,
-      ...(user.role === "superadmin" && {
-        totalRevenue,
-        revenuePercentageIncrease,
-      }),
-      ...(activeRepsCount !== undefined && { activeRepsCount }),
-    });
-  } catch (error) {
-    next(error);
-    console.error(`Error fetching analytics: ${error}`);
-    res.status(500).json({ message: "Error fetching analytics", error });
-    return;
+      // Calculate percentage increase
+      const percentageIncrease =
+        prevTotalBookings === 0 && totalBookings > 0
+          ? 100
+          : prevTotalBookings === 0 && totalBookings === 0
+          ? 0
+          : ((totalBookings - prevTotalBookings) / prevTotalBookings) * 100;
+
+      let totalRevenue = undefined;
+      let prevTotalRevenue = undefined;
+      let revenuePercentageIncrease = undefined;
+      let activeRepsCount = undefined;
+
+      if (user.role === "superadmin" || user.role === "salesrep") {
+        activeRepsCount = await adminService.countActiveReps(user.role);
+      }
+      if (user.role === "superadmin") {
+        totalRevenue = await bookingService.getTotalRevenue(matchStage);
+        prevTotalRevenue = prevDateRange
+          ? await bookingService.getTotalRevenue(matchStagePrev)
+          : 0;
+        revenuePercentageIncrease =
+          prevTotalRevenue === 0 && totalRevenue > 0
+            ? 100
+            : prevTotalRevenue === 0 && totalRevenue === 0
+            ? 0
+            : ((totalRevenue - prevTotalRevenue) / prevTotalRevenue) * 100;
+      }
+
+      res.status(200).json({
+        totalBookings,
+        breakdown: analytics,
+        percentageIncrease,
+        ...(user.role === "superadmin" && {
+          totalRevenue,
+          revenuePercentageIncrease,
+        }),
+        ...(activeRepsCount !== undefined && { activeRepsCount }),
+      });
+    } catch (error) {
+      next(error);
+      console.error(`Error fetching analytics: ${error}`);
+      res.status(500).json({ message: "Error fetching analytics", error });
+      return;
+    }
   }
-}
 }
 
 const bookingController = new BookingController();

@@ -75,40 +75,29 @@ class BookingService {
     return await Booking.findById(bookingId);
   }
 
-  async getAllBooking(
-    userId: string,
-    role: string,
-    query: any,
-    sortOrder?: SortOrder,
-    sortParam?: string
-  ) {
-    // if there's no sort order default the sortOrder to -1 i.e descending
-    if (!sortOrder) sortOrder = -1;
+ async getAllBooking(
+  userId: string,
+  role: string,
+  query: any,
+  sortOrder: SortOrder = -1,
+  sortParam: string = "callDate",
+  skip: number = 0,
+  limit: number = 10
+) {
+  // Build baseQuery
+  const baseQuery = role === "callrep"
+    ? { ...query, assignedRep: new Types.ObjectId(userId) }
+    : query;
 
-    // check user role and fetch bookings via the role
-    if (role === "callrep") {
-      if (sortParam) {
-        // if the sort parameter was submitted fetch the bookings via the query object and sort it via the the sort parameter and the sort order
-        return await Booking.find({
-          // destructure the query object and the assigned rep field to make sure the bookings fetched are assigned to the rep requesting it.
-          ...query,
-          assignedRep: new Types.ObjectId(userId),
-        }).sort({ [sortParam]: sortOrder });
-      }
-
-      // else fetch the booking via the query object and sort it via the the default sort parameter (createdAt) and the sort order
-      return await Booking.find({
-        ...query,
-        assignedRep: new Types.ObjectId(userId),
-      }).sort({ createdAt: sortOrder });
-    }
-
-    // if the user is not a cal rep fetch the bookings via the query, sortParam and order regardless of the role
-    if (sortParam) {
-      return await Booking.find(query).sort({ [sortParam]: sortOrder });
-    }
-    return await Booking.find(query).sort({ createdAt: sortOrder });
-  }
+  return await Booking.find(baseQuery)
+    .sort({ [sortParam]: sortOrder })
+    .skip(skip)
+    .limit(limit)
+    .populate({
+      path: "assignedRep",
+      select: "-password -__v -createdAt -updatedAt", // Optional: exclude sensitive fields
+    });
+}
 
   async generateBookingId(): Promise<string> {
     let bookingId: string;
@@ -140,7 +129,7 @@ class BookingService {
     ]);
   }
 
-  async getTotalBooking(matchStage: any) {
+  async getTotalBookingsCount(matchStage: any) {
     return await Booking.countDocuments(matchStage);
   }
 

@@ -22,7 +22,7 @@ class AuthService {
   }
 
   async getAdminByID(id: string) {
-   return await Admin.findOne({ _id: new Types.ObjectId(id) });
+    return await Admin.findOne({ _id: new Types.ObjectId(id) }).select("-password -__v -createdAt -updatedAt");
   }
 }
 

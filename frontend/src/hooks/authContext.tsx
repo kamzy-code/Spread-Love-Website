@@ -9,13 +9,9 @@ type AdminUser = {
   lastName: string;
   email: string;
   phone: string;
-  password: string;
   role: string;
   status: string;
   _id: string;
-  createdAt: Date;
-  updatedAt: Date;
-  __v: number;
 };
 
 type AuthStatus =
