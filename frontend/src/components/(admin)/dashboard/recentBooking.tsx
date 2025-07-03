@@ -1,0 +1,95 @@
+
+import { useBookings, Booking, BookingFilters } from "@/hooks/useBookings";
+import MiniLoader from "../ui/miniLoader";
+import { Calendar } from "lucide-react";
+import { formatToYMD } from "@/lib/formatDate";
+import { getStatusColor, getStatusIcon } from "@/lib/getStatusColor";
+import { FilterType, useFilter } from "./filterContext";
+import { useRouter } from "next/navigation";
+
+export default function RecentBookings() {
+  const { appliedFilterType, appliedDate, appliedEndDate, appliedStartDate } =
+    useFilter();
+
+  const filters: BookingFilters = {
+    filterType: appliedFilterType as FilterType,
+    startDate: appliedStartDate,
+    endDate: appliedEndDate,
+    singleDate: appliedDate,
+    sortParam: "createdAt",
+    sortOrder: "-1",
+    page: 1,
+    limit: 5,
+  };
+
+  const router = useRouter();
+  
+
+  const {
+    data: bookings,
+    error,
+    isLoading,
+  } = useBookings(filters as BookingFilters);
+
+  return (
+    <div className="card">
+      <div className="min-h-50 p-6 flex flex-col gap-4">
+        <div className="w-full flex justify-between">
+
+        <h2 className="md:text-xl font-semibold text-brand-start">
+          Recent Bookings
+        </h2>
+
+        <button className="text-brand-end hover:text-brand-start" onClick={()=> router.push('/admin/bookings')}>
+            {`View More>`}
+        </button>
+        </div>
+
+        {isLoading && (
+          <div className="flex-1 flex flex-col justify-center items-center">
+            <MiniLoader></MiniLoader>
+          </div>
+        )}
+
+        {bookings?.length === 0 ? (
+          <div className="flex-1 flex flex-col justify-center items-center  text-gray-500">
+            <Calendar className="h-4 w-4 md:h-6 md:w-6" />
+            <p className="text-sm md:text-[1rem]">No Bookings Available</p>
+          </div>
+        ) : (
+          <div>
+            {(bookings as Booking[])?.map((booking: Booking) => {
+              return (
+                <div
+                  key={booking.bookingId}
+                  className="flex flex-row justify-between items-center border-b py-2 last:border-0"
+                >
+                  <div>
+                    <h2 className="text-brand-start font-medium">
+                      {booking.callerName}
+                    </h2>
+                    <p className="text-sm text-gray-700 max-w-[70%] sm:max-w-full">{`${
+                      booking.occassion
+                    } - ${formatToYMD(booking.createdAt)}`}</p>
+                  </div>
+
+                  <div
+                    className={`${getStatusColor(
+                      booking.status as string,
+                      "badge"
+                    )} flex flex-row rounded-full px-3 py-1 items-center gap-2`}
+                  >
+                    <div className="flex">
+                      {getStatusIcon(booking.status as string)}
+                    </div>
+                    <p className="text-sm">{booking.status}</p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

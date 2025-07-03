@@ -39,7 +39,7 @@ class BookingController {
       specialInstruction,
     } = req.body;
 
-    console.log(`ID: ${bookingId}, ${callerName}`);
+ 
     try {
       // call the service class to create a new booking and save in the DB
       const newBooking = await bookingService.createBooking(
@@ -78,7 +78,7 @@ class BookingController {
   }
 
   async getBookingByBookingId(req: Request, res: Response, next: NextFunction) {
-    console.log("get api hit");
+    
     // extract BookingID from url
     const bookingId = req.params.bookingId;
 
@@ -116,7 +116,7 @@ class BookingController {
     res: Response,
     next: NextFunction
   ) {
-    console.log("update api hit");
+   
     // extract the booking ID from URL and the update info from the request body
     const { bookingId } = req.params;
     const info = req.body;
@@ -239,6 +239,7 @@ class BookingController {
   }
 
   async getAllBooking(req: AuthRequest, res: Response, next: NextFunction) {
+    
     // extract all possible filtering parameters from the request query object.
     const {
       status,

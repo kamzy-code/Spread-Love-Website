@@ -2,11 +2,11 @@
 
 import { useRouter } from "next/navigation";
 import { useAdminAuth } from "@/hooks/authContext";
-import { useEffect, useState } from "react";
+import { useEffect, useState, createContext } from "react";
 import AdminShell from "../ui/AdminShell";
 import PageError from "../ui/pageError";
 import PageLoading from "../ui/pageLoading";
-import Analytics from "./analytics";
+import FilterContextProvider from "./filterContext";
 
 export default function Dashboard() {
   const { user, authStatus, isAuthenticated, authError, loading, logout } =
@@ -36,14 +36,10 @@ export default function Dashboard() {
 
   return (
     <AdminShell>
-      <div className="py-6 md:py-8 space-y-8">
-        <h1 className="text-3xl font-bold"> 
-          Dashboard
-        </h1>
+      <div className="py-6 md:py-12 space-y-8">
+        <h1 className="text-3xl font-bold">Dashboard</h1>
 
-        <Analytics></Analytics>
-        
-
+        <FilterContextProvider></FilterContextProvider>
       </div>
     </AdminShell>
   );
