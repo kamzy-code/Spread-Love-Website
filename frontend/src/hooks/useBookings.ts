@@ -25,6 +25,7 @@ export interface Booking {
 export interface BookingFilters {
   status?: string;
   callType?: string;
+  occassion?: string;
   country?: string;
   assignedRep?: string;
   singleDate?: string;
@@ -69,7 +70,9 @@ export const useBookings = (filters: BookingFilters) => {
       }
 
       const data = await res.json();
-      return data.data;
+      return {data: data.data,
+        meta: data.meta
+      };
     },
     staleTime: 1000 * 30, // 30 seconds
   });

@@ -246,6 +246,7 @@ class BookingController {
       assignedRep,
       callType,
       country,
+      occassion,
       sortParam,
       sortOrder,
       page = "1",
@@ -267,6 +268,7 @@ class BookingController {
 
     // add query fields to the query object only if they exist.
     if (status) searchQuery.status = status;
+    if (occassion) searchQuery.occassion = occassion;
     if (assignedRep) searchQuery.assignedRep = assignedRep;
     if (callType) searchQuery.callType = callType;
     if (country) searchQuery.country = country;

@@ -1,74 +1,47 @@
-
-import { useBookings, Booking, BookingFilters } from "@/hooks/useBookings";
+import { useBookingFilter } from "./bookingFilterContext";
+import { useBookings } from "@/hooks/useBookings";
+import PageLoading from "../ui/pageLoading";
 import MiniLoader from "../ui/miniLoader";
-import { Calendar, XCircle } from "lucide-react";
+import { BookingFilters } from "@/hooks/useBookings";
+import { XCircle, Calendar } from "lucide-react";
 import { formatToYMD } from "@/lib/formatDate";
+import { Booking } from "@/hooks/useBookings";
 import { getStatusColor, getStatusIcon } from "@/lib/getStatusColor";
-import { FilterType, useFilter } from "./dashboardFilterContext";
-import { useRouter } from "next/navigation";
 
-export default function RecentBookings() {
-  const { appliedFilterType, appliedDate, appliedEndDate, appliedStartDate } =
-    useFilter();
+export default function BookingTable() {
+  const filter = useBookingFilter();
 
-  const filters: BookingFilters = {
-    filterType: appliedFilterType as FilterType,
-    startDate: appliedStartDate,
-    endDate: appliedEndDate,
-    singleDate: appliedDate,
-    sortParam: "createdAt",
-    sortOrder: "-1",
-    page: 1,
-    limit: 5,
-  };
-
-  const router = useRouter();
-  
-
-  const {
-    data,
-    error,
-    isLoading,
-    refetch,
-  } = useBookings(filters as BookingFilters);
+  const { data, error, isLoading, refetch } = useBookings(
+    filter as BookingFilters
+  );
 
   const { data: bookings, meta } = data ?? { data: [], meta: undefined };
-  
+
   if (error)
     return (
-      <div className="h-50 w-full flex flex-col items-center justify-center gap-4 card">
+      <div className="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] flex flex-col items-center justify-center gap-4 card">
         <div className="flex flex-col justify-center items-center">
           <XCircle className="h-8 md:w-8 text-red-500"></XCircle>
           <p className="text-gray-500">Error Fetching Bookings</p>
         </div>
-        <button className="btn-primary h-10 rounded-lg flex justify-center items-center" onClick={() => refetch()}>
+        <button
+          className="btn-primary h-10 rounded-lg flex justify-center items-center"
+          onClick={() => refetch()}
+        >
           Try again
-        </button> 
+        </button>
       </div>
     );
 
   return (
-    <div className="card">
-      <div className="min-h-50 p-6 flex flex-col gap-4">
-        <div className="w-full flex justify-between">
-
-        <h2 className="md:text-xl font-semibold text-brand-start">
-          Recent Bookings
-        </h2>
-
-        <button className="text-brand-end hover:text-brand-start" onClick={()=> router.push('/admin/bookings')}>
-            {`View More>`}
-        </button>
+    <div>
+      {isLoading ? (
+        <div className="flex-1 flex flex-col justify-center items-center">
+          <MiniLoader></MiniLoader>
         </div>
-
-        {isLoading && (
-          <div className="flex-1 flex flex-col justify-center items-center">
-            <MiniLoader></MiniLoader>
-          </div>
-        )}
-
+      ) : (<div >
         {bookings?.length === 0 ? (
-          <div className="flex-1 flex flex-col justify-center items-center  text-gray-500">
+          <div className="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] flex-1 flex flex-col justify-center items-center  text-gray-500">
             <Calendar className="h-4 w-4 md:h-6 md:w-6" />
             <p className="text-sm md:text-[1rem]">No Bookings Available</p>
           </div>
@@ -105,7 +78,9 @@ export default function RecentBookings() {
             })}
           </div>
         )}
-      </div>
+      </div>)}
+
+       
     </div>
   );
 }

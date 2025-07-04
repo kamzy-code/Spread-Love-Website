@@ -133,50 +133,81 @@ export default function FilterContextProvider({
             transition={{ delay: 0.2 }}
           >
             <form className="flex flex-col lg:flex-row gap-4">
-              <div className="flex flex-row items-center space-x-2 w-full lg:w-auto">
-                <label className="text-gray-700 font-medium">Filter: </label>
-                <select
-                  name="filterType"
-                  className="px-4 py-2 border border-gray-300 rounded-lg flex focus:ring-2 focus:ring-brand-end focus:border-transparent"
-                  onChange={handleFilterChnage}
-                  value={filterType}
-                  required
-                >
-                  {filterOptions.map((option) => {
-                    return (
-                      <option key={option.key} value={option.key}>
-                        {option.label}
-                      </option>
-                    );
-                  })}
-                </select>
-              </div>
-
-              {filterType === "daily" && (
-                <div className="flex flex-row items-center space-x-2 w-full lg:w-auto">
-                  <label className="text-gray-700 font-medium">Date: </label>
-                  <input
-                    type="date"
-                    name="date"
-                    className="px-4 py-2 border border-gray-300 rounded-lg flex focus:ring-2 focus:ring-brand-end focus:border-transparent"
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      setDate(e.target.value)
-                    }
-                    value={date}
-                  />
+              <div className="flex flex-row gap-4">
+                <div className="flex flex-row items-center space-x-2 w-auto">
+                  <label className="text-gray-700 font-medium text-sm">Filter: </label>
+                  <select
+                    name="filterType"
+                    className="px-4 border border-gray-300 rounded-sm h-6 flex items-center justify-center text-sm focus:ring-2 focus:ring-brand-end focus:border-transparent"
+                    onChange={handleFilterChnage}
+                    value={filterType}
+                    required
+                  >
+                    {filterOptions.map((option) => {
+                      return (
+                        <option key={option.key} value={option.key}>
+                          {option.label}
+                        </option>
+                      );
+                    })}
+                  </select>
                 </div>
-              )}
+
+                {filterType === "daily" && (
+                  <div className="flex flex-row items-center space-x-2 w-full lg:w-auto">
+                    <label className="text-gray-700 font-medium text-sm">Date: </label>
+                    <input
+                      type="date"
+                      name="date"
+                      className="px-4 border border-gray-300 rounded-sm h-6 flex items-center justify-center text-sm focus:ring-2 focus:ring-brand-end focus:border-transparent"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                        setDate(e.target.value)
+                      }
+                      value={date}
+                    />
+                  </div>
+                )}
+                {filterType === "weekly" && (
+                  <div className="flex flex-row items-center space-x-2 w-full lg:w-auto">
+                    <label className="text-gray-700 font-medium text-sm">Week: </label>
+                    <input
+                      type="week"
+                      name="week"
+                      className="px-4 border border-gray-300 rounded-sm h-6 flex items-center justify-center text-sm focus:ring-2 focus:ring-brand-end focus:border-transparent"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                        setDate(e.target.value)
+                      }
+                      value={date}
+                    />
+                  </div>
+                )}
+
+                {filterType === "monthly" && (
+                  <div className="flex flex-row items-center space-x-2 w-full lg:w-auto">
+                    <label className="text-gray-700 font-medium text-sm">Month: </label>
+                    <input
+                      type="month"
+                      name="month"
+                      className="px-4 border border-gray-300 rounded-sm h-6 flex items-center justify-center text-sm focus:ring-2 focus:ring-brand-end focus:border-transparent"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                        setDate(e.target.value)
+                      }
+                      value={date}
+                    />
+                  </div>
+                )}
+              </div>
 
               {filterType === "custom" && (
                 <div className="flex flex-col gap-4 sm:flex-row">
-                  <div className="flex flex-row items-center space-x-2 w-full md:w-auto">
-                    <label className="text-gray-700 font-medium">
+                  <div className="flex flex-row items-center space-x-2 w-auto">
+                    <label className="text-gray-700 font-medium text-sm">
                       Start Date:{" "}
                     </label>
                     <input
                       type="date"
                       name="startDate"
-                      className="px-4 py-2 border border-gray-300 rounded-lg flex focus:ring-2 focus:ring-brand-end focus:border-transparent"
+                      className="px-4 py-2 border border-gray-300 rounded-sm h-6 flex items-center justify-center text-sm focus:ring-2 focus:ring-brand-end focus:border-transparent"
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                         setStartDate(e.target.value)
                       }
@@ -184,14 +215,14 @@ export default function FilterContextProvider({
                     />
                   </div>
 
-                  <div className="flex flex-row items-center space-x-2 w-full md:w-auto">
-                    <label className="text-gray-700 font-medium">
+                  <div className="flex flex-row items-center space-x-2 :w-auto">
+                    <label className="text-gray-700 font-medium text-sm">
                       End Date:{" "}
                     </label>
                     <input
                       type="date"
                       name="endDate"
-                      className="px-4 py-2 border border-gray-300 rounded-lg flex focus:ring-2 focus:ring-brand-end focus:border-transparent"
+                      className="px-4 py-2 border border-gray-300 rounded-sm h-6 flex items-center justify-center text-sm focus:ring-2 focus:ring-brand-end focus:border-transparent"
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                         setEndDate(e.target.value)
                       }
@@ -201,39 +232,9 @@ export default function FilterContextProvider({
                 </div>
               )}
 
-              {filterType === "weekly" && (
-                <div className="flex flex-row items-center space-x-2 w-full lg:w-auto">
-                  <label className="text-gray-700 font-medium">Week: </label>
-                  <input
-                    type="week"
-                    name="week"
-                    className="px-4 py-2 border border-gray-300 rounded-lg flex focus:ring-2 focus:ring-brand-end focus:border-transparent"
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      setDate(e.target.value)
-                    }
-                    value={date}
-                  />
-                </div>
-              )}
-
-              {filterType === "monthly" && (
-                <div className="flex flex-row items-center space-x-2 w-full lg:w-auto">
-                  <label className="text-gray-700 font-medium">Month: </label>
-                  <input
-                    type="month"
-                    name="month"
-                    className="px-4 py-2 border border-gray-300 rounded-lg flex focus:ring-2 focus:ring-brand-end focus:border-transparent"
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      setDate(e.target.value)
-                    }
-                    value={date}
-                  />
-                </div>
-              )}
-
               <div className="w-full lg:w-auto">
                 <button
-                  className="btn-primary h-10 rounded-lg flex justify-center items-center"
+                  className="btn-primary rounded-sm h-8 flex items-center justify-center text-sm"
                   onClick={handleApplyFilter}
                 >
                   Apply

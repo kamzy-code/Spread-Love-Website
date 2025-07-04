@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { useAdminAuth } from "@/hooks/authContext";
 import MiniLoader from "../ui/miniLoader";
-import { useFilter } from "./filterContext";
+import { useFilter } from "./dashboardFilterContext";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
@@ -45,7 +45,7 @@ const getAnalytics = async (
   return data;
 };
 
-const STATUS_LIST = [
+export const STATUS_LIST = [
   {
     key: "pending",
     label: "Pending",

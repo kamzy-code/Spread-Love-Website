@@ -14,7 +14,7 @@ export default function AdminShell({
     <div className="min-h-screen bg-gray-50">
       <TopNav />
       <SideNav />
-      <main className="pt-16 md:ml-64 px-6 md:px-8 h-screen">{children}</main>
+      <main className="pt-16 md:ml-64 px-4 sm:px-6 md:px-8 h-screen">{children}</main>
     </div>
   );
 }
