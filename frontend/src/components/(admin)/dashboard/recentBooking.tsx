@@ -1,7 +1,7 @@
 
 import { useBookings, Booking, BookingFilters } from "@/hooks/useBookings";
 import MiniLoader from "../ui/miniLoader";
-import { Calendar } from "lucide-react";
+import { Calendar, XCircle } from "lucide-react";
 import { formatToYMD } from "@/lib/formatDate";
 import { getStatusColor, getStatusIcon } from "@/lib/getStatusColor";
 import { FilterType, useFilter } from "./filterContext";
@@ -29,7 +29,21 @@ export default function RecentBookings() {
     data: bookings,
     error,
     isLoading,
+    refetch,
   } = useBookings(filters as BookingFilters);
+
+  if (error)
+    return (
+      <div className="h-50 w-full flex flex-col items-center justify-center gap-4 card">
+        <div className="flex flex-col justify-center items-center">
+          <XCircle className="h-8 md:w-8 text-red-500"></XCircle>
+          <p className="text-gray-500">Error Fetching Bookings</p>
+        </div>
+        <button className="btn-primary h-10 rounded-lg flex justify-center items-center" onClick={() => refetch()}>
+          Try again
+        </button> 
+      </div>
+    );
 
   return (
     <div className="card">

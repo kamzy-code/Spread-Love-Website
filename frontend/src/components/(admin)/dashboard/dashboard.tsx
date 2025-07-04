@@ -7,12 +7,17 @@ import AdminShell from "../ui/AdminShell";
 import PageError from "../ui/pageError";
 import PageLoading from "../ui/pageLoading";
 import FilterContextProvider from "./filterContext";
+import Analytics from "./analytics";
+import RecentBookings from "./recentBooking";
+import { Filter } from "lucide-react";
+import {motion, AnimatePresence} from "framer-motion"
 
 export default function Dashboard() {
   const { user, authStatus, isAuthenticated, authError, loading, logout } =
     useAdminAuth();
   const [mounted, setMounted] = useState(false);
   const router = useRouter();
+  const [showFilter, setShowFilter] = useState(true);
 
   useEffect(() => {
     setMounted(true);
@@ -35,12 +40,29 @@ export default function Dashboard() {
   }
 
   return (
-    <AdminShell>
+    <AnimatePresence mode="wait">
+      <AdminShell>
       <div className="py-6 md:py-12 space-y-8">
-        <h1 className="text-3xl font-bold">Dashboard</h1>
+        <div className="flex justify-between">
+          <h1 className="text-3xl font-bold">Dashboard</h1>
+          <button className="flex items-center px-4 py-2 border border-brand-end rounded-lg hover:bg-brand-end hover:scale-105 hover:text-white transition text-brand-end"
+          onClick={()=> setShowFilter(!showFilter)}>
+            <Filter className="h-5 w-5 mr-2 " />
+            Filter
+          </button>
+        </div>
 
-        <FilterContextProvider></FilterContextProvider>
+        <FilterContextProvider showFilter={showFilter}>
+          <div>
+            <Analytics></Analytics>
+          </div>
+          <div>
+            <RecentBookings></RecentBookings>
+          </div>
+        </FilterContextProvider>
       </div>
     </AdminShell>
+    </AnimatePresence>
+    
   );
 }

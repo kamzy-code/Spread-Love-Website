@@ -11,8 +11,7 @@ import {
 } from "lucide-react";
 import { useAdminAuth } from "@/hooks/authContext";
 import MiniLoader from "../ui/miniLoader";
-import { useFilter, } from "./filterContext";
- 
+import { useFilter } from "./filterContext";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
@@ -57,7 +56,11 @@ const STATUS_LIST = [
     label: "Successful",
     icon: <CheckCircle className="h-4 w-4 md:h-6 md:w-6" />,
   },
-  { key: "rejected", label: "Rejected", icon: <Ban className="h-4 w-4 md:h-6 md:w-6" /> },
+  {
+    key: "rejected",
+    label: "Rejected",
+    icon: <Ban className="h-4 w-4 md:h-6 md:w-6" />,
+  },
   {
     key: "rescheduled",
     label: "Rescheduled",
@@ -70,14 +73,13 @@ const STATUS_LIST = [
   },
 ];
 
-
 export default function Analytics() {
   const { user } = useAdminAuth();
 
-  
-  const {appliedFilterType, appliedDate, appliedEndDate, appliedStartDate} = useFilter() 
+  const { appliedFilterType, appliedDate, appliedEndDate, appliedStartDate } =
+    useFilter();
 
-  const { data, error, isLoading } = useQuery({
+  const { data, error, isLoading, refetch } = useQuery({
     queryKey: [
       "analytics",
       appliedFilterType,
@@ -96,35 +98,8 @@ export default function Analytics() {
     staleTime: 30 * 1000,
   });
 
-  //   const value = e.target.value as FilterType;
-  //   setFilterType(value);
-
-  //   if (value === "weekly") setDate(getDefaultWeek());
-  //   else if (value === "monthly") setDate(getDefaultMonth());
-  //   else setDate(getDefaultDate());
-
-  //   setStartDate("");
-  //   setEndDate("");
-
-  //   if (value === "custom") {
-  //     setDate("");
-  //     setStartDate(getDefaultDate());
-  //     setEndDate(getDefaultDate());
-  //   }
-  // };
-
-  // const handleApplyFilter = (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   setAppliedFilterType(filterType);
-  //   setAppliedDate(date);
-  //   setAppliedStartDate(startDate);
-  //   setAppliedEndDate(endDate);
-  // };
-
-  // Prepare status counts, ensuring all statuses are present
-  
   const statusCounts: Record<string, number> = {};
-  
+
   STATUS_LIST.forEach((status) => {
     statusCounts[status.key] = 0;
   });
@@ -185,12 +160,21 @@ export default function Analytics() {
     },
   ];
 
+  if (error)
+    return (
+      <div className="h-70 w-full flex flex-col items-center justify-center gap-4 card">
+        <div className="flex flex-col justify-center items-center">
+          <XCircle className="h-8 md:w-8 text-red-500"></XCircle>
+          <p className="text-gray-500">Error Fetching Analtyics</p>
+        </div>
+        <button className="btn-primary h-10 rounded-lg flex justify-center items-center" onClick={() => refetch()}>
+          Try again
+        </button>
+      </div>
+    );
   return (
     <div className="space-y-8">
-      
-      {isLoading && (
-        <MiniLoader></MiniLoader>
-      )}
+      {isLoading && <MiniLoader></MiniLoader>}
 
       {/* Stats Grid */}
       <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -212,7 +196,9 @@ export default function Analytics() {
                 {card.title}
               </div>
               <div className="w-full flex flex-row items-center justify-between">
-                <div className="text-lg md:text-2xl font-bold">{card.value}</div>
+                <div className="text-lg md:text-2xl font-bold">
+                  {card.value}
+                </div>
 
                 <div className="text-brand-end">{card.icon}</div>
               </div>
@@ -241,7 +227,7 @@ export default function Analytics() {
             </div>
           </div>
         ))}
-      </div>  
+      </div>
     </div>
   );
 }
