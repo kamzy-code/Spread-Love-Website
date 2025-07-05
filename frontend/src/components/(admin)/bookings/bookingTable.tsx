@@ -1,6 +1,5 @@
 import { useBookingFilter } from "./bookingFilterContext";
 import { useBookings } from "@/hooks/useBookings";
-import PageLoading from "../ui/pageLoading";
 import MiniLoader from "../ui/miniLoader";
 import { BookingFilters } from "@/hooks/useBookings";
 import { XCircle, Calendar } from "lucide-react";
@@ -9,61 +8,28 @@ import { Booking } from "@/hooks/useBookings";
 import { getStatusColor, getStatusIcon } from "@/lib/getStatusColor";
 import { useState, useMemo, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import { BookingFilterContext } from "./bookingFilterContext";
+import { useDebounce } from "@/hooks/useDebounce"; 
 
 export default function BookingTable() {
   const queryClient = useQueryClient();
-  const filter: BookingFilters = useBookingFilter();
-  const [searchFilter, setSearchFilter] = useState<BookingFilters>({
-    ...filter,
-    search: "",
-  });
+  const fullFilter: BookingFilterContext = useBookingFilter();
+  const { FallbackSearch, setFallbackSearch, ...filter } = fullFilter;
 
-  const { search: searchTerm } = filter;
+  const { search: searchTerm } = filter; 
 
   const { data, error, isLoading, refetch } = useBookings(
-    searchFilter as BookingFilters
+    filter as BookingFilters, searchTerm as string
   );
 
   const { data: bookings, meta } = data ?? { data: [], meta: undefined };
 
-  console.log(data);
-  const filteredBookings = useMemo(() => {
-    if (!searchTerm?.trim()) return bookings;
-
-    const term = searchTerm.toLowerCase();
-
-    const filteredList = bookings.filter(
-      (booking: Booking) =>
-        booking.bookingId?.toLowerCase().includes(term) ||
-        booking.callerName?.toLowerCase().includes(term) ||
-        booking.callerPhone?.includes(term) ||
-        booking.recipientName?.toLowerCase().includes(term) ||
-        booking.recipientPhone?.includes(term)
-    );
-
-    return (term.length < 3 && filteredList.length === 0 ? bookings : filteredList)
-  }, [searchTerm, bookings]);
-
-  useEffect(() => {
-    if (filter.search && filter.search.length >= 3 &&filteredBookings.length === 0) {
-      setSearchFilter(filter);
-    } else {
-      setSearchFilter({ ...filter, search: "" });
-    }
-  }, [filter, searchTerm]);
-
-  useEffect(()=>{
-    queryClient.invalidateQueries({
-      queryKey: ["bookings", searchFilter]
-    })
-  }, [searchFilter]);
 
   if (error)
     return (
       <div className="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] flex flex-col items-center justify-center gap-4 card py-4 px-8">
-      
         <div className="flex flex-col justify-center items-center text-center z-10">
-          <XCircle className="h-8 md:w-8 text-red-500"></XCircle>
+          <XCircle className="h-8 md:w-8 text-red-500" />
           <p className="text-gray-500">Error Fetching Bookings</p>
         </div>
         <button
@@ -79,46 +45,40 @@ export default function BookingTable() {
     <div>
       {isLoading ? (
         <div className="flex-1 flex flex-col justify-center items-center">
-          <MiniLoader></MiniLoader>
+          <MiniLoader />
         </div>
       ) : (
         <div>
           {bookings?.length === 0 ? (
-            <div className="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] flex-1 flex flex-col justify-center items-center  text-gray-500">
+            <div className="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] flex-1 flex flex-col justify-center items-center text-gray-500">
               <Calendar className="h-4 w-4 md:h-6 md:w-6" />
               <p className="text-sm md:text-[1rem]">No Bookings Available</p>
             </div>
           ) : (
             <div>
-              {(filteredBookings as Booking[])?.map((booking: Booking) => {
-                return (
-                  <div
-                    key={booking.bookingId}
-                    className="flex flex-row justify-between items-center border-b py-2 last:border-0"
-                  >
-                    <div>
-                      <h2 className="text-brand-start font-medium">
-                        {booking.callerName}
-                      </h2>
-                      <p className="text-sm text-gray-700 max-w-[70%] sm:max-w-full">{`${
-                        booking.occassion
-                      } - ${formatToYMD(booking.createdAt)}`}</p>
-                    </div>
-
-                    <div
-                      className={`${getStatusColor(
-                        booking.status as string,
-                        "badge"
-                      )} flex flex-row rounded-full px-3 py-1 items-center gap-2`}
-                    >
-                      <div className="flex">
-                        {getStatusIcon(booking.status as string)}
-                      </div>
-                      <p className="text-sm">{booking.status}</p>
-                    </div>
+              {(bookings as Booking[])?.map((booking) => (
+                <div
+                  key={booking.bookingId}
+                  className="flex flex-row justify-between items-center border-b py-2 last:border-0"
+                >
+                  <div>
+                    <h2 className="text-brand-start font-medium">
+                      {booking.callerName}
+                    </h2>
+                    <p className="text-sm text-gray-700 max-w-[70%] sm:max-w-full">{`${booking.occassion} - ${formatToYMD(booking.createdAt)}`}</p>
                   </div>
-                );
-              })}
+
+                  <div
+                    className={`${getStatusColor(
+                      booking.status as string,
+                      "badge"
+                    )} flex flex-row rounded-full px-3 py-1 items-center gap-2`}
+                  >
+                    <div className="flex">{getStatusIcon(booking.status as string)}</div>
+                    <p className="text-sm">{booking.status}</p>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
         </div>

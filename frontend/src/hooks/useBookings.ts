@@ -54,9 +54,9 @@ const buildQueryParams = (filters: Record<string, any>) => {
   return searchParams.toString();
 };
 
-export const useBookings = (filters: BookingFilters) => {
+export const useBookings = (filters: BookingFilters, searchValue: string) => {
   return useQuery({
-    queryKey: ["bookings", filters],
+    queryKey: ["bookings", filters, searchValue],
     queryFn: async ({signal}) => {
       const queryString = buildQueryParams(filters as Record<string, any>);
 

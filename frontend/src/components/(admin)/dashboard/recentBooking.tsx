@@ -30,7 +30,7 @@ export default function RecentBookings() {
     error,
     isLoading,
     refetch,
-  } = useBookings(filters as BookingFilters);
+  } = useBookings(filters as BookingFilters, "all");
 
   const { data: bookings, meta } = data ?? { data: [], meta: undefined };
   

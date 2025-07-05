@@ -248,7 +248,7 @@ class BookingController {
       sortParam,
       sortOrder,
       page = "1",
-      limit = "10",
+      limit = "2",
       startDate,
       endDate,
       search,
@@ -286,7 +286,7 @@ class BookingController {
       };
     }
 
-    if (req.query.search) {
+    if (search) {
       const regex = new RegExp(req.query.search as string, "i");
       searchQuery.$or = [
         { callerName: regex },
@@ -300,7 +300,6 @@ class BookingController {
     const skip = (parseInt(page as string) - 1) * parseInt(limit as string);
     const numericLimit = parseInt(limit as string);
 
-    let booking: any;
     try {
       // call service clas to fetch the booking and sort it via the sort parameter if it exists
 
@@ -314,6 +313,7 @@ class BookingController {
         numericLimit
       );
 
+      
       const total = await bookingService.getTotalBookingsCount(searchQuery);
 
       // return booking list
