@@ -34,6 +34,7 @@ export interface BookingFilters {
   endDate?: string;
   sortParam?: string;
   sortOrder?: "1" | "-1";
+  search?: string; 
   page?: number;
   limit?: number;
 }
@@ -74,6 +75,6 @@ export const useBookings = (filters: BookingFilters) => {
         meta: data.meta
       };
     },
-    staleTime: 1000 * 30, // 30 seconds
+    staleTime: 1000 * 60 * 0.5, // 30 seconds
   });
 };

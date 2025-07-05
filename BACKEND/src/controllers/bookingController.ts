@@ -19,6 +19,7 @@ import {
   startOfWeek,
   endOfWeek,
 } from "date-fns";
+import { Console } from "console";
 
 class BookingController {
   // Customer Endpoints
@@ -39,7 +40,6 @@ class BookingController {
       specialInstruction,
     } = req.body;
 
- 
     try {
       // call the service class to create a new booking and save in the DB
       const newBooking = await bookingService.createBooking(
@@ -78,7 +78,6 @@ class BookingController {
   }
 
   async getBookingByBookingId(req: Request, res: Response, next: NextFunction) {
-    
     // extract BookingID from url
     const bookingId = req.params.bookingId;
 
@@ -116,7 +115,6 @@ class BookingController {
     res: Response,
     next: NextFunction
   ) {
-   
     // extract the booking ID from URL and the update info from the request body
     const { bookingId } = req.params;
     const info = req.body;
@@ -239,7 +237,7 @@ class BookingController {
   }
 
   async getAllBooking(req: AuthRequest, res: Response, next: NextFunction) {
-    
+    console.log(`fetch all hit + ${new Date()}`)
     // extract all possible filtering parameters from the request query object.
     const {
       status,
@@ -253,6 +251,7 @@ class BookingController {
       limit = "10",
       startDate,
       endDate,
+      search,
       singleDate,
       filterType,
     } = req.query;
@@ -287,36 +286,47 @@ class BookingController {
       };
     }
 
+    if (req.query.search) {
+      const regex = new RegExp(req.query.search as string, "i");
+      searchQuery.$or = [
+        { callerName: regex },
+        { bookingId: regex },
+        { callerPhone: regex },
+        { recipientName: regex },
+        { recipientPhone: regex },
+      ];
+    }
+
     const skip = (parseInt(page as string) - 1) * parseInt(limit as string);
     const numericLimit = parseInt(limit as string);
 
     let booking: any;
     try {
       // call service clas to fetch the booking and sort it via the sort parameter if it exists
-     
-    const bookings = await bookingService.getAllBooking(
-      user.userId,
-      user.role,
-      searchQuery,
-      sortOrderCast,
-      sortParam as string,
-      skip,
-      numericLimit
-    );
 
-     const total = await bookingService.getTotalBookingsCount(searchQuery)
+      const bookings = await bookingService.getAllBooking(
+        user.userId,
+        user.role,
+        searchQuery,
+        sortOrderCast,
+        sortParam as string,
+        skip,
+        numericLimit
+      );
+
+      const total = await bookingService.getTotalBookingsCount(searchQuery);
 
       // return booking list
-     res.status(200).json({
-      message: "Bookings fetched successfully",
-      data: bookings,
-      meta: {
-        total,
-        page: Number(page),
-        limit: numericLimit,
-        totalPages: Math.ceil(total / numericLimit),
-      },
-    });
+      res.status(200).json({
+        message: "Bookings fetched successfully",
+        data: bookings,
+        meta: {
+          total,
+          page: Number(page),
+          limit: numericLimit,
+          totalPages: Math.ceil(total / numericLimit),
+        },
+      });
       return;
     } catch (error) {
       next(error);
@@ -504,7 +514,9 @@ class BookingController {
     try {
       // Current period
       const analytics = await bookingService.getAnalytics(matchStage);
-      const totalBookings = await bookingService.getTotalBookingsCount(matchStage);
+      const totalBookings = await bookingService.getTotalBookingsCount(
+        matchStage
+      );
 
       // Previous period
       const prevTotalBookings = prevDateRange
