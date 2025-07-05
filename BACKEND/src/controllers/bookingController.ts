@@ -248,7 +248,7 @@ class BookingController {
       sortParam,
       sortOrder,
       page = "1",
-      limit = "2",
+      limit = "20",
       startDate,
       endDate,
       search,

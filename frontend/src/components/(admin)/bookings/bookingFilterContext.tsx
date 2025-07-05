@@ -10,6 +10,7 @@ import { services } from "@/components/services/serviceList";
 import { Search } from "lucide-react";
 import { useDebounce } from "@/hooks/useDebounce";
 
+
 const filterTypeOptions = [
   {
     key: "daily",
@@ -29,12 +30,10 @@ const filterTypeOptions = [
   },
 ];
 
-export type BookingFilterContext = BookingFilters & {
-  FallbackSearch?: boolean;
-  setFallbackSearch?: () => void;
-};
-
-export const filterContext = createContext<BookingFilterContext | null>(null);
+export type BookingFilterContex = BookingFilters & {
+ setPage : (newPage: number) => void
+}
+export const filterContext = createContext<BookingFilterContex | null>(null);
 
 export default function FilterContextProvider({
   children,
@@ -82,7 +81,6 @@ export default function FilterContextProvider({
     page: formData.page,
   });
   const [searchTerm, setSearchTerm] = useState("");
-  const [FallbackSearch, setFallbackSearch] = useState(false);
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const debouncedValue = useDebounce(debouncedSearch, 500);
 
@@ -165,8 +163,7 @@ export default function FilterContextProvider({
       value={{
         ...appliedFormData,
         search: debouncedValue,
-        FallbackSearch: FallbackSearch,
-        setFallbackSearch: () => setFallbackSearch(false),
+        setPage: (newPage: number) => setAppliedFormData((prev) => ({...prev, page: newPage}))
       }}
     >
       <div className="space-y-8">
@@ -395,7 +392,7 @@ export default function FilterContextProvider({
           </motion.div>
         )}
 
-        <div className="relative md:w-1/3 flex gap-4">
+        <div className="relative flex gap-4">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400"></Search>
           <input
             type="text"
@@ -406,7 +403,7 @@ export default function FilterContextProvider({
             placeholder="Search Booking"
           />
           <button
-            className="btn-primary"
+            className="btn-primary rounded-md h-10 flex items-center justify-center text-sm"
             onClick={() => setDebouncedSearch(searchTerm)}
           >
             Search
@@ -414,6 +411,7 @@ export default function FilterContextProvider({
         </div>
 
         <div className="space-y-8">{children}</div>
+
       </div>
     </filterContext.Provider>
   );

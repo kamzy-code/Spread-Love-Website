@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, keepPreviousData } from "@tanstack/react-query";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
@@ -75,6 +75,8 @@ export const useBookings = (filters: BookingFilters, searchValue: string) => {
         meta: data.meta
       };
     },
-    staleTime: 1000 * 60 * 0.5, // 30 seconds
+    staleTime: 1000 * 60 * 2, 
+    gcTime: 1000 * 60 * 5,
+    placeholderData: keepPreviousData,
   });
 };
