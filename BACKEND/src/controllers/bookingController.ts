@@ -237,7 +237,7 @@ class BookingController {
   }
 
   async getAllBooking(req: AuthRequest, res: Response, next: NextFunction) {
-    console.log(`fetch all hit + ${new Date()}`)
+    console.log(`fetch all hit + ${new Date()}`);
     // extract all possible filtering parameters from the request query object.
     const {
       status,
@@ -270,7 +270,13 @@ class BookingController {
     if (occassion) searchQuery.occassion = occassion;
     if (assignedRep) searchQuery.assignedRep = assignedRep;
     if (callType) searchQuery.callType = callType;
-    if (country) searchQuery.country = country;
+    if (country) {
+      if (country === "local") {
+        searchQuery.country = /nigeria/i; // case-insensitive match for "nigeria"
+      } else if (country === "international") {
+        searchQuery.country = { $not: /nigeria/i }; // case-insensitive "not nigeria"
+      }
+    }
 
     const dateRange = getDateRange(
       filterType as string,
@@ -313,7 +319,6 @@ class BookingController {
         numericLimit
       );
 
-      
       const total = await bookingService.getTotalBookingsCount(searchQuery);
 
       // return booking list
