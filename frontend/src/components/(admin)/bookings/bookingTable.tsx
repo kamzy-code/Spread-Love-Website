@@ -1,13 +1,11 @@
 import { useBookingFilter } from "./bookingFilterContext";
 import { useBookings } from "@/hooks/useBookings";
 import MiniLoader from "../ui/miniLoader";
-import { BookingFilters } from "@/hooks/useBookings";
 import { XCircle, Calendar } from "lucide-react";
 import { formatToYMD } from "@/lib/formatDate";
-import { Booking } from "@/hooks/useBookings";
 import { getStatusColor, getStatusIcon } from "@/lib/getStatusColor";
-import { BookingFilterContex } from "./bookingFilterContext";
 import Pagination from "../ui/pagination";
+import { BookingFilterContex, BookingFilters, Booking } from "@/lib/types";
 
 export default function BookingTable() {
   const fullFilter: BookingFilterContex = useBookingFilter();
@@ -21,7 +19,7 @@ export default function BookingTable() {
   );
 
   const { data: bookings, meta } = data ?? { data: [], meta: undefined };
-  console.log("Meta: ", meta)
+  console.log("Meta: ", meta);
 
   if (error)
     return (
@@ -86,7 +84,9 @@ export default function BookingTable() {
                 </div>
               ))}
 
-             {meta && <Pagination meta={meta} />}
+              <div>
+                {meta && meta.totalPages > 0 && <Pagination meta={meta} />}
+              </div>
             </div>
           }
         </div>

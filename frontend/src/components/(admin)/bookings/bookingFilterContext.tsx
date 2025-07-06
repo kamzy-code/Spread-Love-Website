@@ -1,15 +1,18 @@
 import { useState, createContext, useContext, useEffect } from "react";
 import { format } from "date-fns";
-
 import { useQueryClient } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
-import { FilterType } from "@/lib/types";
-import { BookingFilters } from "@/hooks/useBookings";
 import { STATUS_LIST } from "../dashboard/analytics";
 import { services } from "@/components/services/serviceList";
 import { Search } from "lucide-react";
 import { useDebounce } from "@/hooks/useDebounce";
-
+import { BookingFilterContex, BookingFilters, FilterType } from "@/lib/types";
+import {
+  getDefaultDate,
+  getDefaultMonth,
+  getDefaultWeek,
+  getDefaultYear,
+} from "@/lib/formatDate";
 
 const filterTypeOptions = [
   {
@@ -25,14 +28,15 @@ const filterTypeOptions = [
     label: "Monthly",
   },
   {
+    key: "yearly",
+    label: "Yearly",
+  },
+  {
     key: "custom",
     label: "Custom",
   },
 ];
 
-export type BookingFilterContex = BookingFilters & {
- setPage : (newPage: number) => void
-}
 export const filterContext = createContext<BookingFilterContex | null>(null);
 
 export default function FilterContextProvider({
@@ -44,18 +48,28 @@ export default function FilterContextProvider({
   activeFilters: { [key: string]: boolean };
   sortOptions: { sortOrder: string; sortParam: string };
 }) {
+  // states an values
   const queryClient = useQueryClient();
-  const getDefaultDate = () => format(new Date(), "yyyy-MM-dd");
-  const getDefaultWeek = () => format(new Date(), "yyyy-'W'II");
-  const getDefaultMonth = () => format(new Date(), "yyyy-MM");
 
-  const [filterType, setFilterType] = useState<FilterType>("daily");
-  const [formData, setFormData] = useState<BookingFilters>({
+  const savedFilter = sessionStorage.getItem("bookingFilters");
+
+  const [filterType, setFilterType] = useState<FilterType>(()=>{
+    if (savedFilter) {
+      const {filterType} = JSON.parse(savedFilter); 
+      return filterType;
+    }
+    return "daily";
+  });
+  const [formData, setFormData] = useState<BookingFilters>(() => {
+    if (savedFilter) return JSON.parse(savedFilter);
+    return {
     singleDate:
       filterType === "weekly"
         ? getDefaultWeek()
         : filterType === "monthly"
         ? getDefaultMonth()
+        : filterType === "yearly"
+        ? getDefaultYear()
         : getDefaultDate(),
     startDate: "",
     endDate: "",
@@ -65,8 +79,13 @@ export default function FilterContextProvider({
     assignedRep: "",
     country: "",
     page: 1,
-  });
-  const [appliedFormData, setAppliedFormData] = useState<BookingFilters>({
+  }});
+  const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState(searchTerm);
+  const debouncedValue = useDebounce(debouncedSearch, 500);
+
+// applied filter
+    const [appliedFormData, setAppliedFormData] = useState<BookingFilters>({
     filterType: filterType,
     singleDate: formData.singleDate,
     startDate: formData.startDate,
@@ -80,10 +99,8 @@ export default function FilterContextProvider({
     sortOrder: sortOptions.sortOrder as "1" | "-1",
     page: formData.page,
   });
-  const [searchTerm, setSearchTerm] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
-  const debouncedValue = useDebounce(debouncedSearch, 500);
 
+  // functions
   const handleFilterypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value as FilterType;
     setFilterType(value);
@@ -93,6 +110,8 @@ export default function FilterContextProvider({
       setFormData((prev) => ({ ...prev, singleDate: getDefaultWeek() }));
     else if (value === "monthly")
       setFormData((prev) => ({ ...prev, singleDate: getDefaultMonth() }));
+    else if (value === "yearly")
+      setFormData((prev) => ({ ...prev, singleDate: getDefaultYear() }));
     else setFormData((prev) => ({ ...prev, singleDate: getDefaultDate() }));
 
     setFormData((prev) => ({ ...prev, startDate: "", endDate: "" }));
@@ -130,6 +149,11 @@ export default function FilterContextProvider({
   };
 
   useEffect(() => {
+    sessionStorage.setItem("bookingFilters", JSON.stringify(appliedFormData));
+  }, [appliedFormData]);
+
+
+  useEffect(() => {
     setAppliedFormData((prev) => ({
       ...prev,
       sortParam: sortOptions.sortParam,
@@ -163,7 +187,8 @@ export default function FilterContextProvider({
       value={{
         ...appliedFormData,
         search: debouncedValue,
-        setPage: (newPage: number) => setAppliedFormData((prev) => ({...prev, page: newPage}))
+        setPage: (newPage: number) =>
+          setAppliedFormData((prev) => ({ ...prev, page: newPage })),
       }}
     >
       <div className="space-y-8">
@@ -174,6 +199,7 @@ export default function FilterContextProvider({
             exit={{ y: -20 }}
             transition={{ delay: 0.2 }}
           >
+            {/* filters */}
             <form className="flex flex-col gap-4">
               <div className="flex flex-col lg:flex-row gap-4">
                 <div className="flex flex-col sm:flex-row gap-4">
@@ -237,6 +263,24 @@ export default function FilterContextProvider({
                         className="px-4 py-2 border border-gray-300 rounded-sm h-6 flex items-center justify-center text-sm  focus:ring-2 focus:ring-brand-end focus:border-transparent"
                         onChange={handleOnChange}
                         value={formData.singleDate}
+                      />
+                    </div>
+                  )}
+
+                  {filterType === "yearly" && (
+                    <div className="flex flex-row items-center space-x-2 w-auto">
+                      <label className="text-gray-700 font-medium text-sm">
+                        Year:{" "}
+                      </label>
+                      <input
+                        type="number"
+                        min="1900"
+                        max="2100"
+                        name="singleDate"
+                        className="px-4 py-2 border border-gray-300 rounded-sm h-6 flex items-center justify-center text-sm  focus:ring-2 focus:ring-brand-end focus:border-transparent w-30"
+                        onChange={handleOnChange}
+                        value={formData.singleDate}
+                        placeholder="Enter year"
                       />
                     </div>
                   )}
@@ -380,6 +424,7 @@ export default function FilterContextProvider({
                 </div>
               )}
 
+              {/* apply button */}
               <div className="w-full lg:w-auto">
                 <button
                   className="btn-primary rounded-sm h-8 flex items-center justify-center text-sm "
@@ -392,6 +437,7 @@ export default function FilterContextProvider({
           </motion.div>
         )}
 
+        {/* search input */}
         <div className="relative flex gap-4">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400"></Search>
           <input
@@ -411,7 +457,6 @@ export default function FilterContextProvider({
         </div>
 
         <div className="space-y-8">{children}</div>
-
       </div>
     </filterContext.Provider>
   );

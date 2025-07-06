@@ -6,7 +6,7 @@ import { useEffect, useState, createContext } from "react";
 import AdminShell from "../ui/AdminShell";
 import PageError from "../ui/pageError";
 import PageLoading from "../ui/pageLoading";
-import FilterContextProvider from "./dashboardFilterContext";
+import DashboardContextProvider from "./dashboardFilterContext";
 import Analytics from "./analytics";
 import RecentBookings from "./recentBooking";
 import { Filter } from "lucide-react";
@@ -59,14 +59,14 @@ export default function Dashboard() {
             </button>
           </div>
 
-          <FilterContextProvider showFilter={showFilter}>
+          <DashboardContextProvider showFilter={showFilter}>
             <div>
               <Analytics></Analytics>
             </div>
             <div>
               <RecentBookings></RecentBookings>
             </div>
-          </FilterContextProvider>
+          </DashboardContextProvider>
         </motion.div>
       </AdminShell>
     </AnimatePresence>

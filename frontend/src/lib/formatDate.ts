@@ -1,3 +1,4 @@
+import { format } from "date-fns";
 
 export function formatToYMD(dateString: string): string {
   const date = new Date(dateString);
@@ -7,3 +8,8 @@ export function formatToYMD(dateString: string): string {
 
   return `${year}-${month}-${day}`;
 }
+
+export const getDefaultDate = () => format(new Date(), "yyyy-MM-dd");
+export const getDefaultWeek = () => format(new Date(), "yyyy-'W'II");
+export const getDefaultMonth = () => format(new Date(), "yyyy-MM");
+export const getDefaultYear = () => format(new Date(), "yyyy");

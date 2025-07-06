@@ -1,43 +1,8 @@
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
+import { BookingFilters, Booking } from "@/lib/types";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
-export interface Booking {
-  bookingId: string;
-  callerName: string;
-  callerPhone: string;
-  callerEmail?: string;
-  recipientName: string;
-  recipientPhone: string;
-  country: string;
-  occassion: string;
-  callType: string;
-  callDate: Date;
-  price: string;
-  message?: string;
-  specialInstruction?: string;
-  status?: string;
-  assignedRep?: any; // populated rep data
-  createdAt: string;
-  // add more fields as needed
-}
-
-export interface BookingFilters {
-  status?: string;
-  callType?: string;
-  occassion?: string;
-  country?: string;
-  assignedRep?: string;
-  singleDate?: string;
-  filterType?: "daily" | "weekly" | "monthly" | "yearly" | "custom";
-  startDate?: string;
-  endDate?: string;
-  sortParam?: string;
-  sortOrder?: "1" | "-1";
-  search?: string; 
-  page?: number;
-  limit?: number;
-}
 
 const buildQueryParams = (filters: Record<string, any>) => {
   const searchParams = new URLSearchParams();

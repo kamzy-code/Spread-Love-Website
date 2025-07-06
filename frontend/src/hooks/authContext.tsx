@@ -3,38 +3,8 @@
 import { useState, useContext, createContext, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
+import { AdminAuthContextType, AuthStatus, AdminUser } from "@/lib/types";
 
-type AdminUser = {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  role: string;
-  status: string;
-  _id: string;
-};
-
-type AuthStatus =
-  | "idle"
-  | "checking"
-  | "authenticated"
-  | "unauthenticated"
-  | "error";
-
-interface AdminAuthContextType {
-  user: AdminUser | null;
-  isAuthenticated: boolean;
-  loading: boolean;
-  login: (body: {
-    email: string;
-    password: string;
-    rememberMe: boolean;
-  }) => Promise<void>;
-  logout: () => Promise<void>;
-  authError: string | null;
-  authStatus: AuthStatus;
-   reload: () => Promise<void>;
-}
 
 const AdminAuthContext = createContext<AdminAuthContextType | undefined>(
   undefined

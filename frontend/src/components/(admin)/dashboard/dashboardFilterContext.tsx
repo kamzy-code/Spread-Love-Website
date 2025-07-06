@@ -1,8 +1,8 @@
-import { useState, createContext, useContext } from "react";
+import { useState, createContext, useContext, useEffect } from "react";
 import { format } from "date-fns";
-
 import { useQueryClient } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
+import { FilterType, dashboardFilterContextType } from "@/lib/types";
 
 const filterOptions = [
   {
@@ -18,41 +18,64 @@ const filterOptions = [
     label: "Monthly",
   },
   {
+    key: "yearly",
+    label: "Yearly",
+  },
+  {
     key: "custom",
     label: "Custom",
   },
 ];
 
-export interface filterContextType {
-  appliedFilterType: string;
-  appliedDate?: string;
-  appliedStartDate?: string;
-  appliedEndDate?: string;
-}
+export const dashboardFilterContext =
+  createContext<dashboardFilterContextType | null>(null);
 
-export const filterContext = createContext<filterContextType | null>(null);
-
-export type FilterType = "daily" | "weekly" | "monthly" | "custom";
-export default function FilterContextProvider({
+export default function DashboardContextProvider({
   children,
   showFilter,
 }: {
   children: React.ReactNode;
   showFilter: boolean;
 }) {
+  const savedFilters = sessionStorage.getItem("dashboardFilters");
   const queryClient = useQueryClient();
   const getDefaultDate = () => format(new Date(), "yyyy-MM-dd");
   const getDefaultWeek = () => format(new Date(), "yyyy-'W'II");
   const getDefaultMonth = () => format(new Date(), "yyyy-MM");
+  const getDefaultYear = () => format(new Date(), "yyyy");
 
-  const [filterType, setFilterType] = useState<FilterType>("daily");
+  const [filterType, setFilterType] = useState<FilterType>(() => {
+    if (savedFilters) {
+      const { appliedFilterType } = JSON.parse(savedFilters);
+      return appliedFilterType;
+    }
+    return "daily";
+  });
   const [date, setDate] = useState(() => {
+    if (savedFilters) {
+      const { appliedDate } = JSON.parse(savedFilters);
+      return appliedDate;
+    }
+
     if (filterType === "weekly") return getDefaultWeek();
     if (filterType === "monthly") return getDefaultMonth();
+    if (filterType === "yearly") return getDefaultYear();
     return getDefaultDate();
   });
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
+  const [startDate, setStartDate] = useState(() => {
+    if (savedFilters) {
+      const { appliedStartDate } = JSON.parse(savedFilters);
+      return appliedStartDate;
+    }
+    return "";
+  });
+  const [endDate, setEndDate] = useState(() => {
+    if (savedFilters) {
+      const { appliedEndDate } = JSON.parse(savedFilters);
+      return appliedEndDate;
+    }
+    return "";
+  });
 
   // Applied states for query
   const [appliedFilterType, setAppliedFilterType] =
@@ -67,6 +90,7 @@ export default function FilterContextProvider({
 
     if (value === "weekly") setDate(getDefaultWeek());
     else if (value === "monthly") setDate(getDefaultMonth());
+    else if (value === "yearly") setDate(getDefaultYear());
     else setDate(getDefaultDate());
 
     setStartDate("");
@@ -115,8 +139,19 @@ export default function FilterContextProvider({
     setAppliedEndDate(endDate);
   };
 
+  useEffect(() => {
+    sessionStorage.setItem(
+      "dashboardFilters",
+      JSON.stringify({
+        appliedFilterType,
+        appliedDate,
+        appliedStartDate,
+        appliedEndDate,
+      })
+    );
+  }, [appliedFilterType, appliedDate, appliedStartDate, appliedEndDate]);
   return (
-    <filterContext.Provider
+    <dashboardFilterContext.Provider
       value={{
         appliedFilterType: appliedFilterType,
         appliedDate: appliedDate,
@@ -133,9 +168,11 @@ export default function FilterContextProvider({
             transition={{ delay: 0.2 }}
           >
             <form className="flex flex-col lg:flex-row gap-4">
-              <div className="flex flex-row gap-4">
+              <div className="flex flex-col sm:flex-row gap-4">
                 <div className="flex flex-row items-center space-x-2 w-auto">
-                  <label className="text-gray-700 font-medium text-sm">Filter: </label>
+                  <label className="text-gray-700 font-medium text-sm">
+                    Filter:{" "}
+                  </label>
                   <select
                     name="filterType"
                     className="px-4 border border-gray-300 rounded-sm h-6 flex items-center justify-center text-sm focus:ring-2 focus:ring-brand-end focus:border-transparent"
@@ -155,7 +192,9 @@ export default function FilterContextProvider({
 
                 {filterType === "daily" && (
                   <div className="flex flex-row items-center space-x-2 w-full lg:w-auto">
-                    <label className="text-gray-700 font-medium text-sm">Date: </label>
+                    <label className="text-gray-700 font-medium text-sm">
+                      Date:{" "}
+                    </label>
                     <input
                       type="date"
                       name="date"
@@ -169,7 +208,9 @@ export default function FilterContextProvider({
                 )}
                 {filterType === "weekly" && (
                   <div className="flex flex-row items-center space-x-2 w-full lg:w-auto">
-                    <label className="text-gray-700 font-medium text-sm">Week: </label>
+                    <label className="text-gray-700 font-medium text-sm">
+                      Week:{" "}
+                    </label>
                     <input
                       type="week"
                       name="week"
@@ -184,7 +225,9 @@ export default function FilterContextProvider({
 
                 {filterType === "monthly" && (
                   <div className="flex flex-row items-center space-x-2 w-full lg:w-auto">
-                    <label className="text-gray-700 font-medium text-sm">Month: </label>
+                    <label className="text-gray-700 font-medium text-sm">
+                      Month:{" "}
+                    </label>
                     <input
                       type="month"
                       name="month"
@@ -193,6 +236,26 @@ export default function FilterContextProvider({
                         setDate(e.target.value)
                       }
                       value={date}
+                    />
+                  </div>
+                )}
+
+                {filterType === "yearly" && (
+                  <div className="flex flex-row items-center space-x-2 w-auto">
+                    <label className="text-gray-700 font-medium text-sm">
+                      Year:{" "}
+                    </label>
+                    <input
+                      type="number"
+                      min="1900"
+                      max="2100"
+                      name="singleDate"
+                      className="px-4 py-2 border border-gray-300 rounded-sm h-6 flex items-center justify-center text-sm  focus:ring-2 focus:ring-brand-end focus:border-transparent w-30"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                        setDate(e.target.value)
+                      }
+                      value={date}
+                      placeholder="Enter year"
                     />
                   </div>
                 )}
@@ -245,12 +308,12 @@ export default function FilterContextProvider({
         )}
         <div className="space-y-8">{children}</div>
       </div>
-    </filterContext.Provider>
+    </dashboardFilterContext.Provider>
   );
 }
 
 export const useFilter = () => {
-  const context = useContext(filterContext);
+  const context = useContext(dashboardFilterContext);
   if (context === null) {
     throw new Error("useFilter must be used within an AdminAuthProvider");
   }
