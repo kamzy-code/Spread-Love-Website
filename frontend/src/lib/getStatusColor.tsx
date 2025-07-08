@@ -1,18 +1,18 @@
 import { AlertCircle, Calendar, CheckCircle, XCircle } from "lucide-react";  
   
-  export const getStatusIcon = (status: string) => {
+  export const getStatusIcon = (status: string, resize?: boolean) => {
     switch (status) {
       case "pending":
-        return <AlertCircle className="h-5 w-5 text-yellow-500" />;
+        return <AlertCircle className={`${resize ? 'h-3 w-3' : 'h-5 w-5'} text-yellow-500`} />;
       case "rescheduled":
-        return <Calendar className="h-5 w-5 text-blue-500" />;
+        return <Calendar className={`${resize ? 'h-3 w-3' : 'h-5 w-5'} text-blue-500`} />;
       case "successful":
-        return <CheckCircle className="h-5 w-5 text-green-500" />;
+        return <CheckCircle className={`${resize ? 'h-3 w-3' : 'h-5 w-5'} text-green-500`} />;
       case "rejected":
       case "unsuccessful":
-        return <XCircle className="h-5 w-5 text-red-500" />;
+        return <XCircle className={`${resize ? 'h-3 w-3' : 'h-5 w-5'} text-red-500`} />;
       default:
-        return <AlertCircle className="h-5 w-5 text-gray-500" />;
+        return <AlertCircle className={`${resize ? 'h-3 w-3' : 'h-5 w-5'} text-gray-500`} />;
     }
   };
 

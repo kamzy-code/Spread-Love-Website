@@ -194,7 +194,7 @@ export default function Booking() {
               activeFilters={activeFilters}
               sortOptions={sortOptions}
             >
-              <div className="h-full">
+              <div className="">
                 <BookingTable></BookingTable>
               </div>
             </FilterContextProvider>

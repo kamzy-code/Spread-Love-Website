@@ -3,6 +3,7 @@ import { format } from "date-fns";
 import { useQueryClient } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 import { FilterType, dashboardFilterContextType } from "@/lib/types";
+import { getDefaultDate, getDefaultWeek, getDefaultMonth, getDefaultYear } from "@/lib/formatDate";
 
 const filterOptions = [
   {
@@ -39,10 +40,6 @@ export default function DashboardContextProvider({
 }) {
   const savedFilters = sessionStorage.getItem("dashboardFilters");
   const queryClient = useQueryClient();
-  const getDefaultDate = () => format(new Date(), "yyyy-MM-dd");
-  const getDefaultWeek = () => format(new Date(), "yyyy-'W'II");
-  const getDefaultMonth = () => format(new Date(), "yyyy-MM");
-  const getDefaultYear = () => format(new Date(), "yyyy");
 
   const [filterType, setFilterType] = useState<FilterType>(() => {
     if (savedFilters) {

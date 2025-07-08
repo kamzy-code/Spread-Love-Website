@@ -1,11 +1,11 @@
-
-import { useBookings, Booking, BookingFilters } from "@/hooks/useBookings";
+import { useBookings } from "@/hooks/useBookings";
 import MiniLoader from "../ui/miniLoader";
 import { Calendar, XCircle } from "lucide-react";
 import { formatToYMD } from "@/lib/formatDate";
 import { getStatusColor, getStatusIcon } from "@/lib/getStatusColor";
-import { FilterType, useFilter } from "./dashboardFilterContext";
+import { useFilter } from "./dashboardFilterContext";
 import { useRouter } from "next/navigation";
+import { FilterType, Booking, BookingFilters } from "@/lib/types";
 
 export default function RecentBookings() {
   const { appliedFilterType, appliedDate, appliedEndDate, appliedStartDate } =
@@ -23,17 +23,14 @@ export default function RecentBookings() {
   };
 
   const router = useRouter();
-  
 
-  const {
-    data,
-    error,
-    isLoading,
-    refetch,
-  } = useBookings(filters as BookingFilters, "all");
+  const { data, error, isLoading, refetch } = useBookings(
+    filters as BookingFilters,
+    "all"
+  );
 
   const { data: bookings, meta } = data ?? { data: [], meta: undefined };
-  
+
   if (error)
     return (
       <div className="h-50 w-full flex flex-col items-center justify-center gap-4 card">
@@ -41,9 +38,12 @@ export default function RecentBookings() {
           <XCircle className="h-8 md:w-8 text-red-500"></XCircle>
           <p className="text-gray-500">Error Fetching Bookings</p>
         </div>
-        <button className="btn-primary h-10 rounded-lg flex justify-center items-center" onClick={() => refetch()}>
+        <button
+          className="btn-primary h-10 rounded-lg flex justify-center items-center"
+          onClick={() => refetch()}
+        >
           Try again
-        </button> 
+        </button>
       </div>
     );
 
@@ -51,14 +51,16 @@ export default function RecentBookings() {
     <div className="card">
       <div className="min-h-50 p-6 flex flex-col gap-4">
         <div className="w-full flex justify-between">
+          <h2 className="md:text-xl font-semibold text-brand-start">
+            Recent Bookings
+          </h2>
 
-        <h2 className="md:text-xl font-semibold text-brand-start">
-          Recent Bookings
-        </h2>
-
-        <button className="text-brand-end hover:text-brand-start" onClick={()=> router.push('/admin/bookings')}>
+          <button
+            className="text-brand-end text-sm hover:text-brand-start"
+            onClick={() => router.push("/admin/bookings")}
+          >
             {`View More>`}
-        </button>
+          </button>
         </div>
 
         {isLoading && (
@@ -81,24 +83,22 @@ export default function RecentBookings() {
                   className="flex flex-row justify-between items-center border-b py-2 last:border-0"
                 >
                   <div>
-                    <h2 className="text-brand-start font-medium">
+                    <h3 className="text-brand-start text-sm font-medium">
                       {booking.callerName}
-                    </h2>
-                    <p className="text-sm text-gray-700 max-w-[70%] sm:max-w-full">{`${
+                    </h3>
+                    <p className="text-xs text-gray-700 max-w-[70%] sm:max-w-full">{`${
                       booking.occassion
                     } - ${formatToYMD(booking.createdAt)}`}</p>
                   </div>
 
                   <div
-                    className={`${getStatusColor(
+                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(
                       booking.status as string,
                       "badge"
-                    )} flex flex-row rounded-full px-3 py-1 items-center gap-2`}
+                    )}`}
                   >
-                    <div className="flex">
-                      {getStatusIcon(booking.status as string)}
-                    </div>
-                    <p className="text-sm">{booking.status}</p>
+                    {getStatusIcon(booking.status as string, true)}
+                    <span className="ml-1 capitalize">{booking.status}</span>
                   </div>
                 </div>
               );

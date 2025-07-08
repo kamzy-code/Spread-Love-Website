@@ -51,6 +51,7 @@ export interface AdminAuthContextType {
 export type FilterType = "daily" | "weekly" | "monthly" | "yearly" | "custom";
 
 export interface Booking {
+  _id: string,
   bookingId: string;
   callerName: string;
   callerPhone: string;

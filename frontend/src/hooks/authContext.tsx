@@ -121,6 +121,8 @@ export const AdminAuthProvider = ({
     setUser(null);
     queryClient.clear();
     router.push("/admin");
+    sessionStorage.removeItem("bookingFilters")
+    sessionStorage.removeItem("dashboardFilters")
   };
 
   const reload = async () => {
