@@ -69,7 +69,7 @@ export default function RecentBookings() {
           </div>
         )}
 
-        {bookings?.length === 0 ? (
+        {!isLoading && bookings?.length === 0 ? (
           <div className="flex-1 flex flex-col justify-center items-center  text-gray-500">
             <Calendar className="h-4 w-4 md:h-6 md:w-6" />
             <p className="text-sm md:text-[1rem]">No Bookings Available</p>

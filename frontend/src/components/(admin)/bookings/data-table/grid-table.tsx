@@ -11,13 +11,16 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { MoreVertical } from "lucide-react";
+import ItemDropDown from "./itemDropdown";
 
 export default function GridItem({
   booking,
   role,
+  setSelectedBooking,
 }: {
   booking: Booking;
   role: string;
+  setSelectedBooking: (booking: Booking) => void;
 }) {
   return (
     <div className="">
@@ -47,9 +50,7 @@ export default function GridItem({
         <div className="flex items-center justify-between">
           <div>
             <div className="w-full flex items-center justify-between">
-              <h3 className="text-sm  text-gray-900">
-                {booking.callerName}
-              </h3>
+              <h3 className="text-sm  text-gray-900">{booking.callerName}</h3>
             </div>
 
             <div className="w-full flex justify-between">
@@ -62,35 +63,11 @@ export default function GridItem({
           </div>
 
           <div>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  className="h-8 w-8 p-0 hover:bg-gray-200"
-                >
-                  <span className="sr-only">Open menu</span>
-                  <MoreVertical className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="p-3">
-                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                <DropdownMenuItem
-                  onClick={() =>
-                    navigator.clipboard.writeText(booking.bookingId)
-                  }
-                >
-                  Copy booking ID
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>Update Status</DropdownMenuItem>
-                {role !== "callrep" && (
-                  <div>
-                    <DropdownMenuItem>Delete</DropdownMenuItem>
-                    <DropdownMenuItem>Assign to Rep</DropdownMenuItem>
-                  </div>
-                )}
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <ItemDropDown
+              booking={booking}
+              view="mobile"
+              setSelectedbooking={setSelectedBooking}
+            ></ItemDropDown>
           </div>
         </div>
       </div>

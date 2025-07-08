@@ -1,8 +1,7 @@
-import { useQuery, keepPreviousData } from "@tanstack/react-query";
+import { useQuery, keepPreviousData, useMutation } from "@tanstack/react-query";
 import { BookingFilters, Booking } from "@/lib/types";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-
 
 const buildQueryParams = (filters: Record<string, any>) => {
   const searchParams = new URLSearchParams();
@@ -22,7 +21,7 @@ const buildQueryParams = (filters: Record<string, any>) => {
 export const useBookings = (filters: BookingFilters, searchValue: string) => {
   return useQuery({
     queryKey: ["bookings", filters, searchValue],
-    queryFn: async ({signal}) => {
+    queryFn: async ({ signal }) => {
       const queryString = buildQueryParams(filters as Record<string, any>);
 
       const res = await fetch(`${apiUrl}/booking/admin?${queryString}`, {
@@ -36,12 +35,34 @@ export const useBookings = (filters: BookingFilters, searchValue: string) => {
       }
 
       const data = await res.json();
-      return {data: data.data,
-        meta: data.meta
-      };
+      return { data: data.data, meta: data.meta };
     },
-    staleTime: 1000 * 60 * 2, 
+    staleTime: 1000 * 60 * 2,
     gcTime: 1000 * 60 * 5,
     placeholderData: keepPreviousData,
+  });
+};
+
+export const updateStatusMutation = (body: { id: string; status: string }) => {
+  return useMutation({
+    mutationFn: async () => {
+      const res = await fetch(`${apiUrl}/booking/admin/${body.id}/status`, {
+        credentials: "include",
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ status: body.status }),
+      });
+
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.message || "Failed to fetch bookings");
+      }
+    },
+
+    onError: (error) => {
+      throw new Error(error.message || "Failed to fetch bookings");
+    },
   });
 };
