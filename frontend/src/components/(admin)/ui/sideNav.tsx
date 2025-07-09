@@ -80,7 +80,7 @@ export default function SideNav() {
               router.push(href);
             }}
             className={`flex items-center gap-3 py-2 px-3 rounded-lg text-sm font-medium ${
-              pathname === href
+              ((pathname === href || pathname.includes(href) && href!== "/admin"))
                 ? "gradient-background text-white"
                 : "text-gray-700 hover:bg-gray-100" 
             } ${label==="Reps" && user?.role === 'callrep' ? 'hidden' : ''}`}

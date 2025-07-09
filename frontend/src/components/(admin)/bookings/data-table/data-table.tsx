@@ -29,16 +29,19 @@ import {
 import { Button } from "@/components/ui/button";
 
 import { getColumnLabel } from "./columns";
+import { Booking } from "@/lib/types";
+import { useRouter } from "next/navigation";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
 }
 
-export function DataTable<TData, TValue>({
+export function DataTable<TData extends Booking, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
+  const router = useRouter();
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({
@@ -121,6 +124,10 @@ export function DataTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
+                  onClick={() => {
+                    const booking: Booking = row.original;
+                    router.push(`/admin/bookings/${booking._id}`)
+                  }}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell

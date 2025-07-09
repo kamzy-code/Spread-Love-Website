@@ -28,7 +28,7 @@ export default function ItemDropDown({
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
+      <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
         <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-gray-200">
           <span className="sr-only">Open menu</span>
           {view === "mobile" ? (
@@ -43,7 +43,10 @@ export default function ItemDropDown({
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
 
         <DropdownMenuItem
-          onClick={() => navigator.clipboard.writeText(booking.bookingId)}
+          onClick={(e) => {
+            e.stopPropagation();
+            navigator.clipboard.writeText(booking.bookingId);
+          }}
         >
           Copy booking ID
         </DropdownMenuItem>
@@ -52,12 +55,13 @@ export default function ItemDropDown({
 
         {/* Submenu for Update Status */}
         <DropdownMenuSub>
-          <DropdownMenuSubTrigger>Update Status</DropdownMenuSubTrigger>
+          <DropdownMenuSubTrigger onClick={(e) => e.stopPropagation()}>Update Status</DropdownMenuSubTrigger>
           <DropdownMenuSubContent>
             <DropdownMenuItem
-              onClick={() =>
-                setSelectedbooking({ ...booking, status: "pending" })
-              }
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedbooking({ ...booking, status: "pending" });
+              }}
             >
               <label className={`flex items-center px-2 py-1 cursor-pointer`}>
                 <input
@@ -71,9 +75,10 @@ export default function ItemDropDown({
               </label>
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() =>
-                setSelectedbooking({ ...booking, status: "successful" })
-              }
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedbooking({ ...booking, status: "successful" });
+              }}
             >
               <label className={`flex items-center px-2 py-1 cursor-pointer`}>
                 <input
@@ -87,9 +92,10 @@ export default function ItemDropDown({
               </label>
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() =>
-                setSelectedbooking({ ...booking, status: "rejected" })
-              }
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedbooking({ ...booking, status: "rejected" });
+              }}
             >
               <label className={`flex items-center px-2 py-1 cursor-pointer`}>
                 <input
@@ -103,9 +109,10 @@ export default function ItemDropDown({
               </label>
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() =>
-                setSelectedbooking({ ...booking, status: "rescheduled" })
-              }
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedbooking({ ...booking, status: "rescheduled" });
+              }}
             >
               <label className={`flex items-center px-2 py-1 cursor-pointer`}>
                 <input
@@ -119,9 +126,10 @@ export default function ItemDropDown({
               </label>
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() =>
-                setSelectedbooking({ ...booking, status: "unsuccessful" })
-              }
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedbooking({ ...booking, status: "unsuccessful" });
+              }}
             >
               <label className={`flex items-center px-2 py-1 cursor-pointer`}>
                 <input
@@ -139,8 +147,12 @@ export default function ItemDropDown({
 
         {user?.role !== "callrep" && (
           <>
-            <DropdownMenuItem>Delete</DropdownMenuItem>
-            <DropdownMenuItem>Assign to Rep</DropdownMenuItem>
+            <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
+              Delete
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
+              Assign to Rep
+            </DropdownMenuItem>
           </>
         )}
       </DropdownMenuContent>

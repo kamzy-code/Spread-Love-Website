@@ -61,7 +61,7 @@ export interface Booking {
   country: string;
   occassion: string;
   callType: string;
-  callDate: Date;
+  callDate: string;
   price: string;
   message?: string;
   specialInstruction?: string;

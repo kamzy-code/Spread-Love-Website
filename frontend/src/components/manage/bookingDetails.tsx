@@ -201,44 +201,56 @@ export default function BookingDetails({ data }: { data: any }) {
                 <div className="grid grid-cols-1 gap-4">
                   <div className="flex flex-col space-y-2">
                     <label className="text-gray-700 font-medium">Name:</label>
-                    <input
-                      className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent placeholder:text-gray-400 disabled:border-0 disabled:pl-0"
-                      type="text"
-                      name="callerName"
-                      value={formData.callerName}
-                      onChange={handleOnChange}
-                      required
-                      placeholder="Your full name"
-                      disabled={!editForm}
-                    />
+                    {editForm ? (
+                      <input
+                        className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent placeholder:text-gray-400 disabled:border-0 disabled:pl-0"
+                        type="text"
+                        name="callerName"
+                        value={formData.callerName}
+                        onChange={handleOnChange}
+                        required
+                        placeholder="Your full name"
+                        disabled={!editForm}
+                      />
+                    ) : (
+                      <p className="py-3 w-full">{formData.callerName}</p>
+                    )}
                   </div>
 
                   <div className="flex flex-col space-y-2">
                     <label className="text-gray-700 font-medium">Phone:</label>
-                    <input
-                      className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent placeholder:text-gray-400 disabled:border-0 disabled:pl-0"
-                      type="text"
-                      name="callerPhone"
-                      value={formData.callerPhone}
-                      onChange={handleOnChange}
-                      required
-                      placeholder="+234 123 456 7890"
-                      disabled={!editForm}
-                    />
+                    {editForm ? (
+                      <input
+                        className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent placeholder:text-gray-400 disabled:border-0 disabled:pl-0"
+                        type="text"
+                        name="callerPhone"
+                        value={formData.callerPhone}
+                        onChange={handleOnChange}
+                        required
+                        placeholder="+234 123 456 7890"
+                        disabled={!editForm}
+                      />
+                    ) : (
+                      <p className="py-3 w-full">{formData.callerPhone}</p>
+                    )}
                   </div>
 
                   <div className="flex flex-col space-y-2">
                     <label className="text-gray-700 font-medium">Email:</label>
-                    <input
-                      className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent placeholder:text-gray-400 disabled:border-0 disabled:pl-0"
-                      type="email"
-                      name="callerEmail"
-                      value={formData.callerEmail}
-                      onChange={handleOnChange}
-                      required
-                      placeholder="your.email@example.com"
-                      disabled={!editForm}
-                    />
+                    {editForm ? (
+                      <input
+                        className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent placeholder:text-gray-400 disabled:border-0 disabled:pl-0"
+                        type="email"
+                        name="callerEmail"
+                        value={formData.callerEmail}
+                        onChange={handleOnChange}
+                        required
+                        placeholder="your.email@example.com"
+                        disabled={!editForm}
+                      />
+                    ) : (
+                      <p className="py-3 w-full">{formData.callerEmail}</p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -254,53 +266,65 @@ export default function BookingDetails({ data }: { data: any }) {
                     <label className="text-gray-700 font-medium">
                       Recipients Name:
                     </label>
-                    <input
-                      className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent placeholder:text-gray-400 disabled:border-0 disabled:pl-0"
-                      type="text"
-                      name="recipientName"
-                      value={formData.recipientName}
-                      onChange={handleOnChange}
-                      required
-                      placeholder="who should we call?"
-                      disabled={!editForm}
-                    />
+                    {editForm ? (
+                      <input
+                        className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent placeholder:text-gray-400 disabled:border-0 disabled:pl-0"
+                        type="text"
+                        name="recipientName"
+                        value={formData.recipientName}
+                        onChange={handleOnChange}
+                        required
+                        placeholder="who should we call?"
+                        disabled={!editForm}
+                      />
+                    ) : (
+                      <p className="py-3 w-full">{formData.recipientName}</p>
+                    )}
                   </div>
 
                   <div className="flex flex-col space-y-2">
                     <label className="text-gray-700 font-medium">Phone:</label>
-                    <input
-                      className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent placeholder:text-gray-400 disabled:border-0 disabled:pl-0"
-                      type="text"
-                      name="recipientPhone"
-                      value={formData.recipientPhone}
-                      onChange={handleOnChange}
-                      required
-                      placeholder="+234 801 234 5678"
-                      disabled={!editForm}
-                    />
+                    {editForm ? (
+                      <input
+                        className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent placeholder:text-gray-400 disabled:border-0 disabled:pl-0"
+                        type="text"
+                        name="recipientPhone"
+                        value={formData.recipientPhone}
+                        onChange={handleOnChange}
+                        required
+                        placeholder="+234 801 234 5678"
+                        disabled={!editForm}
+                      />
+                    ) : (
+                      <p className="py-3 w-full">{formData.recipientPhone}</p>
+                    )}
                   </div>
 
                   <div className="flex flex-col space-y-2">
                     <label className="text-gray-700 font-medium">
                       Recipient Country:
                     </label>
-                    <select
-                      name="country"
-                      id="country"
-                      className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent disabled:border-0 disabled:pl-0"
-                      onChange={handleOnChange}
-                      value={formData.country}
-                      required
-                      disabled={!editForm || formData.country === "Nigeria"}
-                    >
-                      {countries.map((country) => {
-                        return (
-                          <option key={country} value={country}>
-                            {country}
-                          </option>
-                        );
-                      })}
-                    </select>
+                    {editForm ? (
+                      <select
+                        name="country"
+                        id="country"
+                        className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent disabled:border-0 disabled:pl-0"
+                        onChange={handleOnChange}
+                        value={formData.country}
+                        required
+                        disabled={!editForm || formData.country === "Nigeria"}
+                      >
+                        {countries.map((country) => {
+                          return (
+                            <option key={country} value={country}>
+                              {country}
+                            </option>
+                          );
+                        })}
+                      </select>
+                    ) : (
+                      <p className="py-3 w-full">{formData.country}</p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -318,24 +342,28 @@ export default function BookingDetails({ data }: { data: any }) {
                   <label className="text-gray-700 font-medium">
                     Occassion:
                   </label>
-                  <select
-                    name="occassion"
-                    id="occassion"
-                    className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent disabled:border-0 disabled:pl-0"
-                    onChange={handleOnChange}
-                    value={formData.occassion}
-                    required
-                    disabled={!editForm}
-                  >
-                    <option value="">Select Occassion</option>
-                    {services.map((service) => {
-                      return (
-                        <option key={service.id} value={service.title}>
-                          {service.title}
-                        </option>
-                      );
-                    })}
-                  </select>
+                  {editForm ? (
+                    <select
+                      name="occassion"
+                      id="occassion"
+                      className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent disabled:border-0 disabled:pl-0"
+                      onChange={handleOnChange}
+                      value={formData.occassion}
+                      required
+                      disabled={!editForm}
+                    >
+                      <option value="">Select Occassion</option>
+                      {services.map((service) => {
+                        return (
+                          <option key={service.id} value={service.title}>
+                            {service.title}
+                          </option>
+                        );
+                      })}
+                    </select>
+                  ) : (
+                    <p className="py-3 w-full">{formData.occassion}</p>
+                  )}
                 </div>
 
                 {/* Call Type */}
@@ -343,18 +371,22 @@ export default function BookingDetails({ data }: { data: any }) {
                   <label className="text-gray-700 font-medium">
                     Call Type:
                   </label>
-                  <input
-                    type="text"
-                    name="callType"
-                    id="call_type"
-                    className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent disabled:border-0 disabled:pl-0"
-                    onChange={handleOnChange}
-                    value={
-                      formData.callType === "regular" ? "Regular" : "Special"
-                    }
-                    required
-                    disabled
-                  />
+                  {editForm ? (
+                    <input
+                      type="text"
+                      name="callType"
+                      id="call_type"
+                      className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent disabled:border-0 disabled:pl-0"
+                      onChange={handleOnChange}
+                      value={
+                        formData.callType === "regular" ? "Regular" : "Special"
+                      }
+                      required
+                      disabled
+                    />
+                  ) : (
+                    <p className="py-3 w-full">{formData.callType}</p>
+                  )}
                 </div>
 
                 {/* Date */}
@@ -362,16 +394,22 @@ export default function BookingDetails({ data }: { data: any }) {
                   <label className="text-gray-700 font-medium">
                     Preferred Date:
                   </label>
-                  <input
-                    className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent placeholder:text-gray-400 disabled:border-0 disabled:pl-0"
-                    type="date"
-                    name="callDate"
-                    value={formatToYMD(formData.callDate)}
-                    onChange={handleOnChange}
-                    required
-                    min={new Date().toISOString().split("T")[0]}
-                    disabled={!editForm}
-                  />
+                  {editForm ? (
+                    <input
+                      className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent placeholder:text-gray-400 disabled:border-0 disabled:pl-0"
+                      type="date"
+                      name="callDate"
+                      value={formatToYMD(formData.callDate)}
+                      onChange={handleOnChange}
+                      required
+                      min={new Date().toISOString().split("T")[0]}
+                      disabled={!editForm}
+                    />
+                  ) : (
+                    <p className="py-3 w-full">
+                      {formatToYMD(formData.callDate)}
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
@@ -470,15 +508,38 @@ export default function BookingDetails({ data }: { data: any }) {
             }
 
             {/* submit button */}
-            {
-              <div className="w-full flex justify-center">
+            {(
+              <div
+                className={`w-full flex ${
+                  editForm ? "justify-end gap-4" : "justify-center"
+                }`}
+              >
+                {editForm && (
+                  <button
+                    className="btn-secondary w-auto]"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setFormData(data);
+                      setEditForm(false);
+                    }}
+                    disabled={isSubmitting || mutation.isPending}
+                  >
+                    {
+                      <div className="flex items-center justify-center">
+                        <p>Cancel</p>
+                      </div>
+                    }
+                  </button>
+                )}
                 <button
                   type="submit"
-                  className="btn-primary w-full md:w-[50%]"
+                  className={`btn-primary ${
+                    editForm ? "w-auto" : "w-full md:w-[50%]"
+                  }`}
                   disabled={isSubmitting || mutation.isPending}
                 >
-                  {(isSubmitting || mutation.isPending) ? (
-                    <div> 
+                  {isSubmitting || mutation.isPending ? (
+                    <div>
                       <svg
                         className="animate-spin h-5 w-5 text-white mx-auto"
                         xmlns="http://www.w3.org/2000/svg"
@@ -510,7 +571,7 @@ export default function BookingDetails({ data }: { data: any }) {
                   )}
                 </button>
               </div>
-            }
+            )}
           </form>
         </div>
 
