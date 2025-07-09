@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import {
   Calendar,
   CheckCircle,
@@ -79,7 +79,7 @@ export default function Analytics() {
   const { appliedFilterType, appliedDate, appliedEndDate, appliedStartDate } =
     useFilter();
 
-  const { data, error, isLoading, refetch } = useQuery({
+  const { data, error, isLoading, isFetching, refetch } = useQuery({
     queryKey: [
       "analytics",
       appliedFilterType,
@@ -95,7 +95,9 @@ export default function Analytics() {
         appliedStartDate,
         appliedEndDate
       ),
-    staleTime: 30 * 1000,
+    staleTime: 1000 * 60 * 2,
+    gcTime: 1000 * 60 * 5,
+    placeholderData: keepPreviousData,
   });
 
   const statusCounts: Record<string, number> = {};
@@ -167,14 +169,17 @@ export default function Analytics() {
           <XCircle className="h-8 md:w-8 text-red-500"></XCircle>
           <p className="text-gray-500">Error Fetching Analtyics</p>
         </div>
-        <button className="btn-primary h-10 rounded-lg flex justify-center items-center" onClick={() => refetch()}>
+        <button
+          className="btn-primary h-10 rounded-lg flex justify-center items-center"
+          onClick={() => refetch()}
+        >
           Try again
         </button>
       </div>
     );
   return (
     <div className="space-y-8">
-      {isLoading && <MiniLoader></MiniLoader>}
+      {(isLoading || isFetching) && <MiniLoader></MiniLoader>}
 
       {/* Stats Grid */}
       <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">

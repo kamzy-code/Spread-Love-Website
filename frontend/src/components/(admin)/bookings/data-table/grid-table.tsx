@@ -35,7 +35,7 @@ export default function GridItem({
               {formatToYMD(booking.createdAt)}
             </p>
           </div>
-
+  
           <div
             className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(
               booking.status as string,
@@ -57,6 +57,21 @@ export default function GridItem({
               <div className="flex gap-2 md:gap-8 items-center">
                 <p className="text-xs  text-gray-700 capitalize">
                   {`${booking.occassion} (${booking.callType}) `}
+                </p>
+              </div>
+            </div>
+
+            <div className="w-full flex justify-between">
+              <div className="flex gap-2 md:gap-8 items-center">
+                <p className="text-xs  text-gray-700 capitalize">
+                  <span className="font-medium text-brand-start">
+                    {booking.country}
+                  </span>
+                  {` ${
+                    role === "callrep"
+                      ? ""
+                      : `| Rep: ${booking.assignedRep.firstName}`
+                  }`}
                 </p>
               </div>
             </div>

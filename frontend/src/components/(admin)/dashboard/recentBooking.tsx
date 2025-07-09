@@ -24,7 +24,7 @@ export default function RecentBookings() {
 
   const router = useRouter();
 
-  const { data, error, isLoading, refetch } = useBookings(
+  const { data, error, isLoading, isFetching, refetch } = useBookings(
     filters as BookingFilters,
     "all"
   );
@@ -63,7 +63,7 @@ export default function RecentBookings() {
           </button>
         </div>
 
-        {isLoading && (
+        {(isLoading || isFetching) && (
           <div className="flex-1 flex flex-col justify-center items-center">
             <MiniLoader></MiniLoader>
           </div>
@@ -80,7 +80,7 @@ export default function RecentBookings() {
               return (
                 <div
                   key={booking.bookingId}
-                  className="flex flex-row justify-between items-center border-b py-2 last:border-0"
+                  className="flex flex-row justify-between items-center border-b py-2 last:border-0 hover:bg-gray-50"
                 >
                   <div>
                     <h3 className="text-brand-start text-sm font-medium">

@@ -21,7 +21,7 @@ export default function UpdateConfirmationModal({
             initial={{ y: 30, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.5 }}
-            className="card p-8"
+            className="card p-8 md:min-w-sm"
           >
             {error ? (
               <div>

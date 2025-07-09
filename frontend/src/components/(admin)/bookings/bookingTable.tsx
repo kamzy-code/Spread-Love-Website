@@ -45,12 +45,13 @@ export default function BookingTable() {
       mutation.mutateAsync();
       setShowMoadal(true);
     }
+
   }, [selectedBooking]);
 
   useEffect(() => {
     if (mutation.isSuccess) {
       queryClient.invalidateQueries({
-        queryKey: ["bookings", filter, searchTerm],
+        queryKey: ["bookings", filter, searchTerm?.toLowerCase()],
       });
       refetch();
     }
@@ -94,10 +95,10 @@ export default function BookingTable() {
           // </div>
 
           <div>
-            <div className="fixed z-50 bg-black/10 top-0 left-0 right-0 bottom-0"></div>
+            <div className="fixed z-50 bg-black/5 top-0 left-0 right-0 bottom-0"></div>
             <div className="fixed z-50 top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]">
-              <div className="w-75 md:w-auto max-w-2xl text-center">
-                <div className="p-8">
+              <div className="">
+                <div className="p-4 card">
                   <MiniLoader></MiniLoader>
                 </div>
               </div>
@@ -133,7 +134,7 @@ export default function BookingTable() {
             </div>
 
             {/* Grid View */}
-            <div className="container mx-auto lg:hidden grid grid-cols-1 gap-4 py-4">
+            <div className="container mx-auto lg:hidden grid grid-cols-1 gap-4 py-4 ">
               {bookings.map((booking: Booking) => {
                 return (
                   <GridItem

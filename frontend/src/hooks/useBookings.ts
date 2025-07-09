@@ -20,7 +20,7 @@ const buildQueryParams = (filters: Record<string, any>) => {
 
 export const useBookings = (filters: BookingFilters, searchValue: string) => {
   return useQuery({
-    queryKey: ["bookings", filters, searchValue],
+    queryKey: ["bookings", filters, (searchValue.toLowerCase())],
     queryFn: async ({ signal }) => {
       const queryString = buildQueryParams(filters as Record<string, any>);
 

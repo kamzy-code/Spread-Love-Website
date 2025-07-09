@@ -113,7 +113,6 @@ export default function DashboardContextProvider({
       ],
     });
 
-    // For a different query, e.g., "recentBookings"
     queryClient.cancelQueries({
       queryKey: [
         "bookings",
@@ -127,6 +126,7 @@ export default function DashboardContextProvider({
           page: 1,
           limit: 5,
         },
+        "all"
       ],
     });
 
