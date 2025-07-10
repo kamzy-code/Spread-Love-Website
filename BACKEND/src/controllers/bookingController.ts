@@ -19,7 +19,6 @@ import {
   startOfWeek,
   endOfWeek,
 } from "date-fns";
-import { Console } from "console";
 
 class BookingController {
   // Customer Endpoints
@@ -236,7 +235,6 @@ class BookingController {
     }
   }
 
-
   // delete a booking by the MongoDB id
   async DeleteBookingById(req: AuthRequest, res: Response, next: NextFunction) {
     // extract booking Id from URL and get the user object created from the JWT token
@@ -258,7 +256,7 @@ class BookingController {
       );
 
       // return not found if no booking was found
-      if (!booking) {
+      if ((!booking) || (booking && booking?.deletedCount < 1)) {
         res.status(404).json({ message: "Booking not found" });
         return;
       }
@@ -277,7 +275,7 @@ class BookingController {
   }
 
   async getAllBooking(req: AuthRequest, res: Response, next: NextFunction) {
-    console.log(`fetch all hit + ${new Date()}`);
+    console.log(`fetch all bookings hit + ${new Date()}`);
     // extract all possible filtering parameters from the request query object.
     const {
       status,
