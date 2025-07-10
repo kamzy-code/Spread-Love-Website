@@ -95,10 +95,6 @@ export default function BookingDetails({ data }: { data: any }) {
         setEditForm(false);
         setError("");
       }
-      // Refetch the booking details after update
-      queryClient.invalidateQueries({
-        queryKey: ["booking", initialBooking.bookingId],
-      });
     },
     onError: (error) => {
       if (error) setError(error.message);

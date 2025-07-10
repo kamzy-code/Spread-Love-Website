@@ -236,6 +236,46 @@ class BookingController {
     }
   }
 
+
+  // delete a booking by the MongoDB id
+  async DeleteBookingById(req: AuthRequest, res: Response, next: NextFunction) {
+    // extract booking Id from URL and get the user object created from the JWT token
+    const bookingId = req.params.bookingId;
+    const user = req.user!;
+
+    // return ID required if ID wasn't found
+    if (!bookingId) {
+      res.status(400).json({ message: "Booking ID required" });
+      return;
+    }
+
+    try {
+      // call service class to delete booking from DB
+      const booking = await bookingService.deleteBookingById(
+        bookingId,
+        user.userId,
+        user.role
+      );
+
+      // return not found if no booking was found
+      if (!booking) {
+        res.status(404).json({ message: "Booking not found" });
+        return;
+      }
+
+      // return success message with booking object.
+      res
+        .status(200)
+        .json({ message: "Booking Deleted successfully", booking });
+      return;
+    } catch (error) {
+      next(error);
+      console.error("Error Deleting booking:", error);
+      res.status(500).json({ message: "Error Deleting booking", error });
+      return;
+    }
+  }
+
   async getAllBooking(req: AuthRequest, res: Response, next: NextFunction) {
     console.log(`fetch all hit + ${new Date()}`);
     // extract all possible filtering parameters from the request query object.

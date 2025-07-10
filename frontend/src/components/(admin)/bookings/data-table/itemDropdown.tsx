@@ -19,10 +19,14 @@ export default function ItemDropDown({
   booking,
   view,
   setSelectedbooking,
+  setDeletedBooking,
+  setShowDeleteModal,
 }: {
   booking: Booking;
   view: string;
   setSelectedbooking: (booking: Booking) => void;
+  setDeletedBooking: (booking: Booking) => void;
+  setShowDeleteModal: (val: boolean) => void;
 }) {
   const { user } = useAdminAuth();
 
@@ -55,7 +59,9 @@ export default function ItemDropDown({
 
         {/* Submenu for Update Status */}
         <DropdownMenuSub>
-          <DropdownMenuSubTrigger onClick={(e) => e.stopPropagation()}>Update Status</DropdownMenuSubTrigger>
+          <DropdownMenuSubTrigger onClick={(e) => e.stopPropagation()}>
+            Update Status
+          </DropdownMenuSubTrigger>
           <DropdownMenuSubContent>
             <DropdownMenuItem
               onClick={(e) => {
@@ -147,7 +153,13 @@ export default function ItemDropDown({
 
         {user?.role !== "callrep" && (
           <>
-            <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
+            <DropdownMenuItem
+              onClick={(e) => {
+                e.stopPropagation();
+                setDeletedBooking(booking);
+                setShowDeleteModal(true);
+              }}
+            >
               Delete
             </DropdownMenuItem>
             <DropdownMenuItem onClick={(e) => e.stopPropagation()}>

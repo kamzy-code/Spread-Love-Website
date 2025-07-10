@@ -8,10 +8,14 @@ export default function GridItem({
   booking,
   role,
   setSelectedBooking,
+  setDeletedBooking,
+  setShowDeleteModal
 }: {
   booking: Booking;
   role: string;
   setSelectedBooking: (booking: Booking) => void;
+  setDeletedBooking: (booking: Booking) => void;
+  setShowDeleteModal: (val: boolean) => void;
 }) {
   const router = useRouter();
   return (
@@ -74,6 +78,8 @@ export default function GridItem({
               booking={booking}
               view="mobile"
               setSelectedbooking={setSelectedBooking}
+              setDeletedBooking={setDeletedBooking}
+              setShowDeleteModal={setShowDeleteModal}
             ></ItemDropDown>
           </div>
         </div>

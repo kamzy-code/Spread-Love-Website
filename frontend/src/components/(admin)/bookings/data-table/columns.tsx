@@ -18,7 +18,9 @@ import ItemDropDown from "./itemDropdown";
 
 export function getColumnsByRole(
   role: "superadmin" | "salesrep" | "callrep",
-  setSelectedBooking: (booking: Booking) => void
+  setSelectedBooking: (booking: Booking) => void,
+  setDeletedBooking: (booking: Booking) => void,
+  setShowDeleteModal: (val: boolean) => void,
 ): ColumnDef<Booking>[] {
   const baseColumns: ColumnDef<Booking>[] = [
     {
@@ -26,7 +28,7 @@ export function getColumnsByRole(
       header: "Booking ID",
       cell: ({ row }) => {
         const id: string = row.getValue("bookingId");
-        return <div className="font-medium">{id}</div>;
+        return <span className="font-medium">{id}</span>;
       },
     },
     {
@@ -41,7 +43,7 @@ export function getColumnsByRole(
       accessorKey: "createdAt",
       header: ({ column }) => {
         return (
-          <div
+          <span
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             className="flex cursor-pointer"
           >
@@ -51,7 +53,7 @@ export function getColumnsByRole(
             ) : (
               <ArrowUpDown className="ml-2 h-4 w-4" />
             )}
-          </div>
+          </span>
         );
       },
       cell: ({ row }) => {
@@ -77,7 +79,7 @@ export function getColumnsByRole(
       cell: ({ row }) => {
         const status: string = row.getValue("status");
         return (
-          <div
+          <span
             className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(
               status,
               "badge"
@@ -85,7 +87,7 @@ export function getColumnsByRole(
           >
             {getStatusIcon(status, true)}
             <span className="ml-1 capitalize">{status}</span>
-          </div>
+          </span>
         );
       },
     },
@@ -112,6 +114,8 @@ export function getColumnsByRole(
           booking={booking}
           view="web"
           setSelectedbooking={setSelectedBooking}
+          setDeletedBooking={setDeletedBooking}
+          setShowDeleteModal={setShowDeleteModal}
         ></ItemDropDown>
       );
     },

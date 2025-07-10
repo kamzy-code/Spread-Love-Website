@@ -1,5 +1,9 @@
 import { useBookingFilter } from "./bookingFilterContext";
-import { useBookings } from "@/hooks/useBookings";
+import {
+  useBookings,
+  useUpdateStatus,
+  useDeleteBooking,
+} from "@/hooks/useBookings";
 import MiniLoader from "../ui/miniLoader";
 import { XCircle, Calendar, MoreHorizontal, MoreVertical } from "lucide-react";
 import Pagination from "../ui/pagination";
@@ -9,16 +13,20 @@ import { getColumnsByRole } from "./data-table/columns";
 import { DataTable } from "./data-table/data-table";
 import { useAdminAuth } from "@/hooks/authContext";
 import GridItem from "./data-table/grid-table";
-import { updateStatusMutation } from "@/hooks/useBookings";
 import { useQueryClient } from "@tanstack/react-query";
 import UpdateConfirmationModal from "./updateModal";
+import DeleteConfirmationModal from "./deleteModal";
 
 export default function BookingTable() {
   const queryClient = useQueryClient();
   const { user } = useAdminAuth();
   const fullFilter: BookingFilterContex = useBookingFilter();
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
-  const [showModal, setShowMoadal] = useState(false);
+  const [showUpdateModal, setShowUpdateMoadal] = useState(false);
+
+  const [deletedBooking, setDeletedBooking] = useState<Booking | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const { setPage, ...filter } = fullFilter;
   const { search: searchTerm } = filter;
@@ -30,35 +38,43 @@ export default function BookingTable() {
 
   const { data: bookings, meta } = data ?? { data: [], meta: undefined };
 
-  const mutation = updateStatusMutation({
+  const updateStatusMutation = useUpdateStatus({
     id: selectedBooking?._id as string,
     status: selectedBooking?.status as string,
   });
 
+  const deleteBookingMutation = useDeleteBooking(deletedBooking?._id as string);
+
   const tableColumns = getColumnsByRole(
     user?.role as "superadmin" | "salesrep" | "callrep",
-    (booking: Booking) => setSelectedBooking(booking)
+    (booking: Booking) => setSelectedBooking(booking),
+    (booking: Booking) => setDeletedBooking(booking),
+    (val: boolean) => setShowDeleteModal(val)
   );
 
   useEffect(() => {
     if (selectedBooking) {
-      mutation.mutateAsync();
-      setShowMoadal(true);
+      updateStatusMutation.mutateAsync();
+      setShowUpdateMoadal(true);
     }
-
   }, [selectedBooking]);
 
   useEffect(() => {
-    if (mutation.isSuccess) {
+    if (updateStatusMutation.isSuccess || deleteBookingMutation.isSuccess) {
       queryClient.invalidateQueries({
         queryKey: ["bookings", filter, searchTerm?.toLowerCase()],
       });
       refetch();
     }
-  }, [mutation.isSuccess]);
+  }, [updateStatusMutation.isSuccess, deleteBookingMutation.isSuccess]);
 
   useEffect(() => {
-    if (isLoading || isFetching || mutation.isPending || showModal) {
+    if (
+      isLoading ||
+      isFetching ||
+      updateStatusMutation.isPending ||
+      showUpdateModal
+    ) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "";
@@ -68,7 +84,19 @@ export default function BookingTable() {
     return () => {
       document.body.style.overflow = "";
     };
-  }, [isLoading, isFetching, mutation.isPending, showModal]);
+  }, [isLoading, isFetching, updateStatusMutation.isPending, showUpdateModal]);
+
+  useEffect(() => {
+    if (deletedBooking && confirmDelete) {
+      deleteBookingMutation.mutateAsync();
+    }
+  }, [deletedBooking, confirmDelete]);
+
+  useEffect(() => {
+    if (deleteBookingMutation.error) {
+      setShowUpdateMoadal(true);
+    }
+  }, [deleteBookingMutation.error]);
 
   if (error)
     return (
@@ -89,7 +117,7 @@ export default function BookingTable() {
   return (
     <div>
       <div>
-        {(isLoading || isFetching || mutation.isPending) && (
+        {(isLoading || isFetching || updateStatusMutation.isPending || deleteBookingMutation.isPending) && (
           // <div className="flex-1 flex flex-col justify-center items-center mt-8">
           //   <MiniLoader />
           // </div>
@@ -113,17 +141,39 @@ export default function BookingTable() {
           </div>
         )}
 
-        {showModal && mutation.error && !mutation.isPending && (
-          <UpdateConfirmationModal
-            setShowModal={() => setShowMoadal(false)}
-            error={mutation.error.message}
-          ></UpdateConfirmationModal>
-        )}
+        {(showUpdateModal &&
+          updateStatusMutation.error &&
+          !updateStatusMutation.isPending) && (
+            <UpdateConfirmationModal
+              setShowModal={() => setShowUpdateMoadal(false)}
+              error={updateStatusMutation.error.message}
+            ></UpdateConfirmationModal>
+          )}
 
-        {showModal && !mutation.error && mutation.isSuccess && (
-          <UpdateConfirmationModal
-            setShowModal={() => setShowMoadal(false)}
-          ></UpdateConfirmationModal>
+          {(showUpdateModal &&
+          deleteBookingMutation.error &&
+          !deleteBookingMutation.isPending) && (
+            <UpdateConfirmationModal
+              setShowModal={() => setShowUpdateMoadal(false)}
+              error={deleteBookingMutation.error.message}
+            ></UpdateConfirmationModal>
+          )}
+
+        {showUpdateModal &&
+          !updateStatusMutation.error &&
+          updateStatusMutation.isSuccess && (
+            <UpdateConfirmationModal
+              setShowModal={() => setShowUpdateMoadal(false)}
+            ></UpdateConfirmationModal>
+          )}
+
+        {deletedBooking && showDeleteModal && (
+          <DeleteConfirmationModal
+            bookingID={deletedBooking.bookingId}
+            resetDeletedBooking={() => setDeletedBooking(null)}
+            setConfirmDelete={(val: boolean) => setConfirmDelete(val)}
+            setShowDeleteModal={(val: boolean) => setShowDeleteModal(val)}
+          ></DeleteConfirmationModal>
         )}
 
         {bookings && bookings.length > 0 && (
@@ -143,6 +193,12 @@ export default function BookingTable() {
                     role={user?.role as string}
                     setSelectedBooking={(booking: Booking) =>
                       setSelectedBooking(booking)
+                    }
+                    setDeletedBooking={(booking: Booking) =>
+                      setDeletedBooking(booking)
+                    }
+                    setShowDeleteModal={(val: boolean) =>
+                      setShowDeleteModal(val)
                     }
                   ></GridItem>
                 );

@@ -43,7 +43,7 @@ export const useBookings = (filters: BookingFilters, searchValue: string) => {
   });
 };
 
-export const updateStatusMutation = (body: { id: string; status: string }) => {
+export const useUpdateStatus = (body: { id: string; status: string }) => {
   return useMutation({
     mutationFn: async () => {
       const res = await fetch(`${apiUrl}/booking/admin/${body.id}/status`, {
@@ -57,12 +57,38 @@ export const updateStatusMutation = (body: { id: string; status: string }) => {
 
       if (!res.ok) {
         const error = await res.json();
-        throw new Error(error.message || "Failed to fetch bookings");
+        throw new Error(error.message || "Failed to update status");
       }
     },
 
     onError: (error) => {
-      throw new Error(error.message || "Failed to fetch bookings");
+      throw new Error(error.message || "Failed to update status");
     },
   });
 };
+
+
+export const useDeleteBooking = (id: string) => {
+  return useMutation({
+    mutationFn: async () => {
+      const res = await fetch(`${apiUrl}/booking/admin/${id}`, {
+        credentials: "include",
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.message || "Failed to delete booking");
+      }
+    },
+
+    onError: (error) => {
+      throw new Error(error.message || "Failed to delete booking");
+    },
+  });
+};
+
+

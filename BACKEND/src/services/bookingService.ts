@@ -75,29 +75,47 @@ class BookingService {
     return await Booking.findById(bookingId);
   }
 
- async getAllBooking(
-  userId: string,
-  role: string,
-  query: any,
-  sortOrder: SortOrder = -1,
-  sortParam: string = "callDate",
-  skip: number = 0,
-  limit: number = 10
-) {
-  // Build baseQuery
-  const baseQuery = role === "callrep"
-    ? { ...query, assignedRep: new Types.ObjectId(userId) }
-    : query;
+  // Delete booking by MongoDB ID
+  async deleteBookingById(bookingId: string, userId: string, role: string) {
+    // check users role
+    if (role === "callrep") {
+      // if the admin is a call rep, delete the booking if the iD is found and the booking was assigned to the call rep
+      return await Booking.deleteOne({
+        _id: new Types.ObjectId(bookingId),
+        assignedRep: userId,
+      });
+    }
 
-  return await Booking.find(baseQuery)
-    .sort({ [sortParam]: sortOrder })
-    .skip(skip)
-    .limit(limit)
-    .populate({
-      path: "assignedRep",
-      select: "-password -__v -createdAt -updatedAt", // Optional: exclude sensitive fields
+    // else delete the booking if the Id matches regardless of the role
+    return await Booking.deleteOne({
+      _id: new Types.ObjectId(bookingId),
     });
-}
+  }
+
+  async getAllBooking(
+    userId: string,
+    role: string,
+    query: any,
+    sortOrder: SortOrder = -1,
+    sortParam: string = "callDate",
+    skip: number = 0,
+    limit: number = 10
+  ) {
+    // Build baseQuery
+    const baseQuery =
+      role === "callrep"
+        ? { ...query, assignedRep: new Types.ObjectId(userId) }
+        : query;
+
+    return await Booking.find(baseQuery)
+      .sort({ [sortParam]: sortOrder })
+      .skip(skip)
+      .limit(limit)
+      .populate({
+        path: "assignedRep",
+        select: "-password -__v -createdAt -updatedAt", // Optional: exclude sensitive fields
+      });
+  }
 
   async generateBookingId(): Promise<string> {
     let bookingId: string;

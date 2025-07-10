@@ -124,9 +124,15 @@ export function DataTable<TData extends Booking, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
-                  onClick={() => {
+                  onClick={(e) => {
+                    const tagName = (
+                      e.target as HTMLElement
+                    ).tagName.toLowerCase();
+                    if (["button", "a", "svg", "path", "span"].includes(tagName))
+                      return;
+
                     const booking: Booking = row.original;
-                    router.push(`/admin/bookings/${booking._id}`)
+                    router.push(`/admin/bookings/${booking._id}`);
                   }}
                 >
                   {row.getVisibleCells().map((cell) => (

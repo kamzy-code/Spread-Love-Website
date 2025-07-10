@@ -39,6 +39,13 @@ router.put(
   bookingController.updateBookingStatus
 );
 
+router.delete(
+  "/admin/:bookingId",
+  authMiddleware,
+  checkRole("superadmin", "salesrep", "callrep"),
+  bookingController.DeleteBookingById
+);
+
 // customer endpoints
 router.post("/create", bookingController.createBooking);
 router.get("/id/generate", bookingController.generateBookingID);
