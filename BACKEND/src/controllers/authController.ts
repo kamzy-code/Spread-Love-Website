@@ -32,9 +32,7 @@ class AuthController {
         role
       );
 
-      // generate a token
-      const token = generateToken(newAdmin._id as string, newAdmin.role);
-      res.status(201).json({ token, admin: newAdmin });
+      res.status(201).json({ message:"Registration successful", admin: newAdmin });
       return;
     } catch (error) {
       res.status(500).json({ message: "Registration failed", error });

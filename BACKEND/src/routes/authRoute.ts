@@ -1,12 +1,17 @@
 import express from "express";
 import authController from "../controllers/authController";
-import { authMiddleware } from "../middlewares/authMiddleware";
+import { authMiddleware, checkRole } from "../middlewares/authMiddleware";
 
 const router = express.Router();
 
-router.post("/register", authController.registerAdmin);
+router.post(
+  "/register",
+  authMiddleware,
+  checkRole("superadmin"),
+  authController.registerAdmin
+);
 router.post("/login", authController.loginAdmin);
 router.post("/logout", authController.logoutAdmin);
-router.get("/me", authMiddleware, authController.getLoggedInUser)
+router.get("/me", authMiddleware, authController.getLoggedInUser);
 
 export default router;

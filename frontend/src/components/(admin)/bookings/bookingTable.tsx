@@ -117,11 +117,10 @@ export default function BookingTable() {
   return (
     <div>
       <div>
-        {(isLoading || isFetching || updateStatusMutation.isPending || deleteBookingMutation.isPending) && (
-          // <div className="flex-1 flex flex-col justify-center items-center mt-8">
-          //   <MiniLoader />
-          // </div>
-
+        {(isLoading ||
+          isFetching ||
+          updateStatusMutation.isPending ||
+          deleteBookingMutation.isPending) && (
           <div>
             <div className="fixed z-50 bg-black/5 top-0 left-0 right-0 bottom-0"></div>
             <div className="fixed z-50 top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]">
@@ -141,18 +140,18 @@ export default function BookingTable() {
           </div>
         )}
 
-        {(showUpdateModal &&
+        {showUpdateModal &&
           updateStatusMutation.error &&
-          !updateStatusMutation.isPending) && (
+          !updateStatusMutation.isPending && (
             <UpdateConfirmationModal
               setShowModal={() => setShowUpdateMoadal(false)}
               error={updateStatusMutation.error.message}
             ></UpdateConfirmationModal>
           )}
 
-          {(showUpdateModal &&
+        {showUpdateModal &&
           deleteBookingMutation.error &&
-          !deleteBookingMutation.isPending) && (
+          !deleteBookingMutation.isPending && (
             <UpdateConfirmationModal
               setShowModal={() => setShowUpdateMoadal(false)}
               error={deleteBookingMutation.error.message}

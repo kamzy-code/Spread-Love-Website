@@ -1,8 +1,7 @@
-import AdminShell from "@/components/(admin)/ui/AdminShell";
+import Reprsentatives from "@/components/(admin)/reps/reps";
+
 export default function Reps() {
   return (
-    <AdminShell>
-      <h1>Representatives</h1>
-    </AdminShell>
+   <Reprsentatives></Reprsentatives>
   );
 }

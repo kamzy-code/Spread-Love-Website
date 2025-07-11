@@ -1,22 +1,8 @@
 import { useQuery, keepPreviousData, useMutation } from "@tanstack/react-query";
 import { BookingFilters, Booking } from "@/lib/types";
+import { buildQueryParams } from "@/lib/buildQueryParams";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-
-const buildQueryParams = (filters: Record<string, any>) => {
-  const searchParams = new URLSearchParams();
-  for (const key in filters) {
-    if (
-      filters[key] !== undefined &&
-      filters[key] !== null &&
-      filters[key] !== ""
-    ) {
-      searchParams.append(key, filters[key]);
-    }
-  }
-  console.log(searchParams.toString());
-  return searchParams.toString();
-};
 
 export const useBookings = (filters: BookingFilters, searchValue: string) => {
   return useQuery({

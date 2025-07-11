@@ -1,4 +1,3 @@
-
 export type PaginationMeta = {
   total: number;
   page: number;
@@ -44,14 +43,14 @@ export interface AdminAuthContextType {
   logout: () => Promise<void>;
   authError: string | null;
   authStatus: AuthStatus;
-   reload: () => Promise<void>;
+  reload: () => Promise<void>;
 }
 
 // Bookings
 export type FilterType = "daily" | "weekly" | "monthly" | "yearly" | "custom";
 
 export interface Booking {
-  _id: string,
+  _id: string;
   bookingId: string;
   callerName: string;
   callerPhone: string;
@@ -83,12 +82,34 @@ export interface BookingFilters {
   endDate?: string;
   sortParam?: string;
   sortOrder?: "1" | "-1";
-  search?: string; 
+  search?: string;
   page?: number;
   limit?: number;
 }
 
-
 export type BookingFilterContex = BookingFilters & {
+  setPage: (newPage: number) => void;
+};
+
+export type Rep = {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  role: string;
+  status: string;
+  createdAt: string;
+};
+
+export type RepFilter = {
+  role?: string;
+  status?: string;
+  search?: string;
+  page?: number;
+  limit: number;
+};
+
+export type RepFiltercontext = RepFilter & {
   setPage: (newPage: number) => void;
 };

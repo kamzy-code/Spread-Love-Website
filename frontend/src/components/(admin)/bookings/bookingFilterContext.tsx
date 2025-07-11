@@ -139,7 +139,8 @@ export default function FilterContextProvider({
     e.preventDefault();
 
     queryClient.cancelQueries({
-      queryKey: ["bookings", appliedFormData],
+      queryKey: ["bookings", { ...appliedFormData,
+        search: debouncedValue,}],
     });
 
     // new
@@ -470,7 +471,7 @@ export default function FilterContextProvider({
 export const useBookingFilter = () => {
   const context = useContext(filterContext);
   if (context === null) {
-    throw new Error("useFilter must be used within an BookingFilterProvider");
+    throw new Error("useBookingFilter must be used within a BookingFilterProvider");
   }
   return context;
 };
