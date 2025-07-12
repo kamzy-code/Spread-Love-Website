@@ -206,7 +206,7 @@ export default function BookingTable() {
 
             {/* pagination */}
             <div>
-              {meta && meta.totalPages > 0 && <Pagination meta={meta} />}
+              {meta && meta.totalPages > 0 && <Pagination meta={meta} setPage={setPage} />}
             </div>
           </div>
         )}

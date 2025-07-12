@@ -48,6 +48,7 @@ class AdminController {
           totalPages: Math.ceil(totalReps / numericLimit),
         },
       });
+      return;
     } catch (error) {
       next(error);
       console.error("Error fetching Reps:", error);

@@ -3,10 +3,11 @@ import { useAdminAuth } from "@/hooks/authContext";
 import { useQueryClient } from "@tanstack/react-query";
 import { useFetchReps } from "@/hooks/useReps";
 import { useEffect } from "react";
-import { XCircle, Users, Trash2, ChartNoAxesCombined } from "lucide-react";
+import { XCircle, Users, Trash2 } from "lucide-react";
 import MiniLoader from "../ui/miniLoader";
 import { Rep } from "@/lib/types";
 import { useRouter } from "next/navigation";
+import Pagination from "../ui/pagination";
 
 export default function RepList() {
   const queryClient = useQueryClient();
@@ -112,12 +113,7 @@ export default function RepList() {
                       </div>
 
                       <div className="flex gap-4">
-                        {rep.role === "callrep" && (
-                          <ChartNoAxesCombined
-                            className="w-6 h-6 text-brand-end hover:scale-120 active:scale-120 transition"
-                            onClick={(e) => e.stopPropagation()}
-                          ></ChartNoAxesCombined>
-                        )}
+                        
                         {user?.role === "superadmin" && <Trash2
                           className="w-6 h-6 text-brand-end hover:scale-120 active:scale-120 transition"
                           onClick={(e) => e.stopPropagation()}
@@ -149,6 +145,10 @@ export default function RepList() {
                   </div>
                 );
               })}
+            </div>
+
+            <div>
+              <Pagination meta={meta} setPage={setPage}></Pagination>
             </div>
           </div>
         )}

@@ -256,7 +256,7 @@ class BookingController {
       );
 
       // return not found if no booking was found
-      if ((!booking) || (booking && booking?.deletedCount < 1)) {
+      if (!booking || (booking && booking?.deletedCount < 1)) {
         res.status(404).json({ message: "Booking not found" });
         return;
       }
@@ -499,9 +499,14 @@ class BookingController {
     next: NextFunction
   ) {
     const user = req.user!;
+    const { repId } = req.params;
     const matchStage: any = {};
+
+    console.log(user.role, "-", repId);
     if (user.role === "callrep")
       matchStage.assignedRep = new Types.ObjectId(user.userId);
+
+    if (repId) matchStage.assignedRep = new Types.ObjectId(repId);
 
     const { filterType, date, startDate, endDate } = req.query;
 
@@ -557,14 +562,17 @@ class BookingController {
     try {
       // Current period
       const analytics = await bookingService.getAnalytics(matchStage);
+      console.log(1)
       const totalBookings = await bookingService.getTotalBookingsCount(
         matchStage
       );
+      console.log(2)
 
       // Previous period
       const prevTotalBookings = prevDateRange
         ? await bookingService.getTotalBookingsCount(matchStagePrev)
         : 0;
+        console.log(3)
 
       // Calculate percentage increase
       const percentageIncrease =
@@ -581,12 +589,15 @@ class BookingController {
 
       if (user.role === "superadmin" || user.role === "salesrep") {
         activeRepsCount = await adminService.countActiveReps(user.role);
+        console.log(5)
       }
       if (user.role === "superadmin") {
         totalRevenue = await bookingService.getTotalRevenue(matchStage);
+        console.log(6)
         prevTotalRevenue = prevDateRange
           ? await bookingService.getTotalRevenue(matchStagePrev)
           : 0;
+          console.log(7)
         revenuePercentageIncrease =
           prevTotalRevenue === 0 && totalRevenue > 0
             ? 100
@@ -605,10 +616,13 @@ class BookingController {
         }),
         ...(activeRepsCount !== undefined && { activeRepsCount }),
       });
+      console.log(8)
+      return;
     } catch (error) {
-      next(error);
       console.error(`Error fetching analytics: ${error}`);
-      res.status(500).json({ message: "Error fetching analytics", error });
+      if (!res.headersSent) {
+        res.status(500).json({ message: "Error fetching analytics" });
+      }
       return;
     }
   }

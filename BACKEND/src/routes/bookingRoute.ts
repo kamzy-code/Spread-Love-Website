@@ -20,6 +20,13 @@ router.get(
 );
 
 router.get(
+  "/admin/analytics/:repId",
+  authMiddleware,
+  checkRole("superadmin", "salesrep"),
+  bookingController.getBookingAnalytics
+);
+
+router.get(
   "/admin/:bookingId",
   authMiddleware,
   checkRole("superadmin", "salesrep", "callrep"),

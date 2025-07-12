@@ -34,11 +34,13 @@ export const dashboardFilterContext =
 export default function DashboardContextProvider({
   children,
   showFilter,
+  repId,
 }: {
   children: React.ReactNode;
   showFilter: boolean;
+  repId?: string;
 }) {
-  const savedFilters = sessionStorage.getItem("dashboardFilters");
+  const savedFilters = sessionStorage.getItem(`${repId ? "callrep" : "dashboard"}Filters`);
   const queryClient = useQueryClient();
 
   const [filterType, setFilterType] = useState<FilterType>(() => {
@@ -138,7 +140,7 @@ export default function DashboardContextProvider({
 
   useEffect(() => {
     sessionStorage.setItem(
-      "dashboardFilters",
+      `${repId ? "callrep" : "dashboard"}Filters`,
       JSON.stringify({
         appliedFilterType,
         appliedDate,
@@ -154,6 +156,7 @@ export default function DashboardContextProvider({
         appliedDate: appliedDate,
         appliedStartDate: appliedStartDate,
         appliedEndDate: appliedEndDate,
+        repId,
       }}
     >
       <div className="space-y-8">

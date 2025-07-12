@@ -1,7 +1,6 @@
 "use client";
 import { useFetchRep } from "@/hooks/useReps";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { XCircle, Users } from "lucide-react";
 import MiniLoader from "../../ui/miniLoader";
 import { useAdminAuth } from "@/hooks/authContext";
@@ -11,10 +10,12 @@ import { motion } from "framer-motion";
 import { Rep } from "@/lib/types";
 import { Details } from "./details";
 import AdminShell from "../../ui/AdminShell";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function RepDetails({ repId }: { repId: string }) {
   const { user, authStatus, isAuthenticated, authError, loading } =
     useAdminAuth();
+    const queryClient = useQueryClient();
   const [mounted, setMounted] = useState(false);
   const { data, error, isLoading, isFetching, refetch } = useFetchRep(repId);
   const repData: Rep = data?.data as any;

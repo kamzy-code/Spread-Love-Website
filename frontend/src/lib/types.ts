@@ -11,6 +11,7 @@ export interface dashboardFilterContextType {
   appliedDate?: string;
   appliedStartDate?: string;
   appliedEndDate?: string;
+  repId?: string
 }
 
 // Auth

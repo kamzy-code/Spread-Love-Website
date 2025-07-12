@@ -5,11 +5,11 @@ import { useBookingFilter } from "../bookings/bookingFilterContext";
 
 interface PaginationProps {
   meta: PaginationMeta;
+  setPage: (val: number)=> void
 
 }
 
-export default function Pagination({ meta }: PaginationProps) {
-    const {setPage} = useBookingFilter()
+export default function Pagination({ meta, setPage }: PaginationProps) {
   const { page, totalPages } = meta;
 
   const pages = Array.from({ length: totalPages }, (_, i) => i + 1);

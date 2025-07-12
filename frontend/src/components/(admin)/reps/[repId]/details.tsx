@@ -7,7 +7,9 @@ import { deepEqual } from "@/lib/hasBookingChanged";
 import UpdateConfirmationModal from "../../ui/updateModal";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Filter } from "lucide-react";
+import DashboardContextProvider from "../../dashboard/dashboardFilterContext";
+import Analytics from "../../dashboard/analytics";
 
 export function Details({ repData }: { repData: Rep }) {
   const { user } = useAdminAuth();
@@ -32,6 +34,7 @@ export function Details({ repData }: { repData: Rep }) {
     newPassword: false,
     confirmPassword: false,
   });
+    const [showFilter, setShowFilter] = useState(true);
 
   const updateMutation = useUpdateRep(formData);
 
@@ -415,8 +418,8 @@ export function Details({ repData }: { repData: Rep }) {
                 )}
                 <button
                   type="submit"
-                  className={`btn-primary h-10 rounded-lg flex items-center disabled:opacity-50 ${
-                    editForm ? "w-auto" : "w-full md:w-auto"
+                  className={`btn-primary h-10 rounded-lg flex items-center justify-center disabled:opacity-50 ${
+                    editForm ? "w-auto" : "w-auto"
                   }`}
                   disabled={
                     updateMutation.isPending ||
@@ -467,6 +470,24 @@ export function Details({ repData }: { repData: Rep }) {
           </div>
         </form>
       </div>
+
+      {repData.role === "callrep" && !editForm && (
+        <div className="space-y-8 mt-12">
+          <div className="flex justify-between">
+            <h1 className="text-3xl font-bold">Analytics</h1>
+            <button
+              className="flex items-center px-4 py-2 border border-brand-end rounded-lg hover:bg-brand-end hover:scale-105 hover:text-white transition text-brand-end"
+              onClick={() => setShowFilter(!showFilter)}
+            >
+              <Filter className="h-5 w-5 mr-2 " />
+              Filter
+            </button>
+          </div>
+          <DashboardContextProvider showFilter={showFilter} repId={repData._id}>
+            <Analytics></Analytics>
+          </DashboardContextProvider>
+        </div>
+      )}
 
       {showUpdateModal && updateMutation.isSuccess && (
         <UpdateConfirmationModal

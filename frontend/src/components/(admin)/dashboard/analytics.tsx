@@ -20,14 +20,15 @@ const getAnalytics = async (
   filterType: string,
   date?: string,
   startDate?: string,
-  endDate?: string
+  endDate?: string,
+  repId?: string
 ) => {
   const response = await fetch(
-    `${apiUrl}/booking/admin/analytics?filterType=${filterType}${
-      date ? `&date=${date}` : ""
-    }${startDate ? `&startDate=${startDate}` : ""}${
-      endDate ? `&endDate=${endDate}` : ""
-    }`,
+    `${apiUrl}/booking/admin/analytics${
+      repId ? `/${repId}` : ""
+    }?filterType=${filterType}${date ? `&date=${date}` : ""}${
+      startDate ? `&startDate=${startDate}` : ""
+    }${endDate ? `&endDate=${endDate}` : ""}`,
     {
       signal,
       method: "GET",
@@ -76,7 +77,7 @@ export const STATUS_LIST = [
 export default function Analytics() {
   const { user } = useAdminAuth();
 
-  const { appliedFilterType, appliedDate, appliedEndDate, appliedStartDate } =
+  const { appliedFilterType, appliedDate, appliedEndDate, appliedStartDate, repId } =
     useFilter();
 
   const { data, error, isLoading, isFetching, refetch } = useQuery({
@@ -86,6 +87,7 @@ export default function Analytics() {
       appliedDate,
       appliedStartDate,
       appliedEndDate,
+      repId || null,
     ],
     queryFn: ({ signal }) =>
       getAnalytics(
@@ -93,7 +95,8 @@ export default function Analytics() {
         appliedFilterType,
         appliedDate,
         appliedStartDate,
-        appliedEndDate
+        appliedEndDate,
+        repId
       ),
     staleTime: 1000 * 60 * 2,
     gcTime: 1000 * 60 * 5,
@@ -182,11 +185,11 @@ export default function Analytics() {
       {(isLoading || isFetching) && <MiniLoader></MiniLoader>}
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
         {cards.map((card, idx) => (
           <div
             className={`${
-              user?.role === "callrep" && card.title === "Active Reps"
+              (user?.role === "callrep" || repId) && card.title === "Active Reps"
                 ? "hidden"
                 : ""
             } ${
