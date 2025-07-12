@@ -10,10 +10,10 @@ class AdminService {
       return await Admin.findOne({
         _id: new Types.ObjectId(repId),
         role: "callrep",
-      });
+      }).select("-password -__v -createdAt -updatedAt");
     }
 
-    return await Admin.findById(repId);
+    return await Admin.findById(repId).select("-password -__v -createdAt -updatedAt");
   }
 
   async getAllReps(searchQuery: any, skip: number, numericLimit: number) {

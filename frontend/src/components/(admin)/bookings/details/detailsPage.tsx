@@ -2,7 +2,7 @@
 import { services } from "@/components/services/serviceList";
 import { useState } from "react";
 import { motion } from "framer-motion";
-import UpdateConfirmationModal from "../updateModal";
+import UpdateConfirmationModal from "../../ui/updateModal";
 import { formatToYMD } from "@/lib/formatDate";
 import { deepEqual } from "@/lib/hasBookingChanged";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -525,10 +525,10 @@ export default function DetailsPage({ data }: { data: Booking }) {
                 )}
                 <button
                   type="submit"
-                  className={`btn-primary ${
+                  className={`btn-primary disabled:opacity-50 ${
                     editForm ? "w-auto" : "w-full md:w-[50%]"
                   }`}
-                  disabled={isSubmitting || mutation.isPending}
+                  disabled={isSubmitting || mutation.isPending || (editForm && deepEqual(initialBooking, formData))}
                 >
                   {isSubmitting || mutation.isPending ? (
                     <div>
@@ -571,6 +571,7 @@ export default function DetailsPage({ data }: { data: Booking }) {
           <UpdateConfirmationModal
             setShowModal={() => setShowModal(false)}
             error={errorMessage}
+            success="Booking status updated successfully."
           ></UpdateConfirmationModal>
         )}
       </motion.div>

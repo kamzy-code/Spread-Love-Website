@@ -14,7 +14,7 @@ import { DataTable } from "./data-table/data-table";
 import { useAdminAuth } from "@/hooks/authContext";
 import GridItem from "./data-table/grid-table";
 import { useQueryClient } from "@tanstack/react-query";
-import UpdateConfirmationModal from "./updateModal";
+import UpdateConfirmationModal from "../ui/updateModal";
 import DeleteConfirmationModal from "./deleteModal";
 
 export default function BookingTable() {

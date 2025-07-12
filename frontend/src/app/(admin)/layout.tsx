@@ -6,9 +6,7 @@ import { AdminAuthProvider } from "@/hooks/authContext";
 export const metadata: Metadata = {
   title: "Admin - Spread Love Network",
   description: "Make someone's day with a surprise call",
-  icons: {
-    icon: "./logo.png",
-  },
+
 };
 
 export default function AdminLayout({

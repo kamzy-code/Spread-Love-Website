@@ -4,6 +4,10 @@ import MiniLoader from "../../ui/miniLoader";
 import { XCircle } from "lucide-react";
 import DetailsPage from "./detailsPage";
 import { useRouter } from "next/navigation";
+import { useAdminAuth } from "@/hooks/authContext";
+import { useState, useEffect } from "react";
+import PageLoading from "../../ui/pageLoading";
+import PageError from "../../ui/pageError";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
@@ -23,6 +27,9 @@ const fetchBookingDetails = async (id: string, signal: AbortSignal) => {
 };
 
 export default function BookingDetails({ id }: { id: string }) {
+  const { user, authStatus, isAuthenticated, authError, loading,} =
+          useAdminAuth();
+           const [mounted, setMounted] = useState(false);
   const router = useRouter();
   const { data, isFetching, isLoading, refetch, error } = useQuery({
     queryKey: ["booking", id],
@@ -33,6 +40,27 @@ export default function BookingDetails({ id }: { id: string }) {
   });
 
   const booking: any = data;
+
+    useEffect(() => {
+    setMounted(true);
+  }, []);
+
+
+  if (!mounted) {
+      return null;
+    }
+  
+    if (loading || authStatus === "checking") {
+      return <PageLoading></PageLoading>;
+    }
+  
+    if (authStatus === "error" && authError) {
+      return <PageError></PageError>;
+    }
+  
+    if (authStatus !== "authenticated") {
+      return null;
+    }
 
   if (error)
     return (

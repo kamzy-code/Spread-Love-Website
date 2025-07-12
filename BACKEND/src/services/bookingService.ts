@@ -57,7 +57,7 @@ class BookingService {
   // fetch bookng by generated ID
   async getBookingByBookingId(bookingId: string) {
     // fetch the booking from DB and return
-    return await Booking.findOne({ bookingId });
+    return await Booking.findOne({ bookingId }).select("-__v -updatedAt");
   }
 
   // fetch booking by MongoDB ID
@@ -68,11 +68,11 @@ class BookingService {
       return await Booking.findOne({
         _id: new Types.ObjectId(bookingId),
         assignedRep: userId,
-      });
+      }).select("-__v -updatedAt");
     }
 
     // return the booking if the Id matches regardless of the role
-    return await Booking.findById(bookingId);
+    return await Booking.findById(bookingId).select("-__v -updatedAt");
   }
 
   // Delete booking by MongoDB ID

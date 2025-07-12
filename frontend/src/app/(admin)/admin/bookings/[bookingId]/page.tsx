@@ -8,7 +8,6 @@ export default async function Bookings({
   params: Promise<{ bookingId: string }>;
 }) {
   const { bookingId } = await params;
-  console.log("booking Id", bookingId);
   return (
     <AdminShell>
       <div>

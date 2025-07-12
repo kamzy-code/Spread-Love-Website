@@ -94,18 +94,6 @@ export default function CreateRep({
     }
   }, [createMutation.isSuccess]);
 
-  useEffect(() => {
-    if (showSuccessModal) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [showSuccessModal]);
-
   if (!mounted) return null;
 
   if (showSuccessModal) {
@@ -118,15 +106,17 @@ export default function CreateRep({
       ></CreateRepModal>
     );
   }
+
   return (
     <div className="">
       <div
-        className="fixed z-50 bg-black/50 top-0 left-0 right-0 bottom-0"
+        className="fixed z-50 inset-0 flex items-center justify-center bg-black/50"
         onClick={() => setShowCreateForm(false)}
-      ></div>
-
-      <div className="fixed z-50 top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] flex items-center justify-center h-[80%] w-[80%] md:w-[60%] lg:w-[40%]">
-        <div className="text-center h-full w-full overflow-y-scroll card relative">
+      >
+        <div
+          className="relative w-[90%] md:w-[70%] lg:w-[40%] max-h-[90%] overflow-y-auto bg-white rounded-xl shadow-lg"
+          onClick={(e) => e.stopPropagation()}
+        >
           <motion.div
             initial={{ y: 30, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}

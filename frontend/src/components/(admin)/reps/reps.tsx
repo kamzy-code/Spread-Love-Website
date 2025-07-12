@@ -13,7 +13,7 @@ import CreateRepForm from "./createRep";
 
 export default function Reprsentatives() {
   const router = useRouter();
-  const { user, authStatus, isAuthenticated, authError, loading, logout } =
+  const { user, authStatus, isAuthenticated, authError, loading,} =
     useAdminAuth();
   const [mounted, setMounted] = useState(false);
   const [showFilter, setShowFilter] = useState(true);
@@ -34,7 +34,9 @@ export default function Reprsentatives() {
     return () => {
       document.body.style.overflow = "";
     };
+
   }, [showCreateForm]);
+  
   if (!mounted) {
     return null;
   }
@@ -102,7 +104,7 @@ export default function Reprsentatives() {
 
           <RepsContextProvider showFilter={showFilter}>
             {showCreateForm && (
-              <div className="py-20">
+              <div>
                 <CreateRepForm
                   setShowCreateForm={(val: boolean) => setShowCreateForm(val)}
                 ></CreateRepForm>

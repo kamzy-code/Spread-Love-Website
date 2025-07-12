@@ -3,13 +3,15 @@ import { useAdminAuth } from "@/hooks/authContext";
 import { useQueryClient } from "@tanstack/react-query";
 import { useFetchReps } from "@/hooks/useReps";
 import { useEffect } from "react";
-import { XCircle, Users } from "lucide-react";
+import { XCircle, Users, Trash2, ChartNoAxesCombined } from "lucide-react";
 import MiniLoader from "../ui/miniLoader";
 import { Rep } from "@/lib/types";
+import { useRouter } from "next/navigation";
 
 export default function RepList() {
   const queryClient = useQueryClient();
   const { user } = useAdminAuth();
+  const router = useRouter();
 
   const { setPage, ...filter } = useRepFilter();
   const { search: searchTerm } = filter;
@@ -20,6 +22,7 @@ export default function RepList() {
   );
 
   const { data: reps, meta } = data ?? { data: [], meta: undefined };
+  console.log("reps", reps)
 
   useEffect(() => {
     if (isLoading || isFetching) {
@@ -36,7 +39,7 @@ export default function RepList() {
 
   if (error)
     return (
-      <div className="absolute top-[70%] left-[70%] translate-x-[-70%] translate-y-[-50%]  flex-1 flex flex-col justify-center items-center text-gray-500 gap-4">
+      <div className="absolute top-[70%] left-[50%] translate-x-[-50%] translate-y-[-50%]  flex-1 flex flex-col justify-center items-center text-gray-500 gap-4">
         <div className="flex flex-col justify-center items-center text-center z-10">
           <XCircle className="h-8 md:w-8 text-red-500" />
           <p className="text-gray-500">Error Fetching Reps</p>
@@ -78,28 +81,47 @@ export default function RepList() {
             <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
               {reps.map((rep: Rep) => {
                 return (
-                  <div key={rep._id} className="card p-6 space-y-2">
-                    <div className="flex gap-4">
-                      {/* badge */}
-                      <div className="gradient-background rounded-full p-4 shrink-0 w-12 h-12 flex items-center justify-center text-white font-medium text-sm">
-                        <h2>{rep.firstName.split("")[0].toUpperCase()}</h2>
-                        <h2>{rep.lastName.split("")[0].toUpperCase()}</h2>
+                  <div
+                    key={rep._id}
+                    className="card p-6 space-y-2 active:bg-gray-50"
+                    onClick={() => router.push(`/admin/reps/${rep._id}`)}
+                  >
+                    <div className="flex justify-between">
+                      <div className="flex gap-4">
+                        {/* badge */}
+                        <div className="gradient-background rounded-full p-4 shrink-0 w-12 h-12 flex items-center justify-center text-white font-medium text-sm">
+                          <h2>{rep.firstName.split("")[0].toUpperCase()}</h2>
+                          <h2>{rep.lastName.split("")[0].toUpperCase()}</h2>
+                        </div>
+
+                        {/* Name and status */}
+                        <div className="flex flex-col gap-y">
+                          <h2 className="font-medium text-brand-start">{`${rep.firstName} ${rep.lastName}`}</h2>
+                          <p
+                            className={`${
+                              rep.status === "active"
+                                ? "text-green-500"
+                                : rep.status === "inactive"
+                                ? "text-gray-500"
+                                : "text-red-500"
+                            }`}
+                          >
+                            {rep.status}
+                          </p>
+                        </div>
                       </div>
 
-                      {/* Name and status */}
-                      <div className="flex flex-col gap-y">
-                        <h2 className="font-medium text-brand-start">{`${rep.firstName} ${rep.lastName}`}</h2>
-                        <p
-                          className={`${
-                            rep.status === "active"
-                              ? "text-green-500"
-                              : rep.status === "inactive"
-                              ? "text-gray-500"
-                              : "text-red-500"
-                          }`}
-                        >
-                          {rep.status}
-                        </p>
+                      <div className="flex gap-4">
+                        {rep.role === "callrep" && (
+                          <ChartNoAxesCombined
+                            className="w-6 h-6 text-brand-end hover:scale-120 active:scale-120 transition"
+                            onClick={(e) => e.stopPropagation()}
+                          ></ChartNoAxesCombined>
+                        )}
+                        {user?.role === "superadmin" && <Trash2
+                          className="w-6 h-6 text-brand-end hover:scale-120 active:scale-120 transition"
+                          onClick={(e) => e.stopPropagation()}
+                        ></Trash2>}
                       </div>
                     </div>
 
@@ -114,9 +136,7 @@ export default function RepList() {
 
                       <div className="flex justify-between items-center">
                         <p>Email:</p>
-                        <p className="text-brand-start font-">
-                          {rep.email}
-                        </p>
+                        <p className="text-brand-start font-">{rep.email}</p>
                       </div>
 
                       <div className="flex justify-between items-center">

@@ -20,7 +20,7 @@ export default function GridItem({
   const router = useRouter();
   return (
     <div className="">
-      <div key={booking.bookingId} className="card active:bg-gray-200 py-6 px-4 space-y-2 transition duration-150" onClick={()=> router.push(`/admin/bookings/${booking._id}`)}>
+      <div key={booking.bookingId} className="card active:bg-gray-50 py-6 px-4 space-y-2 transition duration-150" onClick={()=> router.push(`/admin/bookings/${booking._id}`)}>
         <div className="flex w-full justify-between items-center">
           <div className="flex gap-4 md:gap-8 items-center">
             <p className="text-xs font-medium text-brand-start">
