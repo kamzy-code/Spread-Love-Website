@@ -10,14 +10,14 @@ import PageError from "../../ui/pageError";
 import { motion } from "framer-motion";
 import { Rep } from "@/lib/types";
 import { Details } from "./details";
+import AdminShell from "../../ui/AdminShell";
 
 export default function RepDetails({ repId }: { repId: string }) {
   const { user, authStatus, isAuthenticated, authError, loading } =
     useAdminAuth();
   const [mounted, setMounted] = useState(false);
   const { data, error, isLoading, isFetching, refetch } = useFetchRep(repId);
-  const repData : Rep = data?.data as any;
-
+  const repData: Rep = data?.data as any;
 
   useEffect(() => {
     setMounted(true);
@@ -41,25 +41,27 @@ export default function RepDetails({ repId }: { repId: string }) {
 
   if (error)
     return (
-      <div className="absolute top-[70%] left-[50%] translate-x-[-50%] translate-y-[-50%]  flex-1 flex flex-col justify-center items-center text-gray-500 gap-4">
-        <div className="flex flex-col justify-center items-center text-center z-10">
-          <XCircle className="h-8 md:w-8 text-red-500" />
-          <p className="text-gray-500">
-            {error.message ? error.message : "Error Fetching Rep"}
-          </p>
+      <AdminShell>
+        <div className="absolute top-[70%] left-[50%] translate-x-[-50%] translate-y-[-50%]  flex-1 flex flex-col justify-center items-center text-gray-500 gap-4">
+          <div className="flex flex-col justify-center items-center text-center z-10">
+            <XCircle className="h-8 md:w-8 text-red-500" />
+            <p className="text-gray-500">
+              {error.message ? error.message : "Error Fetching Rep"}
+            </p>
+          </div>
+          <button
+            className="btn-primary h-10 rounded-lg flex justify-center items-center"
+            onClick={() => refetch()}
+          >
+            Try again
+          </button>
         </div>
-        <button
-          className="btn-primary h-10 rounded-lg flex justify-center items-center"
-          onClick={() => refetch()}
-        >
-          Try again
-        </button>
-      </div>
+      </AdminShell>
     );
 
   return (
-    <div>
-      <div>
+    <AdminShell>
+      <div className="">
         {(isLoading || isFetching) && (
           <div>
             <div className="fixed z-50 bg-black/5 top-0 left-0 right-0 bottom-0"></div>
@@ -84,6 +86,6 @@ export default function RepDetails({ repId }: { repId: string }) {
           <Details repData={repData}></Details>
         )}
       </div>
-    </div>
+    </AdminShell>
   );
 }

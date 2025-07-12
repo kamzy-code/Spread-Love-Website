@@ -2,7 +2,7 @@ import { Types } from "mongoose";
 import { Admin } from "../models/adminModel";
 
 class AdminService {
-  async getRepById(repId: string, role: string) {
+  async getRepById(repId: string, role: string, withPassword?: boolean) {
     if (role === "callrep") return;
 
     // If the admin role is a salesrep return the rep if the id matches and the rep is a callrep
@@ -13,7 +13,7 @@ class AdminService {
       }).select("-password -__v -createdAt -updatedAt");
     }
 
-    return await Admin.findById(repId).select("-password -__v -createdAt -updatedAt");
+    return await Admin.findById(repId).select(`${withPassword ? "" : "-password"} -__v -createdAt -updatedAt`);
   }
 
   async getAllReps(searchQuery: any, skip: number, numericLimit: number) {

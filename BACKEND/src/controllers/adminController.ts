@@ -121,10 +121,11 @@ class AdminController {
   async updateRep(req: AuthRequest, res: Response, next: NextFunction) {
     const user = req.user!;
     const { repId } = req.params;
-    const { newPassword, oldPassword, ...info } = req.body;
+    const { newPassword, oldPassword, confirmPassword, ...info } = req.body;
 
     try {
-      const rep = await adminService.getRepById(user.role === "callrep" ? user.userId : repId, user.role);
+      const rep = await adminService.getRepById(user.role === "callrep" ? user.userId : repId, user.role, true);
+      console.log("rep - ", rep)
 
       // if no rep was found return error message
       if (!rep) {
@@ -133,8 +134,9 @@ class AdminController {
       }
 
       if (newPassword) {
+        console.log(oldPassword, "-", newPassword)
         // check if the password is correct
-        const isPasswordValid = await bcrypt.compare(oldPassword, rep.password);
+        const isPasswordValid = await bcrypt.compare(oldPassword as string, rep.password);
 
         if (!isPasswordValid) {
           res.status(401).json({ message: "Invalid password" });
@@ -154,8 +156,8 @@ class AdminController {
       return;
     } catch (error) {
       next(error);
-      console.error(`Booking update failed: ${error}`);
-      res.status(500).json({ message: "Booking update failed", error });
+      console.error(`Rep update failed: ${error}`);
+      res.status(500).json({ message: "Rep update failed", error });
       return;
     }
   }

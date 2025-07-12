@@ -7,6 +7,7 @@ import { deepEqual } from "@/lib/hasBookingChanged";
 import UpdateConfirmationModal from "../../ui/updateModal";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
+import { Eye, EyeOff } from "lucide-react";
 
 export function Details({ repData }: { repData: Rep }) {
   const { user } = useAdminAuth();
@@ -20,11 +21,17 @@ export function Details({ repData }: { repData: Rep }) {
       newPassword?: string;
       confirmPassword?: string;
     }
-  >({ ...repData });
-
-  console.log("form data", formData);
+  >({ ...repData, oldPassword: "", newPassword: "", confirmPassword: "" });
 
   const [editForm, setEditForm] = useState(false);
+  const [showOldPassword, setShowOldPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [errorFields, setErrorFields] = useState({
+    oldPassword: false,
+    newPassword: false,
+    confirmPassword: false,
+  });
 
   const updateMutation = useUpdateRep(formData);
 
@@ -37,7 +44,7 @@ export function Details({ repData }: { repData: Rep }) {
     setFormData((prev: any) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!editForm) {
@@ -45,14 +52,45 @@ export function Details({ repData }: { repData: Rep }) {
       return;
     }
 
-    const hasNotChanged = deepEqual(initialData, formData);
-    if (hasNotChanged) {
+    const personalInfoChanged = !deepEqual(initialData, {
+      ...formData,
+      oldPassword: undefined,
+      newPassword: undefined,
+      confirmPassword: undefined,
+    });
+
+    const updatingPassword =
+      formData.oldPassword || formData.newPassword || formData.confirmPassword;
+
+    let passwordValidationFailed = false;
+
+    // Validate password section only if one of them is touched
+    if (updatingPassword) {
+      const newErrorFields = {
+        oldPassword: !formData.oldPassword,
+        newPassword: !formData.newPassword,
+        confirmPassword:
+          !formData.confirmPassword ||
+          formData.confirmPassword !== formData.newPassword,
+      };
+      setErrorFields(newErrorFields);
+
+      passwordValidationFailed = Object.values(newErrorFields).some(
+        (val) => val === true
+      );
+    }
+
+    // If nothing changed and no password update, close edit
+    if (!personalInfoChanged && !updatingPassword) {
       setEditForm(false);
-      // setShowModal(true);
       return;
     }
 
-    await updateMutation.mutateAsync();
+    // If errors in password, don't proceed
+    if (passwordValidationFailed) return;
+
+    // Proceed with update
+    updateMutation.mutate();
   };
 
   useEffect(() => {
@@ -79,7 +117,7 @@ export function Details({ repData }: { repData: Rep }) {
 
       <div className="">
         <form onSubmit={handleSubmit} className={`space-y-6 text-gray-700`}>
-          <div className="space-y-4">
+          <div className="space-y-8">
             {/* Personal info */}
             <div>
               <h2 className="gradient-text text-xl font-semibold mb-4 pb-2">
@@ -232,81 +270,201 @@ export function Details({ repData }: { repData: Rep }) {
                   )}
                 </div>
               </div>
-
-              {user?.role === "superadmin" && (
-                <div className={`w-full flex gap-4 mt-4`}>
-                  {editForm && (
-                    <button
-                      className="btn-secondary h-10 rounded-lg flex items-center w-auto"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setEditForm(false);
-                        setFormData(initialData);
-                      }}
-                      disabled={updateMutation.isPending}
-                    >
-                      {
-                        <div className="flex items-center justify-center">
-                          <p>Cancel</p>
-                        </div>
-                      }
-                    </button>
-                  )}
-                  <button
-                    type="submit"
-                    className={`btn-primary h-10 rounded-lg flex items-center disabled:opacity-50 ${
-                      editForm ? "w-auto" : "w-full md:w-auto"
-                    }`}
-                    disabled={
-                      updateMutation.isPending ||
-                      (editForm && deepEqual(initialData, formData))
-                    }
-                  >
-                    {updateMutation.isPending ? (
-                      <div>
-                        <svg
-                          className="animate-spin h-5 w-5 text-white mx-auto"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                        >
-                          <circle
-                            className="opacity-25"
-                            cx="12"
-                            cy="12"
-                            r="10"
-                            stroke="currentColor"
-                            strokeWidth="4"
-                          ></circle>
-                          <path
-                            className="opacity-75"
-                            fill="currentColor"
-                            d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-                          ></path>
-                        </svg>
-                        <span className="sr-only">Saving...</span>
-                      </div>
-                    ) : (
-                      <div className="flex items-center justify-center">
-                        <p>{editForm ? "Save" : "Update"}</p>
-                      </div>
-                    )}
-                  </button>
-                </div>
-              )}
             </div>
 
             {/* Update Password */}
-            <div>
-              <h2 className="gradient-text text-xl font-semibold mb-4 pb-2">
-                {" "}
-                Change Password
-              </h2>
-              {/* oldpassword */}
-            </div>
-          </div>
+            {editForm && (
+              <div>
+                <h2 className="gradient-text text-xl font-semibold mb-4 pb-2">
+                  {" "}
+                  Change Password
+                </h2>
 
-          {/* submit button */}
+                <div className="grid grid-cols-1 gap-4">
+                  {/*old password */}
+                  <div className="flex flex-col space-y-2">
+                    <label className="text-gray-700 font-medium">
+                      Old Password:
+                    </label>
+                    <div className="relative">
+                      <input
+                        className={`pl-4 pr-12 py-3 border ${
+                          errorFields.oldPassword
+                            ? "border-red-500"
+                            : "border-gray-300"
+                        } rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent placeholder:text-gray-400 disabled:border-0 disabled:pl-0`}
+                        type={showOldPassword ? "text" : "password"}
+                        name="oldPassword"
+                        value={formData.oldPassword}
+                        onChange={handleOnChange}
+                        placeholder="Enter your password"
+                      />
+
+                      <button
+                        type="button"
+                        onClick={() => setShowOldPassword(!showOldPassword)}
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400"
+                      >
+                        {showOldPassword ? <EyeOff /> : <Eye />}
+                      </button>
+                    </div>
+                    {errorFields.oldPassword && (
+                      <span className="text-red-500 text-xs">
+                        Enter a valid password
+                      </span>
+                    )}
+                  </div>
+
+                  {/*new password */}
+                  <div className="flex flex-col space-y-2">
+                    <label className="text-gray-700 font-medium">
+                      New Password:
+                    </label>
+                    <div className="relative">
+                      <input
+                        className={`pl-4 pr-12 py-3 border ${
+                          errorFields.newPassword
+                            ? "border-red-500"
+                            : "border-gray-300"
+                        } rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent placeholder:text-gray-400 disabled:border-0 disabled:pl-0`}
+                        type={showNewPassword ? "text" : "password"}
+                        name="newPassword"
+                        value={formData.newPassword}
+                        onChange={handleOnChange}
+                        placeholder="Enter new password"
+                      />
+
+                      <button
+                        type="button"
+                        onClick={() => setShowNewPassword(!showNewPassword)}
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400"
+                      >
+                        {showNewPassword ? <EyeOff /> : <Eye />}
+                      </button>
+                    </div>
+                    {errorFields.newPassword && (
+                      <span className="text-red-500 text-xs">
+                        Enter a valid password
+                      </span>
+                    )}
+                  </div>
+
+                  {/*confirm password */}
+                  <div className="flex flex-col space-y-2">
+                    <label className="text-gray-700 font-medium">
+                      Confirm Password:
+                    </label>
+                    <div className="relative">
+                      <input
+                        className={`pl-4 pr-12 py-3 border ${
+                          errorFields.confirmPassword
+                            ? "border-red-500"
+                            : "border-gray-300"
+                        } rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent placeholder:text-gray-400 disabled:border-0 disabled:pl-0`}
+                        type={showConfirmPassword ? "text" : "password"}
+                        name="confirmPassword"
+                        value={formData.confirmPassword}
+                        onChange={handleOnChange}
+                        placeholder="Confirm your password"
+                      />
+
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setShowConfirmPassword(!showConfirmPassword)
+                        }
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400"
+                      >
+                        {showConfirmPassword ? <EyeOff /> : <Eye />}
+                      </button>
+                    </div>
+                    {errorFields.confirmPassword && (
+                      <span className="text-red-500 text-xs">
+                        Password mismatch
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* submit button */}
+            {user?.role === "superadmin" && (
+              <div className={`w-full flex gap-4 mt-4`}>
+                {editForm && (
+                  <button
+                    className="btn-secondary h-10 rounded-lg flex items-center w-auto"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setEditForm(false);
+                      setFormData({
+                        ...initialData,
+                        oldPassword: "",
+                        newPassword: "",
+                        confirmPassword: "",
+                      });
+                    }}
+                    disabled={updateMutation.isPending}
+                  >
+                    {
+                      <div className="flex items-center justify-center">
+                        <p>Cancel</p>
+                      </div>
+                    }
+                  </button>
+                )}
+                <button
+                  type="submit"
+                  className={`btn-primary h-10 rounded-lg flex items-center disabled:opacity-50 ${
+                    editForm ? "w-auto" : "w-full md:w-auto"
+                  }`}
+                  disabled={
+                    updateMutation.isPending ||
+                    (editForm &&
+                      deepEqual(
+                        {
+                          ...initialData,
+                          oldPassword: "",
+                          newPassword: "",
+                          confirmPassword: "",
+                        },
+                        formData
+                      ))
+                  }
+                >
+                  {updateMutation.isPending ? (
+                    <div>
+                      <svg
+                        className="animate-spin h-5 w-5 text-white mx-auto"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                        ></path>
+                      </svg>
+                      <span className="sr-only">Saving...</span>
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-center">
+                      <p>{editForm ? "Save" : "Update"}</p>
+                    </div>
+                  )}
+                </button>
+              </div>
+            )}
+          </div>
         </form>
       </div>
 
