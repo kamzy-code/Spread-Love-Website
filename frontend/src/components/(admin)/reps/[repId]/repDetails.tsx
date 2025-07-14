@@ -1,7 +1,7 @@
 "use client";
 import { useFetchRep } from "@/hooks/useReps";
 import { useState, useEffect } from "react";
-import { XCircle, Users } from "lucide-react";
+import { XCircle, Users, TriangleAlert } from "lucide-react";
 import MiniLoader from "../../ui/miniLoader";
 import { useAdminAuth } from "@/hooks/authContext";
 import PageLoading from "../../ui/pageLoading";
@@ -10,12 +10,13 @@ import { motion } from "framer-motion";
 import { Rep } from "@/lib/types";
 import { Details } from "./details";
 import AdminShell from "../../ui/AdminShell";
-import { useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/router";
 
 export default function RepDetails({ repId }: { repId: string }) {
   const { user, authStatus, isAuthenticated, authError, loading } =
     useAdminAuth();
-    const queryClient = useQueryClient();
+  const router = useRouter();
+  const allowedRoles = ["superadmin", "salesrep"];
   const [mounted, setMounted] = useState(false);
   const { data, error, isLoading, isFetching, refetch } = useFetchRep(repId);
   const repData: Rep = data?.data as any;
@@ -40,6 +41,24 @@ export default function RepDetails({ repId }: { repId: string }) {
     return null;
   }
 
+  if (!allowedRoles.includes(user?.role as string)) {
+    return (
+      <AdminShell>
+        <div className="flex flex-col justify-center items-center h-full w-full gap-4">
+          <TriangleAlert className="h-8 w-8 text-gray-500" />
+          <p className="text-gray-700">Unauthorized</p>
+          <button
+            className="btn-primary rounded-lg"
+            onClick={() => router.replace("/admin/dashboard")}
+          >
+            {" "}
+            Go Back{" "}
+          </button>
+        </div>
+      </AdminShell>
+    );
+  }
+
   if (error)
     return (
       <AdminShell>
@@ -62,7 +81,13 @@ export default function RepDetails({ repId }: { repId: string }) {
 
   return (
     <AdminShell>
-      <div className="">
+      <motion.div
+        className=""
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: 50 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+      >
         {(isLoading || isFetching) && (
           <div>
             <div className="fixed z-50 bg-black/5 top-0 left-0 right-0 bottom-0"></div>
@@ -86,7 +111,7 @@ export default function RepDetails({ repId }: { repId: string }) {
         {!isLoading && !isFetching && repData && (
           <Details repData={repData}></Details>
         )}
-      </div>
+      </motion.div>
     </AdminShell>
   );
 }
