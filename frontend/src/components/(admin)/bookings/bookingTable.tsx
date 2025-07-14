@@ -56,11 +56,25 @@ export default function BookingTable() {
     if (selectedBooking) {
       updateStatusMutation.mutateAsync();
       setShowUpdateMoadal(true);
+      queryClient.invalidateQueries({
+        queryKey: ["booking", selectedBooking?._id],
+      });
     }
   }, [selectedBooking]);
 
   useEffect(() => {
-    if (updateStatusMutation.isSuccess || deleteBookingMutation.isSuccess) {
+    if (updateStatusMutation.isSuccess) {
+      queryClient.invalidateQueries({
+        queryKey: ["bookings", filter, searchTerm?.toLowerCase()],
+      });
+      refetch();
+
+      queryClient.refetchQueries({
+        queryKey: ["booking", selectedBooking?._id],
+      });
+    }
+
+    if (deleteBookingMutation.isSuccess) {
       queryClient.invalidateQueries({
         queryKey: ["bookings", filter, searchTerm?.toLowerCase()],
       });
@@ -89,6 +103,9 @@ export default function BookingTable() {
   useEffect(() => {
     if (deletedBooking && confirmDelete) {
       deleteBookingMutation.mutateAsync();
+      queryClient.invalidateQueries({
+        queryKey: ["booking", deletedBooking?._id],
+      });
     }
   }, [deletedBooking, confirmDelete]);
 
@@ -206,7 +223,9 @@ export default function BookingTable() {
 
             {/* pagination */}
             <div>
-              {meta && meta.totalPages > 0 && <Pagination meta={meta} setPage={setPage} />}
+              {meta && meta.totalPages > 0 && (
+                <Pagination meta={meta} setPage={setPage} />
+              )}
             </div>
           </div>
         )}

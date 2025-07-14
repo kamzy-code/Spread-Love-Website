@@ -10,7 +10,7 @@ import { motion } from "framer-motion";
 import { Rep } from "@/lib/types";
 import { Details } from "./details";
 import AdminShell from "../../ui/AdminShell";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 export default function RepDetails({ repId }: { repId: string }) {
   const { user, authStatus, isAuthenticated, authError, loading } =
