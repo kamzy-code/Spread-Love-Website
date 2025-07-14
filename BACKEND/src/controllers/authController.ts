@@ -32,10 +32,14 @@ class AuthController {
         role
       );
 
-      res.status(201).json({ message:"Registration successful", admin: newAdmin });
+      res
+        .status(201)
+        .json({ message: "Registration successful", admin: newAdmin });
       return;
     } catch (error) {
-      res.status(500).json({ message: "Registration failed", error });
+      if (!res.headersSent) {
+        res.status(500).json({ message: "Registration failed", error });
+      }
       return;
     }
   }
@@ -61,15 +65,20 @@ class AuthController {
       // generate a token
       const token = generateToken(admin._id as string, admin.role);
       // res.status(200).json({ token, admin });
-      res.cookie("token", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production", // only in production with HTTPS
-        sameSite: "strict",
-        maxAge:(rememberMe as boolean) ? 7 * 24 * 60 * 60 * 1000 : undefined, // 7 days
-      }).status(200).json({ message: "Login successful" });
+      res
+        .cookie("token", token, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production", // only in production with HTTPS
+          sameSite: "strict",
+          maxAge: (rememberMe as boolean) ? 7 * 24 * 60 * 60 * 1000 : undefined, // 7 days
+        })
+        .status(200)
+        .json({ message: "Login successful" });
       return;
     } catch (error) {
-      res.status(500).json({ message: "Login failed", error });
+      if (!res.headersSent) {
+        res.status(500).json({ message: "Login failed", error });
+      }
       return;
     }
   }
@@ -93,21 +102,28 @@ class AuthController {
       res.status(200).json({ user: admin });
       return;
     } catch (error) {
-      res.status(500).json({ message: "Error fetching user", error });
+      if (!res.headersSent) {
+        res.status(500).json({ message: "Error fetching user", error });
+      }
       return;
     }
   }
 
   async logoutAdmin(req: Request, res: Response, next: NextFunction) {
     try {
-      res.clearCookie("token", {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production", // only over HTTPS in production
-        sameSite: "strict",
-      }).status(200).json({ message: "Logged out successfully" });
+      res
+        .clearCookie("token", {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production", // only over HTTPS in production
+          sameSite: "strict",
+        })
+        .status(200)
+        .json({ message: "Logged out successfully" });
       return;
     } catch (error) {
-      res.status(500).json({ message: "Logout failed", error });
+      if (!res.headersSent) {
+        res.status(500).json({ message: "Logout failed", error });
+      }
       return;
     }
   }

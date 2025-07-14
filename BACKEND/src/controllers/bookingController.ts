@@ -22,7 +22,7 @@ import {
 
 class BookingController {
   // Customer Endpoints
-  async createBooking(req: Request, res: Response, next: NextFunction) {
+  async createBooking(req: Request, res: Response) {
     const {
       bookingId,
       callerName,
@@ -68,15 +68,17 @@ class BookingController {
         message: "Booking created successfully",
         bookingId: newBooking.bookingId,
       });
+      return;
     } catch (error) {
-      next(error);
       console.error("Error creating booking:", error);
-      res.status(500).json({ message: "Error creating booking", error });
+      if (!res.headersSent) {
+        res.status(500).json({ message: "Error creating booking", error });
+      }
       return;
     }
   }
 
-  async getBookingByBookingId(req: Request, res: Response, next: NextFunction) {
+  async getBookingByBookingId(req: Request, res: Response) {
     // extract BookingID from url
     const bookingId = req.params.bookingId;
 
@@ -102,18 +104,15 @@ class BookingController {
         .json({ message: "Booking fetched successfully", booking });
       return;
     } catch (error) {
-      next(error);
       console.error("Error fetching booking:", error);
-      res.status(500).json({ message: "Error fetching booking", error });
+      if (!res.headersSent) {
+        res.status(500).json({ message: "Error fetching booking", error });
+      }
       return;
     }
   }
 
-  async updateBookingByCustomer(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
+  async updateBookingByCustomer(req: Request, res: Response) {
     // extract the booking ID from URL and the update info from the request body
     const { bookingId } = req.params;
     const info = req.body;
@@ -165,14 +164,15 @@ class BookingController {
       res.status(200).json({ message: "Update Successful" });
       return;
     } catch (error) {
-      next(error);
       console.error(`Booking update failed: ${error}`);
-      res.status(500).json({ message: "Booking update failed", error });
+      if (!res.headersSent) {
+        res.status(500).json({ message: "Booking update failed", error });
+      }
       return;
     }
   }
 
-  async generateBookingID(req: Request, res: Response, next: NextFunction) {
+  async generateBookingID(req: Request, res: Response) {
     try {
       // call service method to generate ID
       const ID = await bookingService.generateBookingId();
@@ -186,10 +186,12 @@ class BookingController {
       res.status(200).json({
         ID,
       });
+      return;
     } catch (error) {
-      next(error);
       console.error(`Error generating Booking ID: ${error}`);
-      res.status(500).json({ message: "Error generating Booking ID", error });
+      if (!res.headersSent) {
+        res.status(500).json({ message: "Error generating Booking ID", error });
+      }
       return;
     }
   }
@@ -197,7 +199,7 @@ class BookingController {
   // Admin Endpoints
 
   // get a booking by the MongoDB id and not the generated booking ID
-  async getBookingById(req: AuthRequest, res: Response, next: NextFunction) {
+  async getBookingById(req: AuthRequest, res: Response) {
     // extract booking Id from URL and get the user object created from the JWT token
     const bookingId = req.params.bookingId;
     const user = req.user!;
@@ -228,9 +230,10 @@ class BookingController {
         .json({ message: "Booking fetched successfully", booking });
       return;
     } catch (error) {
-      next(error);
       console.error("Error fetching booking:", error);
-      res.status(500).json({ message: "Error fetching booking", error });
+      if (!res.headersSent) {
+        res.status(500).json({ message: "Error fetching booking", error });
+      }
       return;
     }
   }
@@ -267,14 +270,15 @@ class BookingController {
         .json({ message: "Booking Deleted successfully", booking });
       return;
     } catch (error) {
-      next(error);
       console.error("Error Deleting booking:", error);
-      res.status(500).json({ message: "Error Deleting booking", error });
+      if (!res.headersSent) {
+        res.status(500).json({ message: "Error Deleting booking", error });
+      }
       return;
     }
   }
 
-  async getAllBooking(req: AuthRequest, res: Response, next: NextFunction) {
+  async getAllBooking(req: AuthRequest, res: Response) {
     console.log(`fetch all bookings hit + ${new Date()}`);
     // extract all possible filtering parameters from the request query object.
     const {
@@ -372,18 +376,15 @@ class BookingController {
       });
       return;
     } catch (error) {
-      next(error);
       console.error("Error fetching bookings:", error);
-      res.status(500).json({ message: "Error fetching bookings", error });
+      if (!res.headersSent) {
+        res.status(500).json({ message: "Error fetching bookings", error });
+      }
       return;
     }
   }
 
-  async updateBookingStatus(
-    req: AuthRequest,
-    res: Response,
-    next: NextFunction
-  ) {
+  async updateBookingStatus(req: AuthRequest, res: Response) {
     // extract the booking ID, new status and user object.
     const { bookingId } = req.params;
     const { status } = req.body;
@@ -422,14 +423,18 @@ class BookingController {
       res.status(201).json({ message: "Status updated" });
       return;
     } catch (error) {
-      next(error);
       console.error(`Error Updating Booking Status: ${error}`);
-      res.status(500).json({ message: "Error Updating Booking status", error });
+      if (!res.headersSent) {
+        res
+          .status(500)
+          .json({ message: "Error Updating Booking status", error });
+      }
+      return;
     }
   }
 
   // manually assign or reassign a call to a rep
-  async assignCallToRep(req: AuthRequest, res: Response, next: NextFunction) {
+  async assignCallToRep(req: AuthRequest, res: Response) {
     // extract booking ID and query parameters
     const bookingId = req.params.bookingId;
     const { repId, autoAssign } = req.body;
@@ -486,18 +491,15 @@ class BookingController {
       res.status(200).json({ message: "Booking assigned", repId: targetRep });
       return;
     } catch (error) {
-      next(error);
       console.error("Error assigning Call to Rep:", error);
-      res.status(500).json({ message: "Error assigning Call to Rep", error });
+      if (!res.headersSent) {
+        res.status(500).json({ message: "Error assigning Call to Rep", error });
+      }
       return;
     }
   }
 
-  async getBookingAnalytics(
-    req: AuthRequest,
-    res: Response,
-    next: NextFunction
-  ) {
+  async getBookingAnalytics(req: AuthRequest, res: Response) {
     const user = req.user!;
     const { repId } = req.params;
     const matchStage: any = {};
@@ -562,17 +564,14 @@ class BookingController {
     try {
       // Current period
       const analytics = await bookingService.getAnalytics(matchStage);
-      console.log(1)
       const totalBookings = await bookingService.getTotalBookingsCount(
         matchStage
       );
-      console.log(2)
 
       // Previous period
       const prevTotalBookings = prevDateRange
         ? await bookingService.getTotalBookingsCount(matchStagePrev)
         : 0;
-        console.log(3)
 
       // Calculate percentage increase
       const percentageIncrease =
@@ -589,15 +588,14 @@ class BookingController {
 
       if (user.role === "superadmin" || user.role === "salesrep") {
         activeRepsCount = await adminService.countActiveReps(user.role);
-        console.log(5)
       }
       if (user.role === "superadmin") {
         totalRevenue = await bookingService.getTotalRevenue(matchStage);
-        console.log(6)
+
         prevTotalRevenue = prevDateRange
           ? await bookingService.getTotalRevenue(matchStagePrev)
           : 0;
-          console.log(7)
+
         revenuePercentageIncrease =
           prevTotalRevenue === 0 && totalRevenue > 0
             ? 100
@@ -616,7 +614,6 @@ class BookingController {
         }),
         ...(activeRepsCount !== undefined && { activeRepsCount }),
       });
-      console.log(8)
       return;
     } catch (error) {
       console.error(`Error fetching analytics: ${error}`);
