@@ -1,5 +1,5 @@
 import adminService from "../services/adminService";
-import { Request , Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from "express";
 import { AuthRequest } from "../middlewares/authMiddleware";
 import bcrypt from "bcrypt";
 
@@ -131,49 +131,26 @@ class AdminController {
     const { newPassword, oldPassword, confirmPassword, ...info } = req.body;
 
     try {
-      const rep = await adminService.getRepById(
-        user.role === "callrep" ? user.userId : repId,
-        user.role,
-        true
-      );
-      console.log("rep - ", rep);
+      const targetRepId = user.role === "callrep" ? user.userId : repId;
 
-      // if no rep was found return error message
-      if (!rep) {
-        res.status(404).json({ message: "Rep not found" });
-        return;
-      }
+      const result = await adminService.updateRepInfo({
+        targetRepId,
+        updaterId: user.userId,
+        updaterRole: user.role,
+        info,
+        oldPassword,
+        newPassword,
+        confirmPassword,
+      });
 
-      if (newPassword) {
-        console.log(oldPassword, "-", newPassword);
-        // check if the password is correct
-        const isPasswordValid = await bcrypt.compare(
-          oldPassword as string,
-          rep.password
-        );
-
-        if (!isPasswordValid) {
-          res.status(401).json({ message: "Invalid password" });
-          return;
-        }
-
-        const hashed = await bcrypt.hash(newPassword, 10);
-        info.password = hashed;
-      }
-
-      for (const field of Object.keys(info)) {
-        (rep as any)[field] = info[field];
-      }
-
-      await rep.save();
-      res.status(200).json({ message: "Update successful" });
+      res.status(result.status).json(result.body);
       return;
     } catch (error) {
       console.error(`Rep update failed: ${error}`);
       if (!res.headersSent) {
         res.status(500).json({ message: "Rep update failed", error });
+        return;
       }
-      return;
     }
   }
 }

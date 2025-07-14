@@ -167,7 +167,7 @@ export default function LoginForm() {
             {errorMessage === "generic" && (
               <p className="text-red-500 text-sm mt-2 text-center flex items-center justify-center font-medium">
                 <TriangleAlert className="h-5 w-5 mr-2 text-red-500" />
-                Error signing in, please try again.
+                {mutation.error?.message? mutation.error.message : "Error signing in, please try again."}
               </p>
             )}
 

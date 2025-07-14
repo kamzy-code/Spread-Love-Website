@@ -437,11 +437,11 @@ class BookingController {
   async assignCallToRep(req: AuthRequest, res: Response) {
     // extract booking ID and query parameters
     const bookingId = req.params.bookingId;
-    const { repId, autoAssign } = req.body;
+    const { repId } = req.query;
     const user = req.user!;
 
     // check the auto assign status
-    const isAutoAssign = autoAssign === true || autoAssign === "true";
+    const isAutoAssign = repId as string === "auto";
 
     // return error message if no bookng ID was found
     if (!bookingId) {
@@ -464,7 +464,9 @@ class BookingController {
 
     try {
       // get the targeted rep by auto assigning or using the submited rep ID
-      const targetRep = isAutoAssign ? await getLeastLoadedRep() : repId;
+      let targetRep = isAutoAssign
+        ? await getLeastLoadedRep()
+        : await adminService.getRepById(repId as string, user.role);
 
       // return error message if rep wasn't found
       if (!targetRep) {
@@ -472,19 +474,28 @@ class BookingController {
         return;
       }
 
+      if (targetRep && typeof targetRep !== "string") {
+        console.log("target -", targetRep, "type -", typeof targetRep);
+        if (targetRep.status !== "active") {
+          res.status(400).json({ message: "Rep isn't active", rep: targetRep });
+          return;
+        }
+        targetRep = targetRep._id as string;
+      }
+
       // update the assigned rep to the new targetted rep
-      booking.assignedRep = targetRep;
+      booking.assignedRep = new Types.ObjectId(targetRep);
 
       // create an array of booking that can't be updated based on their status
-      const disallowedFields = ["successful"];
+      const disallowedStatuses = ["successful", "unsuccessful", "rejected"];
 
       // check if the booking has a status that's part of the disallowed statuses and return error message without saving the updated booking object.
-      if (disallowedFields.includes(booking.status as string)) {
+      if (disallowedStatuses.includes(booking.status as string)) {
         res.status(400).json({ message: "Can't re-assign this Booking" });
         return;
       }
 
-      // else update the booking status to assigned if the booking status is not part of the disallowed statuses, save and return success message with the new rep ID
+      // else update the booking status to pending if the booking status is not part of the disallowed statuses, save and return success message with the new rep ID
       booking.status = "pending" as callStatus;
       await booking.save();
 

@@ -55,6 +55,11 @@ class AuthController {
         return;
       }
 
+      if (admin && admin.status === "blocked") {
+        res.status(400).json({ message: "Account blocked and is no longer accessible!" });
+        return;
+      }
+      
       // check if the password is correct
       const isPasswordValid = await bcrypt.compare(password, admin.password);
       if (!isPasswordValid) {
