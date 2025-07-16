@@ -34,7 +34,7 @@ export function Details({ repData }: { repData: Rep }) {
     newPassword: false,
     confirmPassword: false,
   });
-    const [showFilter, setShowFilter] = useState(true);
+  const [showFilter, setShowFilter] = useState(true);
 
   const updateMutation = useUpdateRep(formData);
 
@@ -218,27 +218,31 @@ export function Details({ repData }: { repData: Rep }) {
                 </div>
 
                 {/* role */}
-                <div
-                  className={`flex ${editForm ? "flex-col" : "flex-row"} gap-4`}
-                >
-                  <label className="text-gray-700 font-medium">Role:</label>
-                  {editForm ? (
-                    <select
-                      className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent placeholder:text-gray-400 disabled:border-0 disabled:pl-0"
-                      name="role"
-                      value={formData.role}
-                      onChange={handleOnChange}
-                      required
-                      disabled={!editForm}
-                    >
-                      <option value="callrep">callrep</option>
-                      <option value="salesrep">salesrep</option>
-                      <option value="superadmin">superadmin</option>
-                    </select>
-                  ) : (
-                    <p className=" flex-1">{formData.role}</p>
-                  )}
-                </div>
+                {user?.role === "superadmin" && (
+                  <div
+                    className={`flex ${
+                      editForm ? "flex-col" : "flex-row"
+                    } gap-4`}
+                  >
+                    <label className="text-gray-700 font-medium">Role:</label>
+                    {editForm ? (
+                      <select
+                        className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent placeholder:text-gray-400 disabled:border-0 disabled:pl-0"
+                        name="role"
+                        value={formData.role}
+                        onChange={handleOnChange}
+                        required
+                        disabled={!editForm}
+                      >
+                        <option value="callrep">callrep</option>
+                        <option value="salesrep">salesrep</option>
+                        <option value="superadmin">superadmin</option>
+                      </select>
+                    ) : (
+                      <p className=" flex-1">{formData.role}</p>
+                    )}
+                  </div>
+                )}
 
                 {/* status */}
                 <div
@@ -276,7 +280,7 @@ export function Details({ repData }: { repData: Rep }) {
             </div>
 
             {/* Update Password */}
-            {editForm && (
+            {editForm && user?.role === "superadmin" && (
               <div>
                 <h2 className="gradient-text text-xl font-semibold mb-4 pb-2">
                   {" "}
@@ -392,7 +396,7 @@ export function Details({ repData }: { repData: Rep }) {
             )}
 
             {/* submit button */}
-            {user?.role === "superadmin" && (
+            {
               <div className={`w-full flex gap-4 mt-4`}>
                 {editForm && (
                   <button
@@ -466,7 +470,7 @@ export function Details({ repData }: { repData: Rep }) {
                   )}
                 </button>
               </div>
-            )}
+            }
           </div>
         </form>
       </div>
