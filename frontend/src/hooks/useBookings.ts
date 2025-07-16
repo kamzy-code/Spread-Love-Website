@@ -54,6 +54,30 @@ export const useUpdateStatus = (body: { id: string; status: string }) => {
 };
 
 
+export const useAssignBooking = (bookingId: string, repId: string) => {
+  return useMutation({
+    mutationFn: async () => {
+      const res = await fetch(`${apiUrl}/booking/admin/assign/${bookingId}?repId=${repId}`, {
+        credentials: "include",
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.message || "Failed to assign booking");
+      }
+    },
+
+    onError: (error) => {
+      throw new Error(error.message || "Failed to assign booking");
+    },
+  });
+};
+
+
 export const useDeleteBooking = (id: string) => {
   return useMutation({
     mutationFn: async () => {

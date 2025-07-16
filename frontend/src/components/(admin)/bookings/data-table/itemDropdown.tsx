@@ -24,7 +24,7 @@ export default function ItemDropDown({
 }: {
   booking: Booking;
   view: string;
-  setSelectedbooking: (booking: Booking) => void;
+  setSelectedbooking: (booking: Booking, action: string) => void;
   setDeletedBooking: (booking: Booking) => void;
   setShowDeleteModal: (val: boolean) => void;
 }) {
@@ -66,7 +66,7 @@ export default function ItemDropDown({
             <DropdownMenuItem
               onClick={(e) => {
                 e.stopPropagation();
-                setSelectedbooking({ ...booking, status: "pending" });
+                setSelectedbooking({ ...booking, status: "pending" }, "update");
               }}
             >
               <label className={`flex items-center px-2 py-1 cursor-pointer`}>
@@ -83,7 +83,10 @@ export default function ItemDropDown({
             <DropdownMenuItem
               onClick={(e) => {
                 e.stopPropagation();
-                setSelectedbooking({ ...booking, status: "successful" });
+                setSelectedbooking(
+                  { ...booking, status: "successful" },
+                  "update"
+                );
               }}
             >
               <label className={`flex items-center px-2 py-1 cursor-pointer`}>
@@ -100,7 +103,10 @@ export default function ItemDropDown({
             <DropdownMenuItem
               onClick={(e) => {
                 e.stopPropagation();
-                setSelectedbooking({ ...booking, status: "rejected" });
+                setSelectedbooking(
+                  { ...booking, status: "rejected" },
+                  "update"
+                );
               }}
             >
               <label className={`flex items-center px-2 py-1 cursor-pointer`}>
@@ -117,7 +123,10 @@ export default function ItemDropDown({
             <DropdownMenuItem
               onClick={(e) => {
                 e.stopPropagation();
-                setSelectedbooking({ ...booking, status: "rescheduled" });
+                setSelectedbooking(
+                  { ...booking, status: "rescheduled" },
+                  "update"
+                );
               }}
             >
               <label className={`flex items-center px-2 py-1 cursor-pointer`}>
@@ -134,7 +143,10 @@ export default function ItemDropDown({
             <DropdownMenuItem
               onClick={(e) => {
                 e.stopPropagation();
-                setSelectedbooking({ ...booking, status: "unsuccessful" });
+                setSelectedbooking(
+                  { ...booking, status: "unsuccessful" },
+                  "update"
+                );
               }}
             >
               <label className={`flex items-center px-2 py-1 cursor-pointer`}>
@@ -162,7 +174,12 @@ export default function ItemDropDown({
             >
               Delete
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
+            <DropdownMenuItem
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedbooking(booking, "assign");
+              }}
+            >
               Assign to Rep
             </DropdownMenuItem>
           </>

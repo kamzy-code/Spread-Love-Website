@@ -13,7 +13,7 @@ export default function GridItem({
 }: {
   booking: Booking;
   role: string;
-  setSelectedBooking: (booking: Booking) => void;
+  setSelectedBooking: (booking: Booking, action: string) => void;
   setDeletedBooking: (booking: Booking) => void;
   setShowDeleteModal: (val: boolean) => void;
 }) {

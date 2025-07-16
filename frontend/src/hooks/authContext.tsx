@@ -66,7 +66,6 @@ export const AdminAuthProvider = ({
   useEffect(() => {
     let isMounted = true;
     fetchUser(isMounted);
-    console.log("fetch ran!!!");
     return () => {
       isMounted = false;
     };
@@ -129,7 +128,6 @@ export const AdminAuthProvider = ({
     setAuthStatus("checking");
     setLoading(true);
     await fetchUser();
-    console.log("fetch reload ran!!!");
   };
 
   return (

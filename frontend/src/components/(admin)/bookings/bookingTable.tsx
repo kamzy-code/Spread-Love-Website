@@ -16,13 +16,16 @@ import GridItem from "./data-table/grid-table";
 import { useQueryClient } from "@tanstack/react-query";
 import UpdateConfirmationModal from "../ui/updateModal";
 import DeleteConfirmationModal from "./deleteModal";
+import AssignModal from "./assignModal";
 
 export default function BookingTable() {
   const queryClient = useQueryClient();
   const { user } = useAdminAuth();
   const fullFilter: BookingFilterContex = useBookingFilter();
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
+  const [updateStatus, setUpdateStatus] = useState(false);
   const [showUpdateModal, setShowUpdateMoadal] = useState(false);
+  const [showAssignModal, setShowAssignModal] = useState(false);
 
   const [deletedBooking, setDeletedBooking] = useState<Booking | null>(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -47,20 +50,28 @@ export default function BookingTable() {
 
   const tableColumns = getColumnsByRole(
     user?.role as "superadmin" | "salesrep" | "callrep",
-    (booking: Booking) => setSelectedBooking(booking),
+    (booking: Booking, action: string) => {
+      setSelectedBooking(booking);
+      action === "update"
+        ? setUpdateStatus(true)
+        : action === "assign"
+        ? setShowAssignModal(true)
+        : null;
+    },
     (booking: Booking) => setDeletedBooking(booking),
     (val: boolean) => setShowDeleteModal(val)
   );
 
+
   useEffect(() => {
-    if (selectedBooking) {
+    if (selectedBooking && updateStatus) {
       updateStatusMutation.mutateAsync();
       setShowUpdateMoadal(true);
       queryClient.invalidateQueries({
         queryKey: ["booking", selectedBooking?._id],
       });
     }
-  }, [selectedBooking]);
+  }, [selectedBooking, updateStatus]);
 
   useEffect(() => {
     if (updateStatusMutation.isSuccess) {
@@ -80,6 +91,10 @@ export default function BookingTable() {
       });
       refetch();
     }
+
+    return () => {
+      setUpdateStatus(false);
+    };
   }, [updateStatusMutation.isSuccess, deleteBookingMutation.isSuccess]);
 
   useEffect(() => {
@@ -180,6 +195,7 @@ export default function BookingTable() {
           updateStatusMutation.isSuccess && (
             <UpdateConfirmationModal
               setShowModal={() => setShowUpdateMoadal(false)}
+              success="Booking status updated successfully!"
             ></UpdateConfirmationModal>
           )}
 
@@ -207,9 +223,14 @@ export default function BookingTable() {
                     key={booking._id}
                     booking={booking}
                     role={user?.role as string}
-                    setSelectedBooking={(booking: Booking) =>
-                      setSelectedBooking(booking)
-                    }
+                    setSelectedBooking={(booking: Booking, action: string) => {
+                      setSelectedBooking(booking);
+                      action === "update"
+                        ? setUpdateStatus(true)
+                        : action === "assign"
+                        ? setShowAssignModal(true)
+                        : null;
+                    }}
                     setDeletedBooking={(booking: Booking) =>
                       setDeletedBooking(booking)
                     }
@@ -229,6 +250,14 @@ export default function BookingTable() {
             </div>
           </div>
         )}
+
+        {showAssignModal && selectedBooking && (
+          <AssignModal
+            setShowAssignForm={(val: boolean) => setShowAssignModal(val)}
+            booking={selectedBooking}
+          />
+        )}
+
       </div>
     </div>
   );

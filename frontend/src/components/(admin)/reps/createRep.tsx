@@ -90,6 +90,15 @@ export default function CreateRep({
         password: "",
         confirmPassword: "",
       });
+      setErrorFields({
+        firstName: false,
+        lastName: false,
+        email: false,
+        phone: false,
+        role: false,
+        password: false,
+        confirmPassword: false,
+      });
       setShowSuccessModal(true);
     }
   }, [createMutation.isSuccess]);

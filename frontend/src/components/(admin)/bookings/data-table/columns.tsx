@@ -18,7 +18,7 @@ import ItemDropDown from "./itemDropdown";
 
 export function getColumnsByRole(
   role: "superadmin" | "salesrep" | "callrep",
-  setSelectedBooking: (booking: Booking) => void,
+  setSelectedBooking: (booking: Booking, action: string) => void,
   setDeletedBooking: (booking: Booking) => void,
   setShowDeleteModal: (val: boolean) => void,
 ): ColumnDef<Booking>[] {

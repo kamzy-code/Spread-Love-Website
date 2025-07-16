@@ -404,6 +404,31 @@ export default function DetailsPage({ data }: { data: Booking }) {
                     </p>
                   )}
                 </div>
+
+                {/* Assiigned Rep */}
+                {user?.role !== "callrep" && (
+                  <div className="flex flex-col space-y-2">
+                    <label className="text-gray-700 font-medium">
+                      Assigned Rep:
+                    </label>
+                    {editForm ? (
+                      <input
+                        type="text"
+                        name="callType"
+                        id="call_type"
+                        className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent disabled:border-0 disabled:pl-0"
+                        onChange={handleOnChange}
+                        value={formData.assignedRep.firstName}
+                        required
+                        disabled
+                      />
+                    ) : (
+                      <p className="py-3 w-full">
+                        {formData.assignedRep.firstName}
+                      </p>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
 
@@ -528,7 +553,11 @@ export default function DetailsPage({ data }: { data: Booking }) {
                   className={`btn-primary disabled:opacity-50 ${
                     editForm ? "w-auto" : "w-full md:w-[50%]"
                   }`}
-                  disabled={isSubmitting || mutation.isPending || (editForm && deepEqual(initialBooking, formData))}
+                  disabled={
+                    isSubmitting ||
+                    mutation.isPending ||
+                    (editForm && deepEqual(initialBooking, formData))
+                  }
                 >
                   {isSubmitting || mutation.isPending ? (
                     <div>

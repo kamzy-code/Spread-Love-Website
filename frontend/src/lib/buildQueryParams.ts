@@ -9,6 +9,5 @@ export const buildQueryParams = (filters: Record<string, any>) => {
       searchParams.append(key, filters[key]);
     }
   }
-  console.log(searchParams.toString());
   return searchParams.toString();
 };

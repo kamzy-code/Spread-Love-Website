@@ -68,11 +68,17 @@ class BookingService {
       return await Booking.findOne({
         _id: new Types.ObjectId(bookingId),
         assignedRep: userId,
-      }).select("-__v -updatedAt");
+      }).populate({
+        path: "assignedRep",
+        select: "-__v -createdAt -updatedAt", // Optional: exclude sensitive fields
+      });
     }
 
     // return the booking if the Id matches regardless of the role
-    return await Booking.findById(bookingId).select("-__v -updatedAt");
+    return await Booking.findById(bookingId).populate({
+      path: "assignedRep",
+      select: "-__v -createdAt -updatedAt", // Optional: exclude sensitive fields
+    });
   }
 
   // Delete booking by MongoDB ID

@@ -45,7 +45,6 @@ export function DataTable<TData extends Booking, TValue>({
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({
-      assignedRep: false,
       price: false,
       recipientName: false,
     });

@@ -475,7 +475,6 @@ class BookingController {
       }
 
       if (targetRep && typeof targetRep !== "string") {
-        console.log("target -", targetRep, "type -", typeof targetRep);
         if (targetRep.status !== "active") {
           res.status(400).json({ message: "Rep isn't active", rep: targetRep });
           return;
