@@ -1,5 +1,10 @@
 import mongoose, { Schema, Document, mongo } from "mongoose";
-import { callStatus, callType, occassion, occassionType } from "../types/genralTypes";
+import {
+  callStatus,
+  callType,
+  occassion,
+  occassionType,
+} from "../types/genralTypes";
 
 export interface IBooking extends Document {
   bookingId: string;
@@ -16,6 +21,8 @@ export interface IBooking extends Document {
   message?: string;
   specialInstruction?: string;
   status?: callStatus;
+  callRecordingURL?: string;
+  contactConsent?: string;
   assignedRep?: mongoose.Types.ObjectId;
 }
 
@@ -29,16 +36,24 @@ const bookingSchema: Schema = new Schema<IBooking>(
     recipientPhone: { type: String, required: true },
     country: { type: String, required: true },
     occassion: { type: String, enum: Object.values(occassion), required: true },
-    callType: {type: String, required: true},
+    callType: { type: String, required: true },
     callDate: { type: Date, required: true },
-    price: {type: String, required: true},
-    message: { type: String, required: true, default: ""},
+    price: { type: String, required: true },
+    message: { type: String, required: true, default: "" },
     specialInstruction: { type: String, required: false, default: "" },
     status: {
       type: String,
-      enum: ["pending", "successful", "rejected", "rescheduled", "unsuccessful"],
+      enum: [
+        "pending",
+        "successful",
+        "rejected",
+        "rescheduled",
+        "unsuccessful",
+      ],
       default: "pending",
     },
+    callRecordingURL: { type: String, required: false, default: "" },
+    contactConsent: { type: String, required: false, default: "no" },
     assignedRep: { type: mongoose.Types.ObjectId, ref: "Admin" },
   },
   { timestamps: true }

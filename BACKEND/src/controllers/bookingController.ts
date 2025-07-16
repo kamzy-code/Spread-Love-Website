@@ -37,6 +37,7 @@ class BookingController {
       price,
       message,
       specialInstruction,
+      contactConsent = "no",
     } = req.body;
 
     try {
@@ -54,7 +55,8 @@ class BookingController {
         callDate as Date,
         price,
         message,
-        specialInstruction
+        specialInstruction,
+        contactConsent
       );
 
       // return failed if booking creation was unsuccessful

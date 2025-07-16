@@ -9,6 +9,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { getStatusColor, getStatusIcon } from "@/lib/getStatusColor";
 import { Booking } from "@/lib/types";
 import { useAdminAuth } from "@/hooks/authContext";
+import { countries } from "@/lib/countries";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
@@ -47,25 +48,6 @@ const updateBooking = async (updatedData: any) => {
 export default function DetailsPage({ data }: { data: Booking }) {
   const { user } = useAdminAuth();
 
-  const countries = [
-    "Nigeria",
-    "United States",
-    "Canada",
-    "United Kingdom",
-    "Australia",
-    "Germany",
-    "France",
-    "Spain",
-    "Italy",
-    "Japan",
-    "South Korea",
-    "India",
-    "Brazil",
-    "Mexico",
-    "Argentina",
-    "South Africa",
-    "Other",
-  ];
   const [initialBooking, setInitialBooking] = useState<Booking>(data);
   const [formData, setFormData] = useState<Booking>(data);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -429,6 +411,41 @@ export default function DetailsPage({ data }: { data: Booking }) {
                     )}
                   </div>
                 )}
+
+                {/* Call Recording URL */}
+                <div className="flex flex-col space-y-2">
+                  <label className="text-gray-700 font-medium">
+                    Call Recording:
+                  </label>
+                  {editForm ? (
+                    <input
+                      type="text"
+                      name="callRecordingURL"
+                      id="callRecordingURL"
+                      className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent disabled:border-0 disabled:pl-0"
+                      onChange={handleOnChange}
+                      value={formData.callRecordingURL}
+                      required
+                      disabled={!editForm}
+                    />
+                  ) : (
+                    <p className="py-3 w-full">
+                      {!formData.callRecordingURL
+                        ? "Not available"
+                        : formData.callRecordingURL}
+                    </p>
+                  )}
+                </div>
+
+                {/* Contact Consent */}
+                {!editForm && (
+                  <div className="flex flex-col space-y-2">
+                    <label className="text-gray-700 font-medium">
+                      Contact Consent:
+                    </label>
+                    {<p className="py-3 w-full">{formData.contactConsent}</p>}
+                  </div>
+                )}
               </div>
             </div>
 
@@ -537,6 +554,7 @@ export default function DetailsPage({ data }: { data: Booking }) {
                     className="btn-secondary w-auto]"
                     onClick={(e) => {
                       e.preventDefault();
+                      setFormData(initialBooking);
                       setEditForm(false);
                     }}
                     disabled={isSubmitting || mutation.isPending}

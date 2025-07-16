@@ -66,6 +66,8 @@ export interface Booking {
   message?: string;
   specialInstruction?: string;
   status?: string;
+  callRecordingURL?: string;
+  contactConsent?: string
   assignedRep?: any; // populated rep data
   createdAt: string;
   // add more fields as needed

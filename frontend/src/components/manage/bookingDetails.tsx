@@ -17,15 +17,18 @@ import { formatToYMD } from "@/lib/formatDate";
 import { deepEqual } from "@/lib/hasBookingChanged";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { getStatusColor, getStatusIcon } from "@/lib/getStatusColor";
+import Link from "next/link";
+import { countries } from "@/lib/countries";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-
 
 const updateBooking = async (updatedData: any) => {
   const disallowedFields = ["bookingId", "status", "assignedRep", "callType"];
 
   const allowedUpdate = Object.fromEntries(
-    Object.entries(updatedData).filter(([key]) => !disallowedFields.includes(key))
+    Object.entries(updatedData).filter(
+      ([key]) => !disallowedFields.includes(key)
+    )
   );
 
   const response = await fetch(
@@ -52,25 +55,6 @@ const updateBooking = async (updatedData: any) => {
 };
 
 export default function BookingDetails({ data }: { data: any }) {
-  const countries = [
-    "Nigeria",
-    "United States",
-    "Canada",
-    "United Kingdom",
-    "Australia",
-    "Germany",
-    "France",
-    "Spain",
-    "Italy",
-    "Japan",
-    "South Korea",
-    "India",
-    "Brazil",
-    "Mexico",
-    "Argentina",
-    "South Africa",
-    "Other",
-  ];
   const [initialBooking, setInitialBooking] = useState(data);
   const [formData, setFormData] = useState(data);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -125,7 +109,6 @@ export default function BookingDetails({ data }: { data: any }) {
     }
 
     await mutation.mutateAsync(formData);
- 
   };
 
   const getCallStatusMessage = (status: string) => {
@@ -147,9 +130,7 @@ export default function BookingDetails({ data }: { data: any }) {
 
   return (
     <section className="container-max section-padding flex justify-center py-20 px-7 md:px-10 sm:px-25 lg:px-50">
-      <motion.div
-        className={`card p-6 md:p-8 w-full space-y-4`}
-      >
+      <motion.div className={`card p-6 md:p-8 w-full space-y-4`}>
         <div className="flex flex-col md:flex-row justify-between md:items-center gap-4">
           <div>
             <h2 className="gradient-text font-bold text-xl md:text-2xl">
@@ -407,6 +388,30 @@ export default function BookingDetails({ data }: { data: any }) {
                     </p>
                   )}
                 </div>
+
+                {/* Call Recording URL */}
+                {!editForm && (
+                  <div className="flex flex-col space-y-2">
+                    <label className="text-gray-700 font-medium">
+                      Call Recording:
+                    </label>
+                    {
+                      <p className="py-3 w-full">
+                        {!formData.callRecordingURL ? (
+                          "Not available"
+                        ) : (
+                          <Link
+                            href={formData.callRecordingURL}
+                            target="_blank"
+                            className="text-blue-500 hover:underline"
+                          >
+                            {formData.callRecordingURL}
+                          </Link>
+                        )}
+                      </p>
+                    }
+                  </div>
+                )}
               </div>
             </div>
 
@@ -504,7 +509,7 @@ export default function BookingDetails({ data }: { data: any }) {
             }
 
             {/* submit button */}
-            {(
+            {
               <div
                 className={`w-full flex ${
                   editForm ? "justify-end gap-4" : "justify-center"
@@ -567,7 +572,7 @@ export default function BookingDetails({ data }: { data: any }) {
                   )}
                 </button>
               </div>
-            )}
+            }
           </form>
         </div>
 

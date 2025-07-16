@@ -113,11 +113,6 @@ export default function RepList() {
                       </div>
 
                       <div className="flex gap-4">
-                        
-                        {user?.role === "superadmin" && <Trash2
-                          className="w-6 h-6 text-brand-end hover:scale-120 active:scale-120 transition"
-                          onClick={(e) => e.stopPropagation()}
-                        ></Trash2>}
                       </div>
                     </div>
 

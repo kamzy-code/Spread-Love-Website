@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { services, callType } from "../services/serviceList";
 import CreateErrorModal from "./errorModal";
 import { useMutation } from "@tanstack/react-query";
+import { countries } from "@/lib/countries";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
@@ -54,25 +55,6 @@ export default function BookingForm({
   const [bookingId, setBookingId] = useState("");
   type serviceType = "regular" | "special";
 
-  const countries = [
-    "Nigeria",
-    "United States",
-    "Canada",
-    "United Kingdom",
-    "Australia",
-    "Germany",
-    "France",
-    "Spain",
-    "Italy",
-    "Japan",
-    "South Korea",
-    "India",
-    "Brazil",
-    "Mexico",
-    "Argentina",
-    "South Africa",
-    "Other",
-  ];
 
   const [mounted, setMounted] = useState(false);
 
@@ -89,8 +71,9 @@ export default function BookingForm({
     price: "",
     message: "",
     specialInstruction: "",
+    contactConsent: "no",
   });
-
+ 
   const mutation = useMutation({
     mutationFn: (updatedData) => createBooking(updatedData),
     onSuccess: (data) => {
@@ -228,6 +211,7 @@ export default function BookingForm({
                       price: "",
                       message: "",
                       specialInstruction: "",
+                      contactConsent: "no",
                     });
                     setBookingId("");
                     setCreateBookingStatus("");
@@ -479,6 +463,24 @@ export default function BookingForm({
                     ></textarea>
                   </div>
                 </div>
+              </div>
+
+              {/* Contact Consent */}
+              <div className="py-2 flex justify-between">
+              <label className="flex flex-row items-center">
+                <input
+                  type="checkbox"
+                  checked={formData.contactConsent === "yes"}
+                  onChange={(e) => formData.contactConsent === "yes"
+                    ? setFormData((prev) => ({ ...prev, contactConsent: "no" }))
+                    : setFormData((prev) => ({ ...prev, contactConsent: "yes" }))}
+                  name="contactConsent"
+                  className="rounded border-gray-300 text-brand-end focus:ring-brand-end"
+                />
+                <span className="ml-2 text-sm text-gray-600">
+                  I agree to be contacted for updates about my booking and future offers. 
+                </span>
+              </label>
               </div>
 
               {/* pricing summary */}
