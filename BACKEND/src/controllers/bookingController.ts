@@ -19,6 +19,7 @@ import {
   startOfWeek,
   endOfWeek,
 } from "date-fns";
+import emailService from "../services/emailService";
 
 class BookingController {
   // Customer Endpoints
@@ -65,6 +66,12 @@ class BookingController {
         return;
       }
 
+      emailService.sendBookingConfirmationEmail(
+        callerEmail,
+        "Booking Confirmation",
+        newBooking.bookingId
+      );
+
       // retrun successful with Booking ID if successful
       res.status(201).json({
         message: "Booking created successfully",
@@ -75,6 +82,48 @@ class BookingController {
       console.error("Error creating booking:", error);
       if (!res.headersSent) {
         res.status(500).json({ message: "Error creating booking", error });
+      }
+      return;
+    }
+  }
+
+  async sendConfirmationEmail(req: Request, res: Response) {
+    // extract BookingID from url
+    const bookingId = req.params.bookingId;
+
+    // return ID reuired if ID wasn't submitted
+    if (!bookingId) {
+      res.status(400).json({ message: "Booking ID required" });
+      return;
+    }
+
+    try {
+      // call the service class to fetch the booking from DB
+      const booking = await bookingService.getBookingByBookingId(bookingId);
+
+      // if no booking was found return error message
+      if (!booking) {
+        res.status(404).json({ message: "Booking Not found" });
+        return;
+      }
+
+      // send email
+      await emailService.sendBookingConfirmationEmail(
+        booking.callerEmail as string,
+        "Booking Confirmation",
+        bookingId
+      );
+
+      res
+        .status(200)
+        .json({ message: "Booking Confirmation sent  successfully", booking });
+      return;
+    } catch (error) {
+      console.error("Error sending booking confirmation:", error);
+      if (!res.headersSent) {
+        res
+          .status(500)
+          .json({ message: "Error sending booking confirmation", error });
       }
       return;
     }
@@ -443,7 +492,7 @@ class BookingController {
     const user = req.user!;
 
     // check the auto assign status
-    const isAutoAssign = repId as string === "auto";
+    const isAutoAssign = (repId as string) === "auto";
 
     // return error message if no bookng ID was found
     if (!bookingId) {

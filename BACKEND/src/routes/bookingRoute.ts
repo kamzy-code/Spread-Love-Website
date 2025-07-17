@@ -55,6 +55,7 @@ router.delete(
 
 // customer endpoints
 router.post("/create", bookingController.createBooking);
+router.post("/confirm/:bookingId", bookingController.sendConfirmationEmail);
 router.get("/id/generate", bookingController.generateBookingID);
 router.get("/:bookingId", bookingController.getBookingByBookingId);
 router.put("/:bookingId/update", bookingController.updateBookingByCustomer);
