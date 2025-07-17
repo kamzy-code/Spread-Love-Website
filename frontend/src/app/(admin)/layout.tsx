@@ -6,7 +6,6 @@ import { AdminAuthProvider } from "@/hooks/authContext";
 export const metadata: Metadata = {
   title: "Admin - Spread Love Network",
   description: "Make someone's day with a surprise call",
-
 };
 
 export default function AdminLayout({
@@ -15,14 +14,10 @@ export default function AdminLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`antialiased`}>
-        <Providers>
-          <main>
-            <AdminAuthProvider>{children}</AdminAuthProvider>
-          </main>
-        </Providers>
-      </body>
-    </html>
+    <Providers>
+      <main>
+        <AdminAuthProvider>{children}</AdminAuthProvider>
+      </main>
+    </Providers>
   );
 }

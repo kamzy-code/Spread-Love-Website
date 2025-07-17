@@ -1,8 +1,5 @@
 import type { Metadata } from "next";
 import "@/app/globals.css";
-import Navbar from "@/components/ui/navbar";
-import Footer from "@/components/ui/footer";
-import Providers from "./providers";
 
 export const metadata: Metadata = {
   title: "Spread Love Network",
@@ -18,10 +15,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <Providers>
-      <Navbar />
-      <main>{children}</main>
-      <Footer />
-    </Providers>
+    <html lang="en">
+      <body className={`antialiased`}>
+        <main>{children}</main>
+      </body>
+    </html>
   );
 }
