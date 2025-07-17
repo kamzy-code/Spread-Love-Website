@@ -23,7 +23,7 @@ export default function RepList() {
   );
 
   const { data: reps, meta } = data ?? { data: [], meta: undefined };
-  console.log("reps", reps)
+  console.log("reps", reps);
 
   useEffect(() => {
     if (isLoading || isFetching) {
@@ -55,17 +55,13 @@ export default function RepList() {
     );
 
   return (
-    <div>
-      <div>
+    <div className="">
+      <div className="">
         {(isLoading || isFetching) && (
-          <div>
-            <div className="fixed z-50 bg-black/5 top-0 left-0 right-0 bottom-0"></div>
-            <div className="fixed z-50 top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]">
-              <div className="">
-                <div className="p-4 card">
-                  <MiniLoader></MiniLoader>
-                </div>
-              </div>
+          <div className="fixed z-50 inset-0 flex items-center justify-center bg-black/5">
+            {" "}
+            <div className="p-4 card">
+              <MiniLoader></MiniLoader>
             </div>
           </div>
         )}
@@ -91,13 +87,13 @@ export default function RepList() {
                       <div className="flex gap-4">
                         {/* badge */}
                         <div className="gradient-background rounded-full p-4 shrink-0 w-12 h-12 flex items-center justify-center text-white font-medium text-sm">
-                          <h2>{rep.firstName.split("")[0].toUpperCase()}</h2>
-                          <h2>{rep.lastName.split("")[0].toUpperCase()}</h2>
+                          <h2>{rep?.firstName?.split("")[0].toUpperCase()}</h2>
+                          <h2>{rep?.lastName?.split("")[0].toUpperCase()}</h2>
                         </div>
 
                         {/* Name and status */}
                         <div className="flex flex-col gap-y">
-                          <h2 className="font-medium text-brand-start">{`${rep.firstName} ${rep.lastName}`}</h2>
+                          <h2 className="font-medium text-brand-start">{`${rep?.firstName} ${rep?.lastName}`}</h2>
                           <p
                             className={`${
                               rep.status === "active"
@@ -107,13 +103,12 @@ export default function RepList() {
                                 : "text-red-500"
                             }`}
                           >
-                            {rep.status}
+                            {rep?.status}
                           </p>
                         </div>
                       </div>
 
-                      <div className="flex gap-4">
-                      </div>
+                      <div className="flex gap-4"></div>
                     </div>
 
                     {/* other details */}
@@ -121,19 +116,19 @@ export default function RepList() {
                       <div className="flex justify-between items-center">
                         <p>Role:</p>
                         <p className="capitalize text-brand-start font-">
-                          {rep.role}
+                          {rep?.role}
                         </p>
                       </div>
 
                       <div className="flex justify-between items-center">
                         <p>Email:</p>
-                        <p className="text-brand-start font-">{rep.email}</p>
+                        <p className="text-brand-start font-">{rep?.email}</p>
                       </div>
 
                       <div className="flex justify-between items-center">
                         <p>Phone:</p>
                         <p className="capitalize text-brand-start font-">
-                          {rep.phone}
+                          {rep?.phone}
                         </p>
                       </div>
                     </div>

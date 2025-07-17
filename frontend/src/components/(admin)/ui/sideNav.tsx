@@ -1,23 +1,6 @@
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
-import {
-  BarChart3,
-  Users,
-  Phone,
-  Calendar,
-  TrendingUp,
-  Filter,
-  Search,
-  MoreHorizontal,
-  CheckCircle,
-  XCircle,
-  Clock,
-  AlertCircle,
-  User,
-  LogOut,
-  Settings,
-  Bell,
-} from "lucide-react";
+import { BarChart3, Users, Calendar, User, LogOut } from "lucide-react";
 import { useAdminAuth } from "@/hooks/authContext";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
@@ -40,9 +23,9 @@ const links = [
     icon: <Users className="h-5 w-5 mr-3" />,
   },
   {
-    label: "Settings",
-    href: "/admin/settings",
-    icon: <Settings className="h-5 w-5 mr-3" />,
+    label: "Profile",
+    href: "/admin/profile",
+    icon: <User className="h-5 w-5 mr-3" />,
   },
   {
     label: "Logout",
@@ -80,10 +63,11 @@ export default function SideNav() {
               router.push(href);
             }}
             className={`flex items-center gap-3 py-2 px-3 rounded-lg text-sm font-medium ${
-              ((pathname === href || pathname.includes(href) && href!== "/admin"))
+              pathname === href ||
+              (pathname.includes(href) && href !== "/admin")
                 ? "gradient-background text-white"
-                : "text-gray-700 hover:bg-gray-100" 
-            } ${label==="Reps" && user?.role === 'callrep' ? 'hidden' : ''}`}
+                : "text-gray-700 hover:bg-gray-100"
+            } ${label === "Reps" && user?.role === "callrep" ? "hidden" : ""}`}
           >
             {icon} {label}
           </button>

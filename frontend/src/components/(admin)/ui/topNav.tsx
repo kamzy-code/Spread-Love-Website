@@ -37,9 +37,9 @@ const links = [
     icon: <Users className="h-5 w-5 mr-3" />,
   },
   {
-    label: "Settings",
-    href: "/admin/settings",
-    icon: <Settings className="h-5 w-5 mr-3" />,
+    label: "Profile",
+    href: "/admin/profile",
+    icon: <User className="h-5 w-5 mr-3" />,
   },
   {
     label: "Logout",
@@ -88,7 +88,7 @@ export default function TopNav() {
                 <Bell className="h-5 w-5 text-gray-700" />
               </Link>
 
-              <Link href={""}>
+              <Link href={"/admin/profile"}>
                 <div className="flex flex-row gap-2 items-center">
                   <div className="p-2 rounded-full gradient-background">
                     {" "}

@@ -62,7 +62,6 @@ export default function BookingTable() {
     (val: boolean) => setShowDeleteModal(val)
   );
 
-
   useEffect(() => {
     if (selectedBooking && updateStatus) {
       updateStatusMutation.mutateAsync();
@@ -153,14 +152,10 @@ export default function BookingTable() {
           isFetching ||
           updateStatusMutation.isPending ||
           deleteBookingMutation.isPending) && (
-          <div>
-            <div className="fixed z-50 bg-black/5 top-0 left-0 right-0 bottom-0"></div>
-            <div className="fixed z-50 top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]">
-              <div className="">
-                <div className="p-4 card">
-                  <MiniLoader></MiniLoader>
-                </div>
-              </div>
+          <div className="fixed z-50 inset-0 flex items-center justify-center bg-black/5">
+            {" "}
+            <div className="p-4 card">
+              <MiniLoader></MiniLoader>
             </div>
           </div>
         )}
@@ -257,7 +252,6 @@ export default function BookingTable() {
             booking={selectedBooking}
           />
         )}
-
       </div>
     </div>
   );

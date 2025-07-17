@@ -143,7 +143,7 @@ class AdminController {
         confirmPassword,
       });
 
-      res.status(result.status).json(result.body);
+      res.status(result.status).json({...result.body});
       return;
     } catch (error) {
       console.error(`Rep update failed: ${error}`);

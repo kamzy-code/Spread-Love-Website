@@ -1,31 +1,25 @@
-import { useAdminAuth } from "@/hooks/authContext";
-import { useFetchRep, useFetchReps, useUpdateRep } from "@/hooks/useReps";
-import { Rep } from "@/lib/types";
-import { motion } from "framer-motion";
-import { useState, useEffect } from "react";
+import { AdminUser } from "@/lib/types";
 import { deepEqual } from "@/lib/hasBookingChanged";
-import UpdateConfirmationModal from "../../ui/updateModal";
-import { useRouter } from "next/navigation";
-import { useQueryClient } from "@tanstack/react-query";
-import { Eye, EyeOff, Filter } from "lucide-react";
-import DashboardContextProvider from "../../dashboard/dashboardFilterContext";
-import Analytics from "../../dashboard/analytics";
+import { useState, useEffect } from "react";
+import { Eye, EyeOff } from "lucide-react";
+import { useUpdateRep } from "@/hooks/useReps";
+import UpdateConfirmationModal from "../ui/updateModal";
 
-export function Details({ repData }: { repData: Rep }) {
-  const { user } = useAdminAuth();
-  const router = useRouter();
-  const queryClient = useQueryClient();
-  const [initialData, setInitialData] = useState(repData);
-  const [showUpdateModal, setShowUpdateModal] = useState(false);
+export default function Details({ user, reload }: { user: AdminUser, reload: ()=> void }) {
+  const [editForm, setEditForm] = useState(false);
+  const [initialData, setInitialData] = useState<AdminUser>(user as AdminUser);
   const [formData, setFormData] = useState<
-    Rep & {
+    AdminUser & {
       oldPassword?: string;
       newPassword?: string;
       confirmPassword?: string;
     }
-  >({ ...repData, oldPassword: "", newPassword: "", confirmPassword: "" });
-
-  const [editForm, setEditForm] = useState(false);
+  >({
+    ...(user as AdminUser),
+    oldPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
   const [showOldPassword, setShowOldPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -34,9 +28,7 @@ export function Details({ repData }: { repData: Rep }) {
     newPassword: false,
     confirmPassword: false,
   });
-  const [showFilter, setShowFilter] = useState(true);
-
-  const updateMutation = useUpdateRep(formData);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
 
   const handleOnChange = (
     e: React.ChangeEvent<
@@ -93,32 +85,28 @@ export function Details({ repData }: { repData: Rep }) {
     if (passwordValidationFailed) return;
 
     // Proceed with update
-    updateMutation.mutate();
+      updateMutation.mutate();
   };
+
+  const updateMutation = useUpdateRep(formData);
 
   useEffect(() => {
     setShowUpdateModal(true);
   }, [updateMutation.isSuccess, updateMutation.isError]);
 
   return (
-    <motion.div
-      className="py-6 md:py-12 space-y-8"
-      initial={{ opacity: 0, y: 50 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 50 }}
-      transition={{ duration: 0.5, delay: 0.2 }}
-    >
-      <button
-        className="btn-secondary rounded-md py-1 md:py-2 border font-normal active:bg-brand-start active:text-white transition duration-150"
-        onClick={() => router.back()}
-      >
-        {`Back`}
-      </button>
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Rep Details</h1>
+    <div className="space-y-8">
+      {/* DP & User name */}
+      <div className="flex flex-col justify-center items-center gap-4 text-center">
+        {/* badge */}
+        <div className="gradient-background rounded-full p-4 shrink-0 w-36 h-36 flex items-center justify-center text-white font-medium text-5xl">
+          <h2>{formData?.firstName.split("")[0]?.toUpperCase()}</h2>
+          <h2>{formData?.lastName.split("")[0]?.toUpperCase()}</h2>
+        </div>
       </div>
 
-      <div className="">
+      {/* other info */}
+      <div>
         <form onSubmit={handleSubmit} className={`space-y-6 text-gray-700`}>
           <div className="space-y-8">
             {/* Personal info */}
@@ -141,14 +129,14 @@ export function Details({ repData }: { repData: Rep }) {
                       className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent placeholder:text-gray-400 disabled:border-0 disabled:pl-0"
                       type="text"
                       name="firstName"
-                      value={formData?.firstName}
+                      value={formData.firstName}
                       onChange={handleOnChange}
                       required
                       placeholder="Your first name"
                       disabled={!editForm}
                     />
                   ) : (
-                    <p className="flex-1">{formData?.firstName}</p>
+                    <p className="flex-1">{formData.firstName}</p>
                   )}
                 </div>
 
@@ -164,14 +152,14 @@ export function Details({ repData }: { repData: Rep }) {
                       className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent placeholder:text-gray-400 disabled:border-0 disabled:pl-0"
                       type="text"
                       name="lastName"
-                      value={formData?.lastName}
+                      value={formData.lastName}
                       onChange={handleOnChange}
                       required
                       placeholder="Your last name"
                       disabled={!editForm}
                     />
                   ) : (
-                    <p className=" flex-1">{formData?.lastName}</p>
+                    <p className=" flex-1">{formData.lastName}</p>
                   )}
                 </div>
 
@@ -185,14 +173,14 @@ export function Details({ repData }: { repData: Rep }) {
                       className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent placeholder:text-gray-400 disabled:border-0 disabled:pl-0"
                       type="email"
                       name="email"
-                      value={formData?.email}
+                      value={formData.email}
                       onChange={handleOnChange}
                       required
                       placeholder="admin@spreadlove.com"
                       disabled={!editForm}
                     />
                   ) : (
-                    <p className=" flex-1">{formData?.email}</p>
+                    <p className=" flex-1">{formData.email}</p>
                   )}
                 </div>
 
@@ -206,81 +194,57 @@ export function Details({ repData }: { repData: Rep }) {
                       className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent placeholder:text-gray-400 disabled:border-0 disabled:pl-0"
                       type="text"
                       name="phone"
-                      value={formData?.phone}
+                      value={formData.phone}
                       onChange={handleOnChange}
                       required
                       placeholder="+234 123 456 7890"
                       disabled={!editForm}
                     />
                   ) : (
-                    <p className=" flex-1">{formData?.phone}</p>
+                    <p className=" flex-1">{formData.phone}</p>
                   )}
                 </div>
 
                 {/* role */}
-                {user?.role === "superadmin" && (
+                {!editForm && (
                   <div
                     className={`flex ${
                       editForm ? "flex-col" : "flex-row"
                     } gap-4`}
                   >
                     <label className="text-gray-700 font-medium">Role:</label>
-                    {editForm ? (
-                      <select
-                        className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent placeholder:text-gray-400 disabled:border-0 disabled:pl-0"
-                        name="role"
-                        value={formData?.role}
-                        onChange={handleOnChange}
-                        required
-                        disabled={!editForm}
-                      >
-                        <option value="callrep">callrep</option>
-                        <option value="salesrep">salesrep</option>
-                        <option value="superadmin">superadmin</option>
-                      </select>
-                    ) : (
-                      <p className=" flex-1">{formData?.role}</p>
-                    )}
+                    {<p className=" flex-1">{formData.role}</p>}
                   </div>
                 )}
 
                 {/* status */}
-                <div
-                  className={`flex ${editForm ? "flex-col" : "flex-row"} gap-4`}
-                >
-                  <label className="text-gray-700 font-medium">Status:</label>
-                  {editForm ? (
-                    <select
-                      className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent placeholder:text-gray-400 disabled:border-0 disabled:pl-0"
-                      name="status"
-                      value={formData?.status}
-                      onChange={handleOnChange}
-                      required
-                      disabled={!editForm}
-                    >
-                      <option value="active">active</option>
-                      <option value="inactive">inactive</option>
-                      <option value="blocked">blocked</option>
-                    </select>
-                  ) : (
-                    <p
-                      className={`flex-1 ${
-                        formData?.status === "active"
-                          ? "text-green-500"
-                          : formData?.status === "inactive"
-                          ? ""
-                          : "text-red-500"
-                      }`}
-                    >
-                      {formData?.status}
-                    </p>
-                  )}
-                </div>
+                {!editForm && (
+                  <div
+                    className={`flex ${
+                      editForm ? "flex-col" : "flex-row"
+                    } gap-4`}
+                  >
+                    <label className="text-gray-700 font-medium">Status:</label>
+                    {
+                      <p
+                        className={`flex-1 ${
+                          formData.status === "active"
+                            ? "text-green-500"
+                            : formData.status === "inactive"
+                            ? ""
+                            : "text-red-500"
+                        }`}
+                      >
+                        {formData.status}
+                      </p>
+                    }
+                  </div>
+                )}
               </div>
             </div>
 
             {/* Update Password */}
-            {editForm && user?.role === "superadmin" && (
+            {editForm && (
               <div>
                 <h2 className="gradient-text text-xl font-semibold mb-4 pb-2">
                   {" "}
@@ -302,7 +266,7 @@ export function Details({ repData }: { repData: Rep }) {
                         } rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent placeholder:text-gray-400 disabled:border-0 disabled:pl-0`}
                         type={showOldPassword ? "text" : "password"}
                         name="oldPassword"
-                        value={formData?.oldPassword}
+                        value={formData.oldPassword}
                         onChange={handleOnChange}
                         placeholder="Enter your password"
                       />
@@ -336,7 +300,7 @@ export function Details({ repData }: { repData: Rep }) {
                         } rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent placeholder:text-gray-400 disabled:border-0 disabled:pl-0`}
                         type={showNewPassword ? "text" : "password"}
                         name="newPassword"
-                        value={formData?.newPassword}
+                        value={formData.newPassword}
                         onChange={handleOnChange}
                         placeholder="Enter new password"
                       />
@@ -370,7 +334,7 @@ export function Details({ repData }: { repData: Rep }) {
                         } rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent placeholder:text-gray-400 disabled:border-0 disabled:pl-0`}
                         type={showConfirmPassword ? "text" : "password"}
                         name="confirmPassword"
-                        value={formData?.confirmPassword}
+                        value={formData.confirmPassword}
                         onChange={handleOnChange}
                         placeholder="Confirm your password"
                       />
@@ -397,7 +361,7 @@ export function Details({ repData }: { repData: Rep }) {
 
             {/* submit button */}
             {
-              <div className={`w-full flex gap-4 mt-4`}>
+              <div className={`w-full flex gap-4 mb-4 pb-2`}>
                 {editForm && (
                   <button
                     className="btn-secondary h-10 rounded-lg flex items-center w-auto"
@@ -473,50 +437,25 @@ export function Details({ repData }: { repData: Rep }) {
             }
           </div>
         </form>
+
+         {showUpdateModal && updateMutation.isSuccess && (
+                <UpdateConfirmationModal
+                  setShowModal={() => {
+                    reload();
+                    setEditForm(false);
+                    setShowUpdateModal(false);
+                  }}
+                  success="Rep info updated successfully"
+                ></UpdateConfirmationModal>
+              )}
+        
+              {showUpdateModal && updateMutation.isError && (
+                <UpdateConfirmationModal
+                  setShowModal={() => setShowUpdateModal(false)}
+                  error={updateMutation.error.message}
+                ></UpdateConfirmationModal>
+              )}
       </div>
-
-      {repData.role === "callrep" && !editForm && (
-        <div className="space-y-8 mt-12">
-          <div className="flex justify-between">
-            <h1 className="text-3xl font-bold">Analytics</h1>
-            <button
-              className="flex items-center px-4 py-2 border border-brand-end rounded-lg hover:bg-brand-end hover:scale-105 hover:text-white transition text-brand-end"
-              onClick={() => setShowFilter(!showFilter)}
-            >
-              <Filter className="h-5 w-5 mr-2 " />
-              Filter
-            </button>
-          </div>
-          <DashboardContextProvider showFilter={showFilter} repId={repData._id}>
-            <Analytics></Analytics>
-          </DashboardContextProvider>
-        </div>
-      )}
-
-      {showUpdateModal && updateMutation.isSuccess && (
-        <UpdateConfirmationModal
-          setShowModal={() => {
-            queryClient.invalidateQueries({
-              queryKey: ["rep", repData._id],
-            });
-
-            queryClient.invalidateQueries({
-              queryKey: ["reps"],
-            });
-
-            setEditForm(false);
-            setShowUpdateModal(false);
-          }}
-          success="Rep info updated successfully"
-        ></UpdateConfirmationModal>
-      )}
-
-      {showUpdateModal && updateMutation.isError && (
-        <UpdateConfirmationModal
-          setShowModal={() => setShowUpdateModal(false)}
-          error={updateMutation.error.message}
-        ></UpdateConfirmationModal>
-      )}
-    </motion.div>
+    </div>
   );
 }
