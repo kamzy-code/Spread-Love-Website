@@ -3,6 +3,7 @@ import {motion} from 'framer-motion';
 import { Search, Phone, Calendar, Clock, User, MessageCircle, CheckCircle, AlertCircle, XCircle } from 'lucide-react'
 
 export default function ManageHero(){
+
     return (
         <section className="gradient-background">
       <motion.div
