@@ -64,7 +64,7 @@ export default function RepsContextProvider({
   };
 
   useEffect(() => {
-    sessionStorage.setItem("repFilters", JSON.stringify(appliedFormData));
+    sessionStorage.setItem("repFilters", JSON.stringify({...appliedFormData, page: 1}));
   }, [appliedFormData]);
 
   useEffect(() => {

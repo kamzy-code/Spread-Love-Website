@@ -40,10 +40,6 @@ export default function Booking() {
   const [mounted, setMounted] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [sortDropDown, setSortDropDown] = useState(false);
-  const [sortOptions, setSortoptions] = useState({
-    sortParam: "createdAt",
-    sortOrder: "1",
-  });
   const [activeFilters, setActiveFilters] = useState<{
     [key: string]: boolean;
   }>({
@@ -55,14 +51,31 @@ export default function Booking() {
     country: false,
     confirmationMailsent: false,
   });
+  const [sortOptions, setSortoptions] = useState({
+    sortParam: "createdAt",
+    sortOrder: "1",
+  });
 
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Handler for toggling filters
   const handleFilterToggle = (key: string) => {
     if (key === "date") return; // Date is always on
+
     setActiveFilters((prev) => ({ ...prev, [key]: !prev[key] }));
   };
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const saved = sessionStorage.getItem("activeBookingFilters");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        setActiveFilters(parsed.activeFilters);
+        setSortoptions(parsed.sortOptions);
+      }
+    }
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -83,6 +96,13 @@ export default function Booking() {
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  useEffect(() => {
+    sessionStorage.setItem(
+      "activeBookingFilters",
+      JSON.stringify({ activeFilters, sortOptions })
+    );
+  }, [activeFilters, sortOptions]);
 
   if (!mounted) {
     return null;
@@ -128,7 +148,7 @@ export default function Booking() {
                   </button>
                 </div>
 
-                {dropdownOpen && (
+                {dropdownOpen && activeFilters && (
                   <div className="absolute right-0 mt-2 w-56 bg-white border rounded-lg shadow-lg z-50 p-2">
                     {FILTER_OPTIONS.map((filter) => (
                       <label
@@ -192,14 +212,16 @@ export default function Booking() {
           </div>
 
           <div className="flex-1">
-            <FilterContextProvider 
-              activeFilters={activeFilters}
-              sortOptions={sortOptions}
-            >
-              <div className="">
-                <BookingTable></BookingTable>
-              </div>
-            </FilterContextProvider>
+            {activeFilters && sortOptions && (
+              <FilterContextProvider
+                activeFilters={activeFilters}
+                sortOptions={sortOptions}
+              >
+                <div className="">
+                  <BookingTable></BookingTable>
+                </div>
+              </FilterContextProvider>
+            )}
           </div>
         </motion.div>
       </AdminShell>
