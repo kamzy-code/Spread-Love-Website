@@ -154,7 +154,14 @@ export default function BookingForm({
 
   useEffect(() => {
     if (mutation.isSuccess && bookingId) {
-      sendConfirmationMailMutation.mutateAsync();
+      const sendMail = async () => {
+        try {
+          await sendConfirmationMailMutation.mutateAsync();
+        } catch (error: any) {
+          console.error(error.message || "Failed to send confirmation email");
+        }
+      };
+      sendMail();
     }
   }, [mutation.isSuccess, bookingId]);
 

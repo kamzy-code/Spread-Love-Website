@@ -167,10 +167,10 @@ export default function BookingTable() {
   }, [deletedBooking, confirmDelete]);
 
   useEffect(() => {
-    if (deleteBookingMutation.error) {
+    if (deleteBookingMutation.error || resendMailMutation.error) {
       setShowActionStatusModal(true);
     }
-  }, [deleteBookingMutation.error]);
+  }, [deleteBookingMutation.error, resendMailMutation.error]);
 
   if (error)
     return (

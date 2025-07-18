@@ -119,8 +119,10 @@ export const useSendBookingConfirmation = (bookingId: string) => {
       }
     },
 
+    retry: 3,
+
     onError: (error) => {
-      console.error(error.message || "Failed to send booking confirmation");
+      throw new Error(error.message || "Failed to send booking confirmation");
     },
   });
 };

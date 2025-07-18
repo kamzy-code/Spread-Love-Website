@@ -300,7 +300,7 @@ class BookingController {
       search,
       singleDate,
       filterType,
-      confirmationMailsent
+      confirmationMailsent,
     } = req.query;
 
     // cast the sort order variable from a string to a valid sort Order type.
@@ -316,7 +316,14 @@ class BookingController {
     if (status) searchQuery.status = status;
     if (occassion) searchQuery.occassion = occassion;
     if (assignedRep) searchQuery.assignedRep = assignedRep;
-    if (confirmationMailsent) searchQuery.confirmationMailsent = confirmationMailsent === "true";
+    if (confirmationMailsent !== undefined && confirmationMailsent !== null) {
+      if (typeof confirmationMailsent === "boolean") {
+        searchQuery.confirmationMailsent = confirmationMailsent;
+      } else if (typeof confirmationMailsent === "string") {
+        searchQuery.confirmationMailsent = confirmationMailsent === "true";
+      }
+    }
+
     if (callType) searchQuery.callType = callType;
     if (country) {
       if (country === "local") {

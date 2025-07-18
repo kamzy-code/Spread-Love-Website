@@ -19,8 +19,7 @@ class EmailService {
         rejectUnauthorized: false, // This is important for self-signed certificates
       },
     });
-
-    console.log(transporter);
+    
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: to,

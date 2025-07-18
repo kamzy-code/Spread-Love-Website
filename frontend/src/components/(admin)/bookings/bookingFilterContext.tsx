@@ -78,6 +78,7 @@ export default function FilterContextProvider({
       occassion: "",
       assignedRep: "",
       country: "",
+      confirmationMailsent: undefined,
       page: 1,
     };
   });
@@ -96,6 +97,7 @@ export default function FilterContextProvider({
     occassion: formData.occassion,
     assignedRep: formData.assignedRep,
     country: formData.country,
+    confirmationMailsent: formData.confirmationMailsent,
     sortParam: sortOptions.sortParam,
     sortOrder: sortOptions.sortOrder as "1" | "-1",
     page: formData.page,
@@ -139,8 +141,7 @@ export default function FilterContextProvider({
     e.preventDefault();
 
     queryClient.cancelQueries({
-      queryKey: ["bookings", { ...appliedFormData,
-        search: debouncedValue,}],
+      queryKey: ["bookings", { ...appliedFormData, search: debouncedValue }],
     });
 
     // new
@@ -152,7 +153,7 @@ export default function FilterContextProvider({
   };
 
   useEffect(() => {
-    sessionStorage.setItem("bookingFilters", JSON.stringify(appliedFormData));
+    sessionStorage.setItem("bookingFilters", JSON.stringify({...appliedFormData, page:1}));
   }, [appliedFormData]);
 
   useEffect(() => {
@@ -171,19 +172,34 @@ export default function FilterContextProvider({
       if (!activeFilters.status) updated.status = "";
       if (!activeFilters.occasion) updated.occassion = "";
       if (!activeFilters.country) updated.country = "";
+      if (!activeFilters.confirmationMailsent)
+        updated.confirmationMailsent = undefined;
+
+      return updated;
+    });
+
+    setAppliedFormData((prev) => {
+      const updated = { ...prev };
+      if (!activeFilters.assignedRep) updated.assignedRep = "";
+      if (!activeFilters.callType) updated.callType = "";
+      if (!activeFilters.status) updated.status = "";
+      if (!activeFilters.occasion) updated.occassion = "";
+      if (!activeFilters.country) updated.country = "";
+      if (!activeFilters.confirmationMailsent)
+        updated.confirmationMailsent = undefined;
 
       return updated;
     });
   }, [activeFilters]);
 
   useEffect(() => {
-    if (searchTerm === ""){
-    const timeout = setTimeout(() => {
-      setDebouncedSearch(searchTerm);
-    }, 500);
-  
-    return () => clearTimeout(timeout);
-  }
+    if (searchTerm === "") {
+      const timeout = setTimeout(() => {
+        setDebouncedSearch(searchTerm);
+      }, 500);
+
+      return () => clearTimeout(timeout);
+    }
   }, [searchTerm]);
 
   return (
@@ -426,6 +442,41 @@ export default function FilterContextProvider({
                         </select>
                       </div>
                     )}
+                    {activeFilters.confirmationMailsent && (
+                      <div className="flex flex-row items-center space-x-2 w-auto">
+                        <label className="text-gray-700 font-medium text-sm">
+                          Confirmation Mail:{" "}
+                        </label>
+                        <select
+                          name="confirmationMailsent"
+                          className="px-4 border border-gray-300 rounded-sm h-6 flex items-center justify-center text-sm focus:ring-2 focus:ring-brand-end focus:border-transparent"
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            setFormData((prev) => ({
+                              ...prev,
+                              confirmationMailsent:
+                                value === ""
+                                  ? undefined
+                                  : value === "true"
+                                  ? true
+                                  : false,
+                            }));
+                          }}
+                          value={
+                            formData.confirmationMailsent === undefined
+                              ? ""
+                              : formData.confirmationMailsent === true
+                              ? "true"
+                              : "false"
+                          }
+                          required
+                        >
+                          <option value="">All</option>
+                          <option value="true">Sent</option>
+                          <option value="false">Failed</option>
+                        </select>
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -462,7 +513,7 @@ export default function FilterContextProvider({
           </div>
         </div>
 
-        <div >{children}</div>
+        <div>{children}</div>
       </div>
     </filterContext.Provider>
   );
@@ -471,7 +522,9 @@ export default function FilterContextProvider({
 export const useBookingFilter = () => {
   const context = useContext(filterContext);
   if (context === null) {
-    throw new Error("useBookingFilter must be used within a BookingFilterProvider");
+    throw new Error(
+      "useBookingFilter must be used within a BookingFilterProvider"
+    );
   }
   return context;
 };

@@ -16,6 +16,7 @@ const FILTER_OPTIONS = [
   { key: "status", label: "Status" },
   { key: "occasion", label: "Occasion" },
   { key: "country", label: "Country" },
+  { key: "confirmationMailsent", label: "Confirmation Mail" },
 ];
 
 const SORT_OPTIONS = [
@@ -52,6 +53,7 @@ export default function Booking() {
     status: false,
     occasion: false,
     country: false,
+    confirmationMailsent: false,
   });
 
   const dropdownRef = useRef<HTMLDivElement>(null);
