@@ -6,7 +6,7 @@ const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export const useBookings = (filters: BookingFilters, searchValue: string) => {
   return useQuery({
-    queryKey: ["bookings", filters, (searchValue.toLowerCase())],
+    queryKey: ["bookings", filters, searchValue.toLowerCase()],
     queryFn: async ({ signal }) => {
       const queryString = buildQueryParams(filters as Record<string, any>);
 
@@ -53,17 +53,19 @@ export const useUpdateStatus = (body: { id: string; status: string }) => {
   });
 };
 
-
 export const useAssignBooking = (bookingId: string, repId: string) => {
   return useMutation({
     mutationFn: async () => {
-      const res = await fetch(`${apiUrl}/booking/admin/assign/${bookingId}?repId=${repId}`, {
-        credentials: "include",
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const res = await fetch(
+        `${apiUrl}/booking/admin/assign/${bookingId}?repId=${repId}`,
+        {
+          credentials: "include",
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       if (!res.ok) {
         const error = await res.json();
@@ -76,7 +78,6 @@ export const useAssignBooking = (bookingId: string, repId: string) => {
     },
   });
 };
-
 
 export const useDeleteBooking = (id: string) => {
   return useMutation({
@@ -101,4 +102,25 @@ export const useDeleteBooking = (id: string) => {
   });
 };
 
+export const useSendBookingConfirmation = (bookingId: string) => {
+  return useMutation({
+    mutationFn: async () => {
+      const res = await fetch(`${apiUrl}/email/confirm/${bookingId}`, {
+        credentials: "include",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.message || "Failed to send booking confirmation");
+      }
+    },
+
+    onError: (error) => {
+      console.error(error.message || "Failed to send booking confirmation");
+    },
+  });
+};

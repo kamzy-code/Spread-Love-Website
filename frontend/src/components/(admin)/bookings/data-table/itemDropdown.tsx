@@ -174,6 +174,7 @@ export default function ItemDropDown({
             >
               Delete
             </DropdownMenuItem>
+
             <DropdownMenuItem
               onClick={(e) => {
                 e.stopPropagation();
@@ -182,6 +183,17 @@ export default function ItemDropDown({
             >
               Assign to Rep
             </DropdownMenuItem>
+
+            {!booking.confirmationMailsent && (
+              <DropdownMenuItem
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSelectedbooking(booking, "resend");
+                }}
+              >
+                Resend confirmation
+              </DropdownMenuItem>
+            )}
           </>
         )}
       </DropdownMenuContent>

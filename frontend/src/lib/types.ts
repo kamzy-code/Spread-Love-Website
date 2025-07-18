@@ -11,7 +11,7 @@ export interface dashboardFilterContextType {
   appliedDate?: string;
   appliedStartDate?: string;
   appliedEndDate?: string;
-  repId?: string
+  repId?: string;
 }
 
 // Auth
@@ -66,11 +66,12 @@ export interface Booking {
   message?: string;
   specialInstruction?: string;
   status?: string;
+  callRecording?: string;
   callRecordingURL?: string;
-  contactConsent?: string
+  contactConsent?: string;
+  confirmationMailsent?: boolean;
   assignedRep?: any; // populated rep data
   createdAt: string;
-  // add more fields as needed
 }
 
 export interface BookingFilters {
@@ -88,6 +89,7 @@ export interface BookingFilters {
   search?: string;
   page?: number;
   limit?: number;
+  confirmationMailsent?: boolean;
 }
 
 export type BookingFilterContex = BookingFilters & {

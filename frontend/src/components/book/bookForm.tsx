@@ -4,6 +4,7 @@ import { services, callType } from "../services/serviceList";
 import CreateErrorModal from "./errorModal";
 import { useMutation } from "@tanstack/react-query";
 import { countries } from "@/lib/countries";
+import { useSendBookingConfirmation } from "@/hooks/useBookings";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
@@ -55,7 +56,6 @@ export default function BookingForm({
   const [bookingId, setBookingId] = useState("");
   type serviceType = "regular" | "special";
 
-
   const [mounted, setMounted] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -72,11 +72,14 @@ export default function BookingForm({
     message: "",
     specialInstruction: "",
     contactConsent: "no",
+    callRecording: "no",
   });
- 
+
+  const sendConfirmationMailMutation = useSendBookingConfirmation(bookingId);
+
   const mutation = useMutation({
     mutationFn: (updatedData) => createBooking(updatedData),
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       if (data && data.bookingId) {
         setBookingId(data.bookingId);
         setCreateBookingStatus(data.message);
@@ -121,8 +124,6 @@ export default function BookingForm({
 
       await mutation.mutateAsync({ bookingId: id, ...formData } as any);
       setBookingId(id);
-
-    
     } catch (error: any) {
       console.log(error);
       setIsError(true);
@@ -150,6 +151,12 @@ export default function BookingForm({
       setFormData((prev) => ({ ...prev, price }));
     }
   }, [formData.occassion, formData.callType, formData.country]);
+
+  useEffect(() => {
+    if (mutation.isSuccess && bookingId) {
+      sendConfirmationMailMutation.mutateAsync();
+    }
+  }, [mutation.isSuccess, bookingId]);
 
   useEffect(() => {
     setMounted(true);
@@ -212,6 +219,7 @@ export default function BookingForm({
                       message: "",
                       specialInstruction: "",
                       contactConsent: "no",
+                      callRecording: "no",
                     });
                     setBookingId("");
                     setCreateBookingStatus("");
@@ -467,20 +475,55 @@ export default function BookingForm({
 
               {/* Contact Consent */}
               <div className="py-2 flex justify-between">
-              <label className="flex flex-row items-center">
-                <input
-                  type="checkbox"
-                  checked={formData.contactConsent === "yes"}
-                  onChange={(e) => formData.contactConsent === "yes"
-                    ? setFormData((prev) => ({ ...prev, contactConsent: "no" }))
-                    : setFormData((prev) => ({ ...prev, contactConsent: "yes" }))}
-                  name="contactConsent"
-                  className="rounded border-gray-300 text-brand-end focus:ring-brand-end"
-                />
-                <span className="ml-2 text-sm text-gray-600">
-                  I agree to be contacted for updates about my booking and future offers. 
-                </span>
-              </label>
+                <label className="flex flex-row items-center">
+                  <input
+                    type="checkbox"
+                    checked={formData.contactConsent === "yes"}
+                    onChange={(e) =>
+                      formData.contactConsent === "yes"
+                        ? setFormData((prev) => ({
+                            ...prev,
+                            contactConsent: "no",
+                          }))
+                        : setFormData((prev) => ({
+                            ...prev,
+                            contactConsent: "yes",
+                          }))
+                    }
+                    name="contactConsent"
+                    className="rounded border-gray-300 text-brand-end focus:ring-brand-end"
+                  />
+                  <span className="ml-2 text-sm text-gray-600">
+                    I agree to be contacted for updates about my booking and
+                    future offers.
+                  </span>
+                </label>
+              </div>
+
+              {/* Call Recording */}
+              <div className="py-2 flex justify-between">
+                <label className="flex flex-row items-center">
+                  <input
+                    type="checkbox"
+                    checked={formData.callRecording === "yes"}
+                    onChange={(e) =>
+                      formData.callRecording === "yes"
+                        ? setFormData((prev) => ({
+                            ...prev,
+                            callRecording: "no",
+                          }))
+                        : setFormData((prev) => ({
+                            ...prev,
+                            callRecording: "yes",
+                          }))
+                    }
+                    name="callRecording"
+                    className="rounded border-gray-300 text-brand-end focus:ring-brand-end"
+                  />
+                  <span className="ml-2 text-sm text-gray-600">
+                    I want a recording of my call.
+                  </span>
+                </label>
               </div>
 
               {/* pricing summary */}

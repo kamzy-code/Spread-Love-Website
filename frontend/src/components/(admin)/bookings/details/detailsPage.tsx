@@ -2,7 +2,7 @@
 import { services } from "@/components/services/serviceList";
 import { useState } from "react";
 import { motion } from "framer-motion";
-import UpdateConfirmationModal from "../../ui/updateModal";
+import ActionStatusModal from "../../ui/updateModal";
 import { formatToYMD } from "@/lib/formatDate";
 import { deepEqual } from "@/lib/hasBookingChanged";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -412,10 +412,23 @@ export default function DetailsPage({ data }: { data: Booking }) {
                   </div>
                 )}
 
-                {/* Call Recording URL */}
-                <div className="flex flex-col space-y-2">
+                 {/* Call Recording status */}
+               {!editForm && <div className="flex flex-col space-y-2">
                   <label className="text-gray-700 font-medium">
                     Call Recording:
+                  </label>
+                  {(
+                    <p className="py-3 w-full capitalize">
+                      {formData.callRecording}
+                    </p>
+                  )}
+                </div>}
+
+
+                {/* Call Recording URL */}
+                {formData.callRecording === "yes" && <div className="flex flex-col space-y-2">
+                  <label className="text-gray-700 font-medium">
+                    Recording Link:
                   </label>
                   {editForm ? (
                     <input
@@ -435,7 +448,7 @@ export default function DetailsPage({ data }: { data: Booking }) {
                         : formData.callRecordingURL}
                     </p>
                   )}
-                </div>
+                </div>}
 
                 {/* Contact Consent */}
                 {!editForm && (
@@ -443,7 +456,7 @@ export default function DetailsPage({ data }: { data: Booking }) {
                     <label className="text-gray-700 font-medium">
                       Contact Consent:
                     </label>
-                    {<p className="py-3 w-full">{formData.contactConsent}</p>}
+                    {<p className="py-3 w-full capitalize">{formData?.contactConsent}</p>}
                   </div>
                 )}
               </div>
@@ -615,11 +628,11 @@ export default function DetailsPage({ data }: { data: Booking }) {
         </div>
 
         {showModal && (
-          <UpdateConfirmationModal
+          <ActionStatusModal
             setShowModal={() => setShowModal(false)}
             error={errorMessage}
             success="Booking status updated successfully."
-          ></UpdateConfirmationModal>
+          ></ActionStatusModal>
         )}
       </motion.div>
     </section>

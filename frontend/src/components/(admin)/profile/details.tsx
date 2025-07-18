@@ -3,7 +3,7 @@ import { deepEqual } from "@/lib/hasBookingChanged";
 import { useState, useEffect } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { useUpdateRep } from "@/hooks/useReps";
-import UpdateConfirmationModal from "../ui/updateModal";
+import ActionStatusModal from "../ui/updateModal";
 
 export default function Details({ user, reload }: { user: AdminUser, reload: ()=> void }) {
   const [editForm, setEditForm] = useState(false);
@@ -439,21 +439,21 @@ export default function Details({ user, reload }: { user: AdminUser, reload: ()=
         </form>
 
          {showUpdateModal && updateMutation.isSuccess && (
-                <UpdateConfirmationModal
+                <ActionStatusModal
                   setShowModal={() => {
                     reload();
                     setEditForm(false);
                     setShowUpdateModal(false);
                   }}
                   success="Rep info updated successfully"
-                ></UpdateConfirmationModal>
+                ></ActionStatusModal>
               )}
         
               {showUpdateModal && updateMutation.isError && (
-                <UpdateConfirmationModal
+                <ActionStatusModal
                   setShowModal={() => setShowUpdateModal(false)}
                   error={updateMutation.error.message}
-                ></UpdateConfirmationModal>
+                ></ActionStatusModal>
               )}
       </div>
     </div>

@@ -19,6 +19,7 @@ class BookingService {
     message: string,
     specialInstruction: string,
     contactConsent: string,
+    callRecording: string,
   ) {
     // create a new booking and save in the DB
     const newBooking = await Booking.create({
@@ -36,6 +37,7 @@ class BookingService {
       message,
       specialInstruction,
       contactConsent,
+      callRecording,
     });
 
     // assign booking to a rep if Booking was created successfully

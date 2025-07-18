@@ -19,7 +19,6 @@ import {
   startOfWeek,
   endOfWeek,
 } from "date-fns";
-import emailService from "../services/emailService";
 
 class BookingController {
   // Customer Endpoints
@@ -39,6 +38,7 @@ class BookingController {
       message,
       specialInstruction,
       contactConsent = "no",
+      callRecording = "no",
     } = req.body;
 
     try {
@@ -57,7 +57,8 @@ class BookingController {
         price,
         message,
         specialInstruction,
-        contactConsent
+        contactConsent,
+        callRecording
       );
 
       // return failed if booking creation was unsuccessful
@@ -65,12 +66,6 @@ class BookingController {
         res.status(500).json({ message: "Failed to create booking" });
         return;
       }
-
-      emailService.sendBookingConfirmationEmail(
-        callerEmail,
-        "Booking Confirmation",
-        newBooking.bookingId
-      );
 
       // retrun successful with Booking ID if successful
       res.status(201).json({
@@ -82,48 +77,6 @@ class BookingController {
       console.error("Error creating booking:", error);
       if (!res.headersSent) {
         res.status(500).json({ message: "Error creating booking", error });
-      }
-      return;
-    }
-  }
-
-  async sendConfirmationEmail(req: Request, res: Response) {
-    // extract BookingID from url
-    const bookingId = req.params.bookingId;
-
-    // return ID reuired if ID wasn't submitted
-    if (!bookingId) {
-      res.status(400).json({ message: "Booking ID required" });
-      return;
-    }
-
-    try {
-      // call the service class to fetch the booking from DB
-      const booking = await bookingService.getBookingByBookingId(bookingId);
-
-      // if no booking was found return error message
-      if (!booking) {
-        res.status(404).json({ message: "Booking Not found" });
-        return;
-      }
-
-      // send email
-      await emailService.sendBookingConfirmationEmail(
-        booking.callerEmail as string,
-        "Booking Confirmation",
-        bookingId
-      );
-
-      res
-        .status(200)
-        .json({ message: "Booking Confirmation sent  successfully", booking });
-      return;
-    } catch (error) {
-      console.error("Error sending booking confirmation:", error);
-      if (!res.headersSent) {
-        res
-          .status(500)
-          .json({ message: "Error sending booking confirmation", error });
       }
       return;
     }
@@ -347,6 +300,7 @@ class BookingController {
       search,
       singleDate,
       filterType,
+      confirmationMailsent
     } = req.query;
 
     // cast the sort order variable from a string to a valid sort Order type.
@@ -362,6 +316,7 @@ class BookingController {
     if (status) searchQuery.status = status;
     if (occassion) searchQuery.occassion = occassion;
     if (assignedRep) searchQuery.assignedRep = assignedRep;
+    if (confirmationMailsent) searchQuery.confirmationMailsent = confirmationMailsent === "true";
     if (callType) searchQuery.callType = callType;
     if (country) {
       if (country === "local") {

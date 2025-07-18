@@ -3,6 +3,7 @@ import {
   useBookings,
   useUpdateStatus,
   useDeleteBooking,
+  useSendBookingConfirmation,
 } from "@/hooks/useBookings";
 import MiniLoader from "../ui/miniLoader";
 import { XCircle, Calendar, MoreHorizontal, MoreVertical } from "lucide-react";
@@ -14,7 +15,7 @@ import { DataTable } from "./data-table/data-table";
 import { useAdminAuth } from "@/hooks/authContext";
 import GridItem from "./data-table/grid-table";
 import { useQueryClient } from "@tanstack/react-query";
-import UpdateConfirmationModal from "../ui/updateModal";
+import ActionStatusModal from "../ui/updateModal";
 import DeleteConfirmationModal from "./deleteModal";
 import AssignModal from "./assignModal";
 
@@ -24,7 +25,8 @@ export default function BookingTable() {
   const fullFilter: BookingFilterContex = useBookingFilter();
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
   const [updateStatus, setUpdateStatus] = useState(false);
-  const [showUpdateModal, setShowUpdateMoadal] = useState(false);
+  const [resendMailStatus, setResendMailStatus] = useState(false);
+  const [showActionStatusModal, setShowActionStatusModal] = useState(false);
   const [showAssignModal, setShowAssignModal] = useState(false);
 
   const [deletedBooking, setDeletedBooking] = useState<Booking | null>(null);
@@ -48,6 +50,10 @@ export default function BookingTable() {
 
   const deleteBookingMutation = useDeleteBooking(deletedBooking?._id as string);
 
+  const resendMailMutation = useSendBookingConfirmation(
+    selectedBooking?.bookingId as string
+  );
+
   const tableColumns = getColumnsByRole(
     user?.role as "superadmin" | "salesrep" | "callrep",
     (booking: Booking, action: string) => {
@@ -56,6 +62,8 @@ export default function BookingTable() {
         ? setUpdateStatus(true)
         : action === "assign"
         ? setShowAssignModal(true)
+        : action === "resend"
+        ? setResendMailStatus(true)
         : null;
     },
     (booking: Booking) => setDeletedBooking(booking),
@@ -65,7 +73,7 @@ export default function BookingTable() {
   useEffect(() => {
     if (selectedBooking && updateStatus) {
       updateStatusMutation.mutateAsync();
-      setShowUpdateMoadal(true);
+      setShowActionStatusModal(true);
       queryClient.invalidateQueries({
         queryKey: ["booking", selectedBooking?._id],
       });
@@ -73,9 +81,19 @@ export default function BookingTable() {
   }, [selectedBooking, updateStatus]);
 
   useEffect(() => {
+    if (selectedBooking && resendMailStatus) {
+      resendMailMutation.mutateAsync();
+      setShowActionStatusModal(true);
+      queryClient.invalidateQueries({
+        queryKey: ["booking", selectedBooking?._id],
+      });
+    }
+  }, [selectedBooking, resendMailStatus]);
+
+  useEffect(() => {
     if (updateStatusMutation.isSuccess) {
       queryClient.invalidateQueries({
-        queryKey: ["bookings", filter, searchTerm?.toLowerCase()],
+        queryKey: ["bookings"],
       });
       refetch();
 
@@ -84,24 +102,49 @@ export default function BookingTable() {
       });
     }
 
+    return () => {
+      setUpdateStatus(false);
+    };
+  }, [updateStatusMutation.isSuccess]);
+
+  useEffect(() => {
     if (deleteBookingMutation.isSuccess) {
       queryClient.invalidateQueries({
-        queryKey: ["bookings", filter, searchTerm?.toLowerCase()],
+        queryKey: ["bookings"],
       });
       refetch();
     }
 
     return () => {
-      setUpdateStatus(false);
+      setDeletedBooking(null);
     };
-  }, [updateStatusMutation.isSuccess, deleteBookingMutation.isSuccess]);
+  }, [deleteBookingMutation.isSuccess]);
+
+  useEffect(() => {
+    if (resendMailMutation.isSuccess) {
+      queryClient.invalidateQueries({
+        queryKey: ["bookings"],
+      });
+      refetch();
+
+      queryClient.refetchQueries({
+        queryKey: ["booking", selectedBooking?._id],
+      });
+    }
+
+    return () => {
+      setResendMailStatus(false);
+    };
+  }, [resendMailMutation.isSuccess]);
 
   useEffect(() => {
     if (
       isLoading ||
       isFetching ||
       updateStatusMutation.isPending ||
-      showUpdateModal
+      deleteBookingMutation.isPending ||
+      resendMailMutation.isPending ||
+      showActionStatusModal
     ) {
       document.body.style.overflow = "hidden";
     } else {
@@ -112,7 +155,7 @@ export default function BookingTable() {
     return () => {
       document.body.style.overflow = "";
     };
-  }, [isLoading, isFetching, updateStatusMutation.isPending, showUpdateModal]);
+  }, [isLoading, isFetching, updateStatusMutation.isPending, showActionStatusModal]);
 
   useEffect(() => {
     if (deletedBooking && confirmDelete) {
@@ -125,7 +168,7 @@ export default function BookingTable() {
 
   useEffect(() => {
     if (deleteBookingMutation.error) {
-      setShowUpdateMoadal(true);
+      setShowActionStatusModal(true);
     }
   }, [deleteBookingMutation.error]);
 
@@ -151,7 +194,7 @@ export default function BookingTable() {
         {(isLoading ||
           isFetching ||
           updateStatusMutation.isPending ||
-          deleteBookingMutation.isPending) && (
+          deleteBookingMutation.isPending || resendMailMutation.isPending) && (
           <div className="fixed z-50 inset-0 flex items-center justify-center bg-black/5">
             {" "}
             <div className="p-4 card">
@@ -167,31 +210,49 @@ export default function BookingTable() {
           </div>
         )}
 
-        {showUpdateModal &&
+        {showActionStatusModal &&
           updateStatusMutation.error &&
           !updateStatusMutation.isPending && (
-            <UpdateConfirmationModal
-              setShowModal={() => setShowUpdateMoadal(false)}
+            <ActionStatusModal
+              setShowModal={() => setShowActionStatusModal(false)}
               error={updateStatusMutation.error.message}
-            ></UpdateConfirmationModal>
+            ></ActionStatusModal>
           )}
 
-        {showUpdateModal &&
+        {showActionStatusModal &&
           deleteBookingMutation.error &&
           !deleteBookingMutation.isPending && (
-            <UpdateConfirmationModal
-              setShowModal={() => setShowUpdateMoadal(false)}
+            <ActionStatusModal
+              setShowModal={() => setShowActionStatusModal(false)}
               error={deleteBookingMutation.error.message}
-            ></UpdateConfirmationModal>
+            ></ActionStatusModal>
           )}
 
-        {showUpdateModal &&
+          {showActionStatusModal &&
+          resendMailMutation.error &&
+          !resendMailMutation.isPending && (
+            <ActionStatusModal
+              setShowModal={() => setShowActionStatusModal(false)}
+              error={resendMailMutation.error.message}
+            ></ActionStatusModal>
+          )}
+
+        {showActionStatusModal &&
           !updateStatusMutation.error &&
           updateStatusMutation.isSuccess && (
-            <UpdateConfirmationModal
-              setShowModal={() => setShowUpdateMoadal(false)}
+            <ActionStatusModal
+              setShowModal={() => setShowActionStatusModal(false)}
               success="Booking status updated successfully!"
-            ></UpdateConfirmationModal>
+            ></ActionStatusModal>
+          )}
+
+           {showActionStatusModal &&
+          !resendMailMutation.error &&
+          resendMailMutation.isSuccess && (
+            <ActionStatusModal
+              setShowModal={() => setShowActionStatusModal(false)}
+              success="Mail Sent successfully!"
+            ></ActionStatusModal>
           )}
 
         {deletedBooking && showDeleteModal && (
@@ -224,6 +285,8 @@ export default function BookingTable() {
                         ? setUpdateStatus(true)
                         : action === "assign"
                         ? setShowAssignModal(true)
+                        : action === "resend"
+                        ? setResendMailStatus(true)
                         : null;
                     }}
                     setDeletedBooking={(booking: Booking) =>

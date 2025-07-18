@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { XCircle, CheckCircle, } from "lucide-react";
 
-export default function UpdateConfirmationModal({
+export default function ActionStatusModal({
   setShowModal,
   error,
   success,

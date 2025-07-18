@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import authRouter from "./routes/authRoute";
 import bookingRouter from "./routes/bookingRoute";
 import adminRouter from "./routes/adminRoute";
+import emailRouter from "./routes/emailRoute";
 import rateLimit from "express-rate-limit";
 import cookieParser from "cookie-parser";
 
@@ -34,5 +35,6 @@ app.get("/", (req, res) => {
 app.use("/api/auth", authRouter);
 app.use("/api/booking", bookingRouter);
 app.use("/api/rep", adminRouter);
+app.use("/api/email", emailRouter);
 
 export default app;

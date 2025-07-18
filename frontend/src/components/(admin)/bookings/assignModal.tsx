@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { X, TriangleAlert } from "lucide-react";
 import { useFetchReps } from "@/hooks/useReps";
 import { useAssignBooking } from "@/hooks/useBookings";
-import UpdateConfirmationModal from "../ui/updateModal";
+import ActionStatusModal from "../ui/updateModal";
 import { useQueryClient } from "@tanstack/react-query";
 
 export default function AssignModal({
@@ -82,13 +82,13 @@ export default function AssignModal({
 
   if (showSuccessModal) {
     return (
-      <UpdateConfirmationModal
+      <ActionStatusModal
         setShowModal={() => {
           setShowSuccessModal(false);
           setShowAssignForm(false);
         }}
         success="Booking assigned successfully!"
-      ></UpdateConfirmationModal>
+      ></ActionStatusModal>
     );
   }
 

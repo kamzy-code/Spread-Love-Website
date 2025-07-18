@@ -390,7 +390,7 @@ export default function BookingDetails({ data }: { data: any }) {
                 </div>
 
                 {/* Call Recording URL */}
-                {!editForm && (
+                {!editForm && formData?.callRecording === "yes" && (
                   <div className="flex flex-col space-y-2">
                     <label className="text-gray-700 font-medium">
                       Call Recording:

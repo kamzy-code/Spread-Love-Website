@@ -4,7 +4,7 @@ import { Rep } from "@/lib/types";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import { deepEqual } from "@/lib/hasBookingChanged";
-import UpdateConfirmationModal from "../../ui/updateModal";
+import ActionStatusModal from "../../ui/updateModal";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { Eye, EyeOff, Filter } from "lucide-react";
@@ -494,7 +494,7 @@ export function Details({ repData }: { repData: Rep }) {
       )}
 
       {showUpdateModal && updateMutation.isSuccess && (
-        <UpdateConfirmationModal
+        <ActionStatusModal
           setShowModal={() => {
             queryClient.invalidateQueries({
               queryKey: ["rep", repData._id],
@@ -508,14 +508,14 @@ export function Details({ repData }: { repData: Rep }) {
             setShowUpdateModal(false);
           }}
           success="Rep info updated successfully"
-        ></UpdateConfirmationModal>
+        ></ActionStatusModal>
       )}
 
       {showUpdateModal && updateMutation.isError && (
-        <UpdateConfirmationModal
+        <ActionStatusModal
           setShowModal={() => setShowUpdateModal(false)}
           error={updateMutation.error.message}
-        ></UpdateConfirmationModal>
+        ></ActionStatusModal>
       )}
     </motion.div>
   );
