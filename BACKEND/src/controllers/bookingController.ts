@@ -19,10 +19,11 @@ import {
   startOfWeek,
   endOfWeek,
 } from "date-fns";
+import { HttpError } from "../utils/httpError";
 
 class BookingController {
   // Customer Endpoints
-  async createBooking(req: Request, res: Response) {
+  async createBooking(req: Request, res: Response, next: NextFunction) {
     const {
       bookingId,
       callerName,
@@ -63,8 +64,7 @@ class BookingController {
 
       // return failed if booking creation was unsuccessful
       if (!newBooking) {
-        res.status(500).json({ message: "Failed to create booking" });
-        return;
+        throw new HttpError(500, "Failed to create booking");
       }
 
       // retrun successful with Booking ID if successful
@@ -74,21 +74,18 @@ class BookingController {
       });
       return;
     } catch (error) {
-      console.error("Error creating booking:", error);
-      if (!res.headersSent) {
-        res.status(500).json({ message: "Error creating booking", error });
-      }
+      next(error);
       return;
     }
   }
 
-  async getBookingByBookingId(req: Request, res: Response) {
+  async getBookingByBookingId(req: Request, res: Response, next: NextFunction) {
     // extract BookingID from url
     const bookingId = req.params.bookingId;
 
     // return ID reuired if ID wasn't submitted
     if (!bookingId) {
-      res.status(400).json({ message: "Booking ID required" });
+      next(new HttpError(400, "Booking ID required"));
       return;
     }
 
@@ -98,8 +95,7 @@ class BookingController {
 
       // if no booking was found return error message
       if (!booking) {
-        res.status(404).json({ message: "Booking Not found" });
-        return;
+        throw new HttpError(404, "Booking not found");
       }
 
       // return the booking with a successful message
@@ -108,15 +104,16 @@ class BookingController {
         .json({ message: "Booking fetched successfully", booking });
       return;
     } catch (error) {
-      console.error("Error fetching booking:", error);
-      if (!res.headersSent) {
-        res.status(500).json({ message: "Error fetching booking", error });
-      }
+      next(error);
       return;
     }
   }
 
-  async updateBookingByCustomer(req: Request, res: Response) {
+  async updateBookingByCustomer(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
     // extract the booking ID from URL and the update info from the request body
     const { bookingId } = req.params;
     const info = req.body;
@@ -127,8 +124,7 @@ class BookingController {
 
       // if no booking was found return error message
       if (!booking) {
-        res.status(404).json({ message: "Booking not found" });
-        return;
+        throw new HttpError(404, "Booking not found");
       }
 
       // create an array of fields that shouldn't be updated by the customer
@@ -148,18 +144,17 @@ class BookingController {
 
           // If the booking status is in the disallowedStatus array, return an error and stop further processing
           if (disallowedStatus.includes(booking.status as string)) {
-            res.status(400).json({ message: "Can't update this Booking" });
-            return;
+            throw new HttpError(400, "Can't update this Booking");
           }
           // Dynamically update the booking object with the new value for the allowed field
           // E.g., if field = "callerName", then booking["callerName"] = info["callerName"]
           (booking as any)[field] = info[field];
         } else {
           // If the field is in the disallowedFields array, return an error and stop further processing
-          res
-            .status(403)
-            .json({ message: "You can't update this field", field });
-          return;
+          throw new HttpError(
+            403,
+            `Field '${field}' cannot be updated by the customer`
+          );
         }
       }
 
@@ -168,22 +163,18 @@ class BookingController {
       res.status(200).json({ message: "Update Successful" });
       return;
     } catch (error) {
-      console.error(`Booking update failed: ${error}`);
-      if (!res.headersSent) {
-        res.status(500).json({ message: "Booking update failed", error });
-      }
+      next(error);
       return;
     }
   }
 
-  async generateBookingID(req: Request, res: Response) {
+  async generateBookingID(req: Request, res: Response, next: NextFunction) {
     try {
       // call service method to generate ID
       const ID = await bookingService.generateBookingId();
 
       if (!ID) {
-        res.status(400).json({ message: "error generating Booking ID" });
-        return;
+        throw new HttpError(500, "Failed to generate Booking ID");
       }
 
       // return the booking ID
@@ -192,10 +183,7 @@ class BookingController {
       });
       return;
     } catch (error) {
-      console.error(`Error generating Booking ID: ${error}`);
-      if (!res.headersSent) {
-        res.status(500).json({ message: "Error generating Booking ID", error });
-      }
+      next(error);
       return;
     }
   }
@@ -203,14 +191,14 @@ class BookingController {
   // Admin Endpoints
 
   // get a booking by the MongoDB id and not the generated booking ID
-  async getBookingById(req: AuthRequest, res: Response) {
+  async getBookingById(req: AuthRequest, res: Response, next: NextFunction) {
     // extract booking Id from URL and get the user object created from the JWT token
     const bookingId = req.params.bookingId;
     const user = req.user!;
 
     // return ID required if ID wasn't found
     if (!bookingId) {
-      res.status(400).json({ message: "Booking ID required" });
+      next(new HttpError(400, "Booking ID required"));
       return;
     }
 
@@ -224,8 +212,7 @@ class BookingController {
 
       // return not found if no booking was returned
       if (!booking) {
-        res.status(404).json({ message: "Booking not found" });
-        return;
+        throw new HttpError(404, "Booking not found");
       }
 
       // return success message with booking object.
@@ -234,10 +221,7 @@ class BookingController {
         .json({ message: "Booking fetched successfully", booking });
       return;
     } catch (error) {
-      console.error("Error fetching booking:", error);
-      if (!res.headersSent) {
-        res.status(500).json({ message: "Error fetching booking", error });
-      }
+      next(error);
       return;
     }
   }
@@ -250,7 +234,7 @@ class BookingController {
 
     // return ID required if ID wasn't found
     if (!bookingId) {
-      res.status(400).json({ message: "Booking ID required" });
+      next(new HttpError(400, "Booking ID required"));
       return;
     }
 
@@ -264,8 +248,7 @@ class BookingController {
 
       // return not found if no booking was found
       if (!booking || (booking && booking?.deletedCount < 1)) {
-        res.status(404).json({ message: "Booking not found" });
-        return;
+        throw new HttpError(404, "Booking not found");
       }
 
       // return success message with booking object.
@@ -274,15 +257,12 @@ class BookingController {
         .json({ message: "Booking Deleted successfully", booking });
       return;
     } catch (error) {
-      console.error("Error Deleting booking:", error);
-      if (!res.headersSent) {
-        res.status(500).json({ message: "Error Deleting booking", error });
-      }
+      next(error);
       return;
     }
   }
 
-  async getAllBooking(req: AuthRequest, res: Response) {
+  async getAllBooking(req: AuthRequest, res: Response, next: NextFunction) {
     console.log(`fetch all bookings hit + ${new Date()}`);
     // extract all possible filtering parameters from the request query object.
     const {
@@ -389,15 +369,16 @@ class BookingController {
       });
       return;
     } catch (error) {
-      console.error("Error fetching bookings:", error);
-      if (!res.headersSent) {
-        res.status(500).json({ message: "Error fetching bookings", error });
-      }
+      next(error);
       return;
     }
   }
 
-  async updateBookingStatus(req: AuthRequest, res: Response) {
+  async updateBookingStatus(
+    req: AuthRequest,
+    res: Response,
+    next: NextFunction
+  ) {
     // extract the booking ID, new status and user object.
     const { bookingId } = req.params;
     const { status } = req.body;
@@ -415,8 +396,7 @@ class BookingController {
 
       // return error message if new status is not in the allowed status array
       if (!allowedStatus.includes(status)) {
-        res.status(400).json({ message: "Invalid status" });
-        return;
+        throw new HttpError(400, "Invalid status");
       }
 
       const booking = await bookingService.getBookingById(
@@ -426,8 +406,7 @@ class BookingController {
       );
 
       if (!booking) {
-        res.status(404).json({ message: "Booking not found" });
-        return;
+        throw new HttpError(404, "Booking not found");
       }
 
       booking.status = status;
@@ -436,18 +415,13 @@ class BookingController {
       res.status(201).json({ message: "Status updated" });
       return;
     } catch (error) {
-      console.error(`Error Updating Booking Status: ${error}`);
-      if (!res.headersSent) {
-        res
-          .status(500)
-          .json({ message: "Error Updating Booking status", error });
-      }
+      next(error);
       return;
     }
   }
 
   // manually assign or reassign a call to a rep
-  async assignCallToRep(req: AuthRequest, res: Response) {
+  async assignCallToRep(req: AuthRequest, res: Response, next: NextFunction) {
     // extract booking ID and query parameters
     const bookingId = req.params.bookingId;
     const { repId } = req.query;
@@ -458,24 +432,23 @@ class BookingController {
 
     // return error message if no bookng ID was found
     if (!bookingId) {
-      res.status(400).json({ message: "Booking ID required" });
-      return;
-    }
-
-    // call service class to fetch booking from DB
-    const booking = await bookingService.getBookingById(
-      bookingId,
-      user.userId,
-      user.role
-    );
-
-    // return error message if no booking was found
-    if (!booking) {
-      res.status(404).json({ message: "Booking not found" });
+      next(new HttpError(400, "Booking ID required"));
       return;
     }
 
     try {
+      // call service class to fetch booking from DB
+      const booking = await bookingService.getBookingById(
+        bookingId,
+        user.userId,
+        user.role
+      );
+
+      // return error message if no booking was found
+      if (!booking) {
+        throw new HttpError(404, "Booking not found");
+      }
+
       // get the targeted rep by auto assigning or using the submited rep ID
       let targetRep = isAutoAssign
         ? await getLeastLoadedRep()
@@ -483,14 +456,12 @@ class BookingController {
 
       // return error message if rep wasn't found
       if (!targetRep) {
-        res.status(500).json({ message: "No available representatives" });
-        return;
+        throw new HttpError(500, "No available representatives");
       }
 
       if (targetRep && typeof targetRep !== "string") {
         if (targetRep.status !== "active") {
-          res.status(400).json({ message: "Rep isn't active", rep: targetRep });
-          return;
+          throw new HttpError(400, "Selected rep is not active");
         }
         targetRep = targetRep._id as string;
       }
@@ -503,8 +474,7 @@ class BookingController {
 
       // check if the booking has a status that's part of the disallowed statuses and return error message without saving the updated booking object.
       if (disallowedStatuses.includes(booking.status as string)) {
-        res.status(400).json({ message: "Can't re-assign this Booking" });
-        return;
+        throw new HttpError(400, "Can't re-assign this Booking");
       }
 
       // else update the booking status to pending if the booking status is not part of the disallowed statuses, save and return success message with the new rep ID
@@ -514,15 +484,12 @@ class BookingController {
       res.status(200).json({ message: "Booking assigned", repId: targetRep });
       return;
     } catch (error) {
-      console.error("Error assigning Call to Rep:", error);
-      if (!res.headersSent) {
-        res.status(500).json({ message: "Error assigning Call to Rep", error });
-      }
+      next(error);
       return;
     }
   }
 
-  async getBookingAnalytics(req: AuthRequest, res: Response) {
+  async getBookingAnalytics(req: AuthRequest, res: Response, next: NextFunction) {
     const user = req.user!;
     const { repId } = req.params;
     const matchStage: any = {};
@@ -639,10 +606,7 @@ class BookingController {
       });
       return;
     } catch (error) {
-      console.error(`Error fetching analytics: ${error}`);
-      if (!res.headersSent) {
-        res.status(500).json({ message: "Error fetching analytics" });
-      }
+      next(error);
       return;
     }
   }
