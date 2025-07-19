@@ -5,6 +5,7 @@ import bcrypt from "bcrypt";
 import { generateToken } from "../utils/generateToken";
 import { IAdmin } from "../models/adminModel";
 import { HttpError } from "../utils/httpError";
+import { authLogger } from "../logger/devLogger";
 
 class AuthController {
   async registerAdmin(req: Request, res: Response, next: NextFunction) {
@@ -48,7 +49,18 @@ class AuthController {
   async loginAdmin(req: Request, res: Response, next: NextFunction) {
     const { email, password, rememberMe } = req.body;
 
+    authLogger.info("Login attempt initiated", {
+      email: email,
+      action: "LOGIN_ATTEMPT",
+    });
+
     if (!email || !password) {
+      authLogger.error("Login attempt failed", {
+        email: email,
+        action: "LOGIN_FAILURE",
+        error: "Missing fields",
+      });
+
       next(new HttpError(400, "All fields are required"));
       return;
     }
@@ -57,10 +69,21 @@ class AuthController {
       // check if the admin exists
       const admin = await authService.getAdminByEmail(email);
       if (!admin) {
+        authLogger.error("Login attempt failed", {
+          email: email,
+          action: "LOGIN_FAILURE",
+          error: "Email not found",
+        });
         throw new HttpError(404, "Email not found");
       }
 
       if (admin && admin.status === "blocked") {
+        authLogger.error("Login attempt failed", {
+          email: email,
+          action: "LOGIN_FAILURE",
+          error: "Account Blocked",
+        });
+
         throw new HttpError(
           403,
           "Account blocked and is no longer accessible!"
@@ -70,6 +93,12 @@ class AuthController {
       // check if the password is correct
       const isPasswordValid = await bcrypt.compare(password, admin.password);
       if (!isPasswordValid) {
+        authLogger.error("Login attempt failed", {
+          email: email,
+          action: "LOGIN_FAILURE",
+          error: "Invalid Password",
+        });
+
         throw new HttpError(401, "Invalid password");
       }
 
@@ -85,6 +114,11 @@ class AuthController {
         })
         .status(200)
         .json({ message: "Login successful" });
+
+        authLogger.info("Login attempt successful", {
+        email: email,
+        action: "LOGIN_SUCCESS",
+      });
       return;
     } catch (error) {
       next(error);

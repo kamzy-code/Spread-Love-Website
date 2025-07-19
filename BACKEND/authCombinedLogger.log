@@ -1,0 +1,16 @@
+{
+  service: 'authService',
+  email: 'kamzy@gmail.com',
+  action: 'LOGIN_ATTEMPT',
+  level: '\x1B[32minfo\x1B[39m',
+  message: 'Login attempt initiated',
+  timestamp: '2025-07-19T16:20:43.395Z'
+}
+{
+  service: 'authService',
+  email: 'kamzy@gmail.com',
+  action: 'LOGIN_SUCCESS',
+  level: '\x1B[32minfo\x1B[39m',
+  message: 'Login attempt successful',
+  timestamp: '2025-07-19T16:20:44.033Z'
+}
