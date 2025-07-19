@@ -1,6 +1,7 @@
 import { Types } from "mongoose";
 import { Admin } from "../models/adminModel";
 import bcrypt from "bcrypt";
+import { HttpError } from "../utils/httpError";
 
 interface UpdateRepOptions {
   targetRepId: string;
@@ -56,16 +57,16 @@ class AdminService {
   }: UpdateRepOptions) {
     const rep = await Admin.findById(targetRepId).lean(false);
     if (!rep) {
-      return { status: 404, body: { message: "Rep not found" } };
+     throw new HttpError(404, "Rep not found");
     }
 
     if (newPassword) {
       if (!oldPassword) {
-        return { status: 400, body: { message: "Old password is required" } };
+      throw new HttpError(400, "Old password is required for password update");
       }
 
       if (newPassword !== confirmPassword) {
-        return { status: 400, body: { message: "Passwords do not match" } };
+       throw new HttpError(400, "Passwords do not match");
       }
 
       const isRepPasswordValid = await bcrypt.compare(
@@ -85,7 +86,7 @@ class AdminService {
       }
 
       if (!isRepPasswordValid && !isAdminPasswordValid) {
-        return { status: 401, body: { message: "Invalid password" } };
+        throw new HttpError(401, "Invalid password");
       }
 
       info.password = await bcrypt.hash(newPassword, 10);

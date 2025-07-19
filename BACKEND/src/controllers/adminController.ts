@@ -2,9 +2,10 @@ import adminService from "../services/adminService";
 import { Request, Response, NextFunction } from "express";
 import { AuthRequest } from "../middlewares/authMiddleware";
 import bcrypt from "bcrypt";
+import { HttpError } from "../utils/httpError";
 
 class AdminController {
-  async getAllReps(req: AuthRequest, res: Response) {
+  async getAllReps(req: AuthRequest, res: Response, next: NextFunction) {
     console.log(`fetch all reps hit + ${new Date()}`);
     const user = req.user!;
     const { status, role, search, page = "1", limit = "10" } = req.query;
@@ -50,22 +51,19 @@ class AdminController {
       });
       return;
     } catch (error) {
-      console.error("Error fetching Reps:", error);
-      if (!res.headersSent) {
-        res.status(500).json({ message: "Error fetching Reps", error });
-      }
+      next(error);
       return;
     }
   }
 
-  async getRepById(req: AuthRequest, res: Response) {
+  async getRepById(req: AuthRequest, res: Response, next: NextFunction) {
     // extract rep Id from URL and get the user object created from the JWT token
     const repId = req.params.repId;
     const user = req.user!;
 
     // return ID required if ID wasn't found
     if (!repId) {
-      res.status(400).json({ message: "Rep ID required" });
+      next(new HttpError(400, "Rep ID required"));
       return;
     }
 
@@ -77,30 +75,26 @@ class AdminController {
 
       // return not found if no rep was returned
       if (!rep) {
-        res.status(404).json({ message: "Rep not found" });
-        return;
+       throw new HttpError(404, "Rep not found");
       }
 
       // return success message with rep object.
       res.status(200).json({ message: "Rep fetched successfully", rep });
       return;
     } catch (error) {
-      console.error("Error fetching Rep:", error);
-      if (!res.headersSent) {
-        res.status(500).json({ message: "Error fetching Rep", error });
-      }
+     next(error);
       return;
     }
   }
 
-  async deleteRepById(req: AuthRequest, res: Response) {
+  async deleteRepById(req: AuthRequest, res: Response, next:NextFunction) {
     // extract rep Id from URL and get the user object created from the JWT token
     const repId = req.params.repId;
     const user = req.user!;
 
     // return ID required if ID wasn't found
     if (!repId) {
-      res.status(400).json({ message: "Rep ID required" });
+      next(new HttpError(400, "Rep ID required"));
       return;
     }
 
@@ -109,23 +103,19 @@ class AdminController {
 
       // return not found if no rep was found
       if (!rep || (rep && rep?.deletedCount < 1)) {
-        res.status(404).json({ message: "Rep not found" });
-        return;
+       throw new HttpError(404, "Rep not found");
       }
 
       // return success message with deleted rep object.
       res.status(200).json({ message: "Rep deleted successfully", rep });
       return;
     } catch (error) {
-      console.error("Error deleting Rep:", error);
-      if (!res.headersSent) {
-        res.status(500).json({ message: "Error deleting Rep", error });
-      }
+      next(error);
       return;
     }
   }
 
-  async updateRep(req: AuthRequest, res: Response) {
+  async updateRep(req: AuthRequest, res: Response, next:NextFunction) {
     const user = req.user!;
     const { repId } = req.params;
     const { newPassword, oldPassword, confirmPassword, ...info } = req.body;
@@ -143,14 +133,11 @@ class AdminController {
         confirmPassword,
       });
 
-      res.status(result.status).json({...result.body});
+      res.status(result.status).json({ ...result.body });
       return;
     } catch (error) {
-      console.error(`Rep update failed: ${error}`);
-      if (!res.headersSent) {
-        res.status(500).json({ message: "Rep update failed", error });
-        return;
-      }
+      next(error);
+      return;
     }
   }
 }
