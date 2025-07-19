@@ -6,4 +6,7 @@ const router = express.Router();
 
 router.post("/confirm/:bookingId", emailController.sendConfirmationEmail);
 
+router.use((req, res) => {
+  res.status(404).json({ message: "Email route not found" });
+});
 export default router;

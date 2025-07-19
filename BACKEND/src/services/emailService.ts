@@ -15,9 +15,9 @@ class EmailService {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
       },
-      tls: {
-        rejectUnauthorized: false, // This is important for self-signed certificates
-      },
+      // tls: {
+      //   rejectUnauthorized: false, // This is important for self-signed certificates
+      // },
     });
     
     const mailOptions = {

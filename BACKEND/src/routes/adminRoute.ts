@@ -29,4 +29,8 @@ router.put(
   adminController.updateRep
 );
 
+router.use((req, res) => {
+  res.status(404).json({ message: "Admin route not found" });
+});
+
 export default router;

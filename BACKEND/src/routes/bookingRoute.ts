@@ -58,4 +58,8 @@ router.get("/id/generate", bookingController.generateBookingID);
 router.get("/:bookingId", bookingController.getBookingByBookingId);
 router.put("/:bookingId/update", bookingController.updateBookingByCustomer);
 
+router.use((req, res) => {
+  res.status(404).json({ message: "Booking route not found" });
+});
+
 export default router;

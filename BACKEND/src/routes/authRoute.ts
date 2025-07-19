@@ -14,4 +14,8 @@ router.post("/login", authController.loginAdmin);
 router.post("/logout", authController.logoutAdmin);
 router.get("/me", authMiddleware, authController.getLoggedInUser);
 
+router.use((req, res) => {
+  res.status(404).json({ message: "Auth route not found" });
+});
+
 export default router;
