@@ -7,6 +7,7 @@ import adminRouter from "./routes/adminRoute";
 import emailRouter from "./routes/emailRoute";
 import rateLimit from "express-rate-limit";
 import cookieParser from "cookie-parser";
+import { errorHandler } from "./middlewares/errorHandler";
 
 dotenv.config();
 
@@ -36,8 +37,11 @@ app.use("/api/auth", authRouter);
 app.use("/api/booking", bookingRouter);
 app.use("/api/rep", adminRouter);
 app.use("/api/email", emailRouter);
+
 app.use("*", (req, res,) => {
   res.status(404).json({ message: "Route not found" });
 });
+
+app.use(errorHandler);
 
 export default app;
