@@ -11,7 +11,7 @@ router.post(
   authController.registerAdmin
 );
 router.post("/login", authController.loginAdmin);
-router.post("/logout", authController.logoutAdmin);
+router.post("/logout", authMiddleware, authController.logoutAdmin);
 router.get("/me", authMiddleware, authController.getLoggedInUser);
 
 router.use((req, res) => {

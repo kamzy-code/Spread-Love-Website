@@ -10,12 +10,11 @@ const logFormat = printf(({ level, timestamp, message }) => {
 winston.loggers.add("authLogger", {
   level: "info",
   format: combine(
-    errors({ stack: true }),
     timestamp(),
-    colorize(),
-    json(),
+    errors({ stack:true }),
     logFormat,
-    prettyPrint()
+    json(),
+    prettyPrint(),
   ),
 
   transports: [
@@ -26,6 +25,5 @@ winston.loggers.add("authLogger", {
 
   defaultMeta: { service: "authService" },
 });
-
 
 export const authLogger = winston.loggers.get("authLogger");
