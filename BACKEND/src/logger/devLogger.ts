@@ -19,7 +19,7 @@ winston.loggers.add("authLogger", {
 
   transports: [
     new transports.Console(),
-    new transports.File({ filename: "authCombinedLogger.log" }),
+    // new transports.File({ filename: "authCombinedLogger.log" }),
     // new transports.File({ filename: "authErrorLogger.log", level: "error" }),
   ],
 
