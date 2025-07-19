@@ -11,7 +11,7 @@ class EmailController {
 
     // return ID reuired if ID wasn't submitted
     if (!bookingId) {
-      next(new HttpError(400, "Booking ID required"))
+      next(new HttpError(400, "Booking ID required"));
       return;
     }
 
@@ -21,11 +21,14 @@ class EmailController {
 
       // if no booking was found return error message
       if (!booking) {
-       throw new HttpError(404, "Booking Not found");
+        throw new HttpError(404, "Booking Not found");
       }
 
       if (!booking.callerEmail) {
-       throw new HttpError(400, "Caller email is required for sending confirmation");
+        throw new HttpError(
+          400,
+          "Caller email is required for sending confirmation"
+        );
       }
 
       try {
@@ -47,6 +50,27 @@ class EmailController {
         next(emailError);
         return;
       }
+    } catch (error) {
+      next(error);
+      return;
+    }
+  }
+
+  async sendContactEmail(req: Request, res: Response, next: NextFunction) {
+    // extract BookingID from url
+    const { name, email, subject, message } = req.body;
+
+    // return ID reuired if ID wasn't submitted
+    if (!name || !email || !subject || !message) {
+      next(new HttpError(400, "All fields are required"));
+      return;
+    }
+
+    try {
+      await emailService.sendContactEmail(name, email, subject, message);
+
+      res.status(200).json({ message: "Contact mail sent successfully" });
+      return;
     } catch (error) {
       next(error);
       return;

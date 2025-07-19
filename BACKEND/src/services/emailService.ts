@@ -1,8 +1,8 @@
 import nodemailer from "nodemailer";
-import {format} from "date-fns/format";
+import { format } from "date-fns/format";
 
 class EmailService {
-  public async sendBookingConfirmationEmail(
+  async sendBookingConfirmationEmail(
     to: string,
     subject: string,
     booking: any
@@ -19,7 +19,7 @@ class EmailService {
       //   rejectUnauthorized: false, // This is important for self-signed certificates
       // },
     });
-    
+
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: to,
@@ -53,7 +53,9 @@ class EmailService {
       </p>
       <p>Use the above booking ID to track and manage your booking via the link below.</p>
       <p>
-      <a href="${process.env.MANAGE_BOOKING_URL}" style="color: #1a73e8; text-decoration: underline;">
+      <a href="${
+        process.env.MANAGE_BOOKING_URL
+      }" style="color: #1a73e8; text-decoration: underline;">
       Manage Your Booking
       </a>
       </p>
@@ -65,6 +67,53 @@ class EmailService {
     };
 
     try {
+      const mailStatus = await transporter.sendMail(mailOptions);
+    } catch (error: any) {
+      throw new Error(error.message || "Error sending confirmation mail");
+    }
+  }
+
+  async sendContactEmail(
+    name: string,
+    email: string,
+    subject: string,
+    message: string
+  ) {
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: process.env.EMAIL_USER,
+      subject: `${subject} from ${name}`,
+      text: `You have received a new contact form submission.
+  Name: ${name}
+  Email: ${email}
+
+  ${message}
+  `,
+      html: `
+    <div style="font-family: Arial, sans-serif; color: #222;">
+      <h2>Contact Submission</h2>
+      <p>You have received a new contact form submission from;</p>
+      
+      <p>
+      <strong>Name:</strong> ${name}<br/>
+      <strong>Email:</strong> ${email}<br/><br/>
+      
+      ${message}
+      </p>
+      
+    </div>
+    `,
+    };
+
+     try {
       const mailStatus = await transporter.sendMail(mailOptions);
     } catch (error: any) {
       throw new Error(error.message || "Error sending confirmation mail");
