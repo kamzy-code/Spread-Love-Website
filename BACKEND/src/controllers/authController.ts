@@ -4,19 +4,22 @@ import { AuthRequest } from "../middlewares/authMiddleware";
 import bcrypt from "bcrypt";
 import { generateToken } from "../utils/generateToken";
 import { IAdmin } from "../models/adminModel";
+import { HttpError } from "../utils/httpError";
 
 class AuthController {
   async registerAdmin(req: Request, res: Response, next: NextFunction) {
     const { firstName, lastName, email, phone, password, role } = req.body;
 
+    if (!firstName || !lastName || !email || !phone || !password || !role) {
+      next(new HttpError(400, "All fields are required"));
+      return;
+    }
+
     try {
       // check is user already exists
       const exists = await authService.getAdminByEmail(email);
       if (exists) {
-        res
-          .status(400)
-          .json({ message: "Admin with this email already exists" });
-        return;
+        throw new HttpError(400, "Admin with this email already exists");
       }
 
       // hash the user's password
@@ -37,9 +40,7 @@ class AuthController {
         .json({ message: "Registration successful", admin: newAdmin });
       return;
     } catch (error) {
-      if (!res.headersSent) {
-        res.status(500).json({ message: "Registration failed", error });
-      }
+      next(error);
       return;
     }
   }
@@ -47,24 +48,29 @@ class AuthController {
   async loginAdmin(req: Request, res: Response, next: NextFunction) {
     const { email, password, rememberMe } = req.body;
 
+    if (!email || !password) {
+      next(new HttpError(400, "All fields are required"));
+      return;
+    }
+
     try {
       // check if the admin exists
       const admin = await authService.getAdminByEmail(email);
       if (!admin) {
-        res.status(404).json({ message: "Email not found" });
-        return;
+        throw new HttpError(404, "Email not found");
       }
 
       if (admin && admin.status === "blocked") {
-        res.status(400).json({ message: "Account blocked and is no longer accessible!" });
-        return;
+        throw new HttpError(
+          403,
+          "Account blocked and is no longer accessible!"
+        );
       }
-      
+
       // check if the password is correct
       const isPasswordValid = await bcrypt.compare(password, admin.password);
       if (!isPasswordValid) {
-        res.status(401).json({ message: "Invalid password" });
-        return;
+        throw new HttpError(401, "Invalid password");
       }
 
       // generate a token
@@ -81,9 +87,7 @@ class AuthController {
         .json({ message: "Login successful" });
       return;
     } catch (error) {
-      if (!res.headersSent) {
-        res.status(500).json({ message: "Login failed", error });
-      }
+      next(error);
       return;
     }
   }
@@ -91,7 +95,7 @@ class AuthController {
   async getLoggedInUser(req: AuthRequest, res: Response, next: NextFunction) {
     const user = req.user;
     if (!user) {
-      res.status(404).json({ message: "No logged in user" });
+      next(new HttpError(401, "Unauthorized access"));
       return;
     }
 
@@ -100,16 +104,13 @@ class AuthController {
       const admin = await authService.getAdminByID(user.userId);
 
       if (!admin) {
-        res.status(404).json({ message: "Admin not found" });
-        return;
+        throw new HttpError(404, "Admin not found");
       }
 
       res.status(200).json({ user: admin });
       return;
     } catch (error) {
-      if (!res.headersSent) {
-        res.status(500).json({ message: "Error fetching user", error });
-      }
+      next(error);
       return;
     }
   }
@@ -126,9 +127,7 @@ class AuthController {
         .json({ message: "Logged out successfully" });
       return;
     } catch (error) {
-      if (!res.headersSent) {
-        res.status(500).json({ message: "Logout failed", error });
-      }
+      next(error);
       return;
     }
   }

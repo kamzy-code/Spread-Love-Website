@@ -38,7 +38,7 @@ app.use("/api/booking", bookingRouter);
 app.use("/api/rep", adminRouter);
 app.use("/api/email", emailRouter);
 
-app.use("*", (req, res,) => {
+app.use((req, res,) => {
   res.status(404).json({ message: "Route not found" });
 });
 
