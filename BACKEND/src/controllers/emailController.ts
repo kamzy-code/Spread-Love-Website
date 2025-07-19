@@ -1,15 +1,17 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import bookingService from "../services/bookingService";
 import emailService from "../services/emailService";
+import { HttpError } from "../utils/httpError";
+import { error } from "console";
 
 class EmailController {
-  async sendConfirmationEmail(req: Request, res: Response) {
+  async sendConfirmationEmail(req: Request, res: Response, next: NextFunction) {
     // extract BookingID from url
     const bookingId = req.params.bookingId;
 
     // return ID reuired if ID wasn't submitted
     if (!bookingId) {
-      res.status(400).json({ message: "Booking ID required" });
+      next(new HttpError(400, "Booking ID required"))
       return;
     }
 
@@ -19,13 +21,11 @@ class EmailController {
 
       // if no booking was found return error message
       if (!booking) {
-        res.status(404).json({ message: "Booking Not found" });
-        return;
+       throw new HttpError(404, "Booking Not found");
       }
 
       if (!booking.callerEmail) {
-        res.status(400).json({ message: "Booking email not found" });
-        return;
+       throw new HttpError(400, "Caller email is required for sending confirmation");
       }
 
       try {
@@ -44,21 +44,11 @@ class EmailController {
           .json({ message: "Booking Confirmation sent successfully", booking });
         return;
       } catch (emailError) {
-        // Email failed to send, do not update booking
-        console.error("Failed to send booking confirmation email:", emailError);
-        res.status(500).json({
-          message: "Failed to send booking confirmation email",
-          error: emailError,
-        });
+        next(emailError);
         return;
       }
     } catch (error) {
-      console.error("Error sending booking confirmation:", error);
-      if (!res.headersSent) {
-        res
-          .status(500)
-          .json({ message: "Error sending booking confirmation", error });
-      }
+      next(error);
       return;
     }
   }
