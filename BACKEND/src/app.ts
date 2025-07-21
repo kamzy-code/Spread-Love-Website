@@ -8,6 +8,7 @@ import emailRouter from "./routes/emailRoute";
 import rateLimit from "express-rate-limit";
 import cookieParser from "cookie-parser";
 import { errorHandler } from "./middlewares/errorHandler";
+import logger from "./logger/devLogger";
 
 dotenv.config();
 
@@ -28,6 +29,18 @@ const limiter = rateLimit({
 });
 
 app.use(limiter);
+
+app.use((req, res, next) => {
+  logger.info(`[${req.method}] ${req.originalUrl}`, {
+    service: "requestLogger",
+    action: "LOG_REQUEST",
+    method: req.method,
+    url: req.originalUrl,
+    ip: req.ip,
+  });
+  next();
+});
+
 
 app.get("/", (req, res) => {
   res.send("API is running!");

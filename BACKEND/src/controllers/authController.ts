@@ -19,7 +19,7 @@ class AuthController {
     if (!firstName || !lastName || !email || !phone || !password || !role) {
       authLogger.warn("Registration failed: missing fields", {
         email: email,
-        action: "REGISTRATION_FAILURE",
+        action: "REGISTRATION_FAILED",
       });
 
       next(new HttpError(400, "All fields are required"));
@@ -32,9 +32,10 @@ class AuthController {
       if (exists) {
         authLogger.warn("Registration failed: email exists", {
           email: email,
-          action: "REGISTRATION_FAILURE",
+          action: "REGISTRATION_FAILED",
         });
-        throw new HttpError(400, "Admin with this email already exists");
+        next(new HttpError(400, "Admin with this email already exists"));
+        return;
       }
 
       // hash the user's password
@@ -53,9 +54,10 @@ class AuthController {
       if (!newAdmin) {
         authLogger.warn("Registration failed: admin creation error", {
           email,
-          action: "REGISTRATION_FAILURE",
+          action: "REGISTRATION_FAILED",
         });
-        throw new HttpError(500, "Failed to create admin");
+        next(new HttpError(500, "Failed to create admin"));
+        return;
       }
 
       res
@@ -69,10 +71,10 @@ class AuthController {
         action: "REGISTRATION_SUCCESS",
       });
       return;
-    } catch (error) {
-      authLogger.error("Registration error", {
+    } catch (error: any) {
+      authLogger.error(`Registration error: ${error.message}`, {
         email,
-        action: "REGISTRATION_FAILURE",
+        action: "REGISTRATION_FAILED",
         error,
       });
 
@@ -92,7 +94,7 @@ class AuthController {
     if (!email || !password) {
       authLogger.warn("Login failed: missing fields", {
         email: email,
-        action: "LOGIN_FAILURE",
+        action: "LOGIN_FAILED",
       });
 
       next(new HttpError(400, "All fields are required"));
@@ -105,20 +107,22 @@ class AuthController {
       if (!admin) {
         authLogger.warn("Login failed: email not found", {
           email,
-          action: "LOGIN_FAILURE",
+          action: "LOGIN_FAILED",
         });
-        throw new HttpError(404, "Email not found");
+        next(new HttpError(404, "Email not found"));
+        return;
       }
 
       if (admin && admin.status === "blocked") {
         authLogger.warn("Login failed: account blocked", {
           email,
-          action: "LOGIN_FAILURE",
+          action: "LOGIN_FAILED",
         });
-        throw new HttpError(
-          403,
-          "Account blocked and is no longer accessible!"
+
+        next(
+          new HttpError(403, "Account blocked and is no longer accessible!")
         );
+        return;
       }
 
       // check if the password is correct
@@ -126,14 +130,24 @@ class AuthController {
       if (!isPasswordValid) {
         authLogger.warn("Login failed: invalid password", {
           email,
-          action: "LOGIN_FAILURE",
+          action: "LOGIN_FAILED",
         });
-        throw new HttpError(401, "Invalid password");
+        next ( new HttpError(401, "Invalid password"));
+        return;
       }
 
       // generate a token
       const token = generateToken(admin._id as string, admin.role);
-      // res.status(200).json({ token, admin });
+     
+      if (!token) {
+        authLogger.error("Login failed: token generation error", {
+          email,
+          action: "LOGIN_FAILED",
+        });
+        next(new HttpError(500, "Failed to generate token"));
+        return;
+      }
+
       res
         .cookie("token", token, {
           httpOnly: true,
@@ -152,9 +166,9 @@ class AuthController {
       });
       return;
     } catch (error: any) {
-      authLogger.error("Login error", {
+      authLogger.error(`Login error: ${error.message}`, {
         email,
-        action: "LOGIN_FAILURE",
+        action: "LOGIN_FAILED",
         error,
       });
 
@@ -172,7 +186,7 @@ class AuthController {
 
     if (!user) {
       authLogger.warn("Get logged in user failed: unauthorized access", {
-        action: "GET_LOGGED_IN_USER_FAILURE",
+        action: "GET_LOGGED_IN_USER_FAILED",
       });
       next(new HttpError(401, "Unauthorized access"));
       return;
@@ -185,22 +199,23 @@ class AuthController {
       if (!admin) {
         authLogger.warn("Get logged in user failed: admin not found", {
           userId: user.userId,
-          action: "GET_LOGGED_IN_USER_FAILURE",
+          action: "GET_LOGGED_IN_USER_FAILED",
         });
-        throw new HttpError(404, "Admin not found");
+        next ( new HttpError(404, "Admin not found"));
+        return;
       }
 
       res.status(200).json({ user: admin });
-      authLogger.warn("Get logged in user successful", {
+      authLogger.info("Get logged in user successful", {
         userId: user.userId,
         role: admin.role,
         action: "GET_LOGGED_IN_USER_SUCCESS",
       });
       return;
-    } catch (error) {
-      authLogger.error("Get logged in user error", {
+    } catch (error: any) {
+      authLogger.error(`Get logged in user error: ${error.message}`, {
         userId: user?.userId,
-        action: "GET_LOGGED_IN_USER_FAILURE",
+        action: "GET_LOGGED_IN_USER_FAILED",
         error,
       });
       next(error);
@@ -217,7 +232,7 @@ class AuthController {
 
     if (!user) {
       authLogger.warn("Logout failed: unauthorized access", {
-        action: "LOGOUT_FAILURE",
+        action: "LOGOUT_FAILED",
       });
       next(new HttpError(401, "Unauthorized access"));
       return;
@@ -238,10 +253,10 @@ class AuthController {
         action: "LOGOUT_SUCCESS",
       });
       return;
-    } catch (error) {
-      authLogger.error("Logout error", {
+    } catch (error: any) {
+      authLogger.error(`Logout error: ${error.message}`, {
         userId: user.userId,
-        action: "LOGOUT_FAILURE",
+        action: "LOGOUT_FAILED",
         error,
       });
       next(error);

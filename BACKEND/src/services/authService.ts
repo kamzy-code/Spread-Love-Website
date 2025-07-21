@@ -1,6 +1,7 @@
 import { Types } from "mongoose";
 import { Admin } from "../models/adminModel";
 import { adminRole } from "../types/genralTypes";
+import { HttpError } from "../utils/httpError";
 
 class AuthService {
 
