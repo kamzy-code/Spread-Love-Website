@@ -73,7 +73,28 @@ winston.loggers.add("bookingLogger", {
   defaultMeta: { service: "bookingService" },
 });
 
+winston.loggers.add("emailLogger", {
+  level: "info",
+  format: combine(
+    timestamp(),
+    errors({ stack: true }),
+    splat(),
+    json(),
+    prettyPrint()
+  ),
+
+  transports: [
+    new transports.Console(),
+    // new transports.File({ filename: "authCombinedLogger.log" }),
+    // new transports.File({ filename: "authErrorLogger.log", level: "error" }),
+  ],
+
+  defaultMeta: { service: "emailService" },
+});
+
+
 export default logger;
 export const authLogger = winston.loggers.get("authLogger");
 export const adminLogger = winston.loggers.get("adminLogger");
 export const bookingLogger = winston.loggers.get("bookingLogger")
+export const emailLogger = winston.loggers.get("emailLogger")

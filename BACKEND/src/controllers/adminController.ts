@@ -68,6 +68,8 @@ class AdminController {
       adminLogger.info("Get all reps successful", {
         userId: user.userId,
         role: user.role,
+        totalReps,
+        page: Number(page),
         action: "GET_ALL_REPS_SUCCESS",
       });
       return;
@@ -77,6 +79,7 @@ class AdminController {
         role: user.role,
         action: "GET_ALL_REPS_FAILED",
         error,
+        url: req.originalUrl,
       });
       next(error);
       return;

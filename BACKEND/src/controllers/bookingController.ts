@@ -20,6 +20,8 @@ import {
   endOfWeek,
 } from "date-fns";
 import { HttpError } from "../utils/httpError";
+import { bookingLogger } from "../logger/devLogger";
+import { url } from "inspector";
 
 class BookingController {
   // Customer Endpoints
@@ -41,6 +43,21 @@ class BookingController {
       contactConsent = "no",
       callRecording = "no",
     } = req.body;
+
+    bookingLogger.info("Booking creation initiated", {
+      bookingId,
+      callerName,
+      action: "CREATE_BOOKING",
+    });
+
+    // return error if booking ID wasn't submitted
+    if (!bookingId) {
+      bookingLogger.warn("Booking creation failed: Booking ID required", {
+        action: "CREATE_BOOKING_FAILED",
+      });
+      next(new HttpError(400, "Booking ID required"));
+      return;
+    }
 
     try {
       // call the service class to create a new booking and save in the DB
@@ -64,7 +81,13 @@ class BookingController {
 
       // return failed if booking creation was unsuccessful
       if (!newBooking) {
-        throw new HttpError(500, "Failed to create booking");
+        bookingLogger.warn("Booking creation failed: Booking not created", {
+          bookingId,
+          callerName,
+          action: "CREATE_BOOKING_FAILED",
+        });
+        next(new HttpError(500, "Failed to create booking"));
+        return;
       }
 
       // retrun successful with Booking ID if successful
@@ -72,8 +95,20 @@ class BookingController {
         message: "Booking created successfully",
         bookingId: newBooking.bookingId,
       });
+      bookingLogger.info("Booking creation successful", {
+        id: newBooking._id,
+        bookingId: newBooking.bookingId,
+        callerName,
+        action: "CREATE_BOOKING_SUCCESS",
+      });
       return;
-    } catch (error) {
+    } catch (error: any) {
+      bookingLogger.error(`Booking creation error: ${error.message}`, {
+        bookingId,
+        callerName,
+        action: "CREATE_BOOKING_FAILED",
+        error,
+      });
       next(error);
       return;
     }
@@ -83,8 +118,19 @@ class BookingController {
     // extract BookingID from url
     const bookingId = req.params.bookingId;
 
+    bookingLogger.info("Get booking by BookingId initiated", {
+      bookingId,
+      action: "GET_BOOKING_BY_BOOKING_ID",
+    });
+
     // return ID reuired if ID wasn't submitted
     if (!bookingId) {
+      bookingLogger.warn(
+        "Get booking by BookingId failed: Booking ID required",
+        {
+          action: "GET_BOOKING_BY_BOOKING_ID_FAILED",
+        }
+      );
       next(new HttpError(400, "Booking ID required"));
       return;
     }
@@ -95,15 +141,35 @@ class BookingController {
 
       // if no booking was found return error message
       if (!booking) {
-        throw new HttpError(404, "Booking not found");
+        bookingLogger.warn(
+          "Get booking by BookingId failed: Booking not found",
+          {
+            bookingId,
+            action: "GET_BOOKING_BY_BOOKING_ID_FAILED",
+          }
+        );
+        next(new HttpError(404, "Booking not found"));
+        return;
       }
 
       // return the booking with a successful message
       res
         .status(200)
         .json({ message: "Booking fetched successfully", booking });
+
+      bookingLogger.info("Get booking by BookingId successful", {
+        id: booking._id,
+        bookingId,
+        action: "GET_BOOKING_BY_BOOKING_ID_SUCCESS",
+      });
       return;
-    } catch (error) {
+    } catch (error: any) {
+      bookingLogger.error(`Get booking by BookingId error: ${error.message}`, {
+        bookingId,
+        action: "GET_BOOKING_BY_BOOKING_ID_FAILED",
+        error,
+      });
+
       next(error);
       return;
     }
@@ -118,13 +184,37 @@ class BookingController {
     const { bookingId } = req.params;
     const info = req.body;
 
+    bookingLogger.info("Update booking by customer initiated", {
+      bookingId,
+      action: "UPDATE_BOOKING_BY_CUSTOMER",
+    });
+
+    if (!bookingId) {
+      bookingLogger.warn(
+        "Update booking by customer failed: Booking ID required",
+        {
+          action: "UPDATE_BOOKING_BY_CUSTOMER_FAILED",
+        }
+      );
+      next(new HttpError(400, "Booking ID required"));
+      return;
+    }
+
     try {
       // call service class to fetch the booking to be updated
       const booking = await bookingService.getBookingByBookingId(bookingId);
 
       // if no booking was found return error message
       if (!booking) {
-        throw new HttpError(404, "Booking not found");
+        bookingLogger.warn(
+          "Update booking by customer failed: Booking not found",
+          {
+            bookingId,
+            action: "UPDATE_BOOKING_BY_CUSTOMER_FAILED",
+          }
+        );
+        next(new HttpError(404, "Booking not found"));
+        return;
       }
 
       // create an array of fields that shouldn't be updated by the customer
@@ -144,45 +234,94 @@ class BookingController {
 
           // If the booking status is in the disallowedStatus array, return an error and stop further processing
           if (disallowedStatus.includes(booking.status as string)) {
-            throw new HttpError(400, "Can't update this Booking");
+            bookingLogger.warn(
+              `Update booking by customer failed: Can't update booking with status ${booking.status}`,
+              {
+                bookingId,
+                bookingStatus: booking.status,
+                action: "UPDATE_BOOKING_BY_CUSTOMER_FAILED",
+              }
+            );
+            next(new HttpError(400, "Can't update this Booking"));
+            return;
           }
+
           // Dynamically update the booking object with the new value for the allowed field
           // E.g., if field = "callerName", then booking["callerName"] = info["callerName"]
           (booking as any)[field] = info[field];
         } else {
           // If the field is in the disallowedFields array, return an error and stop further processing
-          throw new HttpError(
-            403,
-            `Field '${field}' cannot be updated by the customer`
+          bookingLogger.warn(
+            `Update booking by customer failed: Field '${field}' cannot be updated by the customer`,
+            {
+              bookingId,
+              field,
+              action: "UPDATE_BOOKING_BY_CUSTOMER_FAILED",
+            }
           );
+          next(
+            new HttpError(
+              403,
+              `Field '${field}' cannot be updated by the customer`
+            )
+          );
+          return;
         }
       }
 
       // save the updated booking object and return success message
       await booking.save();
       res.status(200).json({ message: "Update Successful" });
+      bookingLogger.info("Update booking by customer successful", {
+        id: booking._id,
+        bookingId,
+        action: "UPDATE_BOOKING_BY_CUSTOMER_SUCCESS",
+      });
       return;
-    } catch (error) {
+    } catch (error: any) {
+      bookingLogger.error(
+        `Update booking by customer error: ${error.message}`,
+        {
+          bookingId,
+          action: "UPDATE_BOOKING_BY_CUSTOMER_FAILED",
+          error,
+        }
+      );
       next(error);
       return;
     }
   }
 
   async generateBookingID(req: Request, res: Response, next: NextFunction) {
+    bookingLogger.info("Generate Booking ID initiated", {
+      action: "GENERATE_BOOKING_ID",
+    });
     try {
       // call service method to generate ID
       const ID = await bookingService.generateBookingId();
 
       if (!ID) {
-        throw new HttpError(500, "Failed to generate Booking ID");
+        bookingLogger.warn("Generate Booking ID failed: ID not generated", {
+          action: "GENERATE_BOOKING_ID_FAILED",
+        });
+        next(new HttpError(500, "Failed to generate Booking ID"));
+        return;
       }
 
       // return the booking ID
       res.status(200).json({
         ID,
       });
+      bookingLogger.info("Generate Booking ID successful", {
+        id: ID,
+        action: "GENERATE_BOOKING_ID_SUCCESS",
+      });
       return;
-    } catch (error) {
+    } catch (error: any) {
+      bookingLogger.error(`Generate Booking ID error: ${error.message}`, {
+        action: "GENERATE_BOOKING_ID_FAILED",
+        error,
+      });
       next(error);
       return;
     }
@@ -196,8 +335,19 @@ class BookingController {
     const bookingId = req.params.bookingId;
     const user = req.user!;
 
+    bookingLogger.info("Get booking by ID initiated", {
+      userId: user.userId,
+      role: user.role,
+      id: bookingId,
+      action: "GET_BOOKING_BY_ID",
+    });
+
     // return ID required if ID wasn't found
     if (!bookingId) {
+      bookingLogger.warn("Get booking by ID failed: Booking ID required", {
+        userId: user.userId,
+        action: "GET_BOOKING_BY_ID_FAILED",
+      });
       next(new HttpError(400, "Booking ID required"));
       return;
     }
@@ -212,13 +362,26 @@ class BookingController {
 
       // return not found if no booking was returned
       if (!booking) {
-        throw new HttpError(404, "Booking not found");
+        bookingLogger.warn("Get booking by ID failed: Booking not found", {
+          userId: user.userId,
+          id: bookingId,
+          action: "GET_BOOKING_BY_ID_FAILED",
+        });
+        next(new HttpError(404, "Booking not found"));
+        return;
       }
 
       // return success message with booking object.
       res
         .status(200)
         .json({ message: "Booking fetched successfully", booking });
+
+      bookingLogger.info("Get booking by ID successful", {
+        userId: user.userId,
+        role: user.role,
+        id: bookingId,
+        action: "GET_BOOKING_BY_ID_SUCCESS",
+      });
       return;
     } catch (error) {
       next(error);
@@ -232,8 +395,19 @@ class BookingController {
     const bookingId = req.params.bookingId;
     const user = req.user!;
 
+    bookingLogger.info("Delete booking by ID initiated", {
+      userId: user.userId,
+      role: user.role,
+      id: bookingId,
+      action: "DELETE_BOOKING_BY_ID",
+    });
+
     // return ID required if ID wasn't found
     if (!bookingId) {
+      bookingLogger.warn("Delete booking by ID failed: Booking ID required", {
+        userId: user.userId,
+        action: "DELETE_BOOKING_BY_ID_FAILED",
+      });
       next(new HttpError(400, "Booking ID required"));
       return;
     }
@@ -248,22 +422,43 @@ class BookingController {
 
       // return not found if no booking was found
       if (!booking || (booking && booking?.deletedCount < 1)) {
-        throw new HttpError(404, "Booking not found");
+        bookingLogger.warn("Delete booking by ID failed: Booking not found", {
+          userId: user.userId,
+          id: bookingId,
+          action: "DELETE_BOOKING_BY_ID_FAILED",
+        });
+
+        next(new HttpError(404, "Booking not found"));
+        return;
       }
 
       // return success message with booking object.
       res
         .status(200)
         .json({ message: "Booking Deleted successfully", booking });
+
+      bookingLogger.info("Delete booking by ID successful", {
+        userId: user.userId,
+        role: user.role,
+        id: bookingId,
+        action: "DELETE_BOOKING_BY_ID_SUCCESS",
+      });
       return;
-    } catch (error) {
+    } catch (error: any) {
+      bookingLogger.error(`Delete booking by ID error: ${error.message}`, {
+        userId: user.userId,
+        role: user.role,
+        id: bookingId,
+        action: "DELETE_BOOKING_BY_ID_FAILED",
+        error,
+      });
+
       next(error);
       return;
     }
   }
 
   async getAllBooking(req: AuthRequest, res: Response, next: NextFunction) {
-    console.log(`fetch all bookings hit + ${new Date()}`);
     // extract all possible filtering parameters from the request query object.
     const {
       status,
@@ -282,6 +477,12 @@ class BookingController {
       filterType,
       confirmationMailsent,
     } = req.query;
+
+    bookingLogger.info("Get all bookings initiated", {
+      userId: req.user?.userId,
+      role: req.user?.role,
+      action: "GET_ALL_BOOKINGS",
+    });
 
     // cast the sort order variable from a string to a valid sort Order type.
     // i.e from sortorder: string = "1" or "-1" to sortorder: SortOrder = 1 or -1
@@ -354,6 +555,16 @@ class BookingController {
         numericLimit
       );
 
+      if (!bookings) {
+        bookingLogger.warn("No bookings found", {
+          userId: user.userId,
+          role: user.role,
+          action: "GET_ALL_BOOKINGS_NO_RESULTS",
+        });
+        next(new HttpError(404, "No bookings found"));
+        return;
+      }
+
       const total = await bookingService.getTotalBookingsCount(searchQuery);
 
       // return booking list
@@ -367,8 +578,24 @@ class BookingController {
           totalPages: Math.ceil(total / numericLimit),
         },
       });
+
+      bookingLogger.info("Get all bookings successful", {
+        userId: user.userId,
+        role: user.role,
+        totalBookings: total,
+        page: Number(page),
+        action: "GET_ALL_BOOKINGS_SUCCESS",
+      });
       return;
-    } catch (error) {
+    } catch (error: any) {
+      bookingLogger.error(`Get all bookings error: ${error.message}`, {
+        userId: user.userId,
+        role: user.role,
+        action: "GET_ALL_BOOKINGS_FAILED",
+        error,
+        url: req.originalUrl,
+      });
+
       next(error);
       return;
     }
@@ -384,6 +611,14 @@ class BookingController {
     const { status } = req.body;
     const user = req.user!;
 
+    bookingLogger.info("Update booking status initiated", {
+      userId: user.userId,
+      role: user.role,
+      id: bookingId,
+      status,
+      action: "UPDATE_BOOKING_STATUS",
+    });
+
     try {
       // create an array of allowed status value
       const allowedStatus = [
@@ -396,7 +631,15 @@ class BookingController {
 
       // return error message if new status is not in the allowed status array
       if (!allowedStatus.includes(status)) {
-        throw new HttpError(400, "Invalid status");
+        bookingLogger.warn("Update booking status failed: Invalid status", {
+          userId: user.userId,
+          role: user.role,
+          id: bookingId,
+          status,
+          action: "UPDATE_BOOKING_STATUS_FAILED",
+        });
+        next(new HttpError(400, "Invalid status"));
+        return;
       }
 
       const booking = await bookingService.getBookingById(
@@ -406,15 +649,37 @@ class BookingController {
       );
 
       if (!booking) {
-        throw new HttpError(404, "Booking not found");
+        bookingLogger.warn("Update booking status failed: Booking not found", {
+          userId: user.userId,
+          role: user.role,
+          id: bookingId,
+          action: "UPDATE_BOOKING_STATUS_FAILED",
+        });
+        next(new HttpError(404, "Booking not found"));
+        return;
       }
 
       booking.status = status;
       await booking.save();
 
       res.status(201).json({ message: "Status updated" });
+      bookingLogger.info("Update booking status successful", {
+        userId: user.userId,
+        role: user.role,
+        id: bookingId,
+        status,
+        action: "UPDATE_BOOKING_STATUS_SUCCESS",
+      });
       return;
-    } catch (error) {
+    } catch (error: any) {
+      bookingLogger.error(`Update booking status error: ${error.message}`, {
+        userId: user.userId,
+        role: user.role,
+        id: bookingId,
+        status,
+        action: "UPDATE_BOOKING_STATUS_FAILED",
+        error,
+      });
       next(error);
       return;
     }
@@ -427,17 +692,38 @@ class BookingController {
     const { repId } = req.query;
     const user = req.user!;
 
-    // check the auto assign status
-    const isAutoAssign = (repId as string) === "auto";
+    bookingLogger.info("Assign call to rep initiated", {
+      userId: user.userId,
+      role: user.role,
+      id: bookingId,
+      repId,
+      action: "ASSIGN_CALL_TO_REP",
+    });
 
-    // return error message if no bookng ID was found
     if (!bookingId) {
+      bookingLogger.warn("Assign call to rep failed: Booking ID required", {
+        userId: user.userId,
+        role: user.role,
+        action: "ASSIGN_CALL_TO_REP_FAILED",
+      });
       next(new HttpError(400, "Booking ID required"));
       return;
     }
 
+    if (!repId) {
+      bookingLogger.warn("Assign call to rep failed: Rep ID required", {
+        userId: user.userId,
+        role: user.role,
+        action: "ASSIGN_CALL_TO_REP_FAILED",
+      });
+      next(new HttpError(400, "Rep ID required"));
+      return;
+    }
+
+    // check the auto assign status
+    const isAutoAssign = (repId as string) === "auto";
+
     try {
-      // call service class to fetch booking from DB
       const booking = await bookingService.getBookingById(
         bookingId,
         user.userId,
@@ -446,7 +732,14 @@ class BookingController {
 
       // return error message if no booking was found
       if (!booking) {
-        throw new HttpError(404, "Booking not found");
+        bookingLogger.warn("Assign call to rep failed: Booking not found", {
+          userId: user.userId,
+          role: user.role,
+          id: bookingId,
+          action: "ASSIGN_CALL_TO_REP_FAILED",
+        });
+        next(new HttpError(404, "Booking not found"));
+        return;
       }
 
       // get the targeted rep by auto assigning or using the submited rep ID
@@ -456,12 +749,30 @@ class BookingController {
 
       // return error message if rep wasn't found
       if (!targetRep) {
-        throw new HttpError(500, "No available representatives");
+        bookingLogger.warn("Assign call to rep failed: No available reps", {
+          userId: user.userId,
+          role: user.role,
+          id: bookingId,
+          action: "ASSIGN_CALL_TO_REP_FAILED",
+        });
+        next(new HttpError(500, "No available representatives"));
+        return;
       }
 
       if (targetRep && typeof targetRep !== "string") {
         if (targetRep.status !== "active") {
-          throw new HttpError(400, "Selected rep is not active");
+          bookingLogger.warn(
+            "Assign call to rep failed: Selected rep is not active",
+            {
+              userId: user.userId,
+              role: user.role,
+              id: bookingId,
+              repId: targetRep._id,
+              action: "ASSIGN_CALL_TO_REP_FAILED",
+            }
+          );
+          next(new HttpError(400, "Selected rep is not active"));
+          return;
         }
         targetRep = targetRep._id as string;
       }
@@ -474,7 +785,25 @@ class BookingController {
 
       // check if the booking has a status that's part of the disallowed statuses and return error message without saving the updated booking object.
       if (disallowedStatuses.includes(booking.status as string)) {
-        throw new HttpError(400, "Can't re-assign this Booking");
+        bookingLogger.warn(
+          `Assign call to rep failed: Can't re-assign booking with status ${booking.status}`,
+          {
+            userId: user.userId,
+            role: user.role,
+            id: bookingId,
+            repId: targetRep,
+            status: booking.status,
+            action: "ASSIGN_CALL_TO_REP_FAILED",
+          }
+        );
+
+        next(
+          new HttpError(
+            400,
+            ` Can't re-assign booking with status ${booking.status}`
+          )
+        );
+        return;
       }
 
       // else update the booking status to pending if the booking status is not part of the disallowed statuses, save and return success message with the new rep ID
@@ -482,19 +811,45 @@ class BookingController {
       await booking.save();
 
       res.status(200).json({ message: "Booking assigned", repId: targetRep });
+      bookingLogger.info("Assign call to rep successful", {
+        userId: user.userId,
+        role: user.role,
+        id: bookingId,
+        repId: targetRep,
+        action: "ASSIGN_CALL_TO_REP_SUCCESS",
+      });
       return;
-    } catch (error) {
+    } catch (error: any) {
+      bookingLogger.error(`Assign call to rep error: ${error.message}`, {
+        userId: user.userId,
+        role: user.role,
+        id: bookingId,
+        repId,
+        action: "ASSIGN_CALL_TO_REP_FAILED",
+        error,
+      });
+
       next(error);
       return;
     }
   }
 
-  async getBookingAnalytics(req: AuthRequest, res: Response, next: NextFunction) {
+  async getBookingAnalytics(
+    req: AuthRequest,
+    res: Response,
+    next: NextFunction
+  ) {
     const user = req.user!;
     const { repId } = req.params;
     const matchStage: any = {};
 
-    console.log(user.role, "-", repId);
+    bookingLogger.info("Get booking analytics initiated", {
+      userId: user.userId,
+      role: user.role,
+      ...(repId ? { repId } : {}),
+      action: "GET_BOOKING_ANALYTICS",
+    });
+
     if (user.role === "callrep")
       matchStage.assignedRep = new Types.ObjectId(user.userId);
 
@@ -604,8 +959,25 @@ class BookingController {
         }),
         ...(activeRepsCount !== undefined && { activeRepsCount }),
       });
+
+      bookingLogger.info("Get booking analytics successful", {
+        userId: user.userId,
+        role: user.role,
+        ...(repId ? { repId } : {}),
+        totalBookings,
+        breakdown: analytics,
+        action: "GET_BOOKING_ANALYTICS_SUCCESS",
+      });
       return;
-    } catch (error) {
+    } catch (error: any) {
+      bookingLogger.error(`Get booking analytics error: ${error.message}`, {
+        userId: user.userId,
+        role: user.role,
+        ...(repId ? { repId } : {}),
+        action: "GET_BOOKING_ANALYTICS_FAILED",
+        error,
+      });
+
       next(error);
       return;
     }
