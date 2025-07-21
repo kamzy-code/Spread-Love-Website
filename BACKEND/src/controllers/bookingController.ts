@@ -22,6 +22,7 @@ import {
 import { HttpError } from "../utils/httpError";
 import { bookingLogger } from "../logger/devLogger";
 import { url } from "inspector";
+import { query } from "winston";
 
 class BookingController {
   // Customer Endpoints
@@ -482,6 +483,7 @@ class BookingController {
       userId: req.user?.userId,
       role: req.user?.role,
       action: "GET_ALL_BOOKINGS",
+      query: {...req.query},
     });
 
     // cast the sort order variable from a string to a valid sort Order type.
@@ -559,6 +561,7 @@ class BookingController {
         bookingLogger.warn("No bookings found", {
           userId: user.userId,
           role: user.role,
+          query: {...req.query},
           action: "GET_ALL_BOOKINGS_NO_RESULTS",
         });
         next(new HttpError(404, "No bookings found"));
@@ -584,6 +587,7 @@ class BookingController {
         role: user.role,
         totalBookings: total,
         page: Number(page),
+        query: {...req.query},
         action: "GET_ALL_BOOKINGS_SUCCESS",
       });
       return;
@@ -593,7 +597,7 @@ class BookingController {
         role: user.role,
         action: "GET_ALL_BOOKINGS_FAILED",
         error,
-        url: req.originalUrl,
+        query: {...req.query},
       });
 
       next(error);
@@ -841,12 +845,14 @@ class BookingController {
   ) {
     const user = req.user!;
     const { repId } = req.params;
+    const { filterType, date, startDate, endDate } = req.query;
     const matchStage: any = {};
 
     bookingLogger.info("Get booking analytics initiated", {
       userId: user.userId,
       role: user.role,
       ...(repId ? { repId } : {}),
+      query: {...req.query},
       action: "GET_BOOKING_ANALYTICS",
     });
 
@@ -854,8 +860,6 @@ class BookingController {
       matchStage.assignedRep = new Types.ObjectId(user.userId);
 
     if (repId) matchStage.assignedRep = new Types.ObjectId(repId);
-
-    const { filterType, date, startDate, endDate } = req.query;
 
     // Get current period range
     const dateRange = getDateRange(
@@ -966,6 +970,7 @@ class BookingController {
         ...(repId ? { repId } : {}),
         totalBookings,
         breakdown: analytics,
+        query: {...req.query},
         action: "GET_BOOKING_ANALYTICS_SUCCESS",
       });
       return;
@@ -976,6 +981,7 @@ class BookingController {
         ...(repId ? { repId } : {}),
         action: "GET_BOOKING_ANALYTICS_FAILED",
         error,
+        query: {...req.query},
       });
 
       next(error);

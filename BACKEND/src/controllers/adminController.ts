@@ -4,6 +4,7 @@ import { AuthRequest } from "../middlewares/authMiddleware";
 import bcrypt from "bcrypt";
 import { HttpError } from "../utils/httpError";
 import { adminLogger } from "../logger/devLogger";
+import { query } from "winston";
 
 class AdminController {
   async getAllReps(req: AuthRequest, res: Response, next: NextFunction) {
@@ -14,6 +15,7 @@ class AdminController {
       userId: user?.userId,
       role: user?.role,
       action: "GET_ALL_REPS",
+      query: {...req.query},
     });
 
     // create an empty query object for the DB search
@@ -43,10 +45,11 @@ class AdminController {
         numericLimit
       );
 
-      if (!reps || reps.length < 1) {
+      if (!reps) {
         adminLogger.warn("No reps found", {
           userId: user.userId,
           action: "GET_ALL_REPS_NO_RESULTS",
+          query: {...req.query},
         });
         next(new HttpError(404, "No reps found"));
         return;
@@ -70,6 +73,7 @@ class AdminController {
         role: user.role,
         totalReps,
         page: Number(page),
+        query:{...req.query},
         action: "GET_ALL_REPS_SUCCESS",
       });
       return;
@@ -79,7 +83,7 @@ class AdminController {
         role: user.role,
         action: "GET_ALL_REPS_FAILED",
         error,
-        url: req.originalUrl,
+        query: {...req.query},
       });
       next(error);
       return;
