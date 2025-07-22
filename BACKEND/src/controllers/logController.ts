@@ -19,15 +19,6 @@ class LogController {
       action: "FETCH_LOGS",
     });
     try {
-      // const files = fs
-      //   .readdirSync(LOG_DIR)
-      //   .filter((file) => file.endsWith(".log")) // ignore .gz
-      //   .map((file) => ({
-      //     name: file,
-      //     size: fs.statSync(path.join(LOG_DIR, file)).size,
-      //     createdAt: fs.statSync(path.join(LOG_DIR, file)).birthtime,
-      //   }));
-
       const files = await logService.getLogFiles();
       res.status(200).json({ message: "Fetch logs succesful", files });
       logsLogger.info("Fetch logs successful", {
@@ -161,6 +152,63 @@ class LogController {
         action: "ZIP_LOGS_FAILED",
         error,
       });
+      next(error);
+      return;
+    }
+  }
+
+  async downloadLogs(req: AuthRequest, res: Response, next: NextFunction) {
+    const { file } = req.params;
+    const user = req.user!;
+
+    logsLogger.info("Download logs initiated", {
+      user: user.userId,
+      role: user.role,
+      file,
+      action: "DOWNLOAD_LOGS",
+    });
+
+    try {
+      const filePath = path.join(LOG_DIR, file);
+
+      if (!fs.existsSync(filePath)) {
+        logsLogger.warn("Download logs failed: File not found", {
+          user: user.userId,
+          role: user.role,
+          file,
+          action: "DOWNLOAD_LOGS_FAILED",
+        });
+        return next(new HttpError(404, "File not found"));
+      }
+
+      res.download(filePath, file, (err) => {
+        if (err) {
+          logsLogger.error("Download logs failed during transfer", {
+            user: user.userId,
+            role: user.role,
+            file,
+            action: "DOWNLOAD_LOGS_FAILED",
+            error: err.message,
+          });
+          next(new HttpError(500, "Error downloading logs"));
+        } else {
+          logsLogger.info("Download logs successful", {
+            user: user.userId,
+            role: user.role,
+            file,
+            action: "DOWNLOAD_LOGS_SUCCESS",
+          });
+        }
+      });
+    } catch (error: any) {
+      logsLogger.error("Download logs error", {
+        user: user.userId,
+        role: user.role,
+        file,
+        action: "DOWNLOAD_LOGS_FAILED",
+        error: error.message,
+      });
+
       next(error);
       return;
     }

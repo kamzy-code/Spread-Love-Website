@@ -10,7 +10,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { format } from "date-fns";
-import { useGetLogContent, useZipLogs } from "@/hooks/useLogs";
+import { useDownloadLogs, useGetLogContent, useZipLogs } from "@/hooks/useLogs";
 import MiniLoader from "../ui/miniLoader";
 import { LogFile } from "@/lib/types";
 import { XCircle } from "lucide-react";
@@ -22,6 +22,7 @@ export default function LogViewerPage({ logData }: { logData: LogFile[] }) {
   const [selected, setSelected] = useState<string[]>([]);
   const [previewLog, setPreviewLog] = useState<string>("");
   const [previewData, setPreviewData] = useState<string | null>(null);
+  const [file, setFile] = useState("");
 
   const toggleSelect = (name: string) => {
     setSelected((prev) =>
@@ -38,12 +39,12 @@ export default function LogViewerPage({ logData }: { logData: LogFile[] }) {
   };
 
   const zipMutation = useZipLogs({ files: selected });
+  const downloadMutation = useDownloadLogs(file);
   const { data, error, isLoading, isFetching, refetch } =
     useGetLogContent(previewLog);
 
   const handleZip = async () => {
     zipMutation.mutate();
-    alert("Zipped successfully.");
   };
 
   useEffect(() => {
@@ -52,6 +53,17 @@ export default function LogViewerPage({ logData }: { logData: LogFile[] }) {
     }
   }, [data, previewLog]);
 
+  useEffect(() => {
+    if (zipMutation.isSuccess) {
+      setFile(zipMutation.data as string);
+    }
+  }, [zipMutation.isSuccess]);
+
+  useEffect(() => {
+    if (file) {
+      downloadMutation.mutateAsync();
+    }
+  }, [file]);
   return (
     <div className="p-6  mx-auto space-y-6">
       {zipMutation.isPending && (
@@ -171,10 +183,8 @@ export default function LogViewerPage({ logData }: { logData: LogFile[] }) {
 
       <div className="flex gap-2">
         <Button disabled={!selected.length} onClick={handleZip}>
-          Zip Selected
+          Zip & Download
         </Button>
-        {/* Optional: Upload to Drive */}
-        {/* <Button variant="outline">Upload to Drive</Button> */}
       </div>
     </div>
   );

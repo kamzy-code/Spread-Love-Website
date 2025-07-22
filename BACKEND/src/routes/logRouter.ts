@@ -12,6 +12,13 @@ router.get(
 );
 
 router.get(
+  "/admin/download/:file",
+  authMiddleware,
+  checkRole("superadmin"),
+  logController.downloadLogs
+);
+
+router.get(
   "/admin/:file",
   authMiddleware,
   checkRole("superadmin"),
@@ -25,10 +32,8 @@ router.post(
   logController.zipLogs
 );
 
-router.get("admin/download/:filename", authMiddleware, checkRole("superadmin"));
-
 router.use((req, res) => {
-  res.status(404).json({ message: "Booking route not found" });
+  res.status(404).json({ message: "Log route not found" });
 });
 
 export default router;

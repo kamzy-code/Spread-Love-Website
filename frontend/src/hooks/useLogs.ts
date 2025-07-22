@@ -49,7 +49,7 @@ export const useGetLogContent = (file: string) => {
   });
 };
 
-export const useZipLogs = (body: {files: string[]}) => {
+export const useZipLogs = (body: { files: string[] }) => {
   return useMutation({
     mutationFn: async () => {
       const res = await fetch(`${apiUrl}/logs/admin/zip`, {
@@ -65,10 +65,50 @@ export const useZipLogs = (body: {files: string[]}) => {
         const error = await res.json();
         throw new Error(error.message || "Failed to zip logs");
       }
+
+      const data = await res.json();
+      return data.archive;
     },
 
     onError: (error) => {
-      throw new Error(error.message || "Failed to update status");
+      throw new Error(error.message || "Failed to zip logs");
+    },
+  });
+};
+
+export const useDownloadLogs = (file: string) => {
+  return useMutation({
+    mutationFn: async () => {
+      const res = await fetch(`${apiUrl}/logs/admin/download/${file}`, {
+        credentials: "include",
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.message || "Failed to download logs");
+      }
+
+      const blob = await res.blob();
+      return { blob, file };
+    },
+
+     onSuccess: ({ blob, file}) => {
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = file;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    },
+
+    onError: (error) => {
+      throw new Error(error.message || "Failed to download logs");
     },
   });
 };
