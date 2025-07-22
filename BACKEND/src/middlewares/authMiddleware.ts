@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import { NextFunction, Request, Response } from "express";
 import { adminRole } from "../types/genralTypes";
-import logger from "../logger/devLogger";
+import logger from "../utils/logger";
 import { HttpError } from "../utils/httpError";
 
 export interface AuthRequest extends Request {

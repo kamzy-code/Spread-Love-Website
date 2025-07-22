@@ -20,7 +20,7 @@ import {
   endOfWeek,
 } from "date-fns";
 import { HttpError } from "../utils/httpError";
-import { bookingLogger } from "../logger/devLogger";
+import { bookingLogger } from "../utils/logger";
 import { url } from "inspector";
 import { query } from "winston";
 

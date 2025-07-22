@@ -23,7 +23,8 @@
     "mongodb": "4.0",
     "mongoose": "^8.15.1",
     "nodemailer": "^7.0.5",
-    "winston": "^3.17.0"
+    "winston": "^3.17.0",
+    "winston-daily-rotate-file": "^5.0.0"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",

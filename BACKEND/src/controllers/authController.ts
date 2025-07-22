@@ -5,7 +5,7 @@ import bcrypt from "bcrypt";
 import { generateToken } from "../utils/generateToken";
 import { IAdmin } from "../models/adminModel";
 import { HttpError } from "../utils/httpError";
-import { authLogger } from "../logger/devLogger";
+import { authLogger } from "../utils/logger";
 
 class AuthController {
   async registerAdmin(req: Request, res: Response, next: NextFunction) {

@@ -8,7 +8,7 @@ import emailRouter from "./routes/emailRoute";
 import rateLimit from "express-rate-limit";
 import cookieParser from "cookie-parser";
 import { errorHandler } from "./middlewares/errorHandler";
-import logger from "./logger/devLogger";
+import logger from "./utils/logger";
 
 dotenv.config();
 

@@ -2,7 +2,7 @@ import { Types } from "mongoose";
 import { Admin } from "../models/adminModel";
 import bcrypt from "bcrypt";
 import { HttpError } from "../utils/httpError";
-import { adminLogger } from "../logger/devLogger";
+import { adminLogger } from "../utils/logger";
 import { NextFunction } from "express";
 
 interface UpdateRepOptions {

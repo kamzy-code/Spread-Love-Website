@@ -3,7 +3,7 @@ import { Request, Response, NextFunction } from "express";
 import { AuthRequest } from "../middlewares/authMiddleware";
 import bcrypt from "bcrypt";
 import { HttpError } from "../utils/httpError";
-import { adminLogger } from "../logger/devLogger";
+import { adminLogger } from "../utils/logger";
 import { query } from "winston";
 
 class AdminController {

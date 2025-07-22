@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import bookingService from "../services/bookingService";
 import emailService from "../services/emailService";
 import { HttpError } from "../utils/httpError";
-import { emailLogger } from "../logger/devLogger";
+import { emailLogger } from "../utils/logger";
 import { error } from "console";
 
 class EmailController {
