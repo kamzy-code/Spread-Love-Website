@@ -81,6 +81,21 @@ const emailLogger = createLogger({
   defaultMeta: { service: "emailService" },
 });
 
+const logsLogger = createLogger({
+  level: "info",
+  format: combine(
+    timestamp(),
+    errors({ stack: true }),
+    splat(),
+    json(),
+    prettyPrint()
+  ),
+
+  transports: [new transports.Console()],
+
+  defaultMeta: { service: "logService" },
+});
+
 if (process.env.NODE_ENV === "production") {
   logger.add(
     new DailyRotateFile({
@@ -186,7 +201,28 @@ if (process.env.NODE_ENV === "production") {
       maxFiles: "30d",
     })
   );
+
+  logsLogger.add(
+    new DailyRotateFile({
+      filename: "logs/logInfo-%DATE%.log",
+      datePattern: "YYYY-MM-DD",
+      level: "info",
+      zippedArchive: true,
+      maxSize: "20m",
+      maxFiles: "14d",
+    })
+  );
+  logsLogger.add(
+    new DailyRotateFile({
+      filename: "logs/logError-%DATE%.log",
+      datePattern: "YYYY-MM-DD",
+      level: "error",
+      zippedArchive: true,
+      maxSize: "20m",
+      maxFiles: "30d",
+    })
+  );
 }
 
 export default logger;
-export { authLogger, adminLogger, bookingLogger, emailLogger };
+export { authLogger, adminLogger, bookingLogger, emailLogger, logsLogger };

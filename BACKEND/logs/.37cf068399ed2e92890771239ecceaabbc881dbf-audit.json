@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 30
+    },
+    "auditLog": "logs\\.37cf068399ed2e92890771239ecceaabbc881dbf-audit.json",
+    "files": [
+        {
+            "date": 1753198028630,
+            "name": "logs\\bookingError-2025-07-22.log",
+            "hash": "e7e1d6df682fcf2cc19d1f1d3fee402c58d634f4f7379f94a3a01417c9db9801"
+        }
+    ],
+    "hashType": "sha256"
+}

@@ -5,6 +5,7 @@ import authRouter from "./routes/authRoute";
 import bookingRouter from "./routes/bookingRoute";
 import adminRouter from "./routes/adminRoute";
 import emailRouter from "./routes/emailRoute";
+import logRouter from "./routes/logRouter";
 import rateLimit from "express-rate-limit";
 import cookieParser from "cookie-parser";
 import { errorHandler } from "./middlewares/errorHandler";
@@ -41,7 +42,6 @@ app.use((req, res, next) => {
   next();
 });
 
-
 app.get("/", (req, res) => {
   res.send("API is running!");
 });
@@ -50,8 +50,9 @@ app.use("/api/auth", authRouter);
 app.use("/api/booking", bookingRouter);
 app.use("/api/rep", adminRouter);
 app.use("/api/email", emailRouter);
+app.use("/api/logs", logRouter);
 
-app.use((req, res,) => {
+app.use((req, res) => {
   res.status(404).json({ message: "Route not found" });
 });
 

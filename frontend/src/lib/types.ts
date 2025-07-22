@@ -118,3 +118,10 @@ export type RepFilter = {
 export type RepFiltercontext = RepFilter & {
   setPage: (newPage: number) => void;
 };
+
+// Logs
+export interface LogFile {
+  name: string;
+  size: number;
+  createdAt: string;
+}

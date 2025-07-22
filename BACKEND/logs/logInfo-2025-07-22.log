@@ -1,0 +1,5332 @@
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T15:27:44.296Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T15:27:44.302Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T15:27:44.314Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T15:27:44.316Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T15:28:16.290Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T15:28:16.296Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T15:28:16.305Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T15:28:16.309Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T15:30:27.201Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T15:30:27.206Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T15:30:27.213Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T15:30:27.216Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T15:34:16.194Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T15:34:16.195Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T15:34:16.201Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T15:34:16.203Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T15:35:31.773Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T15:35:31.776Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T15:35:31.785Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T15:35:31.787Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T15:45:23.952Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T15:45:23.957Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T15:45:23.965Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T15:45:23.966Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T15:45:37.963Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T15:45:37.966Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T15:45:37.978Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T15:45:37.981Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T15:45:42.629Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T15:45:42.633Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T15:45:42.647Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T15:45:42.651Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T15:45:45.267Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T15:45:45.270Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T15:45:45.276Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T15:45:45.279Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T15:45:53.026Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T15:45:53.029Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T15:45:53.040Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T15:45:53.044Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T15:45:57.360Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T15:45:57.364Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T15:45:57.373Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T15:45:57.378Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T15:46:00.581Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T15:46:00.590Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T15:46:00.616Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T15:46:00.621Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T15:46:06.620Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T15:46:06.623Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T15:46:06.629Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T15:46:06.633Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T15:46:09.914Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T15:46:09.917Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T15:46:09.933Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T15:46:09.936Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T15:46:42.252Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T15:46:42.257Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T15:46:42.266Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T15:46:42.269Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T15:46:48.387Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T15:46:48.393Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T15:46:48.421Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T15:46:48.427Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T15:46:55.180Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T15:46:55.182Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T15:46:55.192Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T15:46:55.194Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T15:47:11.262Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T15:47:11.265Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T15:47:11.280Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T15:47:11.282Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T15:47:14.932Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T15:47:14.935Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T15:47:14.946Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T15:47:14.948Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T15:47:20.454Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T15:47:20.457Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T15:47:20.464Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T15:47:20.466Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T15:47:26.549Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T15:47:26.552Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T15:47:26.561Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T15:47:26.564Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T15:47:50.243Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T15:47:50.247Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T15:47:50.258Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T15:47:50.261Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T15:52:24.627Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T15:52:24.629Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T15:52:24.635Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T15:52:24.636Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'ZIP_LOGS',
+  level: 'info',
+  message: 'Zip logs initiated',
+  timestamp: '2025-07-22T15:58:04.453Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'ZIP_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Zip logs successful',
+  timestamp: '2025-07-22T15:58:04.568Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:01:38.696Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:01:38.699Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:01:38.712Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:01:38.716Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:01:38.727Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:01:38.732Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:09:40.801Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:09:40.806Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:09:40.816Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:09:40.818Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:12:57.907Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:12:57.911Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:12:57.917Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:12:57.920Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:13:50.599Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:13:50.604Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:13:50.619Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:13:50.622Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:15:30.865Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:15:30.868Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:15:30.880Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:15:30.884Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:15:33.919Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:15:33.923Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:15:33.930Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:15:33.932Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:15:37.934Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:15:37.937Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:15:37.944Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:15:37.946Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:15:56.915Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:15:56.918Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:15:56.923Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:15:56.927Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:17:58.894Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:17:58.897Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:18:24.936Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:18:24.939Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:18:24.949Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:18:24.951Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:18:24.957Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:18:24.960Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:18:54.176Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:18:54.178Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:18:54.185Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:18:54.192Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:19:39.557Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:19:39.560Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:19:39.565Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:19:39.568Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:20:15.841Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:20:15.844Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:20:15.850Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:20:15.853Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:21:04.754Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:21:04.759Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:21:04.770Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:21:04.773Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:21:17.160Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:21:17.163Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:21:17.173Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:21:17.180Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:21:39.660Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:21:39.663Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:21:39.672Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:21:39.676Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:27:02.068Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:27:02.074Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:27:04.689Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:27:04.694Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:27:04.701Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:27:04.702Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:29:46.369Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:29:46.375Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:29:48.837Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:29:48.841Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:29:48.848Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:29:48.851Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:30:50.674Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:30:50.675Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:30:50.683Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:30:50.686Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:30:53.821Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:30:53.825Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:30:53.830Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:30:53.833Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:31:08.382Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:31:08.384Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:31:08.392Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:31:08.395Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:31:10.881Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:31:10.883Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:31:10.893Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:31:10.894Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:31:13.013Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:31:13.016Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:31:13.024Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:31:13.026Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:31:15.860Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:31:15.863Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:31:15.872Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:31:15.875Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:33:46.934Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:33:46.936Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:33:46.941Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:33:46.942Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:39:09.636Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:39:09.637Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:39:09.644Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:39:09.646Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:40:04.902Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:40:04.905Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:40:04.913Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:40:04.915Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:40:38.933Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:40:38.936Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:40:38.946Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:40:38.948Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:42:56.823Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:42:56.827Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:43:02.413Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:43:02.417Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:43:02.428Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:43:02.432Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:44:12.720Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:44:12.723Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:44:12.730Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:44:12.732Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:45:49.335Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:45:49.338Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:45:49.346Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:45:49.348Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:48:10.803Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:48:10.814Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:48:22.765Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:48:22.767Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:48:22.783Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:48:22.788Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:49:47.658Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:49:47.660Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:49:47.668Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:49:47.672Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:51:21.111Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:51:21.113Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:51:21.120Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:51:21.123Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:52:43.550Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:52:43.553Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:52:43.575Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:52:43.579Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:52:44.925Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:52:44.927Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:52:44.934Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:52:44.936Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:53:42.862Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:53:42.865Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:53:42.872Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:53:42.874Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:54:45.537Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:54:45.552Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:54:45.567Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:54:45.570Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:54:52.169Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:54:52.171Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:54:52.177Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:54:52.178Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:55:45.809Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:55:45.814Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:55:45.822Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:55:45.825Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:58:11.261Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:58:11.262Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T16:58:11.270Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T16:58:11.274Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T18:02:17.593Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T18:02:17.610Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T18:02:17.614Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T18:02:17.617Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'authInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:02:21.705Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'authInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:02:21.712Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'logInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:02:41.972Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'logInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:02:41.982Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'logInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:03:13.176Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'logInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:03:13.179Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'logInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:04:07.699Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'logInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:04:07.703Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T18:07:48.767Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T18:07:48.774Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T18:07:48.786Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T18:07:48.792Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:07:53.022Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:07:53.034Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:08:23.508Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:08:23.511Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:08:56.455Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:08:56.459Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:09:42.803Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:09:42.806Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:11:04.412Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:11:04.415Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:12:02.783Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:12:02.786Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'logInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:12:42.990Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'logInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:12:42.993Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'logInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:13:19.903Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'logInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:13:19.906Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'authInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:13:28.057Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'authInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:13:28.061Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:13:48.956Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:13:48.959Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'logInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:13:52.688Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'logInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:13:52.690Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T18:15:14.350Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T18:15:14.354Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T18:15:14.369Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T18:15:14.380Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:15:16.008Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:15:16.010Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'logInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:15:25.399Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'logInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:15:25.403Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T18:16:41.548Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T18:16:41.550Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T18:16:41.565Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T18:16:41.569Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:16:43.523Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:16:43.526Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:17:41.284Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:17:41.289Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: '.d56822f26f250895dfcabd8a1b85047949f0ddd3-audit.json',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:18:20.272Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: '.d56822f26f250895dfcabd8a1b85047949f0ddd3-audit.json',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:18:20.274Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'logs-1753199884455.zip',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:18:37.007Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'logs-1753199884455.zip',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:18:37.012Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T18:20:32.090Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T18:20:32.103Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T18:20:32.108Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T18:20:32.111Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appError-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:22:30.015Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appError-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:22:30.020Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'emailInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:22:50.041Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'emailInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:22:50.043Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'adminInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:22:54.442Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'adminInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:22:54.445Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'logInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:23:08.186Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'logInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:23:08.189Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'logInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:27:23.398Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'logInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:27:23.401Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T18:27:49.374Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T18:27:49.378Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T18:27:49.386Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T18:27:49.390Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'adminInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:28:02.101Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'adminInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:28:02.106Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T18:29:41.610Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T18:29:41.613Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T18:29:41.622Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T18:29:41.625Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:29:43.102Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:29:43.106Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'logInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:29:55.229Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'logInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:29:55.233Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'bookingInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:30:09.313Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'bookingInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:30:09.321Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'emailError-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:30:13.831Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'emailError-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:30:13.834Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'emailInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:30:17.499Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'emailInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:30:17.502Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T18:30:23.033Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T18:30:23.043Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T18:30:23.045Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T18:30:23.048Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'logInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:30:29.486Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'logInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:30:29.490Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:30:34.866Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:30:34.870Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'adminInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:30:38.252Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'adminInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:30:38.255Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'bookingInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:30:40.792Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'bookingInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:30:40.794Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T18:30:49.211Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T18:30:49.220Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T18:30:49.224Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T18:30:49.227Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'logInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:30:55.582Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'logInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:30:55.584Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:31:01.969Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:31:01.973Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'authInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:31:06.355Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'authInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:31:06.357Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'adminInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:31:09.181Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'adminInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:31:09.184Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'logError-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:31:12.391Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'logError-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:31:12.394Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'logInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:34:45.937Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'logInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:34:45.940Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appError-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:34:57.033Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appError-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:34:57.036Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'emailError-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:35:25.130Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'emailError-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:35:25.134Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appError-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:35:45.632Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appError-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:35:45.633Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'adminError-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:35:48.467Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'adminError-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:35:48.469Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'bookingError-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:36:25.272Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'bookingError-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:36:25.274Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'adminError-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:36:33.139Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'adminError-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:36:33.141Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'emailInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:36:36.844Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'emailInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:36:36.847Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'logError-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:36:43.669Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'logError-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:36:43.672Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'adminInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:36:47.393Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'adminInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:36:47.396Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T18:39:06.012Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T18:39:06.015Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T18:39:06.026Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T18:39:06.030Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T18:39:11.337Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T18:39:11.340Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T18:39:11.346Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T18:39:11.349Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T18:39:56.482Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T18:39:56.485Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T18:39:56.499Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T18:39:56.501Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:39:59.453Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:39:59.457Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'logInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:40:04.788Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'logInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:40:04.792Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'adminInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:40:10.291Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'adminInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:40:10.293Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'bookingInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:40:13.094Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'bookingInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:40:13.097Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T18:40:32.592Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T18:40:32.597Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T18:40:32.607Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T18:40:32.610Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T18:40:35.379Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T18:40:35.381Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T18:40:35.387Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T18:40:35.391Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T18:41:17.343Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T18:41:17.346Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T18:41:17.352Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T18:41:17.356Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T18:41:22.289Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T18:41:22.298Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T18:41:22.300Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T18:41:22.303Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'logInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:41:56.805Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'logInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:41:56.808Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:42:00.607Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:42:00.612Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'emailError-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:42:19.662Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'emailError-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:42:19.665Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'adminError-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:42:24.064Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'adminError-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:42:24.066Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:42:31.425Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:42:31.428Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'logInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:42:37.864Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'logInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:42:37.867Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'logInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:43:29.681Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'logInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:43:29.684Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'authInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:43:40.324Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'authInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:43:40.328Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'adminInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:43:56.246Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'adminInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:43:56.248Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T18:49:19.567Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T18:49:19.569Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T18:49:19.585Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T18:49:19.597Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:49:22.390Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:49:22.394Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T18:50:36.444Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T18:50:36.446Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T18:50:36.455Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T18:50:36.460Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:50:37.872Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:50:37.875Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T18:50:45.862Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T18:50:45.872Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T18:50:45.876Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T18:50:45.880Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'logInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:50:47.021Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'logInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:50:47.024Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'logInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:51:17.225Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'logInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:51:17.230Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T18:51:21.136Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T18:51:21.147Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T18:51:21.149Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T18:51:21.150Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:51:26.402Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:51:26.408Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:51:37.271Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:51:37.276Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:51:40.053Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:51:40.059Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:51:41.690Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:51:41.694Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:51:42.900Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:51:42.905Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:51:44.423Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:51:44.429Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:51:45.763Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:51:45.767Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:51:47.447Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:51:47.451Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:52:25.204Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:52:25.208Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T18:52:55.452Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T18:52:55.460Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T18:52:55.462Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T18:52:55.465Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T18:52:58.426Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T18:52:58.430Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T18:52:58.443Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T18:52:58.448Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T18:53:32.145Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T18:53:32.147Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T18:53:32.155Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T18:53:32.161Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:53:33.959Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:53:33.962Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'logInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:54:05.797Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'logInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:54:05.799Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:54:09.216Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:54:09.218Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'authInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:54:15.170Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'authInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:54:15.173Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'bookingError-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:54:21.797Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'bookingError-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:54:21.800Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'adminError-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:54:33.638Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'adminError-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:54:33.641Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'bookingError-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:54:56.198Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'bookingError-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:54:56.201Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'logInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:55:00.103Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'logInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:55:00.106Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appError-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:55:07.469Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appError-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:55:07.471Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T18:55:32.793Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T18:55:32.795Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T18:55:32.804Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T18:55:32.809Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T18:55:36.469Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS',
+  level: 'info',
+  message: 'Fetch logs initiated',
+  timestamp: '2025-07-22T18:55:36.483Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T18:55:36.485Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'FETCH_LOGS_SUCCESS',
+  level: 'info',
+  message: 'Fetch logs successful',
+  timestamp: '2025-07-22T18:55:36.490Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'logInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:55:40.423Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'logInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:55:40.426Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'adminError-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:55:44.831Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'adminError-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:55:44.833Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:55:49.814Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:55:49.818Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'bookingError-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:55:53.281Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'bookingError-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:55:53.283Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'adminInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:56:01.481Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'adminInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:56:01.484Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appError-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:56:06.742Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appError-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:56:06.746Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'authError-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:56:12.012Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'authError-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:56:12.014Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'logError-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:56:13.837Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'logError-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:56:13.839Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'authInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:56:15.594Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'authInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:56:15.597Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'logInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:56:33.420Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'logInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:56:33.424Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'adminError-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:56:38.601Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'adminError-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:56:38.603Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appError-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:56:40.579Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'appError-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:56:40.582Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'bookingError-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:56:43.053Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'bookingError-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:56:43.055Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'authInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:56:49.827Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'authInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:56:49.829Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'logInfo-2025-07-22.log',
+  action: 'VIEW_LOG',
+  level: 'info',
+  message: 'View log initiated',
+  timestamp: '2025-07-22T18:57:06.331Z'
+}
+{
+  service: 'logService',
+  user: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  file: 'logInfo-2025-07-22.log',
+  action: 'VIEW_LOG_SUCCESS',
+  level: 'info',
+  message: 'View log successful',
+  timestamp: '2025-07-22T18:57:06.335Z'
+}

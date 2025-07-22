@@ -1,0 +1,1479 @@
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T15:27:43.996Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T15:27:44.245Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T15:28:16.012Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T15:28:16.233Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T15:30:26.895Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T15:30:27.127Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T15:35:31.438Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T15:35:31.734Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T15:45:23.666Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T15:45:23.908Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T15:45:37.702Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T15:45:37.910Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T15:45:42.361Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T15:45:42.578Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T15:45:45.004Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T15:45:45.240Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T15:45:52.734Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T15:45:52.971Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T15:45:57.092Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T15:45:57.310Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T15:46:00.257Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T15:46:00.472Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T15:46:06.341Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T15:46:06.581Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T15:46:09.629Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T15:46:09.867Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T15:46:41.967Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T15:46:42.195Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T15:46:47.597Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T15:46:48.316Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T15:46:54.876Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T15:46:55.113Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T15:47:10.950Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T15:47:11.208Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T15:47:14.615Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T15:47:14.867Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T15:47:20.163Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T15:47:20.413Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T15:47:26.245Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T15:47:26.492Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T15:47:49.943Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T15:47:50.179Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T15:52:24.346Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T15:52:24.576Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T16:01:38.381Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T16:01:38.643Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T16:09:40.427Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T16:09:40.745Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T16:12:57.631Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T16:12:57.851Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T16:13:50.329Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T16:13:50.558Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T16:15:30.615Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T16:15:30.824Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T16:15:33.643Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T16:15:33.883Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T16:15:37.656Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T16:15:37.892Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T16:15:56.656Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T16:15:56.892Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T16:17:58.624Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T16:17:58.868Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T16:18:24.643Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T16:18:24.879Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T16:18:53.688Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T16:18:54.142Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T16:19:39.226Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T16:19:39.518Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T16:20:15.441Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T16:20:15.802Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T16:21:04.434Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T16:21:04.692Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T16:21:16.888Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T16:21:17.116Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T16:21:39.369Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T16:21:39.616Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T16:27:04.402Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T16:27:04.657Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T16:29:48.586Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T16:29:48.794Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T16:30:50.392Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T16:30:50.630Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T16:30:53.540Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T16:30:53.785Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T16:31:08.120Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T16:31:08.344Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T16:31:10.615Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T16:31:10.857Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T16:31:12.754Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T16:31:12.990Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T16:31:15.476Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T16:31:15.840Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T16:33:46.624Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T16:33:46.889Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T16:39:09.339Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T16:39:09.602Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T16:40:04.580Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T16:40:04.827Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T16:40:38.655Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T16:40:38.874Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T16:43:02.130Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T16:43:02.359Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T16:44:12.423Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T16:44:12.679Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T16:45:49.052Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T16:45:49.293Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T16:48:22.478Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T16:48:22.704Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T16:49:47.407Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T16:49:47.625Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T16:51:20.826Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T16:51:21.075Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T16:52:43.281Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T16:52:43.513Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T16:52:44.637Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T16:52:44.875Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T16:53:42.577Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T16:53:42.813Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T16:54:45.236Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T16:54:45.470Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T16:54:51.906Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T16:54:52.134Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T16:55:45.513Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T16:55:45.762Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T16:58:10.958Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T16:58:11.212Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T18:02:17.293Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T18:02:17.557Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T18:07:48.459Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T18:07:48.705Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T18:15:14.034Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T18:15:14.288Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T18:16:41.264Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T18:16:41.501Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T18:20:31.771Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T18:20:32.036Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T18:29:41.308Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T18:29:41.551Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T18:30:22.778Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T18:30:22.999Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T18:30:48.803Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T18:30:49.184Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T18:39:05.714Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T18:39:05.959Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T18:39:11.059Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T18:39:11.300Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T18:39:56.162Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T18:39:56.424Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T18:40:32.161Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T18:40:32.562Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T18:40:35.003Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T18:40:35.338Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T18:41:17.027Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T18:41:17.281Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T18:41:21.993Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T18:41:22.242Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T18:49:19.230Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T18:49:19.514Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T18:50:36.130Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T18:50:36.403Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T18:50:45.559Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T18:50:45.824Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T18:51:20.844Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T18:51:21.090Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T18:52:55.180Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T18:52:55.417Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T18:52:58.131Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T18:52:58.374Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T18:53:31.879Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T18:53:32.112Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T18:55:32.503Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T18:55:32.756Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-22T18:55:36.188Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-22T18:55:36.423Z'
+}

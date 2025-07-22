@@ -11,7 +11,7 @@ import Pagination from "../ui/pagination";
 import { BookingFilterContex, BookingFilters, Booking } from "@/lib/types";
 import { useEffect, useState } from "react";
 import { getColumnsByRole } from "./data-table/columns";
-import { DataTable } from "./data-table/data-table";
+import { DataTable } from "../ui/data-table";
 import { useAdminAuth } from "@/hooks/authContext";
 import GridItem from "./data-table/grid-table";
 import { useQueryClient } from "@tanstack/react-query";

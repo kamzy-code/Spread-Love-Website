@@ -6,7 +6,7 @@ import {
   Calendar,
   User,
   LogOut,
-  Settings,
+  Book,
   Bell,
   Menu,
 } from "lucide-react";
@@ -40,6 +40,11 @@ const links = [
     label: "Profile",
     href: "/admin/profile",
     icon: <User className="h-5 w-5 mr-3" />,
+  },
+  {
+    label: "Logs",
+    href: "/admin/logs",
+    icon: <Book className="h-5 w-5 mr-3" />,
   },
   {
     label: "Logout",
@@ -132,10 +137,15 @@ export default function TopNav() {
                   setShowMobileNav(false);
                 }}
                 className={`flex w-full items-center gap-3 py-2 px-3 rounded-lg text-sm font-medium ${
-                  ((pathname === item.href || pathname.includes(item.href) && item.href!== "/admin"))
+                  pathname === item.href ||
+                  (pathname.includes(item.href) && item.href !== "/admin")
                     ? "gradient-background text-white"
                     : "text-gray-700 hover:bg-gray-100"
-                } ${item.label==="Reps" && user?.role === 'callrep' ? 'hidden' : ''}`}
+                } ${
+                  item.label === "Reps" && user?.role === "callrep"
+                    ? "hidden"
+                    : ""
+                }`}
               >
                 {item.icon} {item.label}
               </button>

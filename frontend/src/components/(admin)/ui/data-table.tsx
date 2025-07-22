@@ -28,7 +28,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 
-import { getColumnLabel } from "./columns";
+import { getColumnLabel } from "../bookings/data-table/columns";
 import { Booking } from "@/lib/types";
 import { useRouter } from "next/navigation";
 

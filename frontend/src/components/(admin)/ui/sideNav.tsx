@@ -1,6 +1,6 @@
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
-import { BarChart3, Users, Calendar, User, LogOut } from "lucide-react";
+import { BarChart3, Users, Calendar, User, LogOut, Book } from "lucide-react";
 import { useAdminAuth } from "@/hooks/authContext";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
@@ -26,6 +26,11 @@ const links = [
     label: "Profile",
     href: "/admin/profile",
     icon: <User className="h-5 w-5 mr-3" />,
+  },
+  {
+    label: "Logs",
+    href: "/admin/logs",
+    icon: <Book className="h-5 w-5 mr-3" />,
   },
   {
     label: "Logout",
