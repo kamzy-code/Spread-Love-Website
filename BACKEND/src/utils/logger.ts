@@ -276,7 +276,7 @@ const paymentLogger = createLogger({
     new transports.Console(),
   ],
 
-  defaultMeta: { service: "logService" },
+  defaultMeta: { service: "paymentService" },
 });
 export default logger;
 export { authLogger, adminLogger, bookingLogger, emailLogger, logsLogger, paymentLogger };

@@ -5,6 +5,11 @@ import CreateErrorModal from "./errorModal";
 import { useMutation } from "@tanstack/react-query";
 import { countries } from "@/lib/countries";
 import { useSendBookingConfirmation } from "@/hooks/useBookings";
+import {
+  useInitializeTransaction,
+  useVerifyTransaction,
+} from "@/hooks/usePayment";
+
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
@@ -44,10 +49,13 @@ const createBooking = async (body: any) => {
 export default function BookingForm({
   occassion,
   call_type,
+  reference,
 }: {
   occassion?: string;
   call_type?: string;
+  reference?: string
 }) {
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isError, setIsError] = useState(false);
@@ -75,21 +83,17 @@ export default function BookingForm({
     callRecording: "no",
   });
 
-  const sendConfirmationMailMutation = useSendBookingConfirmation(bookingId);
-
   const mutation = useMutation({
     mutationFn: (updatedData) => createBooking(updatedData),
     onSuccess: async (data) => {
       if (data && data.bookingId) {
         setBookingId(data.bookingId);
-        setCreateBookingStatus(data.message);
-        setIsSubmitted(true);
+        await initializeTransactionMutation.mutateAsync(data.bookingId);
+        // setIsSubmitted(true);
       }
     },
     onError: (error) => {
       if (error) {
-        setIsError(true);
-        setCreateBookingStatus(error.message);
         setShowErrorModal(true);
       }
     },
@@ -97,6 +101,15 @@ export default function BookingForm({
       setIsSubmitting(false);
     },
   });
+
+  const sendConfirmationMailMutation = useSendBookingConfirmation(
+    reference as string
+  );
+  const initializeTransactionMutation = useInitializeTransaction({
+    email: formData.callerEmail,
+    price: formData.price,
+  });
+  const verifyTransactionMutation = useVerifyTransaction(reference as string);
 
   const handleOnChange = (
     e: React.ChangeEvent<
@@ -122,8 +135,8 @@ export default function BookingForm({
         return;
       }
 
-      await mutation.mutateAsync({ bookingId: id, ...formData } as any);
       setBookingId(id);
+      await mutation.mutateAsync({ bookingId: id, ...formData } as any);
     } catch (error: any) {
       console.log(error);
       setIsError(true);
@@ -152,36 +165,85 @@ export default function BookingForm({
     }
   }, [formData.occassion, formData.callType, formData.country]);
 
-  useEffect(() => {
-    if (mutation.isSuccess && bookingId) {
-      const sendMail = async () => {
-        try {
-          await sendConfirmationMailMutation.mutateAsync();
-        } catch (error: any) {
-          console.error(error.message || "Failed to send confirmation email");
-        }
-      };
-      sendMail();
-    }
-  }, [mutation.isSuccess, bookingId]);
+  // Send Email
+  // useEffect(() => {
+  //   if (mutation.isSuccess && bookingId) {
+  //     const sendMail = async () => {
+  //       try {
+  //         await sendConfirmationMailMutation.mutateAsync();
+  //       } catch (error: any) {
+  //         console.error(error.message || "Failed to send confirmation email");
+  //       }
+  //     };
+  //     sendMail();
+  //   }
+  // }, [mutation.isSuccess, bookingId]);
 
   useEffect(() => {
     setMounted(true);
     if (occassion) {
       setFormData((prev) => ({ ...prev, occassion }));
     }
+
     if (call_type) {
       setFormData((prev) => ({ ...prev, callType: call_type }));
     }
+
+    if (reference) {
+      verifyTransactionMutation.mutate();
+    }
   }, []);
+
+  useEffect(() => {
+    if (initializeTransactionMutation.isSuccess) {
+      const data: {
+        authorization_url: string;
+        access_code: string;
+        reference: string;
+      } = initializeTransactionMutation.data;
+
+      const newTab = window.open(data.authorization_url, "_blank");
+      if (!newTab) {
+        window.location.href = data.authorization_url; // fallback if blocked
+      }
+    }
+  }, [initializeTransactionMutation.isSuccess]);
+
+  useEffect(() => {
+    const sendMail = async () => {
+      try {
+        await sendConfirmationMailMutation.mutateAsync();
+      } catch (error: any) {
+        console.error(error.message || "Failed to send confirmation email");
+      }
+    };
+
+    if (verifyTransactionMutation.isSuccess) {
+      const { data, booking } = verifyTransactionMutation.data;
+
+      if (
+        data.status === "success" &&
+        booking &&
+        booking.paymentStatus === "paid"
+      ) {
+        setBookingId(booking.bookingId);
+        setIsSubmitted(true);
+        sendMail();
+      } else {
+        setCreateBookingStatus("Booking failed - payment unsuccessful");
+        setIsError(true);
+        setShowErrorModal(true);
+      }
+    }
+  }, [verifyTransactionMutation.isSuccess]);
 
   if (!mounted) return null; // Avoid SSR
   return (
     <div>
-      {isError && showErrorModal && (
+      {(mutation.error || isError) && showErrorModal && (
         <CreateErrorModal
           setShowModal={() => setShowErrorModal(false)}
-          error={createBookingStatus}
+          error={mutation.error ? mutation.error.message : createBookingStatus}
         ></CreateErrorModal>
       )}
       <section className="container-max section-padding flex justify-center py-20 px-7 md:px-10 sm:px-25 lg:px-50">

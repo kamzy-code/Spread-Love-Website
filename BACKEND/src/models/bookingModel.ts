@@ -10,7 +10,7 @@ export interface IBooking extends Document {
   bookingId: string;
   callerName: string;
   callerPhone: string;
-  callerEmail?: string;
+  callerEmail: string;
   recipientName: string;
   recipientPhone: string;
   country: string;
@@ -26,6 +26,8 @@ export interface IBooking extends Document {
   contactConsent?: string;
   confirmationMailsent?: boolean;
   assignedRep?: mongoose.Types.ObjectId;
+  paymentStatus: string;
+  paymentReference?: string;
 }
 
 const bookingSchema: Schema = new Schema<IBooking>(
@@ -33,7 +35,7 @@ const bookingSchema: Schema = new Schema<IBooking>(
     bookingId: { type: String, required: true, unique: true },
     callerName: { type: String, required: true },
     callerPhone: { type: String, required: true },
-    callerEmail: { type: String, required: false, default: "" },
+    callerEmail: { type: String, required: true, default: "" },
     recipientName: { type: String, required: true },
     recipientPhone: { type: String, required: true },
     country: { type: String, required: true },
@@ -59,6 +61,13 @@ const bookingSchema: Schema = new Schema<IBooking>(
     contactConsent: { type: String, required: false, default: "no" },
     confirmationMailsent: { type: Boolean, default: false },
     assignedRep: { type: mongoose.Types.ObjectId, ref: "Admin" },
+    paymentStatus: {
+      type: String,
+      enum: ["pending", "paid", "failed"],
+      default: "pending",
+      required: true,
+    },
+    paymentReference: { type: String, required: false },
   },
   { timestamps: true }
 );

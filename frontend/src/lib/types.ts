@@ -70,6 +70,8 @@ export interface Booking {
   callRecordingURL?: string;
   contactConsent?: string;
   confirmationMailsent?: boolean;
+  paymentStatus: string;
+  paymentReference?: string;
   assignedRep?: any; // populated rep data
   createdAt: string;
 }

@@ -3,6 +3,7 @@ import paymentController from "../controllers/paymentController";
 
 const router = express.Router();
 
+router.get("/verify-payment", paymentController.verifyPaymentController);
 router.post("/initialize/:bookingId", paymentController.initializeTransaction);
 
 router.use((req, res) => {
