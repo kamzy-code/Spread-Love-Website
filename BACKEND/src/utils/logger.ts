@@ -241,5 +241,42 @@ const logsLogger = createLogger({
   defaultMeta: { service: "logService" },
 });
 
+const paymentLogger = createLogger({
+  level: "info",
+  format: combine(
+    timestamp(),
+    errors({ stack: true }),
+    splat(),
+    json(),
+    prettyPrint()
+  ),
+
+  transports: [
+    ...(process.env.NODE_ENV === "production"
+      ? [
+          new LogtailTransport(logtail),
+          new DailyRotateFile({
+            filename: "logs/paymentInfo-%DATE%.log",
+            datePattern: "YYYY-MM-DD",
+            level: "info",
+            zippedArchive: true,
+            maxSize: "20m",
+            maxFiles: "14d",
+          }),
+          new DailyRotateFile({
+            filename: "logs/paymentError-%DATE%.log",
+            datePattern: "YYYY-MM-DD",
+            level: "error",
+            zippedArchive: true,
+            maxSize: "20m",
+            maxFiles: "30d",
+          }),
+        ]
+      : []),
+    new transports.Console(),
+  ],
+
+  defaultMeta: { service: "logService" },
+});
 export default logger;
-export { authLogger, adminLogger, bookingLogger, emailLogger, logsLogger };
+export { authLogger, adminLogger, bookingLogger, emailLogger, logsLogger, paymentLogger };
