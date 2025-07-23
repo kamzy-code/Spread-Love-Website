@@ -1,0 +1,51 @@
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-23T11:04:22.304Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-23T11:04:22.597Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-23T11:04:30.740Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-23T11:04:30.967Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  action: 'GET_LOGGED_IN_USER',
+  level: 'info',
+  message: 'Get logged in user initiated',
+  timestamp: '2025-07-23T11:09:59.940Z'
+}
+{
+  service: 'authService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_LOGGED_IN_USER_SUCCESS',
+  level: 'info',
+  message: 'Get logged in user successful',
+  timestamp: '2025-07-23T11:10:00.182Z'
+}

@@ -10,6 +10,7 @@ import rateLimit from "express-rate-limit";
 import cookieParser from "cookie-parser";
 import { errorHandler } from "./middlewares/errorHandler";
 import logger from "./utils/logger";
+import { logtail } from "./utils/logger";
 
 dotenv.config();
 
@@ -28,7 +29,6 @@ const limiter = rateLimit({
   max: 100, // Limit each IP to 100 requests per windowMs
   message: "Too many requests from this IP, please try again later.",
 });
-
 app.use(limiter);
 
 app.use((req, res, next) => {
@@ -57,5 +57,15 @@ app.use((req, res) => {
 });
 
 app.use(errorHandler);
+
+process.on("SIGTERM", async () => {
+  await logtail.flush();
+  process.exit(0);
+});
+
+process.on("SIGINT", async () => {
+  await logtail.flush();
+  process.exit(0);
+});
 
 export default app;

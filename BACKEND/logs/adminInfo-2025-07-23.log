@@ -1,0 +1,44 @@
+{
+  service: 'adminService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_ALL_REPS',
+  query: { limit: '10', page: '1' },
+  level: 'info',
+  message: 'Get all reps initiated',
+  timestamp: '2025-07-23T11:05:12.446Z'
+}
+{
+  service: 'adminService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_ALL_REPS',
+  query: { limit: '10', page: '1' },
+  level: 'info',
+  message: 'Get all reps initiated',
+  timestamp: '2025-07-23T11:05:12.479Z'
+}
+{
+  service: 'adminService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  totalReps: 9,
+  page: 1,
+  query: { limit: '10', page: '1' },
+  action: 'GET_ALL_REPS_SUCCESS',
+  level: 'info',
+  message: 'Get all reps successful',
+  timestamp: '2025-07-23T11:05:12.955Z'
+}
+{
+  service: 'adminService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  totalReps: 9,
+  page: 1,
+  query: { limit: '10', page: '1' },
+  action: 'GET_ALL_REPS_SUCCESS',
+  level: 'info',
+  message: 'Get all reps successful',
+  timestamp: '2025-07-23T11:05:12.974Z'
+}

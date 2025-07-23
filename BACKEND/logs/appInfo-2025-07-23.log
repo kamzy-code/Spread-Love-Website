@@ -1,0 +1,869 @@
+{
+  service: 'dbService',
+  action: 'CONNECT_DB_SUCCESS',
+  level: 'info',
+  message: 'MongoDB connected: ac-ure0omc-shard-00-00.61ctozx.mongodb.net',
+  timestamp: '2025-07-23T10:40:55.124Z'
+}
+{
+  service: 'server',
+  action: 'START_SERVER',
+  level: 'info',
+  message: 'server is running on localhost:5000/',
+  timestamp: '2025-07-23T10:40:55.132Z'
+}
+{
+  service: 'dbService',
+  action: 'CONNECT_DB_SUCCESS',
+  level: 'info',
+  message: 'MongoDB connected: ac-ure0omc-shard-00-00.61ctozx.mongodb.net',
+  timestamp: '2025-07-23T10:42:32.711Z'
+}
+{
+  service: 'server',
+  action: 'START_SERVER',
+  level: 'info',
+  message: 'server is running on localhost:5000/',
+  timestamp: '2025-07-23T10:42:32.721Z'
+}
+{
+  service: 'dbService',
+  action: 'CONNECT_DB_SUCCESS',
+  level: 'info',
+  message: 'MongoDB connected: ac-ure0omc-shard-00-02.61ctozx.mongodb.net',
+  timestamp: '2025-07-23T10:49:34.104Z'
+}
+{
+  service: 'server',
+  action: 'START_SERVER',
+  level: 'info',
+  message: 'server is running on localhost:5000/',
+  timestamp: '2025-07-23T10:49:34.112Z'
+}
+{
+  service: 'dbService',
+  action: 'CONNECT_DB_SUCCESS',
+  level: 'info',
+  message: 'MongoDB connected: ac-ure0omc-shard-00-00.61ctozx.mongodb.net',
+  timestamp: '2025-07-23T10:52:12.267Z'
+}
+{
+  service: 'server',
+  action: 'START_SERVER',
+  level: 'info',
+  message: 'server is running on localhost:5000/',
+  timestamp: '2025-07-23T10:52:12.275Z'
+}
+{
+  service: 'dbService',
+  action: 'CONNECT_DB_SUCCESS',
+  level: 'info',
+  message: 'MongoDB connected: ac-ure0omc-shard-00-00.61ctozx.mongodb.net',
+  timestamp: '2025-07-23T10:54:24.940Z'
+}
+{
+  service: 'server',
+  action: 'START_SERVER',
+  level: 'info',
+  message: 'server is running on localhost:5000/',
+  timestamp: '2025-07-23T10:54:24.949Z'
+}
+{
+  service: 'dbService',
+  action: 'CONNECT_DB_SUCCESS',
+  level: 'info',
+  message: 'MongoDB connected: ac-ure0omc-shard-00-00.61ctozx.mongodb.net',
+  timestamp: '2025-07-23T10:58:00.587Z'
+}
+{
+  service: 'server',
+  action: 'START_SERVER',
+  level: 'info',
+  message: 'server is running on localhost:5000/',
+  timestamp: '2025-07-23T10:58:00.594Z'
+}
+{
+  service: 'dbService',
+  action: 'CONNECT_DB_SUCCESS',
+  level: 'info',
+  message: 'MongoDB connected: ac-ure0omc-shard-00-00.61ctozx.mongodb.net',
+  timestamp: '2025-07-23T10:58:31.585Z'
+}
+{
+  service: 'server',
+  action: 'START_SERVER',
+  level: 'info',
+  message: 'server is running on localhost:5000/',
+  timestamp: '2025-07-23T10:58:31.593Z'
+}
+{
+  service: 'dbService',
+  action: 'CONNECT_DB_SUCCESS',
+  level: 'info',
+  message: 'MongoDB connected: ac-ure0omc-shard-00-00.61ctozx.mongodb.net',
+  timestamp: '2025-07-23T11:02:34.757Z'
+}
+{
+  service: 'server',
+  action: 'START_SERVER',
+  level: 'info',
+  message: 'server is running on localhost:5000/',
+  timestamp: '2025-07-23T11:02:34.764Z'
+}
+{
+  service: 'requestLogger',
+  action: 'LOG_REQUEST',
+  method: 'GET',
+  url: '/api/auth/me',
+  ip: '::1',
+  level: 'info',
+  message: '[GET] /api/auth/me',
+  timestamp: '2025-07-23T11:04:22.289Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'TOKEN_VERIFICATION',
+  level: 'info',
+  message: 'Verify token initiated',
+  timestamp: '2025-07-23T11:04:22.294Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'TOKEN_VERIFIED',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  level: 'info',
+  message: 'Token verified successfully',
+  timestamp: '2025-07-23T11:04:22.302Z'
+}
+{
+  service: 'requestLogger',
+  action: 'LOG_REQUEST',
+  method: 'GET',
+  url: '/api/logs/admin',
+  ip: '::1',
+  level: 'info',
+  message: '[GET] /api/logs/admin',
+  timestamp: '2025-07-23T11:04:22.628Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'TOKEN_VERIFICATION',
+  level: 'info',
+  message: 'Verify token initiated',
+  timestamp: '2025-07-23T11:04:22.633Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'TOKEN_VERIFIED',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  level: 'info',
+  message: 'Token verified successfully',
+  timestamp: '2025-07-23T11:04:22.640Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'ROLE_CHECK_PASSED',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  level: 'info',
+  message: 'Role check passed for user: 683d767bcb0122edbe147cee',
+  timestamp: '2025-07-23T11:04:22.642Z'
+}
+{
+  service: 'requestLogger',
+  action: 'LOG_REQUEST',
+  method: 'GET',
+  url: '/api/logs/admin',
+  ip: '::1',
+  level: 'info',
+  message: '[GET] /api/logs/admin',
+  timestamp: '2025-07-23T11:04:22.673Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'TOKEN_VERIFICATION',
+  level: 'info',
+  message: 'Verify token initiated',
+  timestamp: '2025-07-23T11:04:22.674Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'TOKEN_VERIFIED',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  level: 'info',
+  message: 'Token verified successfully',
+  timestamp: '2025-07-23T11:04:22.676Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'ROLE_CHECK_PASSED',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  level: 'info',
+  message: 'Role check passed for user: 683d767bcb0122edbe147cee',
+  timestamp: '2025-07-23T11:04:22.678Z'
+}
+{
+  service: 'requestLogger',
+  action: 'LOG_REQUEST',
+  method: 'GET',
+  url: '/api/auth/me',
+  ip: '::1',
+  level: 'info',
+  message: '[GET] /api/auth/me',
+  timestamp: '2025-07-23T11:04:30.733Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'TOKEN_VERIFICATION',
+  level: 'info',
+  message: 'Verify token initiated',
+  timestamp: '2025-07-23T11:04:30.734Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'TOKEN_VERIFIED',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  level: 'info',
+  message: 'Token verified successfully',
+  timestamp: '2025-07-23T11:04:30.738Z'
+}
+{
+  service: 'requestLogger',
+  action: 'LOG_REQUEST',
+  method: 'GET',
+  url: '/api/logs/admin',
+  ip: '::1',
+  level: 'info',
+  message: '[GET] /api/logs/admin',
+  timestamp: '2025-07-23T11:04:31.010Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'TOKEN_VERIFICATION',
+  level: 'info',
+  message: 'Verify token initiated',
+  timestamp: '2025-07-23T11:04:31.016Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'TOKEN_VERIFIED',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  level: 'info',
+  message: 'Token verified successfully',
+  timestamp: '2025-07-23T11:04:31.020Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'ROLE_CHECK_PASSED',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  level: 'info',
+  message: 'Role check passed for user: 683d767bcb0122edbe147cee',
+  timestamp: '2025-07-23T11:04:31.022Z'
+}
+{
+  service: 'requestLogger',
+  action: 'LOG_REQUEST',
+  method: 'GET',
+  url: '/api/logs/admin',
+  ip: '::1',
+  level: 'info',
+  message: '[GET] /api/logs/admin',
+  timestamp: '2025-07-23T11:04:31.036Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'TOKEN_VERIFICATION',
+  level: 'info',
+  message: 'Verify token initiated',
+  timestamp: '2025-07-23T11:04:31.038Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'TOKEN_VERIFIED',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  level: 'info',
+  message: 'Token verified successfully',
+  timestamp: '2025-07-23T11:04:31.043Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'ROLE_CHECK_PASSED',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  level: 'info',
+  message: 'Role check passed for user: 683d767bcb0122edbe147cee',
+  timestamp: '2025-07-23T11:04:31.045Z'
+}
+{
+  service: 'requestLogger',
+  action: 'LOG_REQUEST',
+  method: 'GET',
+  url: '/api/rep/admin?limit=10&page=1',
+  ip: '::1',
+  level: 'info',
+  message: '[GET] /api/rep/admin?limit=10&page=1',
+  timestamp: '2025-07-23T11:05:12.438Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'TOKEN_VERIFICATION',
+  level: 'info',
+  message: 'Verify token initiated',
+  timestamp: '2025-07-23T11:05:12.440Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'TOKEN_VERIFIED',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  level: 'info',
+  message: 'Token verified successfully',
+  timestamp: '2025-07-23T11:05:12.442Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'ROLE_CHECK_PASSED',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  level: 'info',
+  message: 'Role check passed for user: 683d767bcb0122edbe147cee',
+  timestamp: '2025-07-23T11:05:12.444Z'
+}
+{
+  service: 'requestLogger',
+  action: 'LOG_REQUEST',
+  method: 'GET',
+  url: '/api/rep/admin?limit=10&page=1',
+  ip: '::1',
+  level: 'info',
+  message: '[GET] /api/rep/admin?limit=10&page=1',
+  timestamp: '2025-07-23T11:05:12.457Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'TOKEN_VERIFICATION',
+  level: 'info',
+  message: 'Verify token initiated',
+  timestamp: '2025-07-23T11:05:12.467Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'TOKEN_VERIFIED',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  level: 'info',
+  message: 'Token verified successfully',
+  timestamp: '2025-07-23T11:05:12.473Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'ROLE_CHECK_PASSED',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  level: 'info',
+  message: 'Role check passed for user: 683d767bcb0122edbe147cee',
+  timestamp: '2025-07-23T11:05:12.476Z'
+}
+{
+  service: 'requestLogger',
+  action: 'LOG_REQUEST',
+  method: 'GET',
+  url: '/api/booking/admin?filterType=daily&singleDate=2025-07-23&sortParam=createdAt&sortOrder=1&page=1&limit=10',
+  ip: '::1',
+  level: 'info',
+  message: '[GET] /api/booking/admin?filterType=daily&singleDate=2025-07-23&sortParam=createdAt&sortOrder=1&page=1&limit=10',
+  timestamp: '2025-07-23T11:05:18.578Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'TOKEN_VERIFICATION',
+  level: 'info',
+  message: 'Verify token initiated',
+  timestamp: '2025-07-23T11:05:18.580Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'TOKEN_VERIFIED',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  level: 'info',
+  message: 'Token verified successfully',
+  timestamp: '2025-07-23T11:05:18.582Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'ROLE_CHECK_PASSED',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  level: 'info',
+  message: 'Role check passed for user: 683d767bcb0122edbe147cee',
+  timestamp: '2025-07-23T11:05:18.584Z'
+}
+{
+  service: 'requestLogger',
+  action: 'LOG_REQUEST',
+  method: 'GET',
+  url: '/api/booking/admin?filterType=daily&singleDate=2025-07-23&sortParam=createdAt&sortOrder=1&page=1&limit=10',
+  ip: '::1',
+  level: 'info',
+  message: '[GET] /api/booking/admin?filterType=daily&singleDate=2025-07-23&sortParam=createdAt&sortOrder=1&page=1&limit=10',
+  timestamp: '2025-07-23T11:05:18.609Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'TOKEN_VERIFICATION',
+  level: 'info',
+  message: 'Verify token initiated',
+  timestamp: '2025-07-23T11:05:18.612Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'TOKEN_VERIFIED',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  level: 'info',
+  message: 'Token verified successfully',
+  timestamp: '2025-07-23T11:05:18.617Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'ROLE_CHECK_PASSED',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  level: 'info',
+  message: 'Role check passed for user: 683d767bcb0122edbe147cee',
+  timestamp: '2025-07-23T11:05:18.619Z'
+}
+{
+  service: 'requestLogger',
+  action: 'LOG_REQUEST',
+  method: 'PUT',
+  url: '/api/booking/admin/687a077ad4e7c39e4383ba99/status',
+  ip: '::1',
+  level: 'info',
+  message: '[PUT] /api/booking/admin/687a077ad4e7c39e4383ba99/status',
+  timestamp: '2025-07-23T11:05:26.284Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'TOKEN_VERIFICATION',
+  level: 'info',
+  message: 'Verify token initiated',
+  timestamp: '2025-07-23T11:05:26.286Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'TOKEN_VERIFIED',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  level: 'info',
+  message: 'Token verified successfully',
+  timestamp: '2025-07-23T11:05:26.288Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'ROLE_CHECK_PASSED',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  level: 'info',
+  message: 'Role check passed for user: 683d767bcb0122edbe147cee',
+  timestamp: '2025-07-23T11:05:26.289Z'
+}
+{
+  service: 'requestLogger',
+  action: 'LOG_REQUEST',
+  method: 'GET',
+  url: '/api/booking/admin?filterType=daily&singleDate=2025-07-23&sortParam=createdAt&sortOrder=1&page=1&limit=10',
+  ip: '::1',
+  level: 'info',
+  message: '[GET] /api/booking/admin?filterType=daily&singleDate=2025-07-23&sortParam=createdAt&sortOrder=1&page=1&limit=10',
+  timestamp: '2025-07-23T11:05:27.106Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'TOKEN_VERIFICATION',
+  level: 'info',
+  message: 'Verify token initiated',
+  timestamp: '2025-07-23T11:05:27.108Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'TOKEN_VERIFIED',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  level: 'info',
+  message: 'Token verified successfully',
+  timestamp: '2025-07-23T11:05:27.113Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'ROLE_CHECK_PASSED',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  level: 'info',
+  message: 'Role check passed for user: 683d767bcb0122edbe147cee',
+  timestamp: '2025-07-23T11:05:27.114Z'
+}
+{
+  service: 'requestLogger',
+  action: 'LOG_REQUEST',
+  method: 'GET',
+  url: '/api/booking/admin?filterType=daily&singleDate=2025-07-23&sortParam=createdAt&sortOrder=1&page=1&limit=10',
+  ip: '::1',
+  level: 'info',
+  message: '[GET] /api/booking/admin?filterType=daily&singleDate=2025-07-23&sortParam=createdAt&sortOrder=1&page=1&limit=10',
+  timestamp: '2025-07-23T11:05:27.159Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'TOKEN_VERIFICATION',
+  level: 'info',
+  message: 'Verify token initiated',
+  timestamp: '2025-07-23T11:05:27.161Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'TOKEN_VERIFIED',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  level: 'info',
+  message: 'Token verified successfully',
+  timestamp: '2025-07-23T11:05:27.164Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'ROLE_CHECK_PASSED',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  level: 'info',
+  message: 'Role check passed for user: 683d767bcb0122edbe147cee',
+  timestamp: '2025-07-23T11:05:27.164Z'
+}
+{
+  service: 'dbService',
+  action: 'CONNECT_DB_SUCCESS',
+  level: 'info',
+  message: 'MongoDB connected: ac-ure0omc-shard-00-00.61ctozx.mongodb.net',
+  timestamp: '2025-07-23T11:08:45.091Z'
+}
+{
+  service: 'server',
+  action: 'START_SERVER',
+  level: 'info',
+  message: 'server is running on localhost:5000/',
+  timestamp: '2025-07-23T11:08:45.099Z'
+}
+{
+  service: 'requestLogger',
+  action: 'LOG_REQUEST',
+  method: 'GET',
+  url: '/api/booking/admin?filterType=daily&singleDate=2025-07-23&sortParam=createdAt&sortOrder=1&page=1&limit=10',
+  ip: '::1',
+  level: 'info',
+  message: '[GET] /api/booking/admin?filterType=daily&singleDate=2025-07-23&sortParam=createdAt&sortOrder=1&page=1&limit=10',
+  timestamp: '2025-07-23T11:09:29.879Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'TOKEN_VERIFICATION',
+  level: 'info',
+  message: 'Verify token initiated',
+  timestamp: '2025-07-23T11:09:29.884Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'TOKEN_VERIFIED',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  level: 'info',
+  message: 'Token verified successfully',
+  timestamp: '2025-07-23T11:09:29.899Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'ROLE_CHECK_PASSED',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  level: 'info',
+  message: 'Role check passed for user: 683d767bcb0122edbe147cee',
+  timestamp: '2025-07-23T11:09:29.902Z'
+}
+{
+  service: 'requestLogger',
+  action: 'LOG_REQUEST',
+  method: 'GET',
+  url: '/api/auth/me',
+  ip: '::1',
+  level: 'info',
+  message: '[GET] /api/auth/me',
+  timestamp: '2025-07-23T11:09:59.928Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'TOKEN_VERIFICATION',
+  level: 'info',
+  message: 'Verify token initiated',
+  timestamp: '2025-07-23T11:09:59.934Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'TOKEN_VERIFIED',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  level: 'info',
+  message: 'Token verified successfully',
+  timestamp: '2025-07-23T11:09:59.938Z'
+}
+{
+  service: 'requestLogger',
+  action: 'LOG_REQUEST',
+  method: 'GET',
+  url: '/api/logs/admin',
+  ip: '::1',
+  level: 'info',
+  message: '[GET] /api/logs/admin',
+  timestamp: '2025-07-23T11:10:00.248Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'TOKEN_VERIFICATION',
+  level: 'info',
+  message: 'Verify token initiated',
+  timestamp: '2025-07-23T11:10:00.252Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'TOKEN_VERIFIED',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  level: 'info',
+  message: 'Token verified successfully',
+  timestamp: '2025-07-23T11:10:00.255Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'ROLE_CHECK_PASSED',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  level: 'info',
+  message: 'Role check passed for user: 683d767bcb0122edbe147cee',
+  timestamp: '2025-07-23T11:10:00.256Z'
+}
+{
+  service: 'requestLogger',
+  action: 'LOG_REQUEST',
+  method: 'GET',
+  url: '/api/logs/admin',
+  ip: '::1',
+  level: 'info',
+  message: '[GET] /api/logs/admin',
+  timestamp: '2025-07-23T11:10:00.272Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'TOKEN_VERIFICATION',
+  level: 'info',
+  message: 'Verify token initiated',
+  timestamp: '2025-07-23T11:10:00.274Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'TOKEN_VERIFIED',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  level: 'info',
+  message: 'Token verified successfully',
+  timestamp: '2025-07-23T11:10:00.278Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'ROLE_CHECK_PASSED',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  level: 'info',
+  message: 'Role check passed for user: 683d767bcb0122edbe147cee',
+  timestamp: '2025-07-23T11:10:00.280Z'
+}
+{
+  service: 'requestLogger',
+  action: 'LOG_REQUEST',
+  method: 'GET',
+  url: '/api/logs/admin/appError-2025-07-22.log',
+  ip: '::1',
+  level: 'info',
+  message: '[GET] /api/logs/admin/appError-2025-07-22.log',
+  timestamp: '2025-07-23T11:10:57.974Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'TOKEN_VERIFICATION',
+  level: 'info',
+  message: 'Verify token initiated',
+  timestamp: '2025-07-23T11:10:57.976Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'TOKEN_VERIFIED',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  level: 'info',
+  message: 'Token verified successfully',
+  timestamp: '2025-07-23T11:10:57.978Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'ROLE_CHECK_PASSED',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  level: 'info',
+  message: 'Role check passed for user: 683d767bcb0122edbe147cee',
+  timestamp: '2025-07-23T11:10:57.980Z'
+}
+{
+  service: 'requestLogger',
+  action: 'LOG_REQUEST',
+  method: 'GET',
+  url: '/api/logs/admin/appInfo-2025-07-23.log',
+  ip: '::1',
+  level: 'info',
+  message: '[GET] /api/logs/admin/appInfo-2025-07-23.log',
+  timestamp: '2025-07-23T11:11:03.239Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'TOKEN_VERIFICATION',
+  level: 'info',
+  message: 'Verify token initiated',
+  timestamp: '2025-07-23T11:11:03.240Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'TOKEN_VERIFIED',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  level: 'info',
+  message: 'Token verified successfully',
+  timestamp: '2025-07-23T11:11:03.244Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'ROLE_CHECK_PASSED',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  level: 'info',
+  message: 'Role check passed for user: 683d767bcb0122edbe147cee',
+  timestamp: '2025-07-23T11:11:03.245Z'
+}
+{
+  service: 'requestLogger',
+  action: 'LOG_REQUEST',
+  method: 'GET',
+  url: '/api/logs/admin/appInfo-2025-07-22.log',
+  ip: '::1',
+  level: 'info',
+  message: '[GET] /api/logs/admin/appInfo-2025-07-22.log',
+  timestamp: '2025-07-23T11:11:10.074Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'TOKEN_VERIFICATION',
+  level: 'info',
+  message: 'Verify token initiated',
+  timestamp: '2025-07-23T11:11:10.076Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'TOKEN_VERIFIED',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  level: 'info',
+  message: 'Token verified successfully',
+  timestamp: '2025-07-23T11:11:10.080Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'ROLE_CHECK_PASSED',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  level: 'info',
+  message: 'Role check passed for user: 683d767bcb0122edbe147cee',
+  timestamp: '2025-07-23T11:11:10.081Z'
+}
+{
+  service: 'requestLogger',
+  action: 'LOG_REQUEST',
+  method: 'GET',
+  url: '/api/logs/admin/adminInfo-2025-07-22.log',
+  ip: '::1',
+  level: 'info',
+  message: '[GET] /api/logs/admin/adminInfo-2025-07-22.log',
+  timestamp: '2025-07-23T11:11:16.071Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'TOKEN_VERIFICATION',
+  level: 'info',
+  message: 'Verify token initiated',
+  timestamp: '2025-07-23T11:11:16.072Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'TOKEN_VERIFIED',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  level: 'info',
+  message: 'Token verified successfully',
+  timestamp: '2025-07-23T11:11:16.074Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'ROLE_CHECK_PASSED',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  level: 'info',
+  message: 'Role check passed for user: 683d767bcb0122edbe147cee',
+  timestamp: '2025-07-23T11:11:16.075Z'
+}
+{
+  service: 'requestLogger',
+  action: 'LOG_REQUEST',
+  method: 'GET',
+  url: '/api/logs/admin/adminInfo-2025-07-23.log',
+  ip: '::1',
+  level: 'info',
+  message: '[GET] /api/logs/admin/adminInfo-2025-07-23.log',
+  timestamp: '2025-07-23T11:11:29.063Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'TOKEN_VERIFICATION',
+  level: 'info',
+  message: 'Verify token initiated',
+  timestamp: '2025-07-23T11:11:29.064Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'TOKEN_VERIFIED',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  level: 'info',
+  message: 'Token verified successfully',
+  timestamp: '2025-07-23T11:11:29.068Z'
+}
+{
+  service: 'authMiddleware',
+  action: 'ROLE_CHECK_PASSED',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  level: 'info',
+  message: 'Role check passed for user: 683d767bcb0122edbe147cee',
+  timestamp: '2025-07-23T11:11:29.069Z'
+}

@@ -1,0 +1,202 @@
+{
+  service: 'bookingService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_ALL_BOOKINGS',
+  query: {
+    filterType: 'daily',
+    singleDate: '2025-07-23',
+    sortParam: 'createdAt',
+    sortOrder: '1',
+    page: '1',
+    limit: '10'
+  },
+  level: 'info',
+  message: 'Get all bookings initiated',
+  timestamp: '2025-07-23T11:05:18.586Z'
+}
+{
+  service: 'bookingService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_ALL_BOOKINGS',
+  query: {
+    filterType: 'daily',
+    singleDate: '2025-07-23',
+    sortParam: 'createdAt',
+    sortOrder: '1',
+    page: '1',
+    limit: '10'
+  },
+  level: 'info',
+  message: 'Get all bookings initiated',
+  timestamp: '2025-07-23T11:05:18.622Z'
+}
+{
+  service: 'bookingService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  totalBookings: 1,
+  page: 1,
+  query: {
+    filterType: 'daily',
+    singleDate: '2025-07-23',
+    sortParam: 'createdAt',
+    sortOrder: '1',
+    page: '1',
+    limit: '10'
+  },
+  action: 'GET_ALL_BOOKINGS_SUCCESS',
+  level: 'info',
+  message: 'Get all bookings successful',
+  timestamp: '2025-07-23T11:05:19.326Z'
+}
+{
+  service: 'bookingService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  totalBookings: 1,
+  page: 1,
+  query: {
+    filterType: 'daily',
+    singleDate: '2025-07-23',
+    sortParam: 'createdAt',
+    sortOrder: '1',
+    page: '1',
+    limit: '10'
+  },
+  action: 'GET_ALL_BOOKINGS_SUCCESS',
+  level: 'info',
+  message: 'Get all bookings successful',
+  timestamp: '2025-07-23T11:05:19.334Z'
+}
+{
+  service: 'bookingService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  id: '687a077ad4e7c39e4383ba99',
+  status: 'successful',
+  action: 'UPDATE_BOOKING_STATUS',
+  level: 'info',
+  message: 'Update booking status initiated',
+  timestamp: '2025-07-23T11:05:26.290Z'
+}
+{
+  service: 'bookingService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  id: '687a077ad4e7c39e4383ba99',
+  status: 'successful',
+  action: 'UPDATE_BOOKING_STATUS_SUCCESS',
+  level: 'info',
+  message: 'Update booking status successful',
+  timestamp: '2025-07-23T11:05:27.082Z'
+}
+{
+  service: 'bookingService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_ALL_BOOKINGS',
+  query: {
+    filterType: 'daily',
+    singleDate: '2025-07-23',
+    sortParam: 'createdAt',
+    sortOrder: '1',
+    page: '1',
+    limit: '10'
+  },
+  level: 'info',
+  message: 'Get all bookings initiated',
+  timestamp: '2025-07-23T11:05:27.115Z'
+}
+{
+  service: 'bookingService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_ALL_BOOKINGS',
+  query: {
+    filterType: 'daily',
+    singleDate: '2025-07-23',
+    sortParam: 'createdAt',
+    sortOrder: '1',
+    page: '1',
+    limit: '10'
+  },
+  level: 'info',
+  message: 'Get all bookings initiated',
+  timestamp: '2025-07-23T11:05:27.165Z'
+}
+{
+  service: 'bookingService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  totalBookings: 1,
+  page: 1,
+  query: {
+    filterType: 'daily',
+    singleDate: '2025-07-23',
+    sortParam: 'createdAt',
+    sortOrder: '1',
+    page: '1',
+    limit: '10'
+  },
+  action: 'GET_ALL_BOOKINGS_SUCCESS',
+  level: 'info',
+  message: 'Get all bookings successful',
+  timestamp: '2025-07-23T11:05:27.785Z'
+}
+{
+  service: 'bookingService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  totalBookings: 1,
+  page: 1,
+  query: {
+    filterType: 'daily',
+    singleDate: '2025-07-23',
+    sortParam: 'createdAt',
+    sortOrder: '1',
+    page: '1',
+    limit: '10'
+  },
+  action: 'GET_ALL_BOOKINGS_SUCCESS',
+  level: 'info',
+  message: 'Get all bookings successful',
+  timestamp: '2025-07-23T11:05:27.813Z'
+}
+{
+  service: 'bookingService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  action: 'GET_ALL_BOOKINGS',
+  query: {
+    filterType: 'daily',
+    singleDate: '2025-07-23',
+    sortParam: 'createdAt',
+    sortOrder: '1',
+    page: '1',
+    limit: '10'
+  },
+  level: 'info',
+  message: 'Get all bookings initiated',
+  timestamp: '2025-07-23T11:09:29.906Z'
+}
+{
+  service: 'bookingService',
+  userId: '683d767bcb0122edbe147cee',
+  role: 'superadmin',
+  totalBookings: 1,
+  page: 1,
+  query: {
+    filterType: 'daily',
+    singleDate: '2025-07-23',
+    sortParam: 'createdAt',
+    sortOrder: '1',
+    page: '1',
+    limit: '10'
+  },
+  action: 'GET_ALL_BOOKINGS_SUCCESS',
+  level: 'info',
+  message: 'Get all bookings successful',
+  timestamp: '2025-07-23T11:09:30.616Z'
+}
