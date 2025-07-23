@@ -118,7 +118,7 @@ class PaymentController {
           action: "VERIFY_TRANSACTION_FAILED",
         });
 
-        res.status(400).json({
+        res.status(200).json({
           message: "Transaction not successful",
           data: result.data,
         });

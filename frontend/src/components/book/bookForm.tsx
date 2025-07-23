@@ -9,7 +9,8 @@ import {
   useInitializeTransaction,
   useVerifyTransaction,
 } from "@/hooks/usePayment";
-
+import { XCircle } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
@@ -53,9 +54,9 @@ export default function BookingForm({
 }: {
   occassion?: string;
   call_type?: string;
-  reference?: string
+  reference?: string;
 }) {
-
+  const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isError, setIsError] = useState(false);
@@ -180,6 +181,13 @@ export default function BookingForm({
   // }, [mutation.isSuccess, bookingId]);
 
   useEffect(() => {
+    const verifyTransaction = async () => {
+      try {
+        verifyTransactionMutation.mutate();
+      } catch (error: any) {
+        console.error(error.message || "Failed to verify transaction");
+      }
+    };
     setMounted(true);
     if (occassion) {
       setFormData((prev) => ({ ...prev, occassion }));
@@ -190,7 +198,7 @@ export default function BookingForm({
     }
 
     if (reference) {
-      verifyTransactionMutation.mutate();
+      verifyTransaction();
     }
   }, []);
 
@@ -232,10 +240,18 @@ export default function BookingForm({
       } else {
         setCreateBookingStatus("Booking failed - payment unsuccessful");
         setIsError(true);
-        setShowErrorModal(true);
+        setIsSubmitted(true);
       }
     }
   }, [verifyTransactionMutation.isSuccess]);
+
+  useEffect(() => {
+    if (verifyTransactionMutation.error) {
+      setCreateBookingStatus("Error verifying transaction. Please try again.");
+      setIsError(true);
+      setIsSubmitted(true);
+    }
+  }, [verifyTransactionMutation.error]);
 
   if (!mounted) return null; // Avoid SSR
   return (
@@ -248,64 +264,89 @@ export default function BookingForm({
       )}
       <section className="container-max section-padding flex justify-center py-20 px-7 md:px-10 sm:px-25 lg:px-50">
         <div
-          className={`card p-6 md:p-8 ${
-            isSubmitted ? "w-full md:w-[70%]" : "w-full"
+          className={`${reference && !isSubmitted ? "" : "card"} p-6 md:p-8 ${
+            reference ? "w-full md:w-[70%]" : "w-full"
           }`}
         >
-          {isSubmitted ? (
-            <div className=" w-full text-center">
-              <div className="text-6xl mb-6">🎉</div>
-              <h1 className="text-3xl font-bold gradient-text mb-4">
-                You're All Set to Spread Love!
-              </h1>
-              <p className="text-gray-600 mb-6">
-                Your surprise call has been booked successfully. We'll make sure
-                it's absolutely perfect!
-              </p>
-              <div className="gradient-background-soft p-4 rounded-lg mb-6">
-                <p className="text-sm text-gray-600 mb-2">Your Booking ID:</p>
-                <p className="text-2xl font-bold text-brand-end">{bookingId}</p>
-              </div>
-              <p className="text-sm text-gray-600 mb-6">
-                Save this ID to manage your booking. We'll also send
-                confirmation details to your email.
-              </p>
-              <div className="space-y-3">
-                <button
-                  onClick={() => {
-                    setIsSubmitted(false);
-                    setFormData({
-                      callerName: "",
-                      callerPhone: "",
-                      callerEmail: "",
-                      recipientName: "",
-                      recipientPhone: "",
-                      country: "Nigeria",
-                      occassion: "",
-                      callType: "regular",
-                      callDate: "",
-                      price: "",
-                      message: "",
-                      specialInstruction: "",
-                      contactConsent: "no",
-                      callRecording: "no",
-                    });
-                    setBookingId("");
-                    setCreateBookingStatus("");
-                  }}
-                  className="w-full btn-primary"
-                >
-                  Book Another Call
-                </button>
-                <button
-                  onClick={() =>
-                    window.open(`/manage?id=${bookingId}`, "_blank")
-                  }
-                  className="w-full btn-secondary"
-                >
-                  Manage This Booking
-                </button>
-              </div>
+          {reference ? (
+            <div>
+              {isSubmitted ? (
+                <div className=" w-full text-center">
+                  {isError ? (
+                    <div className="w-full flex justify-center mb-2">
+                      <XCircle className="text-red-500 h-16 w-16"></XCircle>
+                    </div>
+                  ) : (
+                    <div className="text-6xl mb-6">🎉</div>
+                  )}
+                  <h1 className="text-3xl font-bold gradient-text pb-2 mb-4">
+                    {isError
+                      ? "Booking Failed"
+                      : "You're All Set to Spread Love!"}
+                  </h1>
+                  <p className="text-gray-600 mb-6">
+                    {isError
+                      ? createBookingStatus
+                      : "Your surprise call has been booked successfully. We'll make sure it's absolutely perfect!"}
+                  </p>
+                  {!isError && (
+                    <div>
+                      <div className="gradient-background-soft p-4 rounded-lg mb-6">
+                        <p className="text-sm text-gray-600 mb-2">
+                          Your Booking ID:
+                        </p>
+                        <p className="text-2xl font-bold text-brand-end">
+                          {bookingId}
+                        </p>
+                      </div>
+                      <p className="text-sm text-gray-600 mb-6">
+                        Save this ID to manage your booking. We'll also send
+                        confirmation details to your email.
+                      </p>
+                    </div>
+                  )}
+
+                  <div className="space-y-3">
+                    {createBookingStatus ===
+                    "Error verifying transaction. Please try again." ? (
+                      <button
+                        onClick={() => {
+                          setIsSubmitted(false);
+                          setCreateBookingStatus("");
+                          verifyTransactionMutation.mutateAsync();
+                        }}
+                        className="w-full btn-primary"
+                      >
+                        Try again
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => {
+                          router.replace("/book");
+                        }}
+                        className="w-full btn-primary"
+                      >
+                        Book Another Call
+                      </button>
+                    )}
+
+                    {!isError && (
+                      <button
+                        onClick={() =>
+                          window.open(`/manage?id=${bookingId}`, "_blank")
+                        }
+                        className="w-full btn-secondary"
+                      >
+                        Manage This Booking
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <div className=" w-full flex justify-center items-center py-10">
+                  <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-brand-end"></div>
+                </div>
+              )}
             </div>
           ) : (
             <form
