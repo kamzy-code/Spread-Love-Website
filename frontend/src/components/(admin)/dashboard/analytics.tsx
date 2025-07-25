@@ -77,8 +77,13 @@ export const STATUS_LIST = [
 export default function Analytics() {
   const { user } = useAdminAuth();
 
-  const { appliedFilterType, appliedDate, appliedEndDate, appliedStartDate, repId } =
-    useFilter();
+  const {
+    appliedFilterType,
+    appliedDate,
+    appliedEndDate,
+    appliedStartDate,
+    repId,
+  } = useFilter();
 
   const { data, error, isLoading, isFetching, refetch } = useQuery({
     queryKey: [
@@ -186,10 +191,11 @@ export default function Analytics() {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
-        {cards.map((card, idx) => (
+        {cards.map((card) => (
           <div
             className={`${
-              (user?.role === "callrep" || repId) && card.title === "Active Reps"
+              (user?.role === "callrep" || repId) &&
+              card.title === "Active Reps"
                 ? "hidden"
                 : ""
             } ${

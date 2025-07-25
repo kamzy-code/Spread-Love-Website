@@ -1,4 +1,3 @@
-import Link from "next/link";
 import BackButton from "@/components/ui/backButton";
 export default function NotFound() {
   return (

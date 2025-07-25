@@ -6,7 +6,7 @@ import {
   useSendBookingConfirmation,
 } from "@/hooks/useBookings";
 import MiniLoader from "../ui/miniLoader";
-import { XCircle, Calendar, MoreHorizontal, MoreVertical } from "lucide-react";
+import { XCircle, Calendar } from "lucide-react";
 import Pagination from "../ui/pagination";
 import { BookingFilterContex, BookingFilters, Booking } from "@/lib/types";
 import { useEffect, useState } from "react";
@@ -72,15 +72,15 @@ export default function BookingTable() {
     (booking: Booking, action: string) => {
       setSelectedBooking(booking);
       action === "update"
-        ? setUpdateStatusAction(true)
+        ? () => setUpdateStatusAction(true)
         : action === "assign"
-        ? setShowAssignModal(true)
+        ? () => setShowAssignModal(true)
         : action === "resend"
-        ? setResendMailStatusAction(true)
+        ? () => setResendMailStatusAction(true)
         : action === "verify"
-        ? setVerifyTransactionAction(true)
+        ? () => setVerifyTransactionAction(true)
         : action === "complete"
-        ? setCompletePaymentAction(true)
+        ? () => setCompletePaymentAction(true)
         : null;
     },
     (booking: Booking) => setDeletedBooking(booking),
@@ -411,15 +411,15 @@ export default function BookingTable() {
                     setSelectedBooking={(booking: Booking, action: string) => {
                       setSelectedBooking(booking);
                       action === "update"
-                        ? setUpdateStatusAction(true)
+                        ? () => setUpdateStatusAction(true)
                         : action === "assign"
-                        ? setShowAssignModal(true)
+                        ? () => setShowAssignModal(true)
                         : action === "resend"
-                        ? setResendMailStatusAction(true)
+                        ? () => setResendMailStatusAction(true)
                         : action === "verify"
-                        ? setVerifyTransactionAction(true)
+                        ? () => setVerifyTransactionAction(true)
                         : action === "complete"
-                        ? setCompletePaymentAction(true)
+                        ? () => setCompletePaymentAction(true)
                         : null;
                     }}
                     setDeletedBooking={(booking: Booking) =>

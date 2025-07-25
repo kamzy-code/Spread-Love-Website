@@ -1,7 +1,7 @@
 import { useState, createContext, useContext, useEffect } from "react";
-import { format } from "date-fns";
+
 import { useQueryClient } from "@tanstack/react-query";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion,  } from "framer-motion";
 import { FilterType, dashboardFilterContextType } from "@/lib/types";
 import { getDefaultDate, getDefaultWeek, getDefaultMonth, getDefaultYear } from "@/lib/formatDate";
 

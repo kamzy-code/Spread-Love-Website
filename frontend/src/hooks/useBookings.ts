@@ -1,5 +1,5 @@
 import { useQuery, keepPreviousData, useMutation } from "@tanstack/react-query";
-import { BookingFilters, Booking } from "@/lib/types";
+import { BookingFilters, } from "@/lib/types";
 import { buildQueryParams } from "@/lib/buildQueryParams";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
@@ -8,7 +8,7 @@ export const useBookings = (filters: BookingFilters, searchValue: string) => {
   return useQuery({
     queryKey: ["bookings", filters, searchValue.toLowerCase()],
     queryFn: async ({ signal }) => {
-      const queryString = buildQueryParams(filters as Record<string, any>);
+      const queryString = buildQueryParams(filters as Record<string, unknown>);
 
       const res = await fetch(`${apiUrl}/booking/admin?${queryString}`, {
         credentials: "include",

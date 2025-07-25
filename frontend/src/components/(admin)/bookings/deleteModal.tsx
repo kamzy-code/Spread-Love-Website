@@ -1,6 +1,5 @@
-import { Booking } from "@/lib/types";
 import { motion } from "framer-motion";
-import { XCircle, CheckCircle, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 
 export default function DeleteConfirmationModal({
   setShowDeleteModal: setShowDeleteModal,

@@ -97,7 +97,7 @@ function DetailedContact() {
 
             <div className="w-full">
               <p className="font-semibold text-md mb-1">
-                What if the recipient doesn't answer?
+              {`What if the recipient doesn't answer?`}
               </p>
 
               <p className=" text-sm text-gray-600">

@@ -1,4 +1,3 @@
-import { DataTable } from "../ui/data-table";
 import { useFetchLogs } from "@/hooks/useLogs";
 import { XCircle } from "lucide-react";
 import LogViewerPage from "./logViewer";

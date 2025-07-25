@@ -43,7 +43,7 @@ export default function CreateRep({
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    setFormData((prev: any) => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -337,7 +337,7 @@ export default function CreateRep({
                 </div>
                 {errorFields.confirmPassword && (
                   <span className="text-red-500 text-xs">
-                    Password doesn't match
+                    {`Password doesn't match`}
                   </span>
                 )}
               </div>

@@ -13,13 +13,12 @@ import AdminShell from "../../ui/AdminShell";
 import { useRouter } from "next/navigation";
 
 export default function RepDetails({ repId }: { repId: string }) {
-  const { user, authStatus, isAuthenticated, authError, loading } =
-    useAdminAuth();
+  const { user, authStatus, authError, loading } = useAdminAuth();
   const router = useRouter();
   const allowedRoles = ["superadmin", "salesrep"];
   const [mounted, setMounted] = useState(false);
   const { data, error, isLoading, isFetching, refetch } = useFetchRep(repId);
-  const repData: Rep = data?.data as any;
+  const repData: Rep = data?.data;
 
   useEffect(() => {
     setMounted(true);

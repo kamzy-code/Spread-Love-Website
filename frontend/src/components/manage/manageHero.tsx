@@ -1,11 +1,10 @@
-'use client'
-import {motion} from 'framer-motion';
-import { Search, Phone, Calendar, Clock, User, MessageCircle, CheckCircle, AlertCircle, XCircle } from 'lucide-react'
+"use client";
+import { motion } from "framer-motion";
+import { Search } from "lucide-react";
 
-export default function ManageHero(){
-
-    return (
-        <section className="gradient-background">
+export default function ManageHero() {
+  return (
+    <section className="gradient-background">
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
@@ -19,9 +18,9 @@ export default function ManageHero(){
           Manage Your Booking
         </h1>
         <p className="text-primary-200 text-lg md:text-2xl max-w-[80%] lg:max-w-[60%]">
-           Enter your booking ID to view details, track status, or make changes
+          Enter your booking ID to view details, track status, or make changes
         </p>
       </motion.div>
     </section>
-    )
+  );
 }

@@ -20,8 +20,8 @@ function Mission() {
           Join Our Mission
         </h1>
         <p className="text-primary-200 text-lg md:text-2xl max-w-[80%] lg:max-w-[60%]">
-          Be part of spreading love and creating unforgettable moments. Your
-          next surprise call could make someone's entire year. Book a Call
+          {`Be part of spreading love and creating unforgettable moments. Your
+          next surprise call could make someone's entire year. Book a Call`}
         </p>
         <div className="w-full sm:flex sm:justify-center">
           <AboutCTA handleBook={handleBookCall} border={false}></AboutCTA>

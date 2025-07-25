@@ -91,6 +91,7 @@ export const AdminAuthProvider = ({
         const errorData = await response.json();
         errorMessage = errorData.message || errorMessage;
       } catch (jsonErr) {
+        console.error(jsonErr)
         // silently ignore, fallback to default error message
       }
       throw new Error(errorMessage);
@@ -112,6 +113,7 @@ export const AdminAuthProvider = ({
         const errorData = await response.json();
         errorMessage = errorData.message || errorMessage;
       } catch (jsonErr) {
+        console.error(jsonErr)
         // silently ignore, fallback to default error message
       }
       throw new Error(errorMessage);

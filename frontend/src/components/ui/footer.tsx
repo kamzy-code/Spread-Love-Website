@@ -1,7 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
 import {
-  Heart,
   Phone,
   Mail,
   MapPin,
@@ -9,7 +8,6 @@ import {
   Instagram,
   Twitter,
 } from "lucide-react";
-import { li } from "framer-motion/client";
 
 function Footer() {
   const navItems = [

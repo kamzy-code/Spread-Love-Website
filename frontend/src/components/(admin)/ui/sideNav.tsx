@@ -42,13 +42,13 @@ const links = [
 export default function SideNav() {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, logout, loading } = useAdminAuth();
+  const { user, logout,  } = useAdminAuth();
   const [showErrorModal, setShowErrorModal] = useState(false);
 
   const mutation = useMutation({
     mutationFn: () => logout(),
     retry: 3,
-    onError: (error) => {
+    onError: () => {
       setShowErrorModal(true);
     },
   });

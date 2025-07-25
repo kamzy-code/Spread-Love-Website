@@ -9,6 +9,7 @@ import { useState, useEffect } from "react";
 import PageLoading from "../../ui/pageLoading";
 import PageError from "../../ui/pageError";
 import AdminShell from "../../ui/AdminShell";
+import { Booking } from "@/lib/types";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
@@ -28,7 +29,7 @@ const fetchBookingDetails = async (id: string, signal: AbortSignal) => {
 };
 
 export default function BookingDetails({ id }: { id: string }) {
-  const { user, authStatus, isAuthenticated, authError, loading } =
+  const { authStatus, authError, loading } =
     useAdminAuth();
   const [mounted, setMounted] = useState(false);
   const router = useRouter();
@@ -40,7 +41,7 @@ export default function BookingDetails({ id }: { id: string }) {
     placeholderData: keepPreviousData,
   });
 
-  const booking: any = data;
+  const booking: Booking = data;
 
   useEffect(() => {
     setMounted(true);

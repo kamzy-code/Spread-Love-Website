@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { XCircle, CheckCircle, } from "lucide-react";
+import { XCircle,} from "lucide-react";
 
 export default function LogoutErrorModal({
   setShowModal,

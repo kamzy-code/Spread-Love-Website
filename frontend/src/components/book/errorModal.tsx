@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { XCircle, CheckCircle, } from "lucide-react";
+import { XCircle } from "lucide-react";
 
 export default function CreateErrorModal({
   setShowModal,
@@ -23,15 +23,13 @@ export default function CreateErrorModal({
             transition={{ duration: 0.5 }}
             className="card p-8 w-full"
           >
-            {(
+            {
               <div>
                 <XCircle className="h-16 w-16 text-red-500 mx-auto mb-4" />
                 <h3 className="text-2xl font-semibold mb-4">Error</h3>
-                <p className="text-gray-700 mb-6">
-                  {error}
-                </p>
+                <p className="text-gray-700 mb-6">{error}</p>
               </div>
-            )}
+            }
 
             <button
               onClick={() => setShowModal()}

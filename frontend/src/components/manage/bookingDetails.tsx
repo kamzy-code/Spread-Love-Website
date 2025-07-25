@@ -1,21 +1,10 @@
-import { services, callType } from "../services/serviceList";
+import { services } from "../services/serviceList";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import UpdateConfirmationModal from "./updateModal";
-import {
-  Search,
-  Phone,
-  Calendar,
-  Clock,
-  User,
-  MessageCircle,
-  CheckCircle,
-  AlertCircle,
-  XCircle,
-} from "lucide-react";
 import { formatToYMD } from "@/lib/formatDate";
 import { deepEqual } from "@/lib/hasBookingChanged";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { getStatusColor, getStatusIcon } from "@/lib/getStatusColor";
 import Link from "next/link";
 import { countries } from "@/lib/countries";
@@ -55,7 +44,7 @@ const updateBooking = async (updatedData: any) => {
 };
 
 export default function BookingDetails({ data }: { data: any }) {
-  const [initialBooking, setInitialBooking] = useState(data);
+  const [initialBooking] = useState(data);
   const [formData, setFormData] = useState(data);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editForm, setEditForm] = useState(false);
@@ -71,7 +60,6 @@ export default function BookingDetails({ data }: { data: any }) {
     setFormData((prev: any) => ({ ...prev, [name]: value }));
   };
 
-  const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: (updatedData) => updateBooking(updatedData),
     onSuccess: (data) => {

@@ -1,8 +1,8 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+
 import { useAdminAuth } from "@/hooks/authContext";
-import { useEffect, useState, createContext } from "react";
+import { useEffect, useState,  } from "react";
 import AdminShell from "../ui/AdminShell";
 import PageError from "../ui/pageError";
 import PageLoading from "../ui/pageLoading";
@@ -13,7 +13,7 @@ import { Filter } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Dashboard() {
-  const { user, authStatus, isAuthenticated, authError, loading, logout } =
+  const { authStatus,  authError, loading,  } =
     useAdminAuth();
   const [mounted, setMounted] = useState(false);
   const [showFilter, setShowFilter] = useState(true);

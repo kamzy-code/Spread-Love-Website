@@ -5,12 +5,11 @@ import { useState, useEffect } from "react";
 import PageLoading from "../ui/pageLoading";
 import PageError from "../ui/pageError";
 import { motion, AnimatePresence } from "framer-motion";
-import { AdminUser, Rep } from "@/lib/types";
+import { AdminUser } from "@/lib/types";
 import Details from "./details";
 
 export default function Profile() {
-  const { user, authStatus, isAuthenticated, authError, loading, logout, reload } =
-    useAdminAuth();
+  const { user, authStatus, authError, loading, reload } = useAdminAuth();
 
   const [mounted, setMounted] = useState(false);
 

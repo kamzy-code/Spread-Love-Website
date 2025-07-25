@@ -4,7 +4,7 @@ import { useAdminAuth } from "@/hooks/authContext";
 import PageLoading from "../ui/pageLoading";
 import PageError from "../ui/pageError";
 import AdminShell from "../ui/AdminShell";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Filter, Plus, TriangleAlert } from "lucide-react";
 import RepsContextProvider from "./repsContext";
@@ -13,8 +13,7 @@ import CreateRepForm from "./createRep";
 
 export default function Reprsentatives() {
   const router = useRouter();
-  const { user, authStatus, isAuthenticated, authError, loading,} =
-    useAdminAuth();
+  const { user, authStatus, authError, loading } = useAdminAuth();
   const [mounted, setMounted] = useState(false);
   const [showFilter, setShowFilter] = useState(true);
   const allowedRoles = ["superadmin", "salesrep"];
@@ -34,9 +33,8 @@ export default function Reprsentatives() {
     return () => {
       document.body.style.overflow = "";
     };
-
   }, [showCreateForm]);
-  
+
   if (!mounted) {
     return null;
   }
@@ -92,13 +90,15 @@ export default function Reprsentatives() {
                 <p className="hidden md:flex">Filter</p>
               </button>
 
-              {user?.role === "superadmin" && <button
-                className="flex rounded-md h-8 justify-center text-sm items-center gap-2 px-4 py-2 btn-primary hover:scale-105 transition"
-                onClick={() => setShowCreateForm(true)}
-              >
-                <Plus className="h-5 w-5 " />
-                <p className="hidden md:flex">Add</p>
-              </button>}
+              {user?.role === "superadmin" && (
+                <button
+                  className="flex rounded-md h-8 justify-center text-sm items-center gap-2 px-4 py-2 btn-primary hover:scale-105 transition"
+                  onClick={() => setShowCreateForm(true)}
+                >
+                  <Plus className="h-5 w-5 " />
+                  <p className="hidden md:flex">Add</p>
+                </button>
+              )}
             </div>
           </div>
 

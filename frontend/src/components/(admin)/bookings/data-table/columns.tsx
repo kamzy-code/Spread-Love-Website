@@ -4,16 +4,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Booking } from "@/lib/types";
 import { formatToYMD } from "@/lib/formatDate";
 import { getStatusColor, getStatusIcon } from "@/lib/getStatusColor";
-import { MoreHorizontal, ArrowUpDown, ArrowDownUp } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { ArrowUpDown, ArrowDownUp } from "lucide-react";
 import ItemDropDown from "./itemDropdown";
 
 export function getColumnsByRole(
@@ -29,7 +20,10 @@ export function getColumnsByRole(
       cell: ({ row }) => {
         const booking: Booking = row.original;
         return (
-          <div className="flex gap-2 items-center" onClick={(e)=> e.stopPropagation()}>
+          <div
+            className="flex gap-2 items-center"
+            onClick={(e) => e.stopPropagation()}
+          >
             <span className="font-medium">{booking.bookingId}</span>
             <div
               className={`h-2 w-2 rounded-full shrink-0 ${
@@ -40,7 +34,6 @@ export function getColumnsByRole(
                   : `bg-red-500`
               }`}
             ></div>
-           
           </div>
         );
       },

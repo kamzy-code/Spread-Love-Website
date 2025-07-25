@@ -8,7 +8,7 @@ export const useFetchReps = (filter: RepFilter, searchValue: string) => {
   return useQuery({
     queryKey: ["reps", filter, (searchValue.toLowerCase())],
     queryFn: async ({ signal }) => {
-      const queryString = buildQueryParams(filter as Record<string, any>);
+      const queryString = buildQueryParams(filter as Record<string, unknown>);
 
       const res = await fetch(`${apiUrl}/rep/admin?${queryString}`, {
         credentials: "include",
@@ -53,7 +53,7 @@ export const useFetchRep = (repId: string) => {
 };
 
 
-export const useCreateRep = (body: any) => {
+export const useCreateRep = (body: unknown) => {
   return useMutation({
     mutationFn: async () => {
       const res = await fetch(`${apiUrl}/auth/register`, {

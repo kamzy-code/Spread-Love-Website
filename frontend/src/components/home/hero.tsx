@@ -17,7 +17,7 @@ function Hero() {
           Spread Love Network
         </h1>
         <p className="text-2xl md:text-4xl font-semibold mb-4 text-primary-200">
-          Make Someone's Day with a Surprise Call
+          {`Make Someone's Day with a Surprise Call`}
         </p>
         <p className="text-lg md:text-2xl font-normal">
           Personalized Phone calls for birthdays, anniversaries, and special

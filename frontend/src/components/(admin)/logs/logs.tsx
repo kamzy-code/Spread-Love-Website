@@ -1,18 +1,17 @@
 "use client";
 import { useAdminAuth } from "@/hooks/authContext";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import PageLoading from "../ui/pageLoading";
 import PageError from "../ui/pageError";
 import { motion, AnimatePresence } from "framer-motion";
 import AdminShell from "../ui/AdminShell";
 import { TriangleAlert } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useFetchLogs } from "@/hooks/useLogs";
+
 import LogData from "./logData";
 
 export default function Logs() {
-  const { user, authStatus, isAuthenticated, authError, loading, logout } =
-    useAdminAuth();
+  const { user, authStatus, authError, loading } = useAdminAuth();
   const [mounted, setMounted] = useState(false);
   const router = useRouter();
 

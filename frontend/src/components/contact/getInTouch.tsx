@@ -17,7 +17,7 @@ function GetInTouch () {
           Get in Touch
         </h1>
         <p className="text-primary-200 text-lg md:text-xl max-w-[80%] lg:max-w-[60%]">
-          Have questions? Need help? We're here to make your experience perfect.
+          {`Have questions? Need help? We're here to make your experience perfect.`}
         </p>
       </motion.div>
     </section>

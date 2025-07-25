@@ -36,8 +36,7 @@ const SORT_OPTIONS = [
 ];
 
 export default function Booking() {
-  const { user, authStatus, isAuthenticated, authError, loading, logout } =
-    useAdminAuth();
+  const { authStatus, authError, loading } = useAdminAuth();
   const [mounted, setMounted] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [sortDropDown, setSortDropDown] = useState(false);

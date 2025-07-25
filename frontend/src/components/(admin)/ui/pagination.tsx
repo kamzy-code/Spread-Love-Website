@@ -1,7 +1,7 @@
 "use client";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { PaginationMeta } from "@/lib/types";
-import { useBookingFilter } from "../bookings/bookingFilterContext";
+import {  } from "../bookings/bookingFilterContext";
 
 interface PaginationProps {
   meta: PaginationMeta;
@@ -11,8 +11,6 @@ interface PaginationProps {
 
 export default function Pagination({ meta, setPage }: PaginationProps) {
   const { page, totalPages } = meta;
-
-  const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
 
   const handleChange = (newPage: number) => {
     if (newPage >= 1 && newPage <= totalPages) {

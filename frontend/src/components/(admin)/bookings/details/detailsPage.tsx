@@ -48,7 +48,7 @@ const updateBooking = async (updatedData: any) => {
 export default function DetailsPage({ data }: { data: Booking }) {
   const { user } = useAdminAuth();
 
-  const [initialBooking, setInitialBooking] = useState<Booking>(data);
+  const [initialBooking] = useState<Booking>(data);
   const [formData, setFormData] = useState<Booking>(data);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editForm, setEditForm] = useState(false);
@@ -61,7 +61,7 @@ export default function DetailsPage({ data }: { data: Booking }) {
     >
   ) => {
     const { name, value } = e.target;
-    setFormData((prev: any) => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const queryClient = useQueryClient();

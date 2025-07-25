@@ -58,7 +58,7 @@ function Stories() {
                   </div>
 
                   <p className=" text-start text-gray-700 italic">
-                    "{testimonial.text}"
+                    {`"${testimonial.text}"`}
                   </p>
                 </div>
               </motion.div>

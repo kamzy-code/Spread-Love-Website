@@ -467,7 +467,7 @@ function Services() {
   type serviceType = "regular" | "special";
   const [activeTypes, setActiveTypes] = useState<Record<number, serviceType>>(
     () =>
-      Object.fromEntries(services.map((service, _) => [service.id, "regular"]))
+      Object.fromEntries(services.map((service,) => [service.id, "regular"]))
   );
 
   const handleTypeChange = (ServiceId: number, type: serviceType) => {

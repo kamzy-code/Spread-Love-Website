@@ -29,7 +29,7 @@ export default function RecentBookings() {
     "all"
   );
 
-  const { data: bookings, meta } = data ?? { data: [], meta: undefined };
+  const { data: bookings, } = data ?? { data: [], meta: undefined };
 
   if (error)
     return (

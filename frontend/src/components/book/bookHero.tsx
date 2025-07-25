@@ -18,7 +18,7 @@ export default function BookHero() {
           Book Your Surprise call
         </h1>
         <p className="text-primary-200 text-lg md:text-2xl max-w-[80%] lg:max-w-[60%]">
-          Fill out the details below and we'll create a magical moment for your loved one
+          {`Fill out the details below and we'll create a magical moment for your loved one`}
         </p>
       </motion.div>
     </section>

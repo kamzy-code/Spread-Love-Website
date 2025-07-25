@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ScrollArea } from "@/components/ui/scroll-area";
+
 import {
   Dialog,
   DialogTrigger,
@@ -16,7 +16,7 @@ import { LogFile } from "@/lib/types";
 import { XCircle } from "lucide-react";
 
 export default function LogViewerPage({ logData }: { logData: LogFile[] }) {
-  const [logs, setLogs] = useState<LogFile[]>(() =>
+  const [logs, ] = useState<LogFile[]>(() =>
     logData.length && logData.length > 0 ? logData : []
   );
   const [selected, setSelected] = useState<string[]>([]);

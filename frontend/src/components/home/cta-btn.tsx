@@ -1,15 +1,12 @@
 "use client";
-import { motion } from "framer-motion";
-import { useRouter } from "next/router";
 
 interface CTAProps {
-    onClickBook: () => void;
+  onClickBook: () => void;
 }
 
-function CTA(prop:CTAProps) {
-  
+function CTA(prop: CTAProps) {
   return (
-  <>
+    <>
       <button
         className="btn-primary sm:w-auto w-full"
         onClick={() => prop.onClickBook()}
@@ -26,8 +23,7 @@ function CTA(prop:CTAProps) {
       >
         View call Samples
       </button>
-      </>
-    
+    </>
   );
 }
 

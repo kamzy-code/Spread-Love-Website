@@ -1,5 +1,5 @@
 import { useAdminAuth } from "@/hooks/authContext";
-import { useFetchRep, useFetchReps, useUpdateRep } from "@/hooks/useReps";
+import { useUpdateRep } from "@/hooks/useReps";
 import { Rep } from "@/lib/types";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
@@ -15,7 +15,7 @@ export function Details({ repData }: { repData: Rep }) {
   const { user } = useAdminAuth();
   const router = useRouter();
   const queryClient = useQueryClient();
-  const [initialData, setInitialData] = useState(repData);
+  const [initialData, ] = useState(repData);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [formData, setFormData] = useState<
     Rep & {
@@ -44,7 +44,7 @@ export function Details({ repData }: { repData: Rep }) {
     >
   ) => {
     const { name, value } = e.target;
-    setFormData((prev: any) => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {

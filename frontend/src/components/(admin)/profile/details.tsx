@@ -7,7 +7,7 @@ import ActionStatusModal from "../ui/updateModal";
 
 export default function Details({ user, reload }: { user: AdminUser, reload: ()=> void }) {
   const [editForm, setEditForm] = useState(false);
-  const [initialData, setInitialData] = useState<AdminUser>(user as AdminUser);
+  const [initialData, ] = useState<AdminUser>(user as AdminUser);
   const [formData, setFormData] = useState<
     AdminUser & {
       oldPassword?: string;
@@ -36,7 +36,7 @@ export default function Details({ user, reload }: { user: AdminUser, reload: ()=
     >
   ) => {
     const { name, value } = e.target;
-    setFormData((prev: any) => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {

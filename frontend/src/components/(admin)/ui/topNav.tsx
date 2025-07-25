@@ -64,7 +64,7 @@ export default function TopNav() {
   const mutation = useMutation({
     mutationFn: () => logout(),
     retry: 3,
-    onError: (error) => {
+    onError: () => {
       setShowErrorModal(true);
     },
   });

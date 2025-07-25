@@ -101,7 +101,7 @@ function ContactForm() {
             Message Sent!
           </h3>
           <p className="text-gray-600 mb-4">
-            Thank you for reaching out. We'll get back to you within 24 hours.
+            {`Thank you for reaching out. We'll get back to you within 24 hours.`}
           </p>
           <button className="btn-primary" onClick={() => setIsSubmitted(false)}>
             Send Another Message

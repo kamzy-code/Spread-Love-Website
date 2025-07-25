@@ -12,7 +12,6 @@ import {
 import { XCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Booking } from "@/lib/types";
-import { error } from "console";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
@@ -32,7 +31,7 @@ const getID = async () => {
   return data;
 };
 
-const createBooking = async (body: any) => {
+const createBooking = async (body: unknown) => {
   const response = await fetch(`${apiUrl}/booking/create`, {
     method: "POST",
     credentials: "include",
@@ -69,7 +68,7 @@ export default function BookingForm({
 
   const [mounted, setMounted] = useState(false);
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<Partial<Booking>>({
     callerName: "",
     callerPhone: "",
     callerEmail: "",
@@ -87,12 +86,11 @@ export default function BookingForm({
   });
 
   const mutation = useMutation({
-    mutationFn: (updatedData) => createBooking(updatedData),
+    mutationFn: (updatedData: Partial<Booking>) => createBooking(updatedData),
     onSuccess: async (data) => {
       if (data && data.bookingId) {
         setBookingId(data.bookingId);
         await initializeTransactionMutation.mutateAsync(data.bookingId);
-        // setIsSubmitted(true);
       }
     },
     onError: (error) => {
@@ -109,8 +107,8 @@ export default function BookingForm({
     reference as string
   );
   const initializeTransactionMutation = useInitializeTransaction({
-    email: formData.callerEmail,
-    price: formData.price,
+    email: formData.callerEmail as string,
+    price: formData.price as string,
   });
   const verifyTransactionMutation = useVerifyTransaction(reference as string);
 
@@ -139,7 +137,7 @@ export default function BookingForm({
       }
 
       setBookingId(id);
-      await mutation.mutateAsync({ bookingId: id, ...formData } as any);
+      await mutation.mutateAsync({ bookingId: id, ...formData });
     } catch (error: any) {
       console.log(error);
       setIsError(true);
@@ -294,8 +292,8 @@ export default function BookingForm({
                         </p>
                       </div>
                       <p className="text-sm text-gray-600 mb-6">
-                        Save this ID to manage your booking. We'll also send
-                        confirmation details to your email.
+                        {`Save this ID to manage your booking. We'll also send
+                        confirmation details to your email.`}
                       </p>
                     </div>
                   )}
@@ -583,7 +581,7 @@ export default function BookingForm({
                   <input
                     type="checkbox"
                     checked={formData.contactConsent === "yes"}
-                    onChange={(e) =>
+                    onChange={() =>
                       formData.contactConsent === "yes"
                         ? setFormData((prev) => ({
                             ...prev,
@@ -610,7 +608,7 @@ export default function BookingForm({
                   <input
                     type="checkbox"
                     checked={formData.callRecording === "yes"}
-                    onChange={(e) =>
+                    onChange={() =>
                       formData.callRecording === "yes"
                         ? setFormData((prev) => ({
                             ...prev,

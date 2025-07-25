@@ -36,8 +36,8 @@ function WhyChoose() {
           Why Choose Spread Love
         </h1>
         <p className="text-md sm:text-xl  text-gray-700 ">
-          We're committed to creating authentic, heartfelt connections that
-          matter
+        {`We're committed to creating authentic, heartfelt connections that
+          matter`}
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 items-center justify-center section-padding mt-10">

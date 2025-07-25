@@ -1,5 +1,4 @@
 import { useQuery, keepPreviousData, useMutation } from "@tanstack/react-query";
-import { LogFile } from "@/lib/types";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
