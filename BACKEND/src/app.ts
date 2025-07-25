@@ -1,5 +1,5 @@
 import express from "express";
-import cors from "cors";
+import cors, { CorsOptions } from "cors";
 import dotenv from "dotenv";
 import authRouter from "./routes/authRoute";
 import bookingRouter from "./routes/bookingRoute";
@@ -15,13 +15,31 @@ import { logtail } from "./utils/logger";
 
 dotenv.config();
 
+const allowedOrigins = [
+  "https://spread-love-website.vercel.app/",
+  "http://localhost:3000",
+];
+
 const app = express();
-app.use(
-  cors({
-    origin: "http://localhost:3000", // Replace with your frontend domain in production
-    credentials: true,
-  })
-);
+
+export const corsOptions: CorsOptions = {
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps or curl)
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      logger.warn(`Blocked by CORS: ${origin}`, {
+        origin,
+        service: 'CORS_SERVICE',
+        action: 'ACCESS_BACKEND'
+      });
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
 
