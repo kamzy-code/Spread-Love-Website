@@ -193,6 +193,15 @@ export default function ItemDropDown({
               Verify Payment
             </DropdownMenuItem>
 
+            {booking.paymentStatus !== 'paid' && <DropdownMenuItem
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedbooking(booking, "complete");
+              }}
+            >
+             Generate Payment Link
+            </DropdownMenuItem>}
+
             {!booking.confirmationMailsent && (
               <DropdownMenuItem
                 onClick={(e) => {

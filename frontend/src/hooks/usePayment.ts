@@ -8,7 +8,7 @@ export const useInitializeTransaction = (info: {
   price: string;
 }) => {
   return useMutation({
-    mutationFn: async (bookingId) => {
+    mutationFn: async (bookingId: string) => {
       const query = buildQueryParams({ email: info.email, amount: info.price });
       const res = await fetch(
         `${apiUrl}/payment/initialize/${bookingId}?${query}`,
@@ -67,12 +67,11 @@ export const useVerifyTransaction = (reference: string) => {
     retry: 3,
 
     onSuccess: (data) => {
-      if (data.data.status === 'failed'){
-         throw new Error(
+      if (data.data.status === "failed") {
+        throw new Error(
           `Booking failed - Transaction ${data.data.gateway_response}`
         );
       }
-      console.log(data);
     },
     onError: (error) => {
       console.error(error.message || "Failed to verify transaction");

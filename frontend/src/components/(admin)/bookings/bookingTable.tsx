@@ -18,7 +18,11 @@ import { useQueryClient } from "@tanstack/react-query";
 import ActionStatusModal from "../ui/updateModal";
 import DeleteConfirmationModal from "./deleteModal";
 import AssignModal from "./assignModal";
-import { useVerifyTransaction } from "@/hooks/usePayment";
+import {
+  useInitializeTransaction,
+  useVerifyTransaction,
+} from "@/hooks/usePayment";
+import CompletePaymentModal from "./completePayment";
 
 export default function BookingTable() {
   const queryClient = useQueryClient();
@@ -29,8 +33,10 @@ export default function BookingTable() {
   const [resendMailStatusAction, setResendMailStatusAction] = useState(false);
   const [verifyTransactionAction, setVerifyTransactionAction] = useState(false);
   const [showActionStatusModal, setShowActionStatusModal] = useState(false);
+  const [completePaymentAction, setCompletePaymentAction] = useState(false);
   const [showAssignModal, setShowAssignModal] = useState(false);
-
+  const [showCompletePaymentModal, setShowCompletePaymentModal] =
+    useState(false);
   const [deletedBooking, setDeletedBooking] = useState<Booking | null>(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -56,6 +62,10 @@ export default function BookingTable() {
   const verifyTransactionMutation = useVerifyTransaction(
     selectedBooking?.bookingId as string
   );
+  const completePaymentMutation = useInitializeTransaction({
+    email: selectedBooking?.callerEmail as string,
+    price: selectedBooking?.price as string,
+  });
 
   const tableColumns = getColumnsByRole(
     user?.role as "superadmin" | "salesrep" | "callrep",
@@ -69,6 +79,8 @@ export default function BookingTable() {
         ? setResendMailStatusAction(true)
         : action === "verify"
         ? setVerifyTransactionAction(true)
+        : action === "complete"
+        ? setCompletePaymentAction(true)
         : null;
     },
     (booking: Booking) => setDeletedBooking(booking),
@@ -104,6 +116,12 @@ export default function BookingTable() {
       });
     }
   }, [selectedBooking, verifyTransactionAction]);
+
+  useEffect(() => {
+    if (selectedBooking && completePaymentAction) {
+      completePaymentMutation.mutateAsync(selectedBooking.bookingId);
+    }
+  }, [selectedBooking, completePaymentAction]);
 
   useEffect(() => {
     if (updateStatusMutation.isSuccess) {
@@ -170,6 +188,16 @@ export default function BookingTable() {
   }, [verifyTransactionMutation.isSuccess]);
 
   useEffect(() => {
+    if (completePaymentMutation.isSuccess) {
+      setShowCompletePaymentModal(true);
+
+      return () => {
+        setCompletePaymentAction(false);
+      };
+    }
+  }, [completePaymentMutation.isSuccess]);
+
+  useEffect(() => {
     if (
       isLoading ||
       isFetching ||
@@ -207,7 +235,8 @@ export default function BookingTable() {
     if (
       deleteBookingMutation.error ||
       resendMailMutation.error ||
-      verifyTransactionMutation.error
+      verifyTransactionMutation.error ||
+      completePaymentMutation.error
     ) {
       setShowActionStatusModal(true);
     }
@@ -215,6 +244,7 @@ export default function BookingTable() {
     deleteBookingMutation.error,
     resendMailMutation.error,
     verifyTransactionMutation.error,
+    completePaymentMutation.error,
   ]);
 
   if (error)
@@ -303,6 +333,18 @@ export default function BookingTable() {
           )}
 
         {showActionStatusModal &&
+          completePaymentMutation.error &&
+          !completePaymentMutation.isPending && (
+            <ActionStatusModal
+              setShowModal={() => {
+                setShowActionStatusModal(false);
+                setCompletePaymentAction(false);
+              }}
+              error={"Error generating payment link"}
+            ></ActionStatusModal>
+          )}
+
+        {showActionStatusModal &&
           !updateStatusMutation.error &&
           updateStatusMutation.isSuccess && (
             <ActionStatusModal
@@ -329,6 +371,17 @@ export default function BookingTable() {
                 verifyTransactionMutation.data.data.amount / 100
               }`}
             ></ActionStatusModal>
+          )}
+
+        {showCompletePaymentModal &&
+          !completePaymentMutation.error &&
+          completePaymentMutation.isSuccess && (
+            <CompletePaymentModal
+              paymentLink={completePaymentMutation.data.authorization_url}
+              setShowPaymentModal={(val: boolean) =>
+                setShowCompletePaymentModal(val)
+              }
+            ></CompletePaymentModal>
           )}
 
         {deletedBooking && showDeleteModal && (
@@ -365,6 +418,8 @@ export default function BookingTable() {
                         ? setResendMailStatusAction(true)
                         : action === "verify"
                         ? setVerifyTransactionAction(true)
+                        : action === "complete"
+                        ? setCompletePaymentAction(true)
                         : null;
                     }}
                     setDeletedBooking={(booking: Booking) =>
