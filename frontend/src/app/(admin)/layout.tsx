@@ -4,8 +4,11 @@ import Providers from "./providers";
 import { AdminAuthProvider } from "@/hooks/authContext";
 
 export const metadata: Metadata = {
-  title: "Admin - Spread Love Network",
-  description: "Make someone's day with a surprise call",
+  title: {
+    absolute: "Spread Love Network Admin",
+    template: "%s | Spread Love Network Admin",
+  },
+  description: "Manage surprise calls",
 };
 
 export default function AdminLayout({

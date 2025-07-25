@@ -412,43 +412,46 @@ export default function DetailsPage({ data }: { data: Booking }) {
                   </div>
                 )}
 
-                 {/* Call Recording status */}
-               {!editForm && <div className="flex flex-col space-y-2">
-                  <label className="text-gray-700 font-medium">
-                    Call Recording:
-                  </label>
-                  {(
-                    <p className="py-3 w-full capitalize">
-                      {formData.callRecording}
-                    </p>
-                  )}
-                </div>}
-
+                {/* Call Recording status */}
+                {!editForm && (
+                  <div className="flex flex-col space-y-2">
+                    <label className="text-gray-700 font-medium">
+                      Call Recording:
+                    </label>
+                    {
+                      <p className="py-3 w-full capitalize">
+                        {formData.callRecording}
+                      </p>
+                    }
+                  </div>
+                )}
 
                 {/* Call Recording URL */}
-                {formData.callRecording === "yes" && <div className="flex flex-col space-y-2">
-                  <label className="text-gray-700 font-medium">
-                    Recording Link:
-                  </label>
-                  {editForm ? (
-                    <input
-                      type="text"
-                      name="callRecordingURL"
-                      id="callRecordingURL"
-                      className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent disabled:border-0 disabled:pl-0"
-                      onChange={handleOnChange}
-                      value={formData.callRecordingURL}
-                      required
-                      disabled={!editForm}
-                    />
-                  ) : (
-                    <p className="py-3 w-full">
-                      {!formData.callRecordingURL
-                        ? "Not available"
-                        : formData.callRecordingURL}
-                    </p>
-                  )}
-                </div>}
+                {formData.callRecording === "yes" && (
+                  <div className="flex flex-col space-y-2">
+                    <label className="text-gray-700 font-medium">
+                      Recording Link:
+                    </label>
+                    {editForm ? (
+                      <input
+                        type="text"
+                        name="callRecordingURL"
+                        id="callRecordingURL"
+                        className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent disabled:border-0 disabled:pl-0"
+                        onChange={handleOnChange}
+                        value={formData.callRecordingURL}
+                        required
+                        disabled={!editForm}
+                      />
+                    ) : (
+                      <p className="py-3 w-full">
+                        {!formData.callRecordingURL
+                          ? "Not available"
+                          : formData.callRecordingURL}
+                      </p>
+                    )}
+                  </div>
+                )}
 
                 {/* Contact Consent */}
                 {!editForm && (
@@ -456,7 +459,39 @@ export default function DetailsPage({ data }: { data: Booking }) {
                     <label className="text-gray-700 font-medium">
                       Contact Consent:
                     </label>
-                    {<p className="py-3 w-full capitalize">{formData?.contactConsent}</p>}
+                    {
+                      <p className="py-3 w-full capitalize">
+                        {formData?.contactConsent}
+                      </p>
+                    }
+                  </div>
+                )}
+
+                {/*Payment status */}
+                {!editForm && (
+                  <div className="flex flex-col space-y-2">
+                    <label className="text-gray-700 font-medium">
+                      Payment Status:
+                    </label>
+                    {
+                      <p className="py-3 w-full capitalize">
+                        {formData?.paymentStatus}
+                      </p>
+                    }
+                  </div>
+                )}
+
+                {/*Payment status */}
+                {!editForm && formData?.paymentReference && (
+                  <div className="flex flex-col space-y-2">
+                    <label className="text-gray-700 font-medium">
+                      Payment Reference:
+                    </label>
+                    {
+                      <p className="py-3 w-full capitalize">
+                        {formData?.paymentReference}
+                      </p>
+                    }
                   </div>
                 )}
               </div>

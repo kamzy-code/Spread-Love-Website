@@ -1,5 +1,10 @@
 import BookHero from "@/components/book/bookHero";
 import BookingForm from "@/components/book/bookForm";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Book",
+};
 
 export default async function BookingPage({
   searchParams,

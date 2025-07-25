@@ -11,6 +11,7 @@ import {
 } from "@/hooks/usePayment";
 import { XCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { Booking } from "@/lib/types";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
@@ -58,7 +59,7 @@ export default function BookingForm({
 }) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isBookingCompleted, setIsBookingCompleted] = useState(false);
   const [isError, setIsError] = useState(false);
   const [createBookingStatus, setCreateBookingStatus] = useState("");
   const [showErrorModal, setShowErrorModal] = useState(false);
@@ -166,20 +167,6 @@ export default function BookingForm({
     }
   }, [formData.occassion, formData.callType, formData.country]);
 
-  // Send Email
-  // useEffect(() => {
-  //   if (mutation.isSuccess && bookingId) {
-  //     const sendMail = async () => {
-  //       try {
-  //         await sendConfirmationMailMutation.mutateAsync();
-  //       } catch (error: any) {
-  //         console.error(error.message || "Failed to send confirmation email");
-  //       }
-  //     };
-  //     sendMail();
-  //   }
-  // }, [mutation.isSuccess, bookingId]);
-
   useEffect(() => {
     const verifyTransaction = async () => {
       try {
@@ -210,10 +197,7 @@ export default function BookingForm({
         reference: string;
       } = initializeTransactionMutation.data;
 
-      const newTab = window.open(data.authorization_url, "_blank");
-      if (!newTab) {
-        window.location.href = data.authorization_url; // fallback if blocked
-      }
+      window.location.href = data.authorization_url;
     }
   }, [initializeTransactionMutation.isSuccess]);
 
@@ -227,7 +211,9 @@ export default function BookingForm({
     };
 
     if (verifyTransactionMutation.isSuccess) {
-      const { data, booking } = verifyTransactionMutation.data;
+      const { data, booking: bookingData } = verifyTransactionMutation.data;
+
+      const booking: Booking = bookingData;
 
       if (
         data.status === "success" &&
@@ -235,12 +221,15 @@ export default function BookingForm({
         booking.paymentStatus === "paid"
       ) {
         setBookingId(booking.bookingId);
-        setIsSubmitted(true);
-        sendMail();
+        setIsBookingCompleted(true);
+
+        if (!booking.confirmationMailsent) {
+          sendMail();
+        }
       } else {
         setCreateBookingStatus("Booking failed - payment unsuccessful");
         setIsError(true);
-        setIsSubmitted(true);
+        setIsBookingCompleted(true);
       }
     }
   }, [verifyTransactionMutation.isSuccess]);
@@ -249,7 +238,7 @@ export default function BookingForm({
     if (verifyTransactionMutation.error) {
       setCreateBookingStatus("Error verifying transaction. Please try again.");
       setIsError(true);
-      setIsSubmitted(true);
+      setIsBookingCompleted(true);
     }
   }, [verifyTransactionMutation.error]);
 
@@ -264,13 +253,13 @@ export default function BookingForm({
       )}
       <section className="container-max section-padding flex justify-center py-20 px-7 md:px-10 sm:px-25 lg:px-50">
         <div
-          className={`${reference && !isSubmitted ? "" : "card"} p-6 md:p-8 ${
+          className={`${reference && !isBookingCompleted ? "" : "card"} p-6 md:p-8 ${
             reference ? "w-full md:w-[70%]" : "w-full"
           }`}
         >
           {reference ? (
             <div>
-              {isSubmitted ? (
+              {isBookingCompleted ? (
                 <div className=" w-full text-center">
                   {isError ? (
                     <div className="w-full flex justify-center mb-2">
@@ -311,7 +300,7 @@ export default function BookingForm({
                     "Error verifying transaction. Please try again." ? (
                       <button
                         onClick={() => {
-                          setIsSubmitted(false);
+                          setIsBookingCompleted(false);
                           setCreateBookingStatus("");
                           verifyTransactionMutation.mutateAsync();
                         }}

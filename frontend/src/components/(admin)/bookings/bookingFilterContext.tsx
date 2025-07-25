@@ -6,13 +6,19 @@ import { STATUS_LIST } from "../dashboard/analytics";
 import { services } from "@/components/services/serviceList";
 import { Search } from "lucide-react";
 import { useDebounce } from "@/hooks/useDebounce";
-import { BookingFilterContex, BookingFilters, FilterType } from "@/lib/types";
+import {
+  BookingFilterContex,
+  BookingFilters,
+  FilterType,
+  Rep,
+} from "@/lib/types";
 import {
   getDefaultDate,
   getDefaultMonth,
   getDefaultWeek,
   getDefaultYear,
 } from "@/lib/formatDate";
+import { useFetchReps } from "@/hooks/useReps";
 
 const filterTypeOptions = [
   {
@@ -104,6 +110,12 @@ export default function FilterContextProvider({
     limit: 10,
   });
 
+  const { data } = useFetchReps(
+    { limit: 100, page: 1, role: "callrep" },
+    "callreps"
+  );
+  const reps: Rep[] = data?.data || [];
+
   // functions
   const handleFilterypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value as FilterType;
@@ -153,7 +165,10 @@ export default function FilterContextProvider({
   };
 
   useEffect(() => {
-    sessionStorage.setItem("bookingFilters", JSON.stringify({...appliedFormData, page:1}));
+    sessionStorage.setItem(
+      "bookingFilters",
+      JSON.stringify({ ...appliedFormData, page: 1 })
+    );
   }, [appliedFormData]);
 
   useEffect(() => {
@@ -355,8 +370,14 @@ export default function FilterContextProvider({
                           required
                         >
                           <option value="">All</option>
-                          <option value="a">Rep A</option>
-                          <option value="b">Rep B</option>
+                          {reps.map((rep) => {
+                            return (
+                              <option
+                              key={rep._id}
+                                value={rep._id}
+                              >{`${rep.firstName} ${rep.lastName}`}</option>
+                            );
+                          })}
                         </select>
                       </div>
                     )}

@@ -93,7 +93,7 @@ class PaymentController {
       if (
         result.status &&
         result.data.status === "success" &&
-        result.data.amount === (Number(booking.price) * 100)
+        result.data.amount >= Number(booking.price) * 100
       ) {
         booking.paymentStatus = "paid";
         booking.paymentReference = reference as string;
@@ -111,12 +111,33 @@ class PaymentController {
           booking,
         });
         return;
+      } else if (result.status && result.data.status === "failed") {
+        paymentLogger.warn("Transaction not successful", {
+          reference,
+          result,
+          action: "VERIFY_TRANSACTION_FAILED",
+        });
+
+        booking.paymentStatus = "failed";
+        booking.paymentReference = reference as string;
+
+        await booking.save();
+
+        res.status(200).json({
+          message: "Transaction not successful",
+          data: result.data,
+        });
+        return;
       } else {
         paymentLogger.warn("Transaction not successful", {
           reference,
           result,
           action: "VERIFY_TRANSACTION_FAILED",
         });
+
+        booking.paymentStatus = "pending";
+
+        await booking.save();
 
         res.status(200).json({
           message: "Transaction not successful",

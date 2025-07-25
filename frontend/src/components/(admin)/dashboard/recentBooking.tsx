@@ -80,6 +80,7 @@ export default function RecentBookings() {
               return (
                 <div
                   key={booking.bookingId}
+                  onClick={() => router.push(`/admin/bookings/${booking._id}`)}
                   className="flex flex-row justify-between items-center border-b py-2 last:border-0 hover:bg-gray-50"
                 >
                   <div>

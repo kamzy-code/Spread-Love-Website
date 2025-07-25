@@ -5,12 +5,14 @@ import Footer from "@/components/ui/footer";
 import Providers from "./providers";
 
 export const metadata: Metadata = {
-  title: "Spread Love Network",
-  description: "Make someone's day with a surprise call",
-  icons: {
-    icon: "./logo.png",
+  title: {
+    default: "Spread Love Network",
+    template: "%s | Spread Love Network",
+    absolute: "",
   },
+  description: "Make someone's day with a surprise call",
 };
+
 
 export default function RootLayout({
   children,

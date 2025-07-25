@@ -64,6 +64,22 @@ class EmailController {
         return;
       }
 
+       if (booking.confirmationMailsent) {
+        emailLogger.warn(
+          "Send Booking confirmation mail failed: Confirmation Already Sent",
+          {
+            bookingId,
+            email: booking.callerEmail,
+            action: "SEND_BOOKING_CONFIRMAION_MAIL_FAILED",
+          }
+        );
+
+        res
+          .status(200)
+          .json({ message: "Booking Confirmation already sent", bookingId });
+        return;
+      }
+
       try {
         // send the email
         await emailService.sendBookingConfirmationEmail(
@@ -77,7 +93,7 @@ class EmailController {
 
         res
           .status(200)
-          .json({ message: "Booking Confirmation sent successfully", booking });
+          .json({ message: "Booking Confirmation sent successfully", bookingId });
 
         emailLogger.info("Send Booking confirmation mail successful", {
           bookingId,
