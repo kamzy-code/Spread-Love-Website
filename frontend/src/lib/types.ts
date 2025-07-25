@@ -92,6 +92,7 @@ export interface BookingFilters {
   page?: number;
   limit?: number;
   confirmationMailsent?: boolean;
+  paymentStatus: string;
 }
 
 export type BookingFilterContex = BookingFilters & {

@@ -482,18 +482,20 @@ export default function DetailsPage({ data }: { data: Booking }) {
                 )}
 
                 {/*Payment status */}
-                {!editForm && formData?.paymentReference && (
-                  <div className="flex flex-col space-y-2">
-                    <label className="text-gray-700 font-medium">
-                      Payment Reference:
-                    </label>
-                    {
-                      <p className="py-3 w-full capitalize">
-                        {formData?.paymentReference}
-                      </p>
-                    }
-                  </div>
-                )}
+                {!editForm &&
+                  formData?.paymentReference &&
+                  user?.role !== "callrep" && (
+                    <div className="flex flex-col space-y-2">
+                      <label className="text-gray-700 font-medium">
+                        Payment Reference:
+                      </label>
+                      {
+                        <p className="py-3 w-full capitalize">
+                          {formData?.paymentReference}
+                        </p>
+                      }
+                    </div>
+                  )}
               </div>
             </div>
 

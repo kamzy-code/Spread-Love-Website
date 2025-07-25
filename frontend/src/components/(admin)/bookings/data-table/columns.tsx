@@ -20,15 +20,29 @@ export function getColumnsByRole(
   role: "superadmin" | "salesrep" | "callrep",
   setSelectedBooking: (booking: Booking, action: string) => void,
   setDeletedBooking: (booking: Booking) => void,
-  setShowDeleteModal: (val: boolean) => void,
+  setShowDeleteModal: (val: boolean) => void
 ): ColumnDef<Booking>[] {
   const baseColumns: ColumnDef<Booking>[] = [
     {
       accessorKey: "bookingId",
       header: "Booking ID",
       cell: ({ row }) => {
-        const id: string = row.getValue("bookingId");
-        return <span className="font-medium">{id}</span>;
+        const booking: Booking = row.original;
+        return (
+          <div className="flex gap-2 items-center" onClick={(e)=> e.stopPropagation()}>
+            <span className="font-medium">{booking.bookingId}</span>
+            <div
+              className={`h-2 w-2 rounded-full shrink-0 ${
+                booking.paymentStatus === "pending"
+                  ? `bg-yellow-500`
+                  : booking.paymentStatus === "paid"
+                  ? `bg-green-500`
+                  : `bg-red-500`
+              }`}
+            ></div>
+           
+          </div>
+        );
       },
     },
     {

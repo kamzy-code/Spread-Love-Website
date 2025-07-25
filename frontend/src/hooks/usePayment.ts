@@ -57,7 +57,9 @@ export const useVerifyTransaction = (reference: string) => {
       const data = await response.json();
       if (!response.ok) {
         // Attach status and statusText for more context if needed
-        throw new Error(data.message || response.statusText || "Unknown error");
+        throw new Error(
+          data.message || response.statusText || "Failed to verify transaction"
+        );
       }
       return data;
     },
@@ -65,10 +67,15 @@ export const useVerifyTransaction = (reference: string) => {
     retry: 3,
 
     onSuccess: (data) => {
+      if (data.data.status === 'failed'){
+         throw new Error(
+          `Booking failed - Transaction ${data.data.gateway_response}`
+        );
+      }
       console.log(data);
     },
     onError: (error) => {
-      console.error(error.message || "Failed to initialize transaction");
+      console.error(error.message || "Failed to verify transaction");
     },
   });
 };

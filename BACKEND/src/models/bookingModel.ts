@@ -24,7 +24,7 @@ export interface IBooking extends Document {
   callRecording?: string;
   callRecordingURL?: string;
   contactConsent?: string;
-  confirmationMailsent?: boolean;
+  confirmationMailsent: boolean;
   assignedRep?: mongoose.Types.ObjectId;
   paymentStatus: string;
   paymentReference?: string;
@@ -59,7 +59,7 @@ const bookingSchema: Schema = new Schema<IBooking>(
     callRecording: { type: String, required: false, default: "no" },
     callRecordingURL: { type: String, required: false, default: "" },
     contactConsent: { type: String, required: false, default: "no" },
-    confirmationMailsent: { type: Boolean, default: false },
+    confirmationMailsent: { required: true, type: Boolean, default: false },
     assignedRep: { type: mongoose.Types.ObjectId, ref: "Admin" },
     paymentStatus: {
       type: String,

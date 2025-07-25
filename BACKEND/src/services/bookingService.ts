@@ -38,6 +38,7 @@ class BookingService {
       specialInstruction,
       contactConsent,
       callRecording,
+      confirmationMailsent: false,
       paymentStatus: "pending",
     });
 

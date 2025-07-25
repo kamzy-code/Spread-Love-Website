@@ -64,7 +64,7 @@ class EmailController {
         return;
       }
 
-       if (booking.confirmationMailsent) {
+      if (booking.confirmationMailsent) {
         emailLogger.warn(
           "Send Booking confirmation mail failed: Confirmation Already Sent",
           {
@@ -74,9 +74,27 @@ class EmailController {
           }
         );
 
-        res
-          .status(200)
-          .json({ message: "Booking Confirmation already sent", bookingId });
+        next(
+          new HttpError(
+            400,
+            `Booking Confirmation already sent for ${bookingId}`
+          )
+        );
+        return;
+      }
+
+      if (booking.paymentStatus !== "paid") {
+        emailLogger.warn(
+          "Send Booking confirmation mail failed: Can't send email for an unpaid booking",
+          {
+            bookingId,
+            email: booking.callerEmail,
+            paymentStatus: booking.paymentStatus,
+            action: "SEND_BOOKING_CONFIRMAION_MAIL_FAILED",
+          }
+        );
+
+        next(new HttpError(400, `Can't send email for an unpaid booking`));
         return;
       }
 
@@ -91,9 +109,10 @@ class EmailController {
         booking.confirmationMailsent = true;
         await booking.save();
 
-        res
-          .status(200)
-          .json({ message: "Booking Confirmation sent successfully", bookingId });
+        res.status(200).json({
+          message: "Booking Confirmation sent successfully",
+          bookingId,
+        });
 
         emailLogger.info("Send Booking confirmation mail successful", {
           bookingId,

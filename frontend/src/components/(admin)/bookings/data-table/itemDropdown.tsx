@@ -184,6 +184,15 @@ export default function ItemDropDown({
               Assign to Rep
             </DropdownMenuItem>
 
+            <DropdownMenuItem
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedbooking(booking, "verify");
+              }}
+            >
+              Verify Payment
+            </DropdownMenuItem>
+
             {!booking.confirmationMailsent && (
               <DropdownMenuItem
                 onClick={(e) => {

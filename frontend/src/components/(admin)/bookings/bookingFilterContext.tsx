@@ -85,6 +85,7 @@ export default function FilterContextProvider({
       assignedRep: "",
       country: "",
       confirmationMailsent: undefined,
+      paymentStatus: "",
       page: 1,
     };
   });
@@ -107,6 +108,7 @@ export default function FilterContextProvider({
     sortParam: sortOptions.sortParam,
     sortOrder: sortOptions.sortOrder as "1" | "-1",
     page: formData.page,
+    paymentStatus: formData.paymentStatus,
     limit: 10,
   });
 
@@ -189,6 +191,7 @@ export default function FilterContextProvider({
       if (!activeFilters.country) updated.country = "";
       if (!activeFilters.confirmationMailsent)
         updated.confirmationMailsent = undefined;
+      if (!activeFilters.paymentStatus) updated.paymentStatus = "";
 
       return updated;
     });
@@ -202,6 +205,7 @@ export default function FilterContextProvider({
       if (!activeFilters.country) updated.country = "";
       if (!activeFilters.confirmationMailsent)
         updated.confirmationMailsent = undefined;
+      if (!activeFilters.paymentStatus) updated.paymentStatus = "";
 
       return updated;
     });
@@ -373,7 +377,7 @@ export default function FilterContextProvider({
                           {reps.map((rep) => {
                             return (
                               <option
-                              key={rep._id}
+                                key={rep._id}
                                 value={rep._id}
                               >{`${rep.firstName} ${rep.lastName}`}</option>
                             );
@@ -463,6 +467,27 @@ export default function FilterContextProvider({
                         </select>
                       </div>
                     )}
+
+                    {activeFilters.paymentStatus && (
+                      <div className="flex flex-row items-center space-x-2 w-auto">
+                        <label className="text-gray-700 font-medium text-sm">
+                          Payment Status:
+                        </label>
+                        <select
+                          name="paymentStatus"
+                          className="px-4 border border-gray-300 rounded-sm h-6 flex items-center justify-center text-sm focus:ring-2 focus:ring-brand-end focus:border-transparent"
+                          onChange={handleOnChange}
+                          value={formData.paymentStatus}
+                          required
+                        >
+                          <option value="">All</option>
+                          <option value="pending">Pending</option>
+                          <option value="paid">Paid</option>
+                          <option value="failed">failed</option>
+                        </select>
+                      </div>
+                    )}
+
                     {activeFilters.confirmationMailsent && (
                       <div className="flex flex-row items-center space-x-2 w-auto">
                         <label className="text-gray-700 font-medium text-sm">

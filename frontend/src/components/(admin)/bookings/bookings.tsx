@@ -17,6 +17,7 @@ const FILTER_OPTIONS = [
   { key: "occasion", label: "Occasion" },
   { key: "country", label: "Country" },
   { key: "confirmationMailsent", label: "Confirmation Mail" },
+  { key: "paymentStatus", label: "Payment Status" },
 ];
 
 const SORT_OPTIONS = [
@@ -50,6 +51,7 @@ export default function Booking() {
     occasion: false,
     country: false,
     confirmationMailsent: false,
+    paymentStatus: false,
   });
   const [sortOptions, setSortoptions] = useState({
     sortParam: "createdAt",

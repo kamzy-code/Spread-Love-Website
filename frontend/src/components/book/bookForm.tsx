@@ -12,6 +12,7 @@ import {
 import { XCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Booking } from "@/lib/types";
+import { error } from "console";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
@@ -236,7 +237,11 @@ export default function BookingForm({
 
   useEffect(() => {
     if (verifyTransactionMutation.error) {
-      setCreateBookingStatus("Error verifying transaction. Please try again.");
+      setCreateBookingStatus(
+        verifyTransactionMutation.error.message
+          ? verifyTransactionMutation.error.message
+          : "Error verifying transaction. Please try again."
+      );
       setIsError(true);
       setIsBookingCompleted(true);
     }
@@ -253,9 +258,9 @@ export default function BookingForm({
       )}
       <section className="container-max section-padding flex justify-center py-20 px-7 md:px-10 sm:px-25 lg:px-50">
         <div
-          className={`${reference && !isBookingCompleted ? "" : "card"} p-6 md:p-8 ${
-            reference ? "w-full md:w-[70%]" : "w-full"
-          }`}
+          className={`${
+            reference && !isBookingCompleted ? "" : "card"
+          } p-6 md:p-8 ${reference ? "w-full md:w-[70%]" : "w-full"}`}
         >
           {reference ? (
             <div>

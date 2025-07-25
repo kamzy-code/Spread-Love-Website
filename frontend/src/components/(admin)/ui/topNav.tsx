@@ -13,7 +13,7 @@ import {
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { useMutation } from "@tanstack/react-query";
 import { useAdminAuth } from "@/hooks/authContext";
@@ -59,6 +59,7 @@ export default function TopNav() {
   const { user, logout } = useAdminAuth();
   const [showErrorModal, setShowErrorModal] = useState(false);
   const router = useRouter();
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const mutation = useMutation({
     mutationFn: () => logout(),
@@ -67,6 +68,22 @@ export default function TopNav() {
       setShowErrorModal(true);
     },
   });
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setShowMobileNav(false);
+      }
+    }
+    if (showMobileNav) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [showMobileNav]);
+
   return (
     <>
       <nav className="w-full h-16 border-b bg-white/95 fixed top-0 z-50 py-3 px-6">
@@ -122,6 +139,7 @@ export default function TopNav() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
           className="md:hidden mt-16 h-screen w-64 py-4 border-t border-gray-200 bg-white fixed top-0 z-50 px-6 shadow-sm "
+          ref={dropdownRef}
         >
           {links.map((item) => {
             return (
