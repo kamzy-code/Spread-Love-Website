@@ -137,10 +137,6 @@ export default function BookingTable() {
         queryKey: ["booking", selectedBooking?._id],
       });
     }
-
-    return () => {
-      setUpdateStatusAction(false);
-    };
   }, [updateStatusMutation.isSuccess]);
 
   useEffect(() => {
@@ -167,10 +163,6 @@ export default function BookingTable() {
         queryKey: ["booking", selectedBooking?._id],
       });
     }
-
-    return () => {
-      setResendMailStatusAction(false);
-    };
   }, [resendMailMutation.isSuccess]);
 
   useEffect(() => {
@@ -184,16 +176,11 @@ export default function BookingTable() {
         queryKey: ["booking", selectedBooking?._id],
       });
     }
-
-    return () => {
-      setVerifyTransactionAction(false);
-    };
   }, [verifyTransactionMutation.isSuccess]);
 
   useEffect(() => {
     if (completePaymentMutation.isSuccess) {
       setShowCompletePaymentModal(true);
-      setCompletePaymentAction(false);
     }
   }, [completePaymentMutation.isSuccess]);
 
@@ -338,7 +325,7 @@ export default function BookingTable() {
           !completePaymentMutation.isPending && (
             <ActionStatusModal
               setShowModal={() => {
-                setShowActionStatusModal(false);
+                setShowCompletePaymentModal(false);
                 setCompletePaymentAction(false);
               }}
               error={"Error generating payment link"}
@@ -349,7 +336,10 @@ export default function BookingTable() {
           !updateStatusMutation.error &&
           updateStatusMutation.isSuccess && (
             <ActionStatusModal
-              setShowModal={() => setShowActionStatusModal(false)}
+              setShowModal={() => {
+                setShowActionStatusModal(false);
+                setUpdateStatusAction(false);
+              }}
               success="Booking status updated successfully!"
             ></ActionStatusModal>
           )}
@@ -358,7 +348,10 @@ export default function BookingTable() {
           !resendMailMutation.error &&
           resendMailMutation.isSuccess && (
             <ActionStatusModal
-              setShowModal={() => setShowActionStatusModal(false)}
+              setShowModal={() => {
+                setShowActionStatusModal(false);
+                setResendMailStatusAction(false);
+              }}
               success="Mail Sent successfully!"
             ></ActionStatusModal>
           )}
@@ -367,7 +360,10 @@ export default function BookingTable() {
           !verifyTransactionMutation.error &&
           verifyTransactionMutation.isSuccess && (
             <ActionStatusModal
-              setShowModal={() => setShowActionStatusModal(false)}
+              setShowModal={() => {
+                setShowActionStatusModal(false);
+                setVerifyTransactionAction(false);
+              }}
               success={`Booking Successful - N${
                 verifyTransactionMutation.data.data.amount / 100
               }`}
@@ -379,9 +375,10 @@ export default function BookingTable() {
           completePaymentMutation.isSuccess && (
             <CompletePaymentModal
               paymentLink={completePaymentMutation.data.authorization_url}
-              setShowPaymentModal={(val: boolean) =>
-                setShowCompletePaymentModal(val)
-              }
+              setShowPaymentModal={(val: boolean) => {
+                setShowCompletePaymentModal(val);
+                setCompletePaymentAction(val);
+              }}
             ></CompletePaymentModal>
           )}
 
