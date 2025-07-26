@@ -277,7 +277,7 @@ export default function BookingTable() {
 
         {showActionStatusModal &&
           updateStatusMutation.error &&
-          !updateStatusMutation.isPending && (
+          !updateStatusMutation.isPending && updateStatusAction && (
             <ActionStatusModal
               setShowModal={() => {
                 setShowActionStatusModal(false);
@@ -298,7 +298,7 @@ export default function BookingTable() {
 
         {showActionStatusModal &&
           resendMailMutation.error &&
-          !resendMailMutation.isPending && (
+          !resendMailMutation.isPending && resendMailStatusAction && (
             <ActionStatusModal
               setShowModal={() => {
                 setShowActionStatusModal(false);
@@ -310,7 +310,7 @@ export default function BookingTable() {
 
         {showActionStatusModal &&
           verifyTransactionMutation.error &&
-          !verifyTransactionMutation.isPending && (
+          !verifyTransactionMutation.isPending && verifyTransactionAction && (
             <ActionStatusModal
               setShowModal={() => {
                 setShowActionStatusModal(false);
@@ -322,10 +322,10 @@ export default function BookingTable() {
 
         {showActionStatusModal &&
           completePaymentMutation.error &&
-          !completePaymentMutation.isPending && (
+          !completePaymentMutation.isPending && completePaymentAction &&(
             <ActionStatusModal
               setShowModal={() => {
-                setShowCompletePaymentModal(false);
+                setShowActionStatusModal(false);
                 setCompletePaymentAction(false);
               }}
               error={"Error generating payment link"}
@@ -346,7 +346,7 @@ export default function BookingTable() {
 
         {showActionStatusModal &&
           !resendMailMutation.error &&
-          resendMailMutation.isSuccess && (
+          resendMailMutation.isSuccess && resendMailStatusAction && (
             <ActionStatusModal
               setShowModal={() => {
                 setShowActionStatusModal(false);
@@ -358,7 +358,7 @@ export default function BookingTable() {
 
         {showActionStatusModal &&
           !verifyTransactionMutation.error &&
-          verifyTransactionMutation.isSuccess && (
+          verifyTransactionMutation.isSuccess && verifyTransactionAction &&(
             <ActionStatusModal
               setShowModal={() => {
                 setShowActionStatusModal(false);
@@ -372,7 +372,7 @@ export default function BookingTable() {
 
         {showCompletePaymentModal &&
           !completePaymentMutation.error &&
-          completePaymentMutation.isSuccess && (
+          completePaymentMutation.isSuccess && completePaymentAction && (
             <CompletePaymentModal
               paymentLink={completePaymentMutation.data.authorization_url}
               setShowPaymentModal={(val: boolean) => {
