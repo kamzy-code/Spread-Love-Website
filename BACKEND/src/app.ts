@@ -16,7 +16,7 @@ import { logtail } from "./utils/logger";
 dotenv.config();
 
 const allowedOrigins = [
-  "https://spread-love-website.vercel.app/",
+  "https://spread-love-website.vercel.app",
   "http://localhost:3000",
 ];
 
