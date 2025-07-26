@@ -93,6 +93,7 @@ export interface BookingFilters {
   limit?: number;
   confirmationMailsent?: boolean;
   paymentStatus?: string;
+  paymentURL?: string;
 }
 
 export type BookingFilterContex = BookingFilters & {

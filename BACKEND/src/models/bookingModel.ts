@@ -26,6 +26,7 @@ export interface IBooking extends Document {
   contactConsent?: string;
   confirmationMailsent: boolean;
   assignedRep?: mongoose.Types.ObjectId;
+  paymentURL?: string;
   paymentStatus: string;
   paymentReference?: string;
 }
@@ -68,6 +69,7 @@ const bookingSchema: Schema = new Schema<IBooking>(
       required: true,
     },
     paymentReference: { type: String, required: false },
+    paymentURL: { required: false, type: String, default: "" },
   },
   { timestamps: true }
 );

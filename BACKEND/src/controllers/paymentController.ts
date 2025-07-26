@@ -28,11 +28,51 @@ class PaymentController {
     }
 
     try {
+      const booking = await bookingService.getBookingByBookingId(bookingId);
+
+      if (!booking) {
+        paymentLogger.warn(
+          "Initialized transaction failed: Booking not found",
+          {
+            email,
+            amount,
+            bookingId,
+            action: "INITIALIZE_TRANSACTION_FAILED",
+          }
+        );
+
+        next(new HttpError(400, "Booking not found"));
+        return;
+      }
+
+      if (booking.paymentURL) {
+        res.status(200).json({
+          message: "Transaction initialized successfully",
+          data: { authorization_url: booking.paymentURL },
+        });
+
+        paymentLogger.info(
+          "Paystack initialize transaction URL retrieved from booking data",
+          {
+            email,
+            amount: Number(amount) * 100,
+            paymentURL: booking.paymentURL,
+            bookingId,
+            action: "INITIALIZE_TRANSACTION_SUCCESS",
+          }
+        );
+
+        return;
+      }
+
       const response = await paymentService.initialzeTransaction(
         email as string,
         Number(amount),
         bookingId as string
       );
+
+      booking.paymentURL = response.data.authorization_url;
+      await booking.save();
 
       res.status(200).json({
         message: "Transaction initialized successfully",
