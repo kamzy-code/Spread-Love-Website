@@ -21,6 +21,7 @@ export const AdminAuthProvider = ({
   const [loading, setLoading] = useState(true);
   const [authError, setAuthError] = useState<null | string>(null);
   const [authStatus, setAuthStatus] = useState<AuthStatus>("checking");
+  const publicRoutes = ["/admin",];
 
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -64,12 +65,21 @@ export const AdminAuthProvider = ({
   };
 
   useEffect(() => {
-    let isMounted = true;
+  let isMounted = true;
+  const path = window.location.pathname;
+
+  if (!publicRoutes.includes(path)) {
     fetchUser(isMounted);
-    return () => {
-      isMounted = false;
-    };
-  }, []);
+  } else {
+    setLoading(false);
+    setAuthStatus("unauthenticated");
+  }
+
+  return () => {
+    isMounted = false;
+  };
+}, []);
+
 
   const login = async (body: {
     email: string;
