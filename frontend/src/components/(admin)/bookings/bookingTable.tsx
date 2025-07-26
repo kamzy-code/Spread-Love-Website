@@ -193,10 +193,7 @@ export default function BookingTable() {
   useEffect(() => {
     if (completePaymentMutation.isSuccess) {
       setShowCompletePaymentModal(true);
-
-      return () => {
-        setCompletePaymentAction(false);
-      };
+      setCompletePaymentAction(false);
     }
   }, [completePaymentMutation.isSuccess]);
 

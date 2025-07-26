@@ -169,7 +169,7 @@ class PaymentController {
         });
         return;
       } else {
-        paymentLogger.warn(`Transaction not successful: ${result.message}`, {
+        paymentLogger.warn(`Transaction not successful`, {
           reference,
           result,
           action: "VERIFY_TRANSACTION_FAILED",
@@ -180,7 +180,7 @@ class PaymentController {
         await booking.save();
 
         res.status(400).json({
-          message: `Transaction not successful: ${result.message}`,
+          message: `Transaction not successful`,
           data: result.data,
         });
         return;
