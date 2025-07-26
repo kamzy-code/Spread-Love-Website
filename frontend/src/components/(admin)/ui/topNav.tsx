@@ -106,9 +106,9 @@ export default function TopNav() {
             </div>
 
             <div className="flex flex-row gap-4 items-center">
-              <Link href={""}>
+              {/* <Link href={""}>
                 <Bell className="h-5 w-5 text-gray-700" />
-              </Link>
+              </Link> */}
 
               <Link href={"/admin/profile"}>
                 <div className="flex flex-row gap-2 items-center">

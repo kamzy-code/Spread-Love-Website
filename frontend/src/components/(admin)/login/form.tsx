@@ -144,7 +144,7 @@ export default function LoginForm() {
               )}
             </div>
 
-            <div className="py-2 flex justify-between">
+            <div className="py-2">
               <label className="flex flex-row items-center">
                 <input
                   type="checkbox"
@@ -155,13 +155,13 @@ export default function LoginForm() {
                 <span className="ml-2 text-sm text-gray-600">Remember me</span>
               </label>
 
-              <Link
+              {/* <Link
                 href={"/admin"}
                 className="text-brand-end text-sm font-medium hover:text-brand-start"
               >
                 {" "}
                 Forgot Password?
-              </Link>
+              </Link> */}
             </div>
 
             {errorMessage === "generic" && (

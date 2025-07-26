@@ -71,17 +71,20 @@ export default function BookingTable() {
     user?.role as "superadmin" | "salesrep" | "callrep",
     (booking: Booking, action: string) => {
       setSelectedBooking(booking);
-      action === "update"
-        ? () => setUpdateStatusAction(true)
-        : action === "assign"
-        ? () => setShowAssignModal(true)
-        : action === "resend"
-        ? () => setResendMailStatusAction(true)
-        : action === "verify"
-        ? () => setVerifyTransactionAction(true)
-        : action === "complete"
-        ? () => setCompletePaymentAction(true)
-        : null;
+      const runAction = () => {
+        action === "update"
+          ? setUpdateStatusAction(true)
+          : action === "assign"
+          ? setShowAssignModal(true)
+          : action === "resend"
+          ? setResendMailStatusAction(true)
+          : action === "verify"
+          ? setVerifyTransactionAction(true)
+          : action === "complete"
+          ? setCompletePaymentAction(true)
+          : null;
+      };
+      runAction();
     },
     (booking: Booking) => setDeletedBooking(booking),
     (val: boolean) => setShowDeleteModal(val)
@@ -271,7 +274,8 @@ export default function BookingTable() {
           updateStatusMutation.isPending ||
           deleteBookingMutation.isPending ||
           resendMailMutation.isPending ||
-          verifyTransactionMutation.isPending) && (
+          verifyTransactionMutation.isPending ||
+          completePaymentMutation.isPending) && (
           <div className="fixed z-50 inset-0 flex items-center justify-center bg-black/5">
             {" "}
             <div className="p-4 card">
@@ -410,17 +414,20 @@ export default function BookingTable() {
                     role={user?.role as string}
                     setSelectedBooking={(booking: Booking, action: string) => {
                       setSelectedBooking(booking);
-                      action === "update"
-                        ? () => setUpdateStatusAction(true)
-                        : action === "assign"
-                        ? () => setShowAssignModal(true)
-                        : action === "resend"
-                        ? () => setResendMailStatusAction(true)
-                        : action === "verify"
-                        ? () => setVerifyTransactionAction(true)
-                        : action === "complete"
-                        ? () => setCompletePaymentAction(true)
-                        : null;
+                      const runAction = () => {
+                        action === "update"
+                          ? setUpdateStatusAction(true)
+                          : action === "assign"
+                          ? setShowAssignModal(true)
+                          : action === "resend"
+                          ? setResendMailStatusAction(true)
+                          : action === "verify"
+                          ? setVerifyTransactionAction(true)
+                          : action === "complete"
+                          ? setCompletePaymentAction(true)
+                          : null;
+                      };
+                      runAction();
                     }}
                     setDeletedBooking={(booking: Booking) =>
                       setDeletedBooking(booking)
