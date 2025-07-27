@@ -35,7 +35,7 @@ const limiter = rateLimit({
   max: 100, // Limit each IP to 100 requests per windowMs
   message: "Too many requests from this IP, please try again later.",
 });
-app.use(limiter);
+app.use("/api", limiter);
 
 app.use((req, res, next) => {
   if (req.originalUrl === "/") {
