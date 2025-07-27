@@ -38,6 +38,11 @@ const limiter = rateLimit({
 app.use(limiter);
 
 app.use((req, res, next) => {
+  if (req.originalUrl === "/") {
+    next();
+    return;
+  }
+
   logger.info(`[${req.method}] ${req.originalUrl}`, {
     service: "requestLogger",
     action: "LOG_REQUEST",
@@ -45,6 +50,7 @@ app.use((req, res, next) => {
     url: req.originalUrl,
     ip: req.ip,
   });
+
   next();
 });
 
