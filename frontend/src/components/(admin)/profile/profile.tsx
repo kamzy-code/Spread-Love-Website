@@ -7,9 +7,11 @@ import PageError from "../ui/pageError";
 import { motion, AnimatePresence } from "framer-motion";
 import { AdminUser } from "@/lib/types";
 import Details from "./details";
+import { useRouter } from "next/navigation";
 
 export default function Profile() {
   const { user, authStatus, authError, loading, reload } = useAdminAuth();
+  const router = useRouter();
 
   const [mounted, setMounted] = useState(false);
 
@@ -30,6 +32,7 @@ export default function Profile() {
   }
 
   if (authStatus !== "authenticated") {
+    router.replace("/admin");
     return null;
   }
 

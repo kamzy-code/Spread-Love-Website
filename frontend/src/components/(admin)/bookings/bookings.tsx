@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import AdminShell from "../ui/AdminShell";
 import FilterContextProvider from "./bookingFilterContext";
 import { Filter } from "lucide-react";
+import { useRouter } from "next/navigation";
 import BookingTable from "./bookingTable";
 
 const FILTER_OPTIONS = [
@@ -36,6 +37,7 @@ const SORT_OPTIONS = [
 ];
 
 export default function Booking() {
+  const router = useRouter();
   const { authStatus, authError, loading } = useAdminAuth();
   const [mounted, setMounted] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -118,6 +120,7 @@ export default function Booking() {
   }
 
   if (authStatus !== "authenticated") {
+    router.replace("/admin");
     return null;
   }
 

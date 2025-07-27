@@ -48,6 +48,7 @@ export default function Reprsentatives() {
   }
 
   if (authStatus !== "authenticated") {
+    router.replace("/admin");
     return null;
   }
 

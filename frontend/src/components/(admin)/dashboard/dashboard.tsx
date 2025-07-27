@@ -1,8 +1,7 @@
 "use client";
 
-
 import { useAdminAuth } from "@/hooks/authContext";
-import { useEffect, useState,  } from "react";
+import { useEffect, useState } from "react";
 import AdminShell from "../ui/AdminShell";
 import PageError from "../ui/pageError";
 import PageLoading from "../ui/pageLoading";
@@ -11,10 +10,11 @@ import Analytics from "./analytics";
 import RecentBookings from "./recentBooking";
 import { Filter } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useRouter } from "next/navigation";
 
 export default function Dashboard() {
-  const { authStatus,  authError, loading,  } =
-    useAdminAuth();
+  const router = useRouter();
+  const { authStatus, authError, loading } = useAdminAuth();
   const [mounted, setMounted] = useState(false);
   const [showFilter, setShowFilter] = useState(true);
 
@@ -35,6 +35,7 @@ export default function Dashboard() {
   }
 
   if (authStatus !== "authenticated") {
+    router.replace("/admin");
     return null;
   }
 

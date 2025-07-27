@@ -32,6 +32,7 @@ export default function Logs() {
   }
 
   if (authStatus !== "authenticated") {
+    router.replace("/admin");
     return null;
   }
   if (user?.role !== "superadmin") {
