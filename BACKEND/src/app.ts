@@ -19,7 +19,11 @@ const app = express();
 
 app.use(
   cors({
-    origin: ["https://spread-love-website.vercel.app", "http://localhost:3000"],
+    origin: [
+      "https://spread-love-website.vercel.app",
+      "http://localhost:3000",
+      "https://spreadlovenetwork.com",
+    ],
     credentials: true,
   })
 );

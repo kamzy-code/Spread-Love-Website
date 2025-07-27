@@ -132,13 +132,13 @@ class AuthController {
           email,
           action: "LOGIN_FAILED",
         });
-        next ( new HttpError(401, "Invalid password"));
+        next(new HttpError(401, "Invalid password"));
         return;
       }
 
       // generate a token
       const token = generateToken(admin._id as string, admin.role);
-     
+
       if (!token) {
         authLogger.error("Login failed: token generation error", {
           email,
@@ -153,6 +153,8 @@ class AuthController {
           httpOnly: true,
           secure: process.env.NODE_ENV === "production", // only in production with HTTPS
           sameSite: "none",
+          domain: ".spreadlovenetwork.com", // match frontend/backend
+          path: "/",
           maxAge: (rememberMe as boolean) ? 7 * 24 * 60 * 60 * 1000 : undefined, // 7 days
         })
         .status(200)
@@ -201,7 +203,7 @@ class AuthController {
           userId: user.userId,
           action: "GET_LOGGED_IN_USER_FAILED",
         });
-        next ( new HttpError(404, "Admin not found"));
+        next(new HttpError(404, "Admin not found"));
         return;
       }
 
