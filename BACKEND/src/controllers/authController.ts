@@ -245,7 +245,9 @@ class AuthController {
         .clearCookie("token", {
           httpOnly: true,
           secure: process.env.NODE_ENV === "production", // only over HTTPS in production
-          sameSite: "strict",
+          sameSite: "none",
+          domain: ".spreadlovenetwork.com", // match frontend/backend
+          path: "/",
         })
         .status(200)
         .json({ message: "Logout successful" });
