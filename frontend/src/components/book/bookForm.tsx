@@ -554,7 +554,7 @@ export default function BookingForm({
                       onChange={handleOnChange}
                       required
                       rows={5}
-                      placeholder="What would you like us to say? Share your heartfelt message"
+                      placeholder={`What would you like us to say? Share your heartfelt message or indicate "None" if you don't have any.`}
                       className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent placeholder:text-gray-400 resize-none"
                     ></textarea>
                   </div>

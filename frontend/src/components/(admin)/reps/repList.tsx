@@ -19,7 +19,6 @@ export default function RepList() {
   );
 
   const { data: reps, meta } = data ?? { data: [], meta: undefined };
-  console.log("reps", reps);
 
   useEffect(() => {
     if (isLoading || isFetching) {

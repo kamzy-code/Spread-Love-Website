@@ -65,9 +65,6 @@ export default function Logs() {
           <div>
             <div className="flex justify-between">
               <h1 className="text-3xl font-bold">Log Viewer</h1>
-              <button className="btn-primary rounded-lg h-10 flex justify-center items-center">
-                Download
-              </button>
             </div>
           </div>
 
