@@ -56,6 +56,7 @@ export interface Booking {
   callerName: string;
   callerPhone: string;
   callerEmail?: string;
+  relationship: string;
   recipientName: string;
   recipientPhone: string;
   country: string;

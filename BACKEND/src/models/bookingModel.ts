@@ -11,6 +11,7 @@ export interface IBooking extends Document {
   callerName: string;
   callerPhone: string;
   callerEmail: string;
+  relationship: string;
   recipientName: string;
   recipientPhone: string;
   country: string;
@@ -37,6 +38,7 @@ const bookingSchema: Schema = new Schema<IBooking>(
     callerName: { type: String, required: true },
     callerPhone: { type: String, required: true },
     callerEmail: { type: String, required: true, default: "" },
+    relationship: { type: String, required: true },
     recipientName: { type: String, required: true },
     recipientPhone: { type: String, required: true },
     country: { type: String, required: true },

@@ -227,6 +227,26 @@ export default function DetailsPage({ data }: { data: Booking }) {
                       <p className="py-3 w-full">{formData.callerEmail}</p>
                     )}
                   </div>
+
+                  <div className="flex flex-col space-y-2">
+                    <label className="text-gray-700 font-medium">
+                      Relationship:
+                    </label>
+                    {editForm ? (
+                      <input
+                        className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent placeholder:text-gray-400 disabled:border-0 disabled:pl-0"
+                        type="text"
+                        name="relationship"
+                        value={formData.relationship}
+                        onChange={handleOnChange}
+                        required
+                        placeholder="Who are you to the recipient? (e.g., Friend, Family)"
+                        disabled={!editForm}
+                      />
+                    ) : (
+                      <p className="py-3 w-full">{formData.relationship}</p>
+                    )}
+                  </div>
                 </div>
               </div>
 

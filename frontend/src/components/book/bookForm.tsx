@@ -72,6 +72,7 @@ export default function BookingForm({
     callerName: "",
     callerPhone: "",
     callerEmail: "",
+    relationship: "",
     recipientName: "",
     recipientPhone: "",
     country: "Nigeria",
@@ -398,6 +399,21 @@ export default function BookingForm({
                         placeholder="your.email@example.com"
                       />
                     </div>
+
+                    <div className="flex flex-col space-y-2">
+                      <label className="text-gray-700 font-medium">
+                        Relationship *
+                      </label>
+                      <input
+                        className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent placeholder:text-gray-400"
+                        type="text"
+                        name="relationship"
+                        value={formData.relationship}
+                        onChange={handleOnChange}
+                        required
+                        placeholder="Who are you to the recipient? (e.g., Friend, Family)"
+                      />
+                    </div>
                   </div>
                 </div>
 
@@ -690,13 +706,12 @@ export default function BookingForm({
                 </button>
               </div>
 
-              <div className="flex w-full justify-center">
+              <div className="flex flex-col w-full items-center justify-center gap-2">
                 <p className="text-sm font-medium italic text-gray-700 text-center mt-2 md:w-[80%]">
-                  {" "}
-                  Note: Please note that songs performed during the call session
-                  are selected by our team. This is because the songs are not
-                  played from recordings but are sung live to create a more
-                  personal and engaging experience.{" "}
+                  {`Note: Please note that all international calls are made via Whatsapp, therefore provide a valid whatsapp number for easy contact.`}
+                </p>
+                <p className="text-sm font-medium italic text-gray-700 text-center mt-2 md:w-[80%]">
+                  {`Also, songs performed during the call session are selected by our team. This is because the songs are not played from recordings but are sung live to create a more personal and engaging experience.`}
                 </p>
               </div>
             </form>
