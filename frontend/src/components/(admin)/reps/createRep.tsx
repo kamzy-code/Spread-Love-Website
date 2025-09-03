@@ -118,14 +118,8 @@ export default function CreateRep({
 
   return (
     <div className="">
-      <div
-        className="fixed z-50 inset-0 flex items-center justify-center bg-black/50"
-        onClick={() => setShowCreateForm(false)}
-      >
-        <div
-          className="relative w-[90%] md:w-[70%] lg:w-[40%] max-h-[90%] overflow-y-auto bg-white rounded-xl shadow-lg"
-          onClick={(e) => e.stopPropagation()}
-        >
+      <div className="fixed z-50 inset-0 flex items-center justify-center bg-black/50">
+        <div className="relative w-[90%] md:w-[70%] lg:w-[40%] max-h-[90%] overflow-y-auto bg-white rounded-xl shadow-lg">
           <motion.div
             initial={{ y: 30, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}

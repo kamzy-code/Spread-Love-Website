@@ -29,18 +29,18 @@ export default function GridItem({
           <div className="flex w-full justify-between items-center">
             <div className="flex gap-4 md:gap-8 items-center">
               <div className="flex items-center gap-2">
-<div
-          className={`h-2 w-2 rounded-full shrink-0  ${
-            booking.paymentStatus === "pending"
-              ? `bg-yellow-500`
-              : booking.paymentStatus === "paid"
-              ? `bg-green-500`
-              : `bg-red-500`
-          }`}
-        ></div>
-              <p className="text-xs font-medium text-brand-start">
-                {booking.bookingId}
-              </p>
+                <div
+                  className={`h-2 w-2 rounded-full shrink-0  ${
+                    booking.paymentStatus === "pending"
+                      ? `bg-yellow-500`
+                      : booking.paymentStatus === "paid"
+                      ? `bg-green-500`
+                      : `bg-red-500`
+                  }`}
+                ></div>
+                <p className="text-xs font-medium text-brand-start">
+                  {booking.bookingId}
+                </p>
               </div>
               <p className="text-xs  text-gray-900">
                 {" "}
@@ -79,11 +79,9 @@ export default function GridItem({
                     <span className="font-medium text-brand-start">
                       {booking.country}
                     </span>
-                    {` ${
-                      role === "callrep"
-                        ? ""
-                        : `| Rep: ${booking.assignedRep.firstName}`
-                    }`}
+                    {role !== "callrep" && booking?.assignedRep?.firstName
+                      ? ` | Rep: ${booking.assignedRep.firstName}`
+                      : ""}
                   </p>
                 </div>
               </div>

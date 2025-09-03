@@ -152,9 +152,13 @@ class AuthController {
         .cookie("token", token, {
           httpOnly: true,
           secure: process.env.NODE_ENV === "production", // only in production with HTTPS
-          sameSite: "none",
-          domain: ".spreadlovenetwork.com", // match frontend/backend
-          path: "/",
+          sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+          ...(process.env.NODE_ENV === "production"
+            ? {
+                domain: ".spreadlovenetwork.com", // match frontend/backend
+                path: "/",
+              }
+            : {}),
           maxAge: (rememberMe as boolean) ? 7 * 24 * 60 * 60 * 1000 : undefined, // 7 days
         })
         .status(200)
@@ -245,9 +249,13 @@ class AuthController {
         .clearCookie("token", {
           httpOnly: true,
           secure: process.env.NODE_ENV === "production", // only over HTTPS in production
-          sameSite: "none",
-          domain: ".spreadlovenetwork.com", // match frontend/backend
-          path: "/",
+          sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+          ...(process.env.NODE_ENV === "production"
+            ? {
+                domain: ".spreadlovenetwork.com", // match frontend/backend
+                path: "/",
+              }
+            : {}),
         })
         .status(200)
         .json({ message: "Logout successful" });

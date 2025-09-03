@@ -104,6 +104,14 @@ export function getColumnsByRole(
     id: "assignedRep",
     accessorKey: "assignedRep.firstName",
     header: "Rep",
+    cell: ({ row }) => {
+      const booking: Booking = row.original;
+      return booking?.assignedRep?.firstName ? (
+        booking.assignedRep.firstName
+      ) : (
+        <span className="text-gray-400 italic">Unassigned</span>
+      );
+    },
   };
 
   const priceColumn: ColumnDef<Booking> = {

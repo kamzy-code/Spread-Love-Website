@@ -334,7 +334,7 @@ export default function BookingTable() {
 
         {showActionStatusModal &&
           !updateStatusMutation.error &&
-          updateStatusMutation.isSuccess && (
+          updateStatusMutation.isSuccess && updateStatusAction && (
             <ActionStatusModal
               setShowModal={() => {
                 setShowActionStatusModal(false);
