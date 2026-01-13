@@ -1,5 +1,4 @@
 "use client";
-import { motion } from "framer-motion";
 import Image from "next/image";
 import { useState } from "react";
 import {
@@ -14,7 +13,7 @@ import {
   Globe,
   MapPin,
 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export const services = [
   {
@@ -396,34 +395,34 @@ export const services = [
   },
 
   {
-  id: 14,
-  icon: <Users className="h-8 w-8" />,
-  title: "Conference Surprise Call",
-  description:
-    "A group surprise call that brings multiple loved ones together to celebrate or cheer someone on—all at once. Perfect for creating unforgettable moments with a personal touch.",
-  type: {
-    regular: {
-      features: [
-        "Deliver your group celebration message",
-        "Nigerian calls use standard phone networks; International calls are via WhatsApp"
-      ],
-      localPrice: "5000",
-      internationalPrice: "6000",
+    id: 14,
+    icon: <Users className="h-8 w-8" />,
+    title: "Conference Surprise Call",
+    description:
+      "A group surprise call that brings multiple loved ones together to celebrate or cheer someone on—all at once. Perfect for creating unforgettable moments with a personal touch.",
+    type: {
+      regular: {
+        features: [
+          "Deliver your group celebration message",
+          "Nigerian calls use standard phone networks; International calls are via WhatsApp",
+        ],
+        localPrice: "5000",
+        internationalPrice: "6000",
+      },
+      special: {
+        features: [
+          "Deliver your group celebration message",
+          "Nigerian calls use standard phone networks; International calls are via WhatsApp",
+          "Personalized group song option",
+        ],
+        localPrice: "6000",
+        internationalPrice: "7000",
+      },
     },
-    special: {
-      features: [
-        "Deliver your group celebration message",
-        "Nigerian calls use standard phone networks; International calls are via WhatsApp",
-        "Personalized group song option"
-      ],
-      localPrice: "6000",
-      internationalPrice: "7000",
-    },
+    category: "group",
+    thumbnail:
+      "https://images.unsplash.com/photo-1491438590914-bc09fcaaf77a?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   },
-  category: "group",
-  thumbnail:
-    "https://images.unsplash.com/photo-1491438590914-bc09fcaaf77a?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-},
 ];
 
 const categories = [
@@ -462,12 +461,10 @@ export const callType = [
 
 function Services() {
   const [activeTab, setActiveTab] = useState("all");
-  const router = useRouter();
 
   type serviceType = "regular" | "special";
   const [activeTypes, setActiveTypes] = useState<Record<number, serviceType>>(
-    () =>
-      Object.fromEntries(services.map((service,) => [service.id, "regular"]))
+    () => Object.fromEntries(services.map((service) => [service.id, "regular"]))
   );
 
   const handleTypeChange = (ServiceId: number, type: serviceType) => {
@@ -500,19 +497,13 @@ function Services() {
       </div>
 
       <div className="gradient-background-soft">
-        <motion.div
-          layout
-          className="container-max section-padding grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 px-10 py-20  gap-8"
-        >
+        <div className="container-max section-padding grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 px-10 py-20  gap-8">
           {filteredServices.map((service, index) => {
             const activeType = activeTypes[service.id];
             return (
               <div key={index} className="w-full h-full">
-                <motion.div
+                <div
                   key={service.id}
-                  initial={{ y: 30, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
                   className="card overflow-hidden hover:shadow-2xl transition-all duration-300 w-full h-full relative flex flex-col"
                 >
                   <div>
@@ -532,7 +523,7 @@ function Services() {
                     </div>
 
                     <p className="text-gray-600 mb-4">{service.description}</p>
-              
+
                     {/* Features */}
                     <ul className="space-y-2 ">
                       {service.type[activeType].features?.map(
@@ -552,8 +543,7 @@ function Services() {
                   </div>
 
                   <div className="w-full px-6 bottom-0 mb-6">
-
-                         {/* filter buttons */}
+                    {/* filter buttons */}
                     <div className="flex flex-row gap-4 mb-4">
                       {callType.map((type, index) => {
                         return (
@@ -577,7 +567,7 @@ function Services() {
                         );
                       })}
                     </div>
-                    
+
                     {/* Pricing */}
                     <div className="border-t pt-4">
                       <div className="flex justify-between items-center mb-4">
@@ -599,21 +589,20 @@ function Services() {
                         </span>
                       </div>
 
-                      <button
-                        className="w-full btn-primary"
-                        onClick={() => {
-                          router.push(`/book?occassion=${service.title}&call_type=${activeType}`);
-                        }}
+                      <Link
+                        href={`/book?occassion=${service.title}&call_type=${activeType}`}
                       >
-                        Book This Service
-                      </button>
+                        <button className="w-full btn-primary">
+                          Book This Service
+                        </button>
+                      </Link>
                     </div>
                   </div>
-                </motion.div>
+                </div>
               </div>
             );
           })}
-        </motion.div>
+        </div>
       </div>
     </section>
   );

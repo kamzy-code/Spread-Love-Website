@@ -1,12 +1,9 @@
 'use client';
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import AboutCTA from "./aboutCTA";
 
 function SpreadingLove() {
-  const router = useRouter();
-  const handleBookCall = () => router.push("/book");
 
   return (
     <section className="">
@@ -40,7 +37,7 @@ function SpreadingLove() {
             moments, proving that love knows no boundaries.`}
           </p>
 
-          <AboutCTA handleBook={handleBookCall} border={true} />
+          <AboutCTA border={true} />
         </motion.div>
 
         <motion.div

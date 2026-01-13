@@ -1,10 +1,8 @@
 "use client";
 import { motion } from "framer-motion";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 function ReadyToSurprise() {
-  const router = useRouter();
-
   return (
     <section className="gradient-background">
       <motion.div
@@ -22,12 +20,9 @@ function ReadyToSurprise() {
           Choose your service and let us help you create an unforgettable moment
           that will be treasured forever.
         </p>
-        <button
-          className="btn-secondary border-0 w-48"
-          onClick={() => router.push("/book")}
-        >
-          Book now
-        </button>
+        <Link href={"/book"}>
+          <button className="btn-secondary border-0 w-48">Book now</button>
+        </Link>
       </motion.div>
     </section>
   );

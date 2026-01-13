@@ -4,6 +4,8 @@ import ReadyToSurprise from "@/components/services/ready";
 import ChooseType from "@/components/services/chooseType";
 import { Metadata } from "next";
 import Head from "next/head";
+import { Suspense } from "react";
+import { PageLoader } from "@/components/ui/pageLoader";
 
 export const metadata: Metadata = {
   title: "Services",
@@ -56,18 +58,19 @@ export default function services() {
                 "@type": "Continent",
                 name: "Africa, Europe, North America, and South America",
               },
-              
+
               description:
                 "We offer personalized surprise call services for birthdays, anniversarie, romantic and other celebrations across Nigeria and Internationally.",
             }),
           }}
         />
       </Head>
-
-      <OurServices></OurServices>
-      <ChooseType></ChooseType>
-      <Services></Services>
-      <ReadyToSurprise></ReadyToSurprise>
+      <Suspense fallback={<PageLoader></PageLoader>}>
+        <OurServices></OurServices>
+        <ChooseType></ChooseType>
+        <Services></Services>
+        <ReadyToSurprise></ReadyToSurprise>
+      </Suspense>
     </div>
   );
 }
