@@ -1,6 +1,13 @@
 import { Metadata } from "next";
-import AboutCombined from "./about";
 import Head from "next/head";
+import { Suspense } from "react";
+import { PageLoader } from "@/components/ui/pageLoader";
+import Story from "@/components/about/ourStory";
+import SpreadingLove from "@/components/about/spreadingLove";
+import Journey from "@/components/about/journey";
+import Team from "@/components/about/team";
+import Values from "@/components/about/values";
+import Mission from "@/components/about/mission";
 
 export const metadata: Metadata = {
   title: "About",
@@ -61,7 +68,15 @@ export default function About() {
         />
       </Head>
 
-      <AboutCombined></AboutCombined>
+      {/* <AboutCombined></AboutCombined> */}
+      <Suspense fallback={<PageLoader></PageLoader>}>
+         <Story></Story>
+         <SpreadingLove></SpreadingLove>
+         <Journey></Journey>
+         <Team></Team>
+         <Values></Values>
+         <Mission></Mission>
+        </Suspense>
     </>
   );
 }

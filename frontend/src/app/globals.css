@@ -105,11 +105,11 @@ body {
 @layer components {
   .btn-primary {
     background: var(--gradient-brand);
-    @apply text-white px-8 py-3 rounded-3xl font-medium transition-all duration-200 transform hover:scale-105 hover:shadow-lg;
+    @apply text-white px-8 py-3 rounded-3xl font-medium transition-all duration-200 transform hover:scale-105 hover:shadow-lg active:scale-105 active:shadow-lg;
   }
 
   .btn-secondary {
-    @apply bg-white text-brand-start border-2 border-brand-start px-6 py-3 rounded-full font-medium transition-all duration-200 hover:bg-brand-start hover:text-white;
+    @apply bg-white text-brand-start border-2 border-brand-start px-6 py-3 rounded-full font-medium transition-all duration-200 hover:bg-brand-start hover:text-white  active:bg-brand-start active:text-white;
   }
 
   .card {

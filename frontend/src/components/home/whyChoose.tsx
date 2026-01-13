@@ -1,3 +1,4 @@
+"use client";
 import { motion } from "framer-motion";
 import { Heart, Clock, Star, MessageCircle } from "lucide-react";
 
@@ -36,7 +37,7 @@ function WhyChoose() {
           Why Choose Spread Love
         </h1>
         <p className="text-md sm:text-xl  text-gray-700 ">
-        {`We're committed to creating authentic, heartfelt connections that
+          {`We're committed to creating authentic, heartfelt connections that
           matter`}
         </p>
 

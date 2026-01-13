@@ -1,10 +1,8 @@
+"use client";
 import { motion } from "framer-motion";
 import CTA from "./cta-btn";
-import { useRouter } from "next/navigation";
 
 function Hero() {
-  const router = useRouter();
-  const CTAonClick = () => router.push("/book");
   return (
     <section className="gradient-background py-40 min-h-screen flex flex-col justify-center items-center">
       <motion.div
@@ -31,7 +29,7 @@ function Hero() {
         transition={{ duration: 0.8 }}
         className="bg-white flex flex-col sm:flex-row gap-8 w-full justify-center p-10 mt-10"
       >
-        <CTA onClickBook={CTAonClick} />
+        <CTA />
       </motion.div>
     </section>
   );

@@ -1,6 +1,13 @@
-import HomeMerged from "@/components/home/homeMerged";
+import ExperienceMagic from "@/components/home/experienceMagic";
+import Hero from "@/components/home/hero";
+import HowItWorks from "@/components/home/howItWorks";
+import Ready from "@/components/home/ready";
+import Stories from "@/components/home/stories";
+import WhyChoose from "@/components/home/whyChoose";
+import { PageLoader } from "@/components/ui/pageLoader";
 import { Metadata } from "next";
 import Head from "next/head";
+import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: "Home",
@@ -55,7 +62,16 @@ export default function Home() {
           }}
         />
       </Head>
-      <HomeMerged></HomeMerged>;
+      <main>
+        <Suspense fallback={<PageLoader></PageLoader>}>
+          <Hero></Hero>
+          <HowItWorks></HowItWorks>
+          <ExperienceMagic></ExperienceMagic>
+          <WhyChoose></WhyChoose>
+          <Stories></Stories>
+          <Ready></Ready>
+        </Suspense>
+      </main>
     </>
   );
 }

@@ -1,3 +1,4 @@
+'use client';
 import { motion } from "framer-motion";
 import CTA from "./cta-btn";
 import { useRouter } from "next/navigation";

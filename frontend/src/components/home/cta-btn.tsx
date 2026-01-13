@@ -1,18 +1,17 @@
 "use client";
 
-interface CTAProps {
-  onClickBook: () => void;
-}
+import Link from "next/link";
 
-function CTA(prop: CTAProps) {
+function CTA() {
   return (
     <>
+    <Link href={'/book'}>
       <button
         className="btn-primary sm:w-auto w-full"
-        onClick={() => prop.onClickBook()}
       >
         Book a call
       </button>
+    </Link>
       <button
         className="btn-secondary sm:w-auto w-full"
         onClick={() =>

@@ -1,11 +1,8 @@
-import { useRouter } from "next/navigation";
+'use client'
 import AboutCTA from "./aboutCTA";
 import { motion } from "framer-motion";
 
 function Mission() {
-  const router = useRouter();
-  const handleBookCall = () => router.push("/book");
-
   return (
     <section className="gradient-background py-20">
       <motion.div
@@ -24,7 +21,7 @@ function Mission() {
           next surprise call could make someone's entire year. Book a Call`}
         </p>
         <div className="w-full sm:flex sm:justify-center">
-          <AboutCTA handleBook={handleBookCall} border={false}></AboutCTA>
+          <AboutCTA border={false}></AboutCTA>
         </div>
       </motion.div>
     </section>

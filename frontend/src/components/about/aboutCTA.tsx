@@ -1,15 +1,16 @@
 import { MessageCircle } from "lucide-react";
+import Link from "next/link";
 
-function AboutCTA(prop: { handleBook: () => void, border?: boolean }) {
+function AboutCTA(prop: { border?: boolean }) {
   return (
     <div className="flex flex-col sm:flex-row gap-4">
+      <Link href="/book">
       <button
         className="btn-primary sm:w-auto w-full mt-4"
-        onClick={() => prop.handleBook()}
-        //   onClick={() => window.location.href = "/book"}
       >
         Book a Call
       </button>
+      </Link>
 
       <button
         className={`btn-secondary sm:w-auto w-full mt-4 flex justify-center items-center ${prop.border? '': 'border-0'}`}

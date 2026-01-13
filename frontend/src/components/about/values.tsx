@@ -1,5 +1,4 @@
 import { Heart, Users, Globe, Award } from "lucide-react";
-import { motion } from "framer-motion";
 
 function Values() {
   const values = [
@@ -31,25 +30,19 @@ function Values() {
 
   return (
     <section className="section-padding py-20 gradient-background-soft">
-      <motion.div
-        initial={{ opacity: 0, y: 50 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: 50 }}
-        transition={{ duration: 0.5, delay: 0.2 }}
-        className="container-max section-padding flex flex-col justify-center items-center text-center gap-4 mb-10"
-      >
+      <div className="container-max section-padding flex flex-col justify-center items-center text-center gap-4 mb-10">
         <h1 className="gradient-text text-5xl lg:text-6xl font-bold pb-2">
           Our Values
         </h1>
         <p className="text-gray-700 text-lg lg:text-xl md:max-w-[60%] ">
           The principles that guide everything we do
         </p>
-      </motion.div>
+      </div>
 
       <div className="container-max section-padding grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {values.map((value, index) => {
           return (
-            <motion.div
+            <div
               key={index}
               className="flex flex-col items-center text-center gap-2 mt-4 section-padding"
             >
@@ -58,7 +51,7 @@ function Values() {
                 {value.title}
               </h2>
               <p className="text-gray-700 text-md mb-4">{value.description}</p>
-            </motion.div>
+            </div>
           );
         })}
       </div>
