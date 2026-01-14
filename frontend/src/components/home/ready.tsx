@@ -1,11 +1,8 @@
 'use client';
 import { motion } from "framer-motion";
 import CTA from "./cta-btn";
-import { useRouter } from "next/navigation";
 
 function Ready() {
-  const router = useRouter();
-  const CTAonClick = () => router.push("/book");
 
   return (
     <section className="flex flex-col items-center justify-center gap-4 py-20 text-center section-padding gradient-background text-white">
@@ -31,7 +28,7 @@ function Ready() {
         viewport={{ once: true }}
         className="flex flex-col sm:flex-row gap-8 w-full justify-center mt-5"
       >
-        <CTA onClickBook={CTAonClick} />
+        <CTA />
       </motion.div>
     </section>
   );

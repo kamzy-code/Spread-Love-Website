@@ -2,6 +2,8 @@ import BookHero from "@/components/book/bookHero";
 import BookingForm from "@/components/book/bookForm";
 import { Metadata } from "next";
 import Head from "next/head";
+import { Suspense } from "react";
+import { PageLoader } from "@/components/ui/pageLoader";
 
 export const metadata: Metadata = {
   title: "Book",
@@ -59,16 +61,16 @@ export default async function BookingPage({
           }}
         />
       </Head>
-
       <BookHero></BookHero>
-
-      <section className="gradient-background-soft">
-        <BookingForm
-          occassion={occassion}
-          call_type={call_type}
-          reference={reference}
-        ></BookingForm>
-      </section>
+      <Suspense fallback={<PageLoader></PageLoader>}>
+        <section className="gradient-background-soft">
+          <BookingForm
+            occassion={occassion}
+            call_type={call_type}
+            reference={reference}
+          ></BookingForm>
+        </section>
+      </Suspense>
     </div>
   );
 }
