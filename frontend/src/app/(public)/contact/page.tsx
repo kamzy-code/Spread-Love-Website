@@ -1,6 +1,11 @@
 import { Metadata } from "next";
-import ContactCombined from "./contact";
 import Head from "next/head";
+import GetInTouch from "@/components/contact/getInTouch";
+import ContactInfo from "@/components/contact/contactInfo";
+import DetailedContact from "@/components/contact/detailedContact";
+import FAQ from "@/components/contact/faq";
+import { Suspense } from "react";
+import { PageLoader } from "@/components/ui/pageLoader";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -60,7 +65,12 @@ export default function Contact() {
           }}
         />
       </Head>
-      <ContactCombined></ContactCombined>;
+      <Suspense fallback={<PageLoader></PageLoader>}>
+        <GetInTouch></GetInTouch>
+        <ContactInfo></ContactInfo>
+        <DetailedContact></DetailedContact>
+        <FAQ></FAQ>
+      </Suspense>
     </>
   );
 }
