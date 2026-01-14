@@ -8,6 +8,7 @@ export type PaginationMeta = {
 // Dashboard
 export interface dashboardFilterContextType {
   appliedFilterType: string;
+  appliedFetchParam: string;
   appliedDate?: string;
   appliedStartDate?: string;
   appliedEndDate?: string;
@@ -85,6 +86,7 @@ export interface BookingFilters {
   assignedRep?: string;
   singleDate?: string;
   filterType?: FilterType;
+  fetchParam?: string;
   startDate?: string;
   endDate?: string;
   sortParam?: string;

@@ -480,6 +480,7 @@ class BookingController {
       filterType,
       confirmationMailsent,
       paymentStatus,
+      fetchParam,
     } = req.query;
 
     bookingLogger.info("Get all bookings initiated", {
@@ -529,10 +530,17 @@ class BookingController {
     );
 
     if (dateRange) {
-      searchQuery.callDate = {
-        $gte: dateRange.start,
-        $lte: dateRange.end,
-      };
+      if (fetchParam === "bookingDate") {
+        searchQuery.createdAt = {
+          $gte: dateRange.start,
+          $lte: dateRange.end,
+        };
+      } else {
+        searchQuery.callDate = {
+          $gte: dateRange.start,
+          $lte: dateRange.end,
+        };
+      }
     }
 
     if (search) {
@@ -850,7 +858,7 @@ class BookingController {
   ) {
     const user = req.user!;
     const { repId } = req.params;
-    const { filterType, date, startDate, endDate } = req.query;
+    const { filterType, date, startDate, endDate, fetchParam } = req.query;
     const matchStage: any = {};
 
     bookingLogger.info("Get booking analytics initiated", {
@@ -900,10 +908,17 @@ class BookingController {
     }
 
     if (dateRange) {
-      matchStage.callDate = {
-        $gte: dateRange.start,
-        $lte: dateRange.end,
-      };
+      if (fetchParam === "bookingDate") {
+        matchStage.createdAt = {
+          $gte: dateRange.start,
+          $lte: dateRange.end,
+        };
+      } else {
+        matchStage.callDate = {
+          $gte: dateRange.start,
+          $lte: dateRange.end,
+        };
+      }
     }
 
     // Build previous period match stage

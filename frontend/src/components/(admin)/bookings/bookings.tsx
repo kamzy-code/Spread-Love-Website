@@ -37,6 +37,7 @@ const SORT_OPTIONS = [
 ];
 
 export default function Booking() {
+  const savedFilter = sessionStorage.getItem("bookingFilters");
   const router = useRouter();
   const { authStatus, authError, loading } = useAdminAuth();
   const [mounted, setMounted] = useState(false);
@@ -54,9 +55,16 @@ export default function Booking() {
     confirmationMailsent: false,
     paymentStatus: false,
   });
-  const [sortOptions, setSortoptions] = useState({
-    sortParam: "createdAt",
-    sortOrder: "1",
+  const [sortOptions, setSortoptions] = useState(() => {
+    if (savedFilter) {
+      const { sortOrder, sortParam } = JSON.parse(savedFilter);
+      return { sortOrder, sortParam };
+    }
+
+    return {
+      sortParam: "createdAt",
+      sortOrder: "1",
+    };
   });
 
   const dropdownRef = useRef<HTMLDivElement>(null);

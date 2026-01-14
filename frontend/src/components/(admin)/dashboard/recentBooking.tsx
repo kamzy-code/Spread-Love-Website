@@ -8,11 +8,12 @@ import { useRouter } from "next/navigation";
 import { FilterType, Booking, BookingFilters } from "@/lib/types";
 
 export default function RecentBookings() {
-  const { appliedFilterType, appliedDate, appliedEndDate, appliedStartDate } =
+  const { appliedFilterType, appliedFetchParam, appliedDate, appliedEndDate, appliedStartDate } =
     useFilter();
 
   const filters: BookingFilters = {
     filterType: appliedFilterType as FilterType,
+    fetchParam: appliedFetchParam,
     startDate: appliedStartDate,
     endDate: appliedEndDate,
     singleDate: appliedDate,

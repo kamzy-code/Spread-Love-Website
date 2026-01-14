@@ -1,9 +1,14 @@
 import { useState, createContext, useContext, useEffect } from "react";
 
 import { useQueryClient } from "@tanstack/react-query";
-import { motion,  } from "framer-motion";
+import { motion } from "framer-motion";
 import { FilterType, dashboardFilterContextType } from "@/lib/types";
-import { getDefaultDate, getDefaultWeek, getDefaultMonth, getDefaultYear } from "@/lib/formatDate";
+import {
+  getDefaultDate,
+  getDefaultWeek,
+  getDefaultMonth,
+  getDefaultYear,
+} from "@/lib/formatDate";
 
 const filterOptions = [
   {
@@ -40,7 +45,9 @@ export default function DashboardContextProvider({
   showFilter: boolean;
   repId?: string;
 }) {
-  const savedFilters = sessionStorage.getItem(`${repId ? "callrep" : "dashboard"}Filters`);
+  const savedFilters = sessionStorage.getItem(
+    `${repId ? "callrep" : "dashboard"}Filters`
+  );
   const queryClient = useQueryClient();
 
   const [filterType, setFilterType] = useState<FilterType>(() => {
@@ -75,6 +82,13 @@ export default function DashboardContextProvider({
     }
     return "";
   });
+  const [fetchParam, setFetchParam] = useState(() => {
+    if (savedFilters) {
+      const { appliedFetchParam } = JSON.parse(savedFilters);
+      return appliedFetchParam;
+    }
+    return "callDate";
+  });
 
   // Applied states for query
   const [appliedFilterType, setAppliedFilterType] =
@@ -82,6 +96,7 @@ export default function DashboardContextProvider({
   const [appliedDate, setAppliedDate] = useState(date);
   const [appliedStartDate, setAppliedStartDate] = useState("");
   const [appliedEndDate, setAppliedEndDate] = useState("");
+  const [appliedFetchParam, setAppliedFetchParam] = useState(fetchParam);
 
   const handleFilterChnage = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value as FilterType;
@@ -102,6 +117,11 @@ export default function DashboardContextProvider({
     }
   };
 
+  const handleFetchParamChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
+    setFetchParam(value);
+  };
+
   const handleApplyFilter = (e: React.FormEvent) => {
     e.preventDefault();
     // For the "analytics" query
@@ -112,6 +132,7 @@ export default function DashboardContextProvider({
         appliedDate,
         appliedStartDate,
         appliedEndDate,
+        appliedFetchParam,
       ],
     });
 
@@ -123,12 +144,13 @@ export default function DashboardContextProvider({
           startDate: appliedStartDate,
           endDate: appliedEndDate,
           singleDate: appliedDate,
+          fetchParam: appliedFetchParam,
           sortParam: "createdAt",
           sortOrder: "-1",
           page: 1,
           limit: 5,
         },
-        "all"
+        "all",
       ],
     });
 
@@ -136,6 +158,7 @@ export default function DashboardContextProvider({
     setAppliedDate(date);
     setAppliedStartDate(startDate);
     setAppliedEndDate(endDate);
+    setAppliedFetchParam(fetchParam);
   };
 
   useEffect(() => {
@@ -146,9 +169,16 @@ export default function DashboardContextProvider({
         appliedDate,
         appliedStartDate,
         appliedEndDate,
+        appliedFetchParam,
       })
     );
-  }, [appliedFilterType, appliedDate, appliedStartDate, appliedEndDate]);
+  }, [
+    appliedFilterType,
+    appliedDate,
+    appliedStartDate,
+    appliedEndDate,
+    appliedFetchParam,
+  ]);
   return (
     <dashboardFilterContext.Provider
       value={{
@@ -156,6 +186,7 @@ export default function DashboardContextProvider({
         appliedDate: appliedDate,
         appliedStartDate: appliedStartDate,
         appliedEndDate: appliedEndDate,
+        appliedFetchParam: appliedFetchParam,
         repId,
       }}
     >
@@ -294,6 +325,22 @@ export default function DashboardContextProvider({
                   </div>
                 </div>
               )}
+
+              <div className="flex flex-row items-center space-x-2 w-auto">
+                <label className="text-gray-700 font-medium text-sm">
+                  Fetch By:{" "}
+                </label>
+                <select
+                  name="fetchParam"
+                  className="px-4 border border-gray-300 rounded-sm h-6 flex items-center justify-center text-sm focus:ring-2 focus:ring-brand-end focus:border-transparent"
+                  onChange={handleFetchParamChange}
+                  value={fetchParam}
+                  required
+                >
+                  <option value={"callDate"}>Call Date</option>
+                  <option value={"bookingDate"}>Booking Date</option>
+                </select>
+              </div>
 
               <div className="w-full lg:w-auto">
                 <button

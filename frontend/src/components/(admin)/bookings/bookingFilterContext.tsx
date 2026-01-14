@@ -1,7 +1,7 @@
 import { useState, createContext, useContext, useEffect } from "react";
 
 import { useQueryClient } from "@tanstack/react-query";
-import { motion,} from "framer-motion";
+import { motion } from "framer-motion";
 import { STATUS_LIST } from "../dashboard/analytics";
 import { services } from "@/components/services/serviceList";
 import { Search } from "lucide-react";
@@ -79,6 +79,7 @@ export default function FilterContextProvider({
           : getDefaultDate(),
       startDate: "",
       endDate: "",
+      fetchParam: "callDate",
       status: "",
       callType: "",
       occassion: "",
@@ -96,6 +97,7 @@ export default function FilterContextProvider({
   // applied filter
   const [appliedFormData, setAppliedFormData] = useState<BookingFilters>({
     filterType: filterType,
+    fetchParam: formData.fetchParam,
     singleDate: formData.singleDate,
     startDate: formData.startDate,
     endDate: formData.endDate,
@@ -339,7 +341,7 @@ export default function FilterContextProvider({
                           onChange={handleOnChange}
                           value={formData.startDate}
                         />
-                      </div>
+                      </div> 
 
                       <div className="flex flex-row items-center space-x-2 w-auto">
                         <label className="text-gray-700 font-medium text-sm">
@@ -355,6 +357,22 @@ export default function FilterContextProvider({
                       </div>
                     </div>
                   )}
+
+                   <div className="flex flex-row items-center space-x-2 w-auto">
+                    <label className="text-gray-700 font-medium text-sm">
+                      Fetch By:{" "}
+                    </label>
+                    <select
+                      name="fetchParam"
+                      className="px-4 border border-gray-300 rounded-sm h-6 flex items-center justify-center text-sm focus:ring-2 focus:ring-brand-end focus:border-transparent"
+                      onChange={handleOnChange}
+                      value={formData.fetchParam}
+                      required
+                    >
+                      <option value={"callDate"}>Call Date</option>
+                      <option value={"bookingDate"}>Booking Date</option>
+                    </select>
+                  </div>
                 </div>
 
                 {Object.entries(activeFilters).some(

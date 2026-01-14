@@ -18,6 +18,7 @@ const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 const getAnalytics = async (
   signal: AbortSignal,
   filterType: string,
+  fetchParam: string,
   date?: string,
   startDate?: string,
   endDate?: string,
@@ -26,7 +27,7 @@ const getAnalytics = async (
   const response = await fetch(
     `${apiUrl}/booking/admin/analytics${
       repId ? `/${repId}` : ""
-    }?filterType=${filterType}${date ? `&date=${date}` : ""}${
+    }?filterType=${filterType}&fetchParam=${fetchParam}${date ? `&date=${date}` : ""}${
       startDate ? `&startDate=${startDate}` : ""
     }${endDate ? `&endDate=${endDate}` : ""}`,
     {
@@ -82,8 +83,11 @@ export default function Analytics() {
     appliedDate,
     appliedEndDate,
     appliedStartDate,
+    appliedFetchParam,
     repId,
   } = useFilter();
+
+  console.log("appliedFetchParam", appliedFetchParam);
 
   const { data, error, isLoading, isFetching, refetch } = useQuery({
     queryKey: [
@@ -92,12 +96,14 @@ export default function Analytics() {
       appliedDate,
       appliedStartDate,
       appliedEndDate,
+      appliedFetchParam,
       repId || null,
     ],
     queryFn: ({ signal }) =>
       getAnalytics(
         signal,
         appliedFilterType,
+        appliedFetchParam,
         appliedDate,
         appliedStartDate,
         appliedEndDate,
