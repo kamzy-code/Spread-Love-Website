@@ -9,16 +9,7 @@ export const metadata: Metadata = {
   title: "Book",
 };
 
-export default async function BookingPage({
-  searchParams,
-}: {
-  searchParams: Promise<{
-    occassion?: string;
-    call_type?: string;
-    reference?: string;
-  }>;
-}) {
-  const { occassion, call_type, reference } = await searchParams;
+export default async function BookingPage() {
   return (
     <div>
       <Head>
@@ -64,11 +55,7 @@ export default async function BookingPage({
       <BookHero></BookHero>
       <Suspense fallback={<PageLoader></PageLoader>}>
         <section className="gradient-background-soft">
-          <BookingForm
-            occassion={occassion}
-            call_type={call_type}
-            reference={reference}
-          ></BookingForm>
+          <BookingForm></BookingForm>
         </section>
       </Suspense>
     </div>

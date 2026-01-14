@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect, useMemo, useCallback } from "react";
+import { useSearchParams } from "next/navigation";
 import { services, callType } from "../services/serviceList";
 import CreateErrorModal from "./errorModal";
 import { useMutation } from "@tanstack/react-query";
@@ -18,15 +19,11 @@ import { BookingError } from "./BookingError";
 type BookingStatus = "idle" | "completed" | "error" | "pending";
 type ServiceType = "regular" | "special";
 
-export default function BookingForm({
-  occassion,
-  call_type,
-  reference,
-}: {
-  occassion?: string;
-  call_type?: string;
-  reference?: string;
-}) {
+export default function BookingForm() {
+  const searchParams = useSearchParams();
+  const occassion = searchParams.get("occassion") || "";
+  const call_type = searchParams.get("call_type") || "";
+  const reference = searchParams.get("reference") || "";
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [bookingStatus, setBookingStatus] = useState<BookingStatus>("idle");
   const [errorMessage, setErrorMessage] = useState("");
@@ -135,12 +132,14 @@ export default function BookingForm({
 
       setBookingId(id);
       await mutation.mutateAsync({ bookingId: id, ...formData });
-    } catch (error: any) {
-      console.log(error);
-      setErrorMessage(error.message);
-      setBookingStatus("error");
-      setIsSubmitting(false);
-      setShowErrorModal(true);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.log(error);
+        setErrorMessage(error.message);
+        setBookingStatus("error");
+        setIsSubmitting(false);
+        setShowErrorModal(true);
+      }
     }
   };
 
@@ -212,11 +211,7 @@ export default function BookingForm({
       {(mutation.error || bookingStatus === "error") && showErrorModal && (
         <CreateErrorModal
           setShowModal={() => setShowErrorModal(false)}
-          error={
-            mutation.error
-              ? mutation.error.message
-              : errorMessage
-          }
+          error={mutation.error ? mutation.error.message : errorMessage}
         />
       )}
       <section className="container-max section-padding flex justify-center py-20 px-7 md:px-10 sm:px-25 lg:px-50">
