@@ -13,7 +13,6 @@ export const metadata: Metadata = {
   description: "Make someone's day with a surprise call",
 };
 
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -24,6 +23,18 @@ export default function RootLayout({
       <Navbar />
       <main>{children}</main>
       <Footer />
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            name: "Spread Love Network",
+            url: "https://spreadlovenetwork.com",
+          }),
+        }}
+      />
     </Providers>
   );
 }
