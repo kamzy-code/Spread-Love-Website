@@ -29,7 +29,7 @@ export default function BookingForm() {
   const [errorMessage, setErrorMessage] = useState("");
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [bookingId, setBookingId] = useState("");
-  const BOOKINGS_DISABLED = true;
+  const BOOKINGS_DISABLED = false;
   const DISABLE_REASON =
     "We're experiencing high traffic for Valentine's Day. Bookings will resume soon!";
 
