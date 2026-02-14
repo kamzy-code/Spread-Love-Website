@@ -29,6 +29,9 @@ export default function BookingForm() {
   const [errorMessage, setErrorMessage] = useState("");
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [bookingId, setBookingId] = useState("");
+  const BOOKINGS_DISABLED = true;
+  const DISABLE_REASON =
+    "We're experiencing high traffic for Valentine's Day. Bookings will resume soon!";
 
   const [formData, setFormData] = useState<Partial<Booking>>({
     callerName: "",
@@ -51,7 +54,7 @@ export default function BookingForm() {
   // Memoized price calculation
   const price = useMemo(() => {
     const selectedService = services.find(
-      (service) => service.title === formData.occassion
+      (service) => service.title === formData.occassion,
     );
     if (!selectedService) return "";
 
@@ -87,7 +90,7 @@ export default function BookingForm() {
   });
 
   const sendConfirmationMailMutation = useSendBookingConfirmation(
-    reference as string
+    reference as string,
   );
   const initializeTransactionMutation = useInitializeTransaction({
     email: formData.callerEmail as string,
@@ -100,12 +103,12 @@ export default function BookingForm() {
     (
       e: React.ChangeEvent<
         HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-      >
+      >,
     ) => {
       const { name, value } = e.target;
       setFormData((prev) => ({ ...prev, [name]: value }));
     },
-    []
+    [],
   );
 
   // Simplified checkbox handler
@@ -201,7 +204,7 @@ export default function BookingForm() {
     if (verifyTransactionMutation.error) {
       setErrorMessage(
         verifyTransactionMutation.error.message ||
-          "Error verifying transaction. Please try again."
+          "Error verifying transaction. Please try again.",
       );
       setBookingStatus("error");
     }
@@ -239,6 +242,13 @@ export default function BookingForm() {
                   <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-brand-end"></div>
                 </div>
               )}
+            </div>
+          ) : BOOKINGS_DISABLED ? (
+            <div className="p-6 text-center">
+              <h2 className="text-xl font-semibold mb-2">
+                Bookings Temporarily Closed
+              </h2>
+              <p className="text-gray-600">{DISABLE_REASON}</p>
             </div>
           ) : (
             <form
