@@ -12,6 +12,7 @@ interface PaginationProps {
 export default function Pagination({ meta, setPage }: PaginationProps) {
   const { page, totalPages } = meta;
 
+  
   const handleChange = (newPage: number) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setPage(newPage);

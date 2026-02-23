@@ -171,7 +171,7 @@ export default function FilterContextProvider({
   useEffect(() => {
     sessionStorage.setItem(
       "bookingFilters",
-      JSON.stringify({ ...appliedFormData, page: 1 })
+      JSON.stringify({ ...appliedFormData})
     );
   }, [appliedFormData]);
 
