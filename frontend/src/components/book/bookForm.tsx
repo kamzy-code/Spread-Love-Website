@@ -15,6 +15,7 @@ import { generateBookingID, createBooking } from "@/lib/apiClient";
 import { FormField, FormSelect, FormTextArea } from "./FormFields";
 import { BookingSuccess } from "./BookingSuccess";
 import { BookingError } from "./BookingError";
+import { PageLoader } from "../ui/pageLoader";
 
 type BookingStatus = "idle" | "completed" | "error" | "pending";
 type ServiceType = "regular" | "special";
@@ -24,6 +25,7 @@ export default function BookingForm() {
   const occassion = searchParams.get("occassion") || "";
   const call_type = searchParams.get("call_type") || "";
   const reference = searchParams.get("reference") || "";
+  const [isMounted, setIsMounted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [bookingStatus, setBookingStatus] = useState<BookingStatus>("idle");
   const [errorMessage, setErrorMessage] = useState("");
@@ -70,6 +72,11 @@ export default function BookingForm() {
       setFormData((prev) => ({ ...prev, price }));
     }
   }, [price]);
+
+  // Set mounted flag after component hydrates
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const mutation = useMutation({
     mutationFn: (updatedData: Partial<Booking>) => createBooking(updatedData),
@@ -209,317 +216,328 @@ export default function BookingForm() {
       setBookingStatus("error");
     }
   }, [verifyTransactionMutation.error]);
+
+  if (!isMounted) {
+    return <PageLoader />;
+  }
+
   return (
     <div>
-      {(mutation.error || bookingStatus === "error") && showErrorModal && (
-        <CreateErrorModal
-          setShowModal={() => setShowErrorModal(false)}
-          error={mutation.error ? mutation.error.message : errorMessage}
-        />
-      )}
-      <section className="container-max section-padding flex justify-center py-20 px-7 md:px-10 sm:px-25 lg:px-50">
-        <div
-          className={`${
-            reference && bookingStatus !== "completed" ? "" : "card"
-          } p-6 md:p-8 ${reference ? "w-full md:w-[70%]" : "w-full"}`}
-        >
-          {reference ? (
-            <div>
-              {bookingStatus === "completed" ? (
-                <BookingSuccess bookingId={bookingId} />
-              ) : bookingStatus === "error" ? (
-                <BookingError
-                  error={errorMessage}
-                  bookingId={bookingId}
-                  onRetry={() => {
-                    setBookingStatus("pending");
-                    setErrorMessage("");
-                    verifyTransactionMutation.mutateAsync();
-                  }}
-                />
-              ) : (
-                <div className="w-full flex justify-center items-center py-10">
-                  <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-brand-end"></div>
-                </div>
-              )}
-            </div>
-          ) : BOOKINGS_DISABLED ? (
-            <div className="p-6 text-center">
-              <h2 className="text-xl font-semibold mb-2">
-                Bookings Temporarily Closed
-              </h2>
-              <p className="text-gray-600">{DISABLE_REASON}</p>
-            </div>
-          ) : (
-            <form
-              onSubmit={handleSubmit}
-              className="space-y-6 text-brand-start"
+      {
+        <>
+          {(mutation.error || bookingStatus === "error") && showErrorModal && (
+            <CreateErrorModal
+              setShowModal={() => setShowErrorModal(false)}
+              error={mutation.error ? mutation.error.message : errorMessage}
+            />
+          )}
+          <section className="container-max section-padding flex justify-center py-20 px-7 md:px-10 sm:px-25 lg:px-50">
+            <div
+              className={`${
+                reference && bookingStatus !== "completed" ? "" : "card"
+              } p-6 md:p-8 ${reference ? "w-full md:w-[70%]" : "w-full"}`}
             >
-              {/* Personal and Recipient info */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                {/* Personal info */}
+              {reference ? (
                 <div>
-                  <h2 className="gradient-text text-2xl font-semibold mb-4 pb-2">
-                    Personal Information
-                  </h2>
-                  <div className="grid grid-cols-1 gap-4">
-                    <FormField
-                      label="Name *"
-                      name="callerName"
-                      value={formData.callerName || ""}
-                      onChange={handleOnChange}
-                      placeholder="Your full name"
-                      required
+                  {bookingStatus === "completed" ? (
+                    <BookingSuccess bookingId={bookingId} />
+                  ) : bookingStatus === "error" ? (
+                    <BookingError
+                      error={errorMessage}
+                      bookingId={bookingId}
+                      onRetry={() => {
+                        setBookingStatus("pending");
+                        setErrorMessage("");
+                        verifyTransactionMutation.mutateAsync();
+                      }}
                     />
-
-                    <FormField
-                      label="Phone *"
-                      name="callerPhone"
-                      type="tel"
-                      value={formData.callerPhone || ""}
-                      onChange={handleOnChange}
-                      placeholder="+234 123 456 7890"
-                      required
-                    />
-
-                    <FormField
-                      label="Email *"
-                      name="callerEmail"
-                      type="email"
-                      value={formData.callerEmail || ""}
-                      onChange={handleOnChange}
-                      placeholder="your.email@example.com"
-                      required
-                    />
-
-                    <FormField
-                      label="Relationship *"
-                      name="relationship"
-                      value={formData.relationship || ""}
-                      onChange={handleOnChange}
-                      placeholder="Who are you to the recipient?"
-                      required
-                    />
-                  </div>
-                </div>
-
-                {/* Recipient Info */}
-                <div>
-                  <h2 className="gradient-text text-2xl font-semibold mb-4 pb-2">
-                    Recipient Information
-                  </h2>
-                  <div className="grid grid-cols-1 gap-4">
-                    <FormField
-                      label="Recipients Name *"
-                      name="recipientName"
-                      value={formData.recipientName || ""}
-                      onChange={handleOnChange}
-                      placeholder="Who should we call?"
-                      required
-                    />
-
-                    <FormField
-                      label="Phone *"
-                      name="recipientPhone"
-                      value={formData.recipientPhone || ""}
-                      onChange={handleOnChange}
-                      placeholder="+234 801 234 5678"
-                      required
-                    />
-
-                    <FormSelect
-                      label="Recipient Country *"
-                      name="country"
-                      value={formData.country || ""}
-                      onChange={handleOnChange}
-                      options={countries.map((country) => ({
-                        value: country,
-                        label: country,
-                      }))}
-                      required
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Call Details */}
-              <div>
-                <h2 className="gradient-text text-2xl font-semibold mb-4 pb-2">
-                  Call Details
-                </h2>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                  <FormSelect
-                    label="Occasion *"
-                    name="occassion"
-                    value={formData.occassion || ""}
-                    onChange={handleOnChange}
-                    options={[
-                      { value: "", label: "Select Occasion" },
-                      ...services.map((service) => ({
-                        value: service.title,
-                        label: service.title,
-                      })),
-                    ]}
-                    required
-                  />
-
-                  <FormSelect
-                    label="Call Type *"
-                    name="callType"
-                    value={formData.callType || ""}
-                    onChange={handleOnChange}
-                    options={callType.map((type) => ({
-                      value: type.id,
-                      label: type.name,
-                    }))}
-                    required
-                  />
-
-                  <FormField
-                    label="Preferred Date *"
-                    name="callDate"
-                    type="date"
-                    value={formData.callDate || ""}
-                    onChange={handleOnChange}
-                    required
-                    min={new Date().toISOString().split("T")[0]}
-                  />
-                </div>
-              </div>
-
-              {/* Personal Touch */}
-              <div>
-                <h2 className="gradient-text text-2xl font-semibold mb-4 pb-2">
-                  Personal Touch
-                </h2>
-                <div className="grid grid-cols-1 gap-4">
-                  <FormTextArea
-                    label="Message *"
-                    name="message"
-                    value={formData.message || ""}
-                    onChange={handleOnChange}
-                    placeholder="What would you like us to say? Indicate 'None' if you don't have any special message"
-                    required
-                    rows={5}
-                  />
-
-                  <FormTextArea
-                    label="Special Instructions (Optional) *"
-                    name="specialInstruction"
-                    value={formData.specialInstruction || ""}
-                    onChange={handleOnChange}
-                    placeholder="Any special requests we should know about?"
-                    rows={3}
-                  />
-                </div>
-              </div>
-
-              {/* Contact Consent */}
-              <div className="py-2 flex justify-between">
-                <label className="flex flex-row items-center">
-                  <input
-                    type="checkbox"
-                    checked={formData.contactConsent === "yes"}
-                    onChange={() => handleCheckboxChange("contactConsent")}
-                    name="contactConsent"
-                    className="rounded border-gray-300 text-brand-end focus:ring-brand-end"
-                  />
-                  <span className="ml-2 text-sm text-gray-600">
-                    I agree to be contacted for updates about my booking and
-                    future offers.
-                  </span>
-                </label>
-              </div>
-
-              {/* Call Recording */}
-              <div className="py-2 flex justify-between">
-                <label className="flex flex-row items-center">
-                  <input
-                    type="checkbox"
-                    checked={formData.callRecording === "yes"}
-                    onChange={() => handleCheckboxChange("callRecording")}
-                    name="callRecording"
-                    className="rounded border-gray-300 text-brand-end focus:ring-brand-end"
-                  />
-                  <span className="ml-2 text-sm text-gray-600">
-                    I want a recording of my call.
-                  </span>
-                </label>
-              </div>
-
-              {/* Pricing summary */}
-              {formData.occassion && (
-                <div className="mt-6 p-4 md:p-6 gradient-background-soft space-y-2">
-                  <h3 className="font-semibold">Pricing Summary</h3>
-                  <div className="flex justify-between">
-                    <h2 className="text-sm sm:text-md md:text-lg font-bold text-brand-end max-w-[50%] md:max-w-full">{`${
-                      formData.occassion
-                    } (${
-                      formData.callType === "regular" ? "Regular" : "Special"
-                    })`}</h2>
-                    <div className="flex flex-row">
-                      <h2 className="text-sm sm:text-md md:text-lg font-bold text-brand-end">
-                        N{formData.price}
-                      </h2>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Submit button */}
-              <div className="w-full flex justify-center">
-                <button
-                  type="submit"
-                  className="btn-primary w-full md:w-[50%]"
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? (
-                    <div>
-                      <svg
-                        className="animate-spin h-5 w-5 text-white mx-auto"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        />
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-                        />
-                      </svg>
-                      <span className="sr-only">Loading...</span>
-                    </div>
                   ) : (
-                    <div className="flex items-center justify-center">
-                      <p>Book my Call</p>
+                    <div className="w-full flex justify-center items-center py-10">
+                      <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-brand-end"></div>
                     </div>
                   )}
-                </button>
-              </div>
+                </div>
+              ) : BOOKINGS_DISABLED ? (
+                <div className="p-6 text-center">
+                  <h2 className="text-xl font-semibold mb-2">
+                    Bookings Temporarily Closed
+                  </h2>
+                  <p className="text-gray-600">{DISABLE_REASON}</p>
+                </div>
+              ) : (
+                <form
+                  onSubmit={handleSubmit}
+                  className="space-y-6 text-brand-start"
+                >
+                  {/* Personal and Recipient info */}
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    {/* Personal info */}
+                    <div>
+                      <h2 className="gradient-text text-2xl font-semibold mb-4 pb-2">
+                        Personal Information
+                      </h2>
+                      <div className="grid grid-cols-1 gap-4">
+                        <FormField
+                          label="Name *"
+                          name="callerName"
+                          value={formData.callerName || ""}
+                          onChange={handleOnChange}
+                          placeholder="Your full name"
+                          required
+                        />
 
-              <div className="flex flex-col w-full items-center justify-center gap-2">
-                <p className="text-sm font-medium italic text-gray-700 text-center mt-2 md:w-[80%]">
-                  Note: All international calls are made via WhatsApp. Please
-                  provide a valid WhatsApp number for easy contact.
-                </p>
-                <p className="text-sm font-medium italic text-gray-700 text-center mt-2 md:w-[80%]">
-                  Songs performed during the call session are selected by our
-                  team. They are sung live to create a more personal and
-                  engaging experience.
-                </p>
-              </div>
-            </form>
-          )}
-        </div>
-      </section>
+                        <FormField
+                          label="Phone *"
+                          name="callerPhone"
+                          type="tel"
+                          value={formData.callerPhone || ""}
+                          onChange={handleOnChange}
+                          placeholder="+234 123 456 7890"
+                          required
+                        />
+
+                        <FormField
+                          label="Email *"
+                          name="callerEmail"
+                          type="email"
+                          value={formData.callerEmail || ""}
+                          onChange={handleOnChange}
+                          placeholder="your.email@example.com"
+                          required
+                        />
+
+                        <FormField
+                          label="Relationship *"
+                          name="relationship"
+                          value={formData.relationship || ""}
+                          onChange={handleOnChange}
+                          placeholder="Who are you to the recipient?"
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    {/* Recipient Info */}
+                    <div>
+                      <h2 className="gradient-text text-2xl font-semibold mb-4 pb-2">
+                        Recipient Information
+                      </h2>
+                      <div className="grid grid-cols-1 gap-4">
+                        <FormField
+                          label="Recipients Name *"
+                          name="recipientName"
+                          value={formData.recipientName || ""}
+                          onChange={handleOnChange}
+                          placeholder="Who should we call?"
+                          required
+                        />
+
+                        <FormField
+                          label="Phone *"
+                          name="recipientPhone"
+                          value={formData.recipientPhone || ""}
+                          onChange={handleOnChange}
+                          placeholder="+234 801 234 5678"
+                          required
+                        />
+
+                        <FormSelect
+                          label="Recipient Country *"
+                          name="country"
+                          value={formData.country || ""}
+                          onChange={handleOnChange}
+                          options={countries.map((country) => ({
+                            value: country,
+                            label: country,
+                          }))}
+                          required
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Call Details */}
+                  <div>
+                    <h2 className="gradient-text text-2xl font-semibold mb-4 pb-2">
+                      Call Details
+                    </h2>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                      <FormSelect
+                        label="Occasion *"
+                        name="occassion"
+                        value={formData.occassion || ""}
+                        onChange={handleOnChange}
+                        options={[
+                          { value: "", label: "Select Occasion" },
+                          ...services.map((service) => ({
+                            value: service.title,
+                            label: service.title,
+                          })),
+                        ]}
+                        required
+                      />
+
+                      <FormSelect
+                        label="Call Type *"
+                        name="callType"
+                        value={formData.callType || ""}
+                        onChange={handleOnChange}
+                        options={callType.map((type) => ({
+                          value: type.id,
+                          label: type.name,
+                        }))}
+                        required
+                      />
+
+                      <FormField
+                        label="Preferred Date *"
+                        name="callDate"
+                        type="date"
+                        value={formData.callDate || ""}
+                        onChange={handleOnChange}
+                        required
+                        min={new Date().toISOString().split("T")[0]}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Personal Touch */}
+                  <div>
+                    <h2 className="gradient-text text-2xl font-semibold mb-4 pb-2">
+                      Personal Touch
+                    </h2>
+                    <div className="grid grid-cols-1 gap-4">
+                      <FormTextArea
+                        label="Message *"
+                        name="message"
+                        value={formData.message || ""}
+                        onChange={handleOnChange}
+                        placeholder="What would you like us to say? Indicate 'None' if you don't have any special message"
+                        required
+                        rows={5}
+                      />
+
+                      <FormTextArea
+                        label="Special Instructions (Optional) *"
+                        name="specialInstruction"
+                        value={formData.specialInstruction || ""}
+                        onChange={handleOnChange}
+                        placeholder="Any special requests we should know about?"
+                        rows={3}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Contact Consent */}
+                  <div className="py-2 flex justify-between">
+                    <label className="flex flex-row items-center">
+                      <input
+                        type="checkbox"
+                        checked={formData.contactConsent === "yes"}
+                        onChange={() => handleCheckboxChange("contactConsent")}
+                        name="contactConsent"
+                        className="rounded border-gray-300 text-brand-end focus:ring-brand-end"
+                      />
+                      <span className="ml-2 text-sm text-gray-600">
+                        I agree to be contacted for updates about my booking and
+                        future offers.
+                      </span>
+                    </label>
+                  </div>
+
+                  {/* Call Recording */}
+                  <div className="py-2 flex justify-between">
+                    <label className="flex flex-row items-center">
+                      <input
+                        type="checkbox"
+                        checked={formData.callRecording === "yes"}
+                        onChange={() => handleCheckboxChange("callRecording")}
+                        name="callRecording"
+                        className="rounded border-gray-300 text-brand-end focus:ring-brand-end"
+                      />
+                      <span className="ml-2 text-sm text-gray-600">
+                        I want a recording of my call.
+                      </span>
+                    </label>
+                  </div>
+
+                  {/* Pricing summary */}
+                  {formData.occassion && (
+                    <div className="mt-6 p-4 md:p-6 gradient-background-soft space-y-2">
+                      <h3 className="font-semibold">Pricing Summary</h3>
+                      <div className="flex justify-between">
+                        <h2 className="text-sm sm:text-md md:text-lg font-bold text-brand-end max-w-[50%] md:max-w-full">{`${
+                          formData.occassion
+                        } (${
+                          formData.callType === "regular"
+                            ? "Regular"
+                            : "Special"
+                        })`}</h2>
+                        <div className="flex flex-row">
+                          <h2 className="text-sm sm:text-md md:text-lg font-bold text-brand-end">
+                            N{formData.price}
+                          </h2>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Submit button */}
+                  <div className="w-full flex justify-center">
+                    <button
+                      type="submit"
+                      className="btn-primary w-full md:w-[50%]"
+                      disabled={isSubmitting}
+                    >
+                      {isSubmitting ? (
+                        <div>
+                          <svg
+                            className="animate-spin h-5 w-5 text-white mx-auto"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                          >
+                            <circle
+                              className="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="4"
+                            />
+                            <path
+                              className="opacity-75"
+                              fill="currentColor"
+                              d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                            />
+                          </svg>
+                          <span className="sr-only">Loading...</span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-center">
+                          <p>Book my Call</p>
+                        </div>
+                      )}
+                    </button>
+                  </div>
+
+                  <div className="flex flex-col w-full items-center justify-center gap-2">
+                    <p className="text-sm font-medium italic text-gray-700 text-center mt-2 md:w-[80%]">
+                      Note: All international calls are made via WhatsApp.
+                      Please provide a valid WhatsApp number for easy contact.
+                    </p>
+                    <p className="text-sm font-medium italic text-gray-700 text-center mt-2 md:w-[80%]">
+                      Songs performed during the call session are selected by
+                      our team. They are sung live to create a more personal and
+                      engaging experience.
+                    </p>
+                  </div>
+                </form>
+              )}
+            </div>
+          </section>
+        </>
+      }
     </div>
   );
 }
