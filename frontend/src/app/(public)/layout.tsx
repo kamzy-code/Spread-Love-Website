@@ -3,6 +3,7 @@ import "@/app/globals.css";
 import Navbar from "@/components/ui/navbar";
 import Footer from "@/components/ui/footer";
 import Providers from "./providers";
+import Script from "next/script";
 
 export const metadata: Metadata = {
   title: {
@@ -35,6 +36,17 @@ export default function RootLayout({
           }),
         }}
       />
+
+      <Script
+        async
+        src="https://www.googletagmanager.com/gtag/js?id=G-QHC818RNLF"
+        strategy="afterInteractive"
+      ></Script>
+      <Script id="Google tag (gtag.js)">{` window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-QHC818RNLF');`}</Script>
     </Providers>
   );
 }
