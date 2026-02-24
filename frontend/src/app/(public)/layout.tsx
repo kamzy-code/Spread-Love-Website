@@ -39,14 +39,14 @@ export default function RootLayout({
 
       <Script
         async
-        src="https://www.googletagmanager.com/gtag/js?id=G-QHC818RNLF"
+        src="https://www.googletagmanager.com/gtag/js?id=G-XMGKXZXTKD"
         strategy="afterInteractive"
       ></Script>
       <Script id="Google tag (gtag.js)">{` window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
 
-  gtag('config', 'G-QHC818RNLF');`}</Script>
+  gtag('config', 'G-XMGKXZXTKD');`}</Script>
     </Providers>
   );
 }
