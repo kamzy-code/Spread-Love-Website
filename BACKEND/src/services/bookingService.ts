@@ -5,6 +5,7 @@ import { isLegacyBooking } from "../utils/bookingShape";
 import { callStatus, bookingStatusType } from "../types/genralTypes";
 import customerService from "./customerService";
 import couponService from "./couponService";
+import paymentService from "./paymentService";
 import { HttpError } from "../utils/httpError";
 
 const TERMINAL_CALL_STATUSES: callStatus[] = [
@@ -147,6 +148,44 @@ class BookingService {
     }
     // return null if booking couldn't be created
     return null;
+  }
+
+  // Single orchestration entry point for the customer booking flow: generate
+  // an ID, create (or re-use) the booking, then initialize the Paystack
+  // transaction — replaces what used to be 3 separate client round-trips.
+  // If payment initialization throws after the booking is already saved, the
+  // booking is not lost: it exists unpaid, and a retried checkout within 60
+  // minutes will hit the re-use path above and mint a fresh payment attempt
+  // on the same booking rather than creating a duplicate.
+  async checkoutBooking(
+    caller: ICaller,
+    recipients: IRecipient[],
+    contactConsent: string,
+    couponCode?: string
+  ) {
+    const bookingId = await this.generateBookingId();
+
+    const booking = await this.createBooking(
+      bookingId,
+      caller,
+      recipients,
+      contactConsent,
+      couponCode
+    );
+
+    if (!booking) {
+      throw new HttpError(500, "Failed to create booking");
+    }
+
+    const paymentData = await paymentService.initializePaymentForBooking(
+      booking,
+      booking.caller?.email || caller.email
+    );
+
+    return {
+      bookingId: booking.bookingId,
+      paymentURL: paymentData.authorization_url,
+    };
   }
 
   // fetch bookng by generated ID

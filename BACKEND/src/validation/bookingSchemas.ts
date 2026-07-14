@@ -45,7 +45,6 @@ export const recipientSchema = z.object({
 });
 
 export const createBookingSchema = z.object({
-  bookingId: z.string().min(1, "Booking ID is required"),
   caller: callerSchema,
   recipients: z
     .array(recipientSchema)

@@ -24,58 +24,38 @@ import { bookingLogger } from "../utils/logger";
 
 class BookingController {
   // Customer Endpoints
+  // Orchestrates ID generation, booking creation (or re-use), and Paystack
+  // initialization server-side in one request — see bookingService.checkoutBooking.
   async createBooking(req: Request, res: Response, next: NextFunction) {
     // body has already been validated against createBookingSchema by validateRequest
-    const {
-      bookingId,
-      caller,
-      recipients,
-      contactConsent = "no",
-      couponCode,
-    } = req.body;
+    const { caller, recipients, contactConsent = "no", couponCode } = req.body;
 
-    bookingLogger.info("Booking creation initiated", {
-      bookingId,
+    bookingLogger.info("Booking checkout initiated", {
       callerName: caller.name,
       action: "CREATE_BOOKING",
     });
 
     try {
-      // call the service class to create a new booking and save in the DB
-      const newBooking = await bookingService.createBooking(
-        bookingId,
+      const { bookingId, paymentURL } = await bookingService.checkoutBooking(
         caller,
         recipients,
         contactConsent,
         couponCode
       );
 
-      // return failed if booking creation was unsuccessful
-      if (!newBooking) {
-        bookingLogger.warn("Booking creation failed: Booking not created", {
-          bookingId,
-          callerName: caller.name,
-          action: "CREATE_BOOKING_FAILED",
-        });
-        next(new HttpError(500, "Failed to create booking"));
-        return;
-      }
-
-      // return successful with Booking ID if successful
       res.status(201).json({
         message: "Booking created successfully",
-        bookingId: newBooking.bookingId,
+        bookingId,
+        paymentURL,
       });
-      bookingLogger.info("Booking creation successful", {
-        id: newBooking._id,
-        bookingId: newBooking.bookingId,
+      bookingLogger.info("Booking checkout successful", {
+        bookingId,
         callerName: caller.name,
         action: "CREATE_BOOKING_SUCCESS",
       });
       return;
     } catch (error: any) {
-      bookingLogger.error(`Booking creation error: ${error.message}`, {
-        bookingId,
+      bookingLogger.error(`Booking checkout error: ${error.message}`, {
         callerName: caller.name,
         action: "CREATE_BOOKING_FAILED",
         error,
@@ -262,41 +242,6 @@ class BookingController {
           error,
         }
       );
-      next(error);
-      return;
-    }
-  }
-
-  async generateBookingID(req: Request, res: Response, next: NextFunction) {
-    bookingLogger.info("Generate Booking ID initiated", {
-      action: "GENERATE_BOOKING_ID",
-    });
-    try {
-      // call service method to generate ID
-      const ID = await bookingService.generateBookingId();
-
-      if (!ID) {
-        bookingLogger.warn("Generate Booking ID failed: ID not generated", {
-          action: "GENERATE_BOOKING_ID_FAILED",
-        });
-        next(new HttpError(500, "Failed to generate Booking ID"));
-        return;
-      }
-
-      // return the booking ID
-      res.status(200).json({
-        ID,
-      });
-      bookingLogger.info("Generate Booking ID successful", {
-        id: ID,
-        action: "GENERATE_BOOKING_ID_SUCCESS",
-      });
-      return;
-    } catch (error: any) {
-      bookingLogger.error(`Generate Booking ID error: ${error.message}`, {
-        action: "GENERATE_BOOKING_ID_FAILED",
-        error,
-      });
       next(error);
       return;
     }

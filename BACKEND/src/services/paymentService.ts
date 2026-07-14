@@ -1,7 +1,44 @@
 import https from "https";
 import { paymentLogger } from "../utils/logger";
+import { IBooking } from "../models/bookingModel";
+import { HttpError } from "../utils/httpError";
 
 export class PaymentService {
+  // Single entry point for resolving a booking's payment link — used by both
+  // the customer checkout flow and the admin "complete payment" action, so
+  // amount/reference logic only lives in one place.
+  async initializePaymentForBooking(
+    booking: IBooking,
+    email: string
+  ): Promise<{ authorization_url: string; access_code?: string; reference?: string }> {
+    const amount = booking.totalPrice ?? Number(booking.price);
+
+    if (!amount || Number.isNaN(amount)) {
+      throw new HttpError(400, "Booking has no valid price");
+    }
+
+    if (booking.paymentURL) {
+      return { authorization_url: booking.paymentURL };
+    }
+
+    // Paystack references are single-use. First-time initialize uses the
+    // bookingId; once a booking has been re-used (contents replaced,
+    // reuseCount > 0), mint a fresh reference instead of reusing one that
+    // may already be spent.
+    const reference =
+      booking.reuseCount > 0
+        ? `${booking.bookingId}-r${booking.reuseCount}`
+        : booking.paymentReference || booking.bookingId;
+
+    const response = await this.initialzeTransaction(email, amount, reference);
+
+    booking.paymentURL = response.data.authorization_url;
+    booking.paymentReference = reference;
+    await booking.save();
+
+    return response.data;
+  }
+
   async initialzeTransaction(
     email: string,
     amount: number,

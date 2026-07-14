@@ -66,7 +66,6 @@ router.post(
   validateRequest(createBookingSchema),
   bookingController.createBooking
 );
-router.get("/id/generate", bookingController.generateBookingID);
 router.get("/:bookingId", bookingController.getBookingByBookingId);
 router.put("/:bookingId/update", bookingController.updateBookingByCustomer);
 

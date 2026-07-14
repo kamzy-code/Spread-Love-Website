@@ -42,66 +42,21 @@ class PaymentController {
         return;
       }
 
-      // amount is always computed server-side from the booking record —
-      // never trust a client-supplied amount for a payment total.
-      const amount = booking.totalPrice ?? Number(booking.price);
-
-      if (!amount || Number.isNaN(amount)) {
-        paymentLogger.warn(
-          "Initialized transaction failed: Booking has no valid price",
-          {
-            email,
-            bookingId,
-            action: "INITIALIZE_TRANSACTION_FAILED",
-          }
-        );
-        next(new HttpError(400, "Booking has no valid price"));
-        return;
-      }
-
-      if (booking.paymentURL) {
-        res.status(200).json({
-          message: "Transaction initialized successfully",
-          data: { authorization_url: booking.paymentURL },
-        });
-
-        paymentLogger.info(
-          "Paystack initialize transaction URL retrieved from booking data",
-          {
-            email,
-            amount: amount * 100,
-            paymentURL: booking.paymentURL,
-            bookingId,
-            action: "INITIALIZE_TRANSACTION_SUCCESS",
-          }
-        );
-
-        return;
-      }
-
-      // first-time initialize uses bookingId as the reference. Paystack
-      // references are single-use, so once a booking has been re-used
-      // (contents replaced, reuseCount > 0) every subsequent initialize
-      // mints a fresh `${bookingId}-r${reuseCount}` reference instead of
-      // reusing a reference that may already be spent.
-      const reference =
-        booking.reuseCount > 0
-          ? `${booking.bookingId}-r${booking.reuseCount}`
-          : booking.paymentReference || bookingId;
-
-      const response = await paymentService.initialzeTransaction(
-        email as string,
-        amount,
-        reference
+      const data = await paymentService.initializePaymentForBooking(
+        booking,
+        email as string
       );
 
-      booking.paymentURL = response.data.authorization_url;
-      booking.paymentReference = reference;
-      await booking.save();
+      paymentLogger.info("Transaction initialized successfully", {
+        email,
+        bookingId,
+        paymentURL: data.authorization_url,
+        action: "INITIALIZE_TRANSACTION_SUCCESS",
+      });
 
       res.status(200).json({
         message: "Transaction initialized successfully",
-        data: response.data,
+        data,
       });
       return;
     } catch (error: any) {
