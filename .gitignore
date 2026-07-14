@@ -1,5 +1,8 @@
 # Root
 .env
+/plan
+/prod_snapshot
+/scripts
 
 # Node
 node_modules/
@@ -8,6 +11,8 @@ node_modules/
 /backend/dist/
 /backend/node_modules/
 /backend/.env
+/backend/src/scripts/refresh-dev-db.sh
+/backend/src/prod_snapshot
 
 # Frontend
 /frontend/.next/

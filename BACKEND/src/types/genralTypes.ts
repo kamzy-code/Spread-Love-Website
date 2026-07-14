@@ -45,3 +45,16 @@ export type callStatus =
   | "regular"
   | "special"
 
+
+export const RELATIONSHIP_OPTIONS = [
+  "Partner",
+  "Parent",
+  "Sibling",
+  "Friend",
+  "Colleague",
+  "Other",
+] as const;
+
+export type bookingStatusType = "pending" | "in_progress" | "completed";
+export type genderType = "male" | "female" | "prefer_not_to_say";
+export type RelationshipOption = (typeof RELATIONSHIP_OPTIONS)[number];

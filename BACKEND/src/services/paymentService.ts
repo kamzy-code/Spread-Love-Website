@@ -5,7 +5,7 @@ export class PaymentService {
   async initialzeTransaction(
     email: string,
     amount: number,
-    bookingId: string
+    reference: string
   ): Promise<any> {
     const baseAmount = amount * 100;
     const secret = process.env.PAYSTACK_SECRET;
@@ -13,7 +13,7 @@ export class PaymentService {
     const params = JSON.stringify({
       email,
       amount: baseAmount,
-      reference: bookingId,
+      reference,
     });
 
     const options = {
@@ -44,7 +44,7 @@ export class PaymentService {
               {
                 email,
                 amount: baseAmount,
-                bookingId,
+                reference,
                 statusCode: res.statusCode,
                 response: parsed,
                 action: "INITIALIZE_TRANSACTION_SUCCESS",
@@ -66,7 +66,7 @@ export class PaymentService {
             paymentLogger.error("Failed to parse Paystack response", {
               email,
               amount: baseAmount,
-              bookingId,
+              reference,
               error: err.message,
               action: "INITIALIZE_TRANSACTION_PARSE_ERROR",
             });
@@ -79,7 +79,7 @@ export class PaymentService {
         paymentLogger.error("Paystack request error", {
           email,
           amount: baseAmount,
-          bookingId,
+          reference,
           error: error.message,
           action: "INITIALIZE_TRANSACTION_REQUEST_ERROR",
         });

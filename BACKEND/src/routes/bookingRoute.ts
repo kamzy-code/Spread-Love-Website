@@ -1,6 +1,8 @@
 import express from "express";
 import bookingController from "../controllers/bookingController";
 import { authMiddleware, checkRole } from "../middlewares/authMiddleware";
+import { validateRequest } from "../middlewares/validateRequest";
+import { createBookingSchema } from "../validation/bookingSchemas";
 
 const router = express.Router();
 
@@ -44,6 +46,12 @@ router.put(
   checkRole("superadmin", "salesrep", "callrep"),
   bookingController.updateBookingStatus
 );
+router.put(
+  "/admin/:bookingId/recipients/:recipientId/status",
+  authMiddleware,
+  checkRole("superadmin", "salesrep", "callrep"),
+  bookingController.updateBookingStatus
+);
 
 router.delete(
   "/admin/:bookingId",
@@ -53,7 +61,11 @@ router.delete(
 );
 
 // customer endpoints
-router.post("/create", bookingController.createBooking);
+router.post(
+  "/create",
+  validateRequest(createBookingSchema),
+  bookingController.createBooking
+);
 router.get("/id/generate", bookingController.generateBookingID);
 router.get("/:bookingId", bookingController.getBookingByBookingId);
 router.put("/:bookingId/update", bookingController.updateBookingByCustomer);

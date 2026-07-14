@@ -1,51 +1,138 @@
 import { SortOrder, Types } from "mongoose";
-import { Booking } from "../models/bookingModel";
-import { callType, occassionType } from "../types/genralTypes";
+import { Booking, ICaller, IRecipient } from "../models/bookingModel";
 import { getLeastLoadedRep } from "../utils/getLeastLoadedRep";
+import { isLegacyBooking } from "../utils/bookingShape";
+import { callStatus, bookingStatusType } from "../types/genralTypes";
+import customerService from "./customerService";
+import couponService from "./couponService";
+import { HttpError } from "../utils/httpError";
+
+const TERMINAL_CALL_STATUSES: callStatus[] = [
+  "successful",
+  "unsuccessful",
+  "rejected",
+];
+
+const deriveBookingStatus = (recipients: IRecipient[]): bookingStatusType => {
+  const terminalCount = recipients.filter(
+    (r) => r.callStatus && TERMINAL_CALL_STATUSES.includes(r.callStatus)
+  ).length;
+
+  if (terminalCount === 0) return "pending";
+  if (terminalCount === recipients.length) return "completed";
+  return "in_progress";
+};
 
 class BookingService {
+  // Looks for a booking from the same caller within the last 60 minutes that
+  // has a recipient matching (name + phone + callType) one of the newly
+  // submitted recipients. Used to catch an abandoned/failed-payment
+  // resubmission instead of creating a duplicate record.
+  async findReusableMatch(caller: ICaller, recipients: IRecipient[]) {
+    const sixtyMinutesAgo = new Date(Date.now() - 60 * 60 * 1000);
+
+    const candidates = await Booking.find({
+      createdAt: { $gte: sixtyMinutesAgo },
+      $or: [
+        { "caller.phone": caller.phone, "caller.email": caller.email },
+        { callerPhone: caller.phone, callerEmail: caller.email },
+      ],
+    }).sort({ createdAt: -1 });
+
+    for (const candidate of candidates) {
+      const candidateRecipients = isLegacyBooking(candidate)
+        ? [
+            {
+              recipientName: candidate.recipientName,
+              recipientPhone: candidate.recipientPhone,
+              callType: candidate.callType,
+            },
+          ]
+        : candidate.recipients || [];
+
+      const hasMatch = candidateRecipients.some((cr) =>
+        recipients.some(
+          (r) =>
+            cr.recipientName === r.recipientName &&
+            cr.recipientPhone === r.recipientPhone &&
+            cr.callType === r.callType
+        )
+      );
+
+      if (hasMatch) return candidate;
+    }
+
+    return null;
+  }
+
   async createBooking(
     bookingId: string,
-    callerName: string,
-    callerPhone: string,
-    callerEmail: string,
-    relationship: string,
-    recipientName: string,
-    recipientPhone: string,
-    country: string,
-    occassion: occassionType,
-    callType: callType,
-    callDate: Date,
-    price: string,
-    message: string,
-    specialInstruction: string,
+    caller: ICaller,
+    recipients: IRecipient[],
     contactConsent: string,
-    callRecording: string
+    couponCode?: string
   ) {
-    // create a new booking and save in the DB
+    const rawTotal = recipients.reduce((sum, r) => sum + r.price, 0);
+
+    let totalPrice = rawTotal;
+    let discountAmount = 0;
+    let appliedCouponCode: string | undefined;
+
+    if (couponCode) {
+      const validation = await couponService.validateCoupon(couponCode);
+      if (!validation.valid || !validation.coupon) {
+        throw new HttpError(400, validation.reason || "Invalid coupon code");
+      }
+      discountAmount = couponService.computeDiscount(
+        validation.coupon,
+        rawTotal
+      );
+      totalPrice = rawTotal - discountAmount;
+      appliedCouponCode = validation.coupon.code;
+    }
+
+    const match = await this.findReusableMatch(caller, recipients);
+
+    // unpaid near-duplicate: re-use the existing bookingId/_id, replace its
+    // contents, and force the next payment initialize to mint a fresh
+    // Paystack reference (references are single-use).
+    if (match && match.paymentStatus !== "paid") {
+      match.caller = caller;
+      match.recipients = recipients;
+      match.totalPrice = totalPrice;
+      match.couponCode = appliedCouponCode;
+      match.discountAmount = discountAmount || undefined;
+      match.bookingStatus = "pending";
+      match.contactConsent = contactConsent;
+      match.reuseCount = (match.reuseCount || 0) + 1;
+      match.paymentURL = "";
+      match.paymentStatus = "pending";
+      const saved = await match.save();
+      if (appliedCouponCode) await couponService.incrementUsage(appliedCouponCode);
+      return saved;
+    }
+
+    // paid near-duplicate: don't touch the paid booking — create a new one
+    // and flag it for rep/admin visibility.
     const newBooking = await Booking.create({
       bookingId,
-      callerName,
-      callerPhone,
-      callerEmail,
-      relationship,
-      recipientName,
-      recipientPhone,
-      country,
-      occassion,
-      callType,
-      callDate,
-      price,
-      message,
-      specialInstruction,
+      caller,
+      recipients,
+      totalPrice,
+      couponCode: appliedCouponCode,
+      discountAmount: discountAmount || undefined,
+      bookingStatus: "pending",
+      reuseCount: 0,
+      duplicateOfPaid: match ? true : false,
       contactConsent,
-      callRecording,
       confirmationMailsent: false,
       paymentStatus: "pending",
     });
 
     // assign booking to a rep if Booking was created successfully
     if (newBooking) {
+      if (appliedCouponCode) await couponService.incrementUsage(appliedCouponCode);
+
       // get the rep with the lest amount of bookings
       const assignedRep = await getLeastLoadedRep();
 
@@ -68,6 +155,20 @@ class BookingService {
     return await Booking.findOne({ bookingId }).select("-__v -updatedAt");
   }
 
+  // Paystack references diverge from bookingId once a booking is re-used
+  // (Task 10). Try the reference field first, then fall back to treating
+  // the reference as a bookingId — covers legacy/first-payment bookings
+  // where they're still equal.
+  async getBookingByPaymentReference(reference: string) {
+    const byReference = await Booking.findOne({
+      paymentReference: reference,
+    }).select("-__v -updatedAt");
+
+    if (byReference) return byReference;
+
+    return this.getBookingByBookingId(reference);
+  }
+
   // fetch booking by MongoDB ID
   async getBookingById(bookingId: string, userId: string, role: string) {
     // check users role
@@ -87,6 +188,45 @@ class BookingService {
       path: "assignedRep",
       select: "-__v -createdAt -updatedAt", // Optional: exclude sensitive fields
     });
+  }
+
+  // Update a call's status. For legacy (flat-shape) bookings this writes the
+  // top-level `status` field directly. For v2 bookings it updates the
+  // matching recipient's `callStatus` and recomputes `bookingStatus` in the
+  // same write — this is the single write path, never set bookingStatus
+  // directly elsewhere.
+  async updateCallStatus(
+    bookingId: string,
+    userId: string,
+    role: string,
+    newStatus: callStatus,
+    recipientId?: string
+  ) {
+    const booking = await this.getBookingById(bookingId, userId, role);
+    if (!booking) return null;
+
+    if (isLegacyBooking(booking) || !recipientId) {
+      booking.status = newStatus;
+      return await booking.save();
+    }
+
+    const recipient = booking.recipients?.find(
+      (r) => r._id?.toString() === recipientId
+    );
+    if (!recipient) return null;
+
+    recipient.callStatus = newStatus;
+
+    const wasCompleted = booking.bookingStatus === "completed";
+    booking.bookingStatus = deriveBookingStatus(booking.recipients!);
+
+    const saved = await booking.save();
+
+    if (!wasCompleted && booking.bookingStatus === "completed") {
+      await customerService.recordCompletedBooking(booking.caller!);
+    }
+
+    return saved;
   }
 
   // Delete booking by MongoDB ID
@@ -151,10 +291,24 @@ class BookingService {
       // pass the matchStage object to filter the documents based on the keys in the matchstage objet
       { $match: matchStage },
 
-      // this groups the returned documents that matches with the matchsatge based on their status i.e assigned, succesfful, pending, etc. and retuns the sum count for each group.
+      // legacy (flat) bookings count by their single `status`; v2 bookings
+      // count per-call via each recipient's `callStatus` — one booking with
+      // 3 recipients contributes up to 3 status entries here.
+      {
+        $project: {
+          effectiveStatuses: {
+            $cond: [
+              { $gt: [{ $size: { $ifNull: ["$recipients", []] } }, 0] },
+              "$recipients.callStatus",
+              ["$status"],
+            ],
+          },
+        },
+      },
+      { $unwind: "$effectiveStatuses" },
       {
         $group: {
-          _id: "$status",
+          _id: "$effectiveStatuses",
           count: { $sum: 1 },
         },
       },
@@ -169,9 +323,22 @@ class BookingService {
     const result = await Booking.aggregate([
       { $match: matchStage },
       {
+        // v2 bookings carry a numeric totalPrice; legacy bookings only have
+        // the string `price` field.
+        $project: {
+          effectivePrice: {
+            $cond: [
+              { $ifNull: ["$totalPrice", false] },
+              "$totalPrice",
+              { $toDouble: { $ifNull: ["$price", "0"] } },
+            ],
+          },
+        },
+      },
+      {
         $group: {
           _id: null,
-          totalRevenue: { $sum: { $toDouble: "$price" } },
+          totalRevenue: { $sum: "$effectivePrice" },
         },
       },
     ]);

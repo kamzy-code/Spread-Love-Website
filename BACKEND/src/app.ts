@@ -7,6 +7,7 @@ import adminRouter from "./routes/adminRoute";
 import emailRouter from "./routes/emailRoute";
 import logRouter from "./routes/logRouter";
 import paymentRouter from "./routes/paymentRoute";
+import couponRouter from "./routes/couponRoute";
 import rateLimit from "express-rate-limit";
 import cookieParser from "cookie-parser";
 import { errorHandler } from "./middlewares/errorHandler";
@@ -66,6 +67,7 @@ app.use("/api/rep", adminRouter);
 app.use("/api/email", emailRouter);
 app.use("/api/logs", logRouter);
 app.use("/api/payment", paymentRouter);
+app.use("/api/coupon", couponRouter);
 
 app.use((req, res) => {
   res.status(404).json({ message: "Route not found" });

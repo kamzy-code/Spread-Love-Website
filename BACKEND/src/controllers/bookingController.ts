@@ -2,10 +2,10 @@ import { Request, Response, NextFunction } from "express";
 import bookingService from "../services/bookingService";
 import { getLeastLoadedRep } from "../utils/getLeastLoadedRep";
 import { callStatus } from "../types/genralTypes";
+import { isLegacyBooking } from "../utils/bookingShape";
 import { AuthRequest } from "../middlewares/authMiddleware";
 import { Types } from "mongoose";
 import { castSortOder } from "../utils/castSortOrder";
-import { callType, occassionType } from "../types/genralTypes";
 import getDateRange from "../utils/getDateRange";
 import adminService from "../services/adminService";
 import {
@@ -21,79 +21,47 @@ import {
 } from "date-fns";
 import { HttpError } from "../utils/httpError";
 import { bookingLogger } from "../utils/logger";
-import { url } from "inspector";
-import { query } from "winston";
 
 class BookingController {
   // Customer Endpoints
   async createBooking(req: Request, res: Response, next: NextFunction) {
+    // body has already been validated against createBookingSchema by validateRequest
     const {
       bookingId,
-      callerName,
-      callerPhone,
-      callerEmail,
-      relationship,
-      recipientName,
-      recipientPhone,
-      country,
-      occassion,
-      callType,
-      callDate,
-      price,
-      message,
-      specialInstruction,
+      caller,
+      recipients,
       contactConsent = "no",
-      callRecording = "no",
+      couponCode,
     } = req.body;
 
     bookingLogger.info("Booking creation initiated", {
       bookingId,
-      callerName,
+      callerName: caller.name,
       action: "CREATE_BOOKING",
     });
-
-    // return error if booking ID wasn't submitted
-    if (!bookingId) {
-      bookingLogger.warn("Booking creation failed: Booking ID required", {
-        action: "CREATE_BOOKING_FAILED",
-      });
-      next(new HttpError(400, "Booking ID required"));
-      return;
-    }
 
     try {
       // call the service class to create a new booking and save in the DB
       const newBooking = await bookingService.createBooking(
         bookingId,
-        callerName,
-        callerPhone,
-        callerEmail,
-        relationship,
-        recipientName,
-        recipientPhone,
-        country,
-        occassion as occassionType,
-        callType as callType,
-        callDate as Date,
-        price,
-        message,
-        specialInstruction,
+        caller,
+        recipients,
         contactConsent,
-        callRecording
+        couponCode
       );
 
       // return failed if booking creation was unsuccessful
       if (!newBooking) {
         bookingLogger.warn("Booking creation failed: Booking not created", {
           bookingId,
-          callerName,
+          callerName: caller.name,
           action: "CREATE_BOOKING_FAILED",
         });
         next(new HttpError(500, "Failed to create booking"));
         return;
       }
 
-      // retrun successful with Booking ID if successful
+      // return successful with Booking ID if successful
       res.status(201).json({
         message: "Booking created successfully",
         bookingId: newBooking.bookingId,
@@ -101,14 +69,14 @@ class BookingController {
       bookingLogger.info("Booking creation successful", {
         id: newBooking._id,
         bookingId: newBooking.bookingId,
-        callerName,
+        callerName: caller.name,
         action: "CREATE_BOOKING_SUCCESS",
       });
       return;
     } catch (error: any) {
       bookingLogger.error(`Booking creation error: ${error.message}`, {
         bookingId,
-        callerName,
+        callerName: caller.name,
         action: "CREATE_BOOKING_FAILED",
         error,
       });
@@ -236,7 +204,11 @@ class BookingController {
           const disallowedStatus = ["successful"];
 
           // If the booking status is in the disallowedStatus array, return an error and stop further processing
-          if (disallowedStatus.includes(booking.status as string)) {
+          const isBookingLocked = isLegacyBooking(booking)
+            ? disallowedStatus.includes(booking.status as string)
+            : booking.bookingStatus === "completed";
+
+          if (isBookingLocked) {
             bookingLogger.warn(
               `Update booking by customer failed: Can't update booking with status ${booking.status}`,
               {
@@ -498,10 +470,10 @@ class BookingController {
 
     // create an empty query object for the DB search
     const searchQuery: any = {};
+    // each entry is an independent $or block; combined at the end via $and
+    // so legacy-shape and v2-shape (recipients[]) bookings both match.
+    const andConditions: any[] = [];
 
-    // add query fields to the query object only if they exist.
-    if (status) searchQuery.status = status;
-    if (occassion) searchQuery.occassion = occassion;
     if (paymentStatus) searchQuery.paymentStatus = paymentStatus;
     if (assignedRep)
       searchQuery.assignedRep = new Types.ObjectId(assignedRep as string);
@@ -513,13 +485,40 @@ class BookingController {
       }
     }
 
-    if (callType) searchQuery.callType = callType;
-    if (country) {
-      if (country === "local") {
-        searchQuery.country = /nigeria/i; // case-insensitive match for "nigeria"
-      } else if (country === "international") {
-        searchQuery.country = { $not: /nigeria/i }; // case-insensitive "not nigeria"
-      }
+    // status/occassion/callType/country can live on the flat (legacy) fields
+    // or on a recipient inside recipients[] (v2) — $elemMatch keeps all of a
+    // v2 filter combination scoped to the same recipient.
+    const legacyMatch: any = {};
+    const recipientMatch: any = {};
+    let hasShapeFilter = false;
+
+    if (status) {
+      legacyMatch.status = status;
+      recipientMatch.callStatus = status;
+      hasShapeFilter = true;
+    }
+    if (occassion) {
+      legacyMatch.occassion = occassion;
+      recipientMatch.occassion = occassion;
+      hasShapeFilter = true;
+    }
+    if (callType) {
+      legacyMatch.callType = callType;
+      recipientMatch.callType = callType;
+      hasShapeFilter = true;
+    }
+    if (country === "local" || country === "international") {
+      const countryPattern =
+        country === "local" ? /nigeria/i : { $not: /nigeria/i };
+      legacyMatch.country = countryPattern;
+      recipientMatch.country = countryPattern;
+      hasShapeFilter = true;
+    }
+
+    if (hasShapeFilter) {
+      andConditions.push({
+        $or: [legacyMatch, { recipients: { $elemMatch: recipientMatch } }],
+      });
     }
 
     const dateRange = getDateRange(
@@ -536,22 +535,39 @@ class BookingController {
           $lte: dateRange.end,
         };
       } else {
-        searchQuery.callDate = {
-          $gte: dateRange.start,
-          $lte: dateRange.end,
-        };
+        andConditions.push({
+          $or: [
+            { callDate: { $gte: dateRange.start, $lte: dateRange.end } },
+            {
+              "recipients.callDate": {
+                $gte: dateRange.start,
+                $lte: dateRange.end,
+              },
+            },
+          ],
+        });
       }
     }
 
     if (search) {
       const regex = new RegExp(req.query.search as string, "i");
-      searchQuery.$or = [
-        { callerName: regex },
-        { bookingId: regex },
-        { callerPhone: regex },
-        { recipientName: regex },
-        { recipientPhone: regex },
-      ];
+      andConditions.push({
+        $or: [
+          { callerName: regex },
+          { bookingId: regex },
+          { callerPhone: regex },
+          { recipientName: regex },
+          { recipientPhone: regex },
+          { "caller.name": regex },
+          { "caller.phone": regex },
+          { "recipients.recipientName": regex },
+          { "recipients.recipientPhone": regex },
+        ],
+      });
+    }
+
+    if (andConditions.length > 0) {
+      searchQuery.$and = andConditions;
     }
 
     const skip = (parseInt(page as string) - 1) * parseInt(limit as string);
@@ -623,8 +639,9 @@ class BookingController {
     res: Response,
     next: NextFunction
   ) {
-    // extract the booking ID, new status and user object.
-    const { bookingId } = req.params;
+    // extract the booking ID, optional recipient ID (v2 bookings only),
+    // new status and user object.
+    const { bookingId, recipientId } = req.params;
     const { status } = req.body;
     const user = req.user!;
 
@@ -632,6 +649,7 @@ class BookingController {
       userId: user.userId,
       role: user.role,
       id: bookingId,
+      recipientId,
       status,
       action: "UPDATE_BOOKING_STATUS",
     });
@@ -640,6 +658,7 @@ class BookingController {
       // create an array of allowed status value
       const allowedStatus = [
         "pending",
+        "assigned",
         "successful",
         "rejected",
         "rescheduled",
@@ -659,10 +678,12 @@ class BookingController {
         return;
       }
 
-      const booking = await bookingService.getBookingById(
+      const booking = await bookingService.updateCallStatus(
         bookingId,
         user.userId,
-        user.role
+        user.role,
+        status,
+        recipientId
       );
 
       if (!booking) {
@@ -675,9 +696,6 @@ class BookingController {
         next(new HttpError(404, "Booking not found"));
         return;
       }
-
-      booking.status = status;
-      await booking.save();
 
       res.status(201).json({ message: "Status updated" });
       bookingLogger.info("Update booking status successful", {
@@ -799,17 +817,24 @@ class BookingController {
 
       // create an array of booking that can't be updated based on their status
       const disallowedStatuses = ["successful", "unsuccessful", "rejected"];
+      const currentStatus = isLegacyBooking(booking)
+        ? (booking.status as string)
+        : booking.bookingStatus;
 
       // check if the booking has a status that's part of the disallowed statuses and return error message without saving the updated booking object.
-      if (disallowedStatuses.includes(booking.status as string)) {
+      const isBlocked = isLegacyBooking(booking)
+        ? disallowedStatuses.includes(currentStatus as string)
+        : currentStatus === "completed";
+
+      if (isBlocked) {
         bookingLogger.warn(
-          `Assign call to rep failed: Can't re-assign booking with status ${booking.status}`,
+          `Assign call to rep failed: Can't re-assign booking with status ${currentStatus}`,
           {
             userId: user.userId,
             role: user.role,
             id: bookingId,
             repId: targetRep,
-            status: booking.status,
+            status: currentStatus,
             action: "ASSIGN_CALL_TO_REP_FAILED",
           }
         );
@@ -817,14 +842,17 @@ class BookingController {
         next(
           new HttpError(
             400,
-            ` Can't re-assign booking with status ${booking.status}`
+            ` Can't re-assign booking with status ${currentStatus}`
           )
         );
         return;
       }
 
-      // else update the booking status to pending if the booking status is not part of the disallowed statuses, save and return success message with the new rep ID
-      booking.status = "pending" as callStatus;
+      // legacy bookings reset to pending on reassignment; v2 per-recipient
+      // call statuses are untouched by a rep reassignment
+      if (isLegacyBooking(booking)) {
+        booking.status = "pending" as callStatus;
+      }
       await booking.save();
 
       res.status(200).json({ message: "Booking assigned", repId: targetRep });

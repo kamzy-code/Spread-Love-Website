@@ -5,20 +5,18 @@ import { HttpError } from "../utils/httpError";
 import bookingService from "../services/bookingService";
 class PaymentController {
   async initializeTransaction(req: Request, res: Response, next: NextFunction) {
-    const { email, amount } = req.query;
+    const { email } = req.query;
     const { bookingId } = req.params;
 
     paymentLogger.info("Initialize transaction triggered", {
       email,
-      amount,
       bookingId,
       action: "INITIALIZE_TRANSACTION",
     });
 
-    if (!email || !amount || !bookingId) {
+    if (!email || !bookingId) {
       paymentLogger.warn("Initialized transaction failed: Missing fields", {
         email,
-        amount,
         bookingId,
         action: "INITIALIZE_TRANSACTION_FAILED",
       });
@@ -35,13 +33,29 @@ class PaymentController {
           "Initialized transaction failed: Booking not found",
           {
             email,
-            amount,
             bookingId,
             action: "INITIALIZE_TRANSACTION_FAILED",
           }
         );
 
         next(new HttpError(400, "Booking not found"));
+        return;
+      }
+
+      // amount is always computed server-side from the booking record —
+      // never trust a client-supplied amount for a payment total.
+      const amount = booking.totalPrice ?? Number(booking.price);
+
+      if (!amount || Number.isNaN(amount)) {
+        paymentLogger.warn(
+          "Initialized transaction failed: Booking has no valid price",
+          {
+            email,
+            bookingId,
+            action: "INITIALIZE_TRANSACTION_FAILED",
+          }
+        );
+        next(new HttpError(400, "Booking has no valid price"));
         return;
       }
 
@@ -55,7 +69,7 @@ class PaymentController {
           "Paystack initialize transaction URL retrieved from booking data",
           {
             email,
-            amount: Number(amount) * 100,
+            amount: amount * 100,
             paymentURL: booking.paymentURL,
             bookingId,
             action: "INITIALIZE_TRANSACTION_SUCCESS",
@@ -65,13 +79,24 @@ class PaymentController {
         return;
       }
 
+      // first-time initialize uses bookingId as the reference. Paystack
+      // references are single-use, so once a booking has been re-used
+      // (contents replaced, reuseCount > 0) every subsequent initialize
+      // mints a fresh `${bookingId}-r${reuseCount}` reference instead of
+      // reusing a reference that may already be spent.
+      const reference =
+        booking.reuseCount > 0
+          ? `${booking.bookingId}-r${booking.reuseCount}`
+          : booking.paymentReference || bookingId;
+
       const response = await paymentService.initialzeTransaction(
         email as string,
-        Number(amount),
-        bookingId as string
+        amount,
+        reference
       );
 
       booking.paymentURL = response.data.authorization_url;
+      booking.paymentReference = reference;
       await booking.save();
 
       res.status(200).json({
@@ -82,7 +107,6 @@ class PaymentController {
     } catch (error: any) {
       paymentLogger.error(`Initialize transaction failed: ${error.message}`, {
         email,
-        amount,
         bookingId,
         error: error.message,
         action: "INITIALIZE_TRANSACTION_FAILED",
@@ -112,7 +136,7 @@ class PaymentController {
       return;
     }
 
-    const booking = await bookingService.getBookingByBookingId(
+    const booking = await bookingService.getBookingByPaymentReference(
       reference as string
     );
 
@@ -130,10 +154,12 @@ class PaymentController {
         reference as string
       );
 
+      const expectedAmount = booking.totalPrice ?? Number(booking.price);
+
       if (
         result.status &&
         result.data.status === "success" &&
-        result.data.amount >= Number(booking.price) * 100
+        result.data.amount >= expectedAmount * 100
       ) {
         booking.paymentStatus = "paid";
         booking.paymentReference = reference as string;
