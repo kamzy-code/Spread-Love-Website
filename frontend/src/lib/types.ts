@@ -78,6 +78,54 @@ export interface Booking {
   createdAt: string;
 }
 
+// v2 booking creation (multi-recipient checkout flow)
+export interface BookingCaller {
+  name: string;
+  phone: string;
+  email: string;
+  gender: "male" | "female" | "prefer_not_to_say" | "";
+  relationship: string;
+}
+
+export interface BookingRecipient {
+  recipientName: string;
+  recipientPhone: string;
+  country: string;
+  occassion: string;
+  callType: string;
+  callDate: string;
+  price: number;
+  message?: string;
+  specialInstruction?: string;
+  callRecording?: "yes" | "no";
+}
+
+export interface CreateBookingPayload {
+  caller: BookingCaller;
+  recipients: BookingRecipient[];
+  contactConsent?: "yes" | "no";
+  couponCode?: string;
+}
+
+export interface CreateBookingResponse {
+  message: string;
+  bookingId: string;
+  paymentURL: string;
+}
+
+export interface CouponValidationResponse {
+  valid: boolean;
+  message?: string;
+  discountAmount?: number;
+  newTotal?: number;
+}
+
+// Local form state — same shape as the API types above, minus fields that
+// are derived rather than user-entered (e.g. recipient price is computed
+// from occassion/callType/country, not typed in).
+export type CallerFormState = BookingCaller;
+export type RecipientFormState = Omit<BookingRecipient, "price">;
+
 export interface BookingFilters {
   status?: string;
   callType?: string;

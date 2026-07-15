@@ -121,6 +121,11 @@ body {
     @apply bg-clip-text text-transparent;
   }
 
+    .gradient-text-soft {
+    background: var(--gradient-soft);
+    @apply bg-clip-text text-transparent;
+  }
+
   .section-padding {
     @apply px-4 sm:px-6 lg:px-8;
   }

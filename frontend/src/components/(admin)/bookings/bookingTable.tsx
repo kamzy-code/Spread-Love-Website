@@ -64,7 +64,6 @@ export default function BookingTable() {
   );
   const completePaymentMutation = useInitializeTransaction({
     email: selectedBooking?.callerEmail as string,
-    price: selectedBooking?.price as string,
   });
 
   const tableColumns = getColumnsByRole(

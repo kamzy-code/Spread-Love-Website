@@ -1,4 +1,5 @@
 import React from "react";
+import { wordCount } from "@/lib/wordCount";
 
 interface FormFieldProps {
   label: string;
@@ -83,6 +84,7 @@ interface FormTextAreaProps {
   placeholder?: string;
   required?: boolean;
   rows?: number;
+  maxWords?: number;
 }
 
 export const FormTextArea: React.FC<FormTextAreaProps> = ({
@@ -93,10 +95,25 @@ export const FormTextArea: React.FC<FormTextAreaProps> = ({
   placeholder,
   required = false,
   rows = 4,
+  maxWords,
 }) => {
+  const count = maxWords !== undefined ? wordCount(value) : undefined;
+  const overLimit = maxWords !== undefined && count! > maxWords;
+
   return (
     <div className="flex flex-col space-y-2">
-      <label className="text-gray-700 font-medium">{label}</label>
+      <div className="flex items-center justify-between">
+        <label className="text-gray-700 font-medium">{label}</label>
+        {maxWords !== undefined && (
+          <span
+            className={`text-xs ${
+              overLimit ? "text-red-500 font-semibold" : "text-gray-400"
+            }`}
+          >
+            {count}/{maxWords} words
+          </span>
+        )}
+      </div>
       <textarea
         name={name}
         value={value}
@@ -104,7 +121,9 @@ export const FormTextArea: React.FC<FormTextAreaProps> = ({
         required={required}
         rows={rows}
         placeholder={placeholder}
-        className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent placeholder:text-gray-400 resize-none"
+        className={`px-4 py-3 border rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent placeholder:text-gray-400 resize-none ${
+          overLimit ? "border-red-400" : "border-gray-300"
+        }`}
       />
     </div>
   );

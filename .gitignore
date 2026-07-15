@@ -3,6 +3,7 @@
 /plan
 /prod_snapshot
 /scripts
+/.claude
 
 # Node
 node_modules/

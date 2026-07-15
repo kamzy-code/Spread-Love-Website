@@ -1,40 +1,23 @@
 import { useMutation } from "@tanstack/react-query";
 import { buildQueryParams } from "@/lib/buildQueryParams";
+import { apiCall } from "@/lib/apiClient";
 
-const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-
-export const useInitializeTransaction = (info: {
-  email: string;
-  price: string;
-}) => {
+// Used by admin's "Complete Payment" action to (re)generate a payment link
+// for an existing booking. The customer checkout flow no longer calls this —
+// createBooking now returns a ready-to-use paymentURL in one request.
+export const useInitializeTransaction = (info: { email: string }) => {
   return useMutation({
     mutationFn: async (bookingId: string) => {
-      const query = buildQueryParams({ email: info.email, amount: info.price });
-      const res = await fetch(
-        `${apiUrl}/payment/initialize/${bookingId}?${query}`,
-        {
-          credentials: "include",
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+      const query = buildQueryParams({ email: info.email });
+      const result = await apiCall(
+        `/payment/initialize/${bookingId}?${query}`,
+        { method: "POST" }
       );
-
-      if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error.message || "Failed to initialize transaction");
-      }
-
-      const data = await res.json();
-      return data.data;
+      return result.data;
     },
 
     retry: 3,
 
-    onSuccess: (data) => {
-      console.log(data);
-    },
     onError: (error) => {
       console.error(error.message || "Failed to initialize transaction");
     },
@@ -44,24 +27,9 @@ export const useInitializeTransaction = (info: {
 export const useVerifyTransaction = (reference: string) => {
   return useMutation({
     mutationFn: async () => {
-      const response = await fetch(
-        `${apiUrl}/payment/verify-payment?reference=${reference}`,
-        {
-          method: "GET",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      const data = await response.json();
-      if (!response.ok) {
-        // Attach status and statusText for more context if needed
-        throw new Error(
-          data.message || response.statusText || "Failed to verify transaction"
-        );
-      }
-      return data;
+      return apiCall(`/payment/verify-payment?reference=${reference}`, {
+        method: "GET",
+      });
     },
 
     retry: 3,
