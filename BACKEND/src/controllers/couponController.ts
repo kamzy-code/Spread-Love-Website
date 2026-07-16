@@ -70,14 +70,10 @@ class CouponController {
     }
   }
 
-  // public: used at checkout to preview a discount before booking creation
+  // public: used at checkout to preview a discount before booking creation.
+  // code/totalPrice are validated by validateRequest (validateCouponSchema).
   async validateCoupon(req: Request, res: Response, next: NextFunction) {
     const { code, totalPrice } = req.body;
-
-    if (!code || totalPrice === undefined) {
-      next(new HttpError(400, "code and totalPrice are required"));
-      return;
-    }
 
     try {
       const result = await couponService.validateCoupon(code);

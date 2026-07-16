@@ -46,95 +46,22 @@ class EmailController {
         return;
       }
 
-      if (!booking.callerEmail) {
-        emailLogger.warn(
-          "Send Booking confirmation mail failed: Caller email is required",
-          {
-            bookingId,
-            action: "SEND_BOOKING_CONFIRMAION_MAIL_FAILED",
-          }
-        );
+      const result = await emailService.sendBookingConfirmationIfDue(booking);
 
-        next(
-          new HttpError(
-            400,
-            "Caller email is required for sending confirmation"
-          )
-        );
-        return;
-      }
-
-      if (booking.confirmationMailsent) {
-        emailLogger.warn(
-          "Send Booking confirmation mail failed: Confirmation Already Sent",
-          {
-            bookingId,
-            email: booking.callerEmail,
-            action: "SEND_BOOKING_CONFIRMAION_MAIL_FAILED",
-          }
-        );
-
-        next(
-          new HttpError(
-            400,
-            `Booking Confirmation already sent for ${bookingId}`
-          )
-        );
-        return;
-      }
-
-      if (booking.paymentStatus !== "paid") {
-        emailLogger.warn(
-          "Send Booking confirmation mail failed: Can't send email for an unpaid booking",
-          {
-            bookingId,
-            email: booking.callerEmail,
-            paymentStatus: booking.paymentStatus,
-            action: "SEND_BOOKING_CONFIRMAION_MAIL_FAILED",
-          }
-        );
-
-        next(new HttpError(400, `Can't send email for an unpaid booking`));
-        return;
-      }
-
-      try {
-        // send the email
-        await emailService.sendBookingConfirmationEmail(
-          booking.callerEmail as string,
-          "Booking Confirmation",
-          booking
-        );
-
-        booking.confirmationMailsent = true;
-        await booking.save();
-
-        res.status(200).json({
-          message: "Booking Confirmation sent successfully",
+      if (!result.sent) {
+        emailLogger.warn(`Send Booking confirmation mail failed: ${result.reason}`, {
           bookingId,
+          action: "SEND_BOOKING_CONFIRMAION_MAIL_FAILED",
         });
-
-        emailLogger.info("Send Booking confirmation mail successful", {
-          bookingId,
-          callerEmail: booking.callerEmail,
-          confirmationMailSent: booking.confirmationMailsent,
-          action: "SEND_BOOKING_CONFIRMAION_MAIL_SUCCESS",
-        });
-        return;
-      } catch (emailError: any) {
-        emailLogger.error(
-          `Send Booking confirmation mail error: ${emailError.message}`,
-          {
-            bookingId,
-            action: "SEND_BOOKING_CONFIRMAION_MAIL_FAILED",
-            confirmationMailSent: booking.confirmationMailsent,
-            emailError,
-          }
-        );
-
-        next(emailError);
+        next(new HttpError(400, result.reason as string));
         return;
       }
+
+      res.status(200).json({
+        message: "Booking Confirmation sent successfully",
+        bookingId,
+      });
+      return;
     } catch (error: any) {
       emailLogger.error(
         `Send Booking confirmation mail error: ${error.message}`,

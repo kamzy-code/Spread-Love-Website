@@ -11,6 +11,11 @@ export const createCoupounSchema = z.object({
     createdBy: z.string().min(1, "Created by (admin ID) is required"),
 })
 
+export const validateCouponSchema = z.object({
+    code: z.string().min(1, "Coupon code is required"),
+    totalPrice: z.coerce.number().nonnegative("totalPrice must be non-negative"),
+})
+
 export const updateCouponSchema = z.object({
     code: z.string().min(1, "Coupon code is required").transform((val) => val.toUpperCase().trim()).optional(),
     discountType: z.enum(["flat", "percent"]).optional(),
@@ -21,3 +26,5 @@ export const updateCouponSchema = z.object({
     }).optional(),
     active: z.boolean().optional(),
 })
+
+

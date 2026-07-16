@@ -5,8 +5,10 @@ import { AlertCircle, Calendar, CheckCircle, XCircle } from "lucide-react";
       case "pending":
         return <AlertCircle className={`${resize ? 'h-3 w-3' : 'h-5 w-5'} text-yellow-500`} />;
       case "rescheduled":
+      case "in_progress":
         return <Calendar className={`${resize ? 'h-3 w-3' : 'h-5 w-5'} text-blue-500`} />;
       case "successful":
+      case "completed":
         return <CheckCircle className={`${resize ? 'h-3 w-3' : 'h-5 w-5'} text-green-500`} />;
       case "rejected":
       case "unsuccessful":
@@ -21,8 +23,10 @@ import { AlertCircle, Calendar, CheckCircle, XCircle } from "lucide-react";
       case "pending":
         return `${useCase === "badge" ? "bg-yellow-100" : ""} text-yellow-800`;
       case "rescheduled":
+      case "in_progress":
         return `${useCase === "badge" ? "bg-blue-100" : ""} text-blue-800`;
       case "successful":
+      case "completed":
         return `${useCase === "badge" ? "bg-green-100" : ""} text-green-800`;
       case "rejected":
       case "unsuccessful":

@@ -126,6 +126,33 @@ export interface CouponValidationResponse {
 export type CallerFormState = BookingCaller;
 export type RecipientFormState = Omit<BookingRecipient, "price">;
 
+// Customer self-service update (PUT /booking/:bookingId/update) — deliberately
+// a smaller, all-partial field set. Mirrors updateBookingByCustomerSchema on
+// the backend: no callStatus/price/occassion — those are rep/system-owned or
+// price-determining, never customer-editable after the fact.
+export interface CustomerUpdateCaller {
+  name?: string;
+  phone?: string;
+  email?: string;
+  gender?: "male" | "female" | "prefer_not_to_say";
+  relationship?: string;
+}
+
+export interface CustomerUpdateRecipient {
+  _id: string;
+  recipientName?: string;
+  recipientPhone?: string;
+  country?: string;
+  callDate?: string;
+  message?: string;
+  specialInstruction?: string;
+}
+
+export interface CustomerBookingUpdatePayload {
+  caller?: CustomerUpdateCaller;
+  recipients?: CustomerUpdateRecipient[];
+}
+
 export interface BookingFilters {
   status?: string;
   callType?: string;

@@ -1,8 +1,46 @@
 import { useQuery, keepPreviousData, useMutation } from "@tanstack/react-query";
-import { BookingFilters, } from "@/lib/types";
+import {
+  BookingFilters,
+  CreateBookingPayload,
+  CreateBookingResponse,
+  CustomerBookingUpdatePayload,
+} from "@/lib/types";
 import { buildQueryParams } from "@/lib/buildQueryParams";
+import { apiCall } from "@/lib/apiClient";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+// One request: server generates the booking ID, creates (or re-uses) the
+// booking, and initializes the Paystack transaction — returns a ready-to-use
+// paymentURL. Navigation on success is the caller's concern, not the hook's.
+export const useBookingCheckout = () => {
+  return useMutation({
+    mutationFn: (payload: CreateBookingPayload): Promise<CreateBookingResponse> =>
+      apiCall("/booking/create", {
+        method: "POST",
+        body: JSON.stringify(payload),
+      }),
+  });
+};
+
+// Customer self-service edit (PUT /booking/:bookingId/update) — bookingId and
+// payload are passed at call time via mutate(), not baked into the hook, so
+// the call site can't accidentally submit against a stale bookingId closure.
+export const useUpdateBookingByCustomer = () => {
+  return useMutation({
+    mutationFn: ({
+      bookingId,
+      payload,
+    }: {
+      bookingId: string;
+      payload: CustomerBookingUpdatePayload;
+    }) =>
+      apiCall(`/booking/${bookingId}/update`, {
+        method: "PUT",
+        body: JSON.stringify(payload),
+      }),
+  });
+};
 
 export const useBookings = (filters: BookingFilters, searchValue: string) => {
   return useQuery({

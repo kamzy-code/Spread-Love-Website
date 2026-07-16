@@ -3,11 +3,29 @@
 // deliberate mirror, not a coincidence. Provisional list until the client
 // sends their real relationship options; "Other" keeps submissions unblocked.
 export const RELATIONSHIP_OPTIONS = [
-  "Partner",
-  "Parent",
-  "Sibling",
-  "Friend",
+  "Mother",
+  "Father",
+  "Daughter",
+  "Son",
+  "Brother",
+  "Sister",
+  "Cousin",
+  "Nephew",
+  "Niece",
+  "Wife",
+  "Husband",
+  "Girlfriend",
+  "Boyfriend",
+  "Fiancé",
+  "Fiancée",
   "Colleague",
+  "Friend",
+  "Boss",
+  "Employee",
+  "Baby Mama",
+  "Baby Daddy",
+  "Ex",
+  "Best Friend",
   "Other",
 ] as const;
 

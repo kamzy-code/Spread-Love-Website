@@ -59,9 +59,7 @@ export default function BookingTable() {
   const resendMailMutation = useSendBookingConfirmation(
     selectedBooking?.bookingId as string
   );
-  const verifyTransactionMutation = useVerifyTransaction(
-    selectedBooking?.bookingId as string
-  );
+  const verifyTransactionMutation = useVerifyTransaction();
   const completePaymentMutation = useInitializeTransaction({
     email: selectedBooking?.callerEmail as string,
   });
@@ -111,7 +109,7 @@ export default function BookingTable() {
 
   useEffect(() => {
     if (selectedBooking && verifyTransactionAction) {
-      verifyTransactionMutation.mutateAsync();
+      verifyTransactionMutation.mutateAsync(selectedBooking?.bookingId as string);
       setShowActionStatusModal(true);
       queryClient.invalidateQueries({
         queryKey: ["booking", selectedBooking?._id],

@@ -14,10 +14,18 @@ export class PaymentService {
     const amount = booking.totalPrice ?? Number(booking.price);
 
     if (!amount || Number.isNaN(amount)) {
+      paymentLogger.warn("Cannot initialize payment: booking has no valid price", {
+        bookingId: booking.bookingId,
+        action: "INITIALIZE_PAYMENT_FOR_BOOKING_INVALID_PRICE",
+      });
       throw new HttpError(400, "Booking has no valid price");
     }
 
     if (booking.paymentURL) {
+      paymentLogger.info("Returning cached payment URL", {
+        bookingId: booking.bookingId,
+        action: "INITIALIZE_PAYMENT_FOR_BOOKING_CACHED",
+      });
       return { authorization_url: booking.paymentURL };
     }
 
@@ -35,6 +43,13 @@ export class PaymentService {
     booking.paymentURL = response.data.authorization_url;
     booking.paymentReference = reference;
     await booking.save();
+
+    paymentLogger.info("Payment initialized for booking", {
+      bookingId: booking.bookingId,
+      reference,
+      reuseCount: booking.reuseCount,
+      action: "INITIALIZE_PAYMENT_FOR_BOOKING_SUCCESS",
+    });
 
     return response.data;
   }

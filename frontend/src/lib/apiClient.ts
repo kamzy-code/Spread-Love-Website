@@ -1,11 +1,8 @@
 /**
- * Centralized API client for all fetch requests
+ * Centralized API client — generic fetch transport used by every hook's
+ * query/mutation function. Endpoint-specific request shaping lives in the
+ * hook that owns that endpoint, not here.
  */
-import type {
-  CreateBookingPayload,
-  CreateBookingResponse,
-  CouponValidationResponse,
-} from "./types";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
@@ -31,24 +28,3 @@ export const apiCall = async (endpoint: string, options?: ApiOptions) => {
 
   return data;
 };
-
-// Single request: server generates the booking ID, creates (or re-uses) the
-// booking, and initializes the Paystack transaction — returns a ready-to-use
-// paymentURL, replacing the old generate-ID -> create -> initialize sequence.
-export const createBooking = (
-  body: CreateBookingPayload
-): Promise<CreateBookingResponse> =>
-  apiCall("/booking/create", {
-    method: "POST",
-    body: JSON.stringify(body),
-  });
-
-// Preview-only: never mutates coupon usage, safe to call on every keystroke/blur.
-export const validateCoupon = (
-  code: string,
-  totalPrice: number
-): Promise<CouponValidationResponse> =>
-  apiCall("/coupon/validate", {
-    method: "POST",
-    body: JSON.stringify({ code, totalPrice }),
-  });

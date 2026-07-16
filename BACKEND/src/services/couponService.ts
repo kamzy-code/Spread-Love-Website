@@ -1,4 +1,5 @@
 import { Coupon, ICoupon } from "../models/couponModel";
+import { bookingLogger } from "../utils/logger";
 
 interface CouponValidationResult {
   valid: boolean;
@@ -8,7 +9,13 @@ interface CouponValidationResult {
 
 class CouponService {
   async createCoupon(data: Partial<ICoupon>) {
-    return await Coupon.create(data);
+    const coupon = await Coupon.create(data);
+    bookingLogger.info("Coupon created", {
+      code: coupon.code,
+      service: "couponService",
+      action: "CREATE_COUPON_SUCCESS",
+    });
+    return coupon;
   }
 
   async listCoupons() {
@@ -31,12 +38,20 @@ class CouponService {
   async validateCoupon(code: string): Promise<CouponValidationResult> {
     const coupon = await Coupon.findOne({ code: code.toUpperCase().trim() });
 
-    if (!coupon) return { valid: false, reason: "Coupon not found" };
-    if (!coupon.active) return { valid: false, reason: "Coupon is inactive" };
-    if (coupon.expiresAt < new Date())
-      return { valid: false, reason: "Coupon has expired" };
+    const reject = (reason: string): CouponValidationResult => {
+      bookingLogger.warn(`Coupon validation failed: ${reason}`, {
+        code,
+        service: "couponService",
+        action: "VALIDATE_COUPON_FAILED",
+      });
+      return { valid: false, reason };
+    };
+
+    if (!coupon) return reject("Coupon not found");
+    if (!coupon.active) return reject("Coupon is inactive");
+    if (coupon.expiresAt < new Date()) return reject("Coupon has expired");
     if (coupon.usedCount >= coupon.usageLimit)
-      return { valid: false, reason: "Coupon usage limit reached" };
+      return reject("Coupon usage limit reached");
 
     return { valid: true, coupon };
   }
@@ -55,6 +70,11 @@ class CouponService {
       { code: code.toUpperCase().trim() },
       { $inc: { usedCount: 1 } },
     );
+    bookingLogger.info("Coupon usage incremented", {
+      code,
+      service: "couponService",
+      action: "INCREMENT_COUPON_USAGE",
+    });
   }
 }
 

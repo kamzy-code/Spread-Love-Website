@@ -1,9 +1,13 @@
 import { Request, Response, NextFunction } from "express";
 import { paymentLogger } from "../utils/logger";
 import paymentService from "../services/paymentService";
+import emailService from "../services/emailService";
 import { HttpError } from "../utils/httpError";
 import bookingService from "../services/bookingService";
 class PaymentController {
+  // email/bookingId are validated by validateQuery/validateParams middleware
+  // (initializeTransactionQuerySchema/initializeTransactionParamsSchema)
+  // before this handler runs.
   async initializeTransaction(req: Request, res: Response, next: NextFunction) {
     const { email } = req.query;
     const { bookingId } = req.params;
@@ -13,17 +17,6 @@ class PaymentController {
       bookingId,
       action: "INITIALIZE_TRANSACTION",
     });
-
-    if (!email || !bookingId) {
-      paymentLogger.warn("Initialized transaction failed: Missing fields", {
-        email,
-        bookingId,
-        action: "INITIALIZE_TRANSACTION_FAILED",
-      });
-
-      next(new HttpError(400, "All fields are required"));
-      return;
-    }
 
     try {
       const booking = await bookingService.getBookingByBookingId(bookingId);
@@ -72,6 +65,7 @@ class PaymentController {
     }
   }
 
+  // reference is validated by validateQuery middleware (verifyPaymentQuerySchema).
   async verifyPaymentController(
     req: Request,
     res: Response,
@@ -82,14 +76,6 @@ class PaymentController {
       reference,
       action: "VERIFY_TRANSACTION",
     });
-
-    if (!reference) {
-      paymentLogger.warn("Verification failed: No reference provided", {
-        action: "VERIFY_TRANSACTION_FAILED",
-      });
-      next(new HttpError(400, "Transaction reference is required"));
-      return;
-    }
 
     const booking = await bookingService.getBookingByPaymentReference(
       reference as string
@@ -125,6 +111,21 @@ class PaymentController {
           reference,
           action: "VERIFY_TRANSACTION_SUCCESS",
         });
+
+        // Best-effort: a failed confirmation email must not fail an
+        // already-verified payment response back to the customer.
+        try {
+          await emailService.sendBookingConfirmationIfDue(booking);
+        } catch (emailError: any) {
+          paymentLogger.error(
+            `Confirmation mail failed after payment verification: ${emailError.message}`,
+            {
+              reference,
+              bookingId: booking.bookingId,
+              action: "VERIFY_TRANSACTION_CONFIRMATION_MAIL_FAILED",
+            }
+          );
+        }
 
         res.status(200).json({
           message: "Payment verified successfully",

@@ -5,12 +5,17 @@ import { validateRequest } from "../middlewares/validateRequest";
 import {
   createCoupounSchema,
   updateCouponSchema,
+  validateCouponSchema,
 } from "../validation/couponSchema";
 
 const router = express.Router();
 
 // public — used at checkout to preview a discount before booking creation
-router.post("/validate", couponController.validateCoupon);
+router.post(
+  "/validate",
+  validateRequest(validateCouponSchema),
+  couponController.validateCoupon,
+);
 
 // admin CRUD
 router.post(

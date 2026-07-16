@@ -24,9 +24,9 @@ export const useInitializeTransaction = (info: { email: string }) => {
   });
 };
 
-export const useVerifyTransaction = (reference: string) => {
+export const useVerifyTransaction = () => {
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async (reference: string) => {
       return apiCall(`/payment/verify-payment?reference=${reference}`, {
         method: "GET",
       });

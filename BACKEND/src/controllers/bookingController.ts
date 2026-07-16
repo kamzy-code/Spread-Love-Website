@@ -126,36 +126,23 @@ class BookingController {
     }
   }
 
+  // caller/recipients are validated by validateRequest (updateBookingByCustomerSchema)
   async updateBookingByCustomer(
     req: Request,
     res: Response,
     next: NextFunction
   ) {
-    // extract the booking ID from URL and the update info from the request body
     const { bookingId } = req.params;
-    const info = req.body;
+    const { caller, recipients } = req.body;
 
     bookingLogger.info("Update booking by customer initiated", {
       bookingId,
       action: "UPDATE_BOOKING_BY_CUSTOMER",
     });
 
-    if (!bookingId) {
-      bookingLogger.warn(
-        "Update booking by customer failed: Booking ID required",
-        {
-          action: "UPDATE_BOOKING_BY_CUSTOMER_FAILED",
-        }
-      );
-      next(new HttpError(400, "Booking ID required"));
-      return;
-    }
-
     try {
-      // call service class to fetch the booking to be updated
       const booking = await bookingService.getBookingByBookingId(bookingId);
 
-      // if no booking was found return error message
       if (!booking) {
         bookingLogger.warn(
           "Update booking by customer failed: Booking not found",
@@ -168,70 +155,12 @@ class BookingController {
         return;
       }
 
-      // create an array of fields that shouldn't be updated by the customer
-      const disallowedFields = [
-        "bookingId",
-        "status",
-        "assingedRep",
-        "callType",
-      ];
-
-      // Loop through each key in the info object to check which fields can be updated
-      for (const field of Object.keys(info)) {
-        // If the field is not in the disallowedFields array, proceed to update
-        if (!disallowedFields.includes(field)) {
-          // Define statuses for which bookings cannot be updated
-          const disallowedStatus = ["successful"];
-
-          // If the booking status is in the disallowedStatus array, return an error and stop further processing
-          const isBookingLocked = isLegacyBooking(booking)
-            ? disallowedStatus.includes(booking.status as string)
-            : booking.bookingStatus === "completed";
-
-          if (isBookingLocked) {
-            bookingLogger.warn(
-              `Update booking by customer failed: Can't update booking with status ${booking.status}`,
-              {
-                bookingId,
-                bookingStatus: booking.status,
-                action: "UPDATE_BOOKING_BY_CUSTOMER_FAILED",
-              }
-            );
-            next(new HttpError(400, "Can't update this Booking"));
-            return;
-          }
-
-          // Dynamically update the booking object with the new value for the allowed field
-          // E.g., if field = "callerName", then booking["callerName"] = info["callerName"]
-          (booking as any)[field] = info[field];
-        } else {
-          // If the field is in the disallowedFields array, return an error and stop further processing
-          bookingLogger.warn(
-            `Update booking by customer failed: Field '${field}' cannot be updated by the customer`,
-            {
-              bookingId,
-              field,
-              action: "UPDATE_BOOKING_BY_CUSTOMER_FAILED",
-            }
-          );
-          next(
-            new HttpError(
-              403,
-              `Field '${field}' cannot be updated by the customer`
-            )
-          );
-          return;
-        }
-      }
-
-      // save the updated booking object and return success message
-      await booking.save();
-      res.status(200).json({ message: "Update Successful" });
-      bookingLogger.info("Update booking by customer successful", {
-        id: booking._id,
-        bookingId,
-        action: "UPDATE_BOOKING_BY_CUSTOMER_SUCCESS",
+      await bookingService.updateBookingByCustomer(booking, {
+        caller,
+        recipients,
       });
+
+      res.status(200).json({ message: "Update Successful" });
       return;
     } catch (error: any) {
       bookingLogger.error(
@@ -600,29 +529,7 @@ class BookingController {
     });
 
     try {
-      // create an array of allowed status value
-      const allowedStatus = [
-        "pending",
-        "assigned",
-        "successful",
-        "rejected",
-        "rescheduled",
-        "unsuccessful",
-      ];
-
-      // return error message if new status is not in the allowed status array
-      if (!allowedStatus.includes(status)) {
-        bookingLogger.warn("Update booking status failed: Invalid status", {
-          userId: user.userId,
-          role: user.role,
-          id: bookingId,
-          status,
-          action: "UPDATE_BOOKING_STATUS_FAILED",
-        });
-        next(new HttpError(400, "Invalid status"));
-        return;
-      }
-
+      // status is validated by validateRequest (updateBookingStatusSchema)
       const booking = await bookingService.updateCallStatus(
         bookingId,
         user.userId,
@@ -680,26 +587,7 @@ class BookingController {
       action: "ASSIGN_CALL_TO_REP",
     });
 
-    if (!bookingId) {
-      bookingLogger.warn("Assign call to rep failed: Booking ID required", {
-        userId: user.userId,
-        role: user.role,
-        action: "ASSIGN_CALL_TO_REP_FAILED",
-      });
-      next(new HttpError(400, "Booking ID required"));
-      return;
-    }
-
-    if (!repId) {
-      bookingLogger.warn("Assign call to rep failed: Rep ID required", {
-        userId: user.userId,
-        role: user.role,
-        action: "ASSIGN_CALL_TO_REP_FAILED",
-      });
-      next(new HttpError(400, "Rep ID required"));
-      return;
-    }
-
+    // repId is validated by validateQuery (assignCallToRepQuerySchema)
     // check the auto assign status
     const isAutoAssign = (repId as string) === "auto";
 

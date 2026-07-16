@@ -1,5 +1,25 @@
 import nodemailer from "nodemailer";
 import { format } from "date-fns/format";
+import { IBooking } from "../models/bookingModel";
+import { isLegacyBooking } from "../utils/bookingShape";
+import { emailLogger } from "../utils/logger";
+
+// Normalizes a booking's recipient(s) to a flat list regardless of shape, so
+// the email template only has one code path to render — legacy bookings
+// have exactly one recipient built from the flat fields, v2 bookings carry
+// their real recipients[] array.
+const getRecipientsForEmail = (booking: any) => {
+  if (!isLegacyBooking(booking)) return booking.recipients;
+
+  return [
+    {
+      recipientName: booking.recipientName,
+      recipientPhone: booking.recipientPhone,
+      country: booking.country,
+      callDate: booking.callDate,
+    },
+  ];
+};
 
 class EmailService {
   async sendBookingConfirmationEmail(
@@ -7,7 +27,8 @@ class EmailService {
     subject: string,
     booking: any
   ): Promise<void> {
-    // Implementation for sending email
+    const callerName = booking.caller?.name ?? booking.callerName ?? "Customer";
+    const recipients = getRecipientsForEmail(booking);
 
     const transporter = nodemailer.createTransport({
       service: "gmail",
@@ -15,10 +36,24 @@ class EmailService {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
       },
-      // tls: {
-      //   rejectUnauthorized: false, // This is important for self-signed certificates
-      // },
     });
+
+    const recipientLinesText = recipients
+      .map(
+        (r: any, i: number) =>
+          `  Recipient ${i + 1}: ${r.recipientName} (${r.recipientPhone}, ${r.country}) — ${format(r.callDate, "yyyy-MM-dd")}`
+      )
+      .join("\n");
+
+    const recipientItemsHtml = recipients
+      .map(
+        (r: any) => `
+        <li style="margin-bottom: 8px;">
+          <strong>${r.recipientName}</strong> — ${r.recipientPhone}, ${r.country}<br/>
+          Call Date: ${format(r.callDate, "yyyy-MM-dd")}
+        </li>`
+      )
+      .join("");
 
     const mailOptions = {
       from: process.env.EMAIL_USER,
@@ -26,16 +61,13 @@ class EmailService {
       subject: subject,
       text: `Thank you for your booking! Your booking has been confirmed.
   Booking ID: ${booking.bookingId}
-  Caller Name: ${booking.callerName}
-  Recipient Name: ${booking.recipientName}
-  Recipient Phone: ${booking.recipientPhone}
-  Recipient Country: ${booking.country}
-  Call Date: ${format(booking.callDate, "yyyy-MM-dd")}
+  Caller Name: ${callerName}
+${recipientLinesText}
   `,
       html: `
     <div style="font-family: Arial, sans-serif; color: #222;">
       <h2>Booking Confirmation</h2>
-      <p>Dear Customer,</p>
+      <p>Dear ${callerName},</p>
       <p>Thank you for your surprise call booking! We are glad to let you know that your booking has been <strong>confirmed</strong>.</p>
       <p>
       <strong>Booking ID:</strong>
@@ -43,14 +75,9 @@ class EmailService {
         ${booking.bookingId}
       </span>
       </p>
-      <p>
-      <strong>Caller Name:</strong> ${booking.callerName}<br/>
-      <strong>Recipient Name:</strong> ${booking.recipientName}<br/>
-      <strong>Recipient Phone:</strong> ${booking.recipientPhone}<br/>
-      <strong>Recipient Country:</strong> ${booking.country}
-      <br/>
-      <strong>Call Date:</strong> ${format(booking.callDate, "yyyy-MM-dd")}
-      </p>
+      <ul>
+        ${recipientItemsHtml}
+      </ul>
       <p>Use the above booking ID to track and manage your booking via the link below.</p>
       <p>
       <a href="${
@@ -67,10 +94,43 @@ class EmailService {
     };
 
     try {
-      const mailStatus = await transporter.sendMail(mailOptions);
+      await transporter.sendMail(mailOptions);
     } catch (error: any) {
       throw new Error(error.message || "Error sending confirmation mail");
     }
+  }
+
+  // Single guarded entry point for sending the confirmation email — used by
+  // both the standalone /email/confirm/:bookingId route (admin resend) and
+  // the payment-verify flow (automatic send on successful payment), so the
+  // "already sent" / "not paid" / "no email" rules only live in one place.
+  async sendBookingConfirmationIfDue(
+    booking: IBooking
+  ): Promise<{ sent: boolean; reason?: string }> {
+    const email = booking.caller?.email || booking.callerEmail;
+
+    if (!email) {
+      return { sent: false, reason: "Caller email is required for sending confirmation" };
+    }
+    if (booking.confirmationMailsent) {
+      return { sent: false, reason: `Booking Confirmation already sent for ${booking.bookingId}` };
+    }
+    if (booking.paymentStatus !== "paid") {
+      return { sent: false, reason: "Can't send email for an unpaid booking" };
+    }
+
+    await this.sendBookingConfirmationEmail(email, "Booking Confirmation", booking);
+
+    booking.confirmationMailsent = true;
+    await booking.save();
+
+    emailLogger.info("Booking confirmation mail sent", {
+      bookingId: booking.bookingId,
+      email,
+      action: "SEND_BOOKING_CONFIRMATION_MAIL_SUCCESS",
+    });
+
+    return { sent: true };
   }
 
   async sendContactEmail(

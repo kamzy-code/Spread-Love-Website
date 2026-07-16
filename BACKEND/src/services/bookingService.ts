@@ -1,5 +1,5 @@
 import { SortOrder, Types } from "mongoose";
-import { Booking, ICaller, IRecipient } from "../models/bookingModel";
+import { Booking, IBooking, ICaller, IRecipient } from "../models/bookingModel";
 import { getLeastLoadedRep } from "../utils/getLeastLoadedRep";
 import { isLegacyBooking } from "../utils/bookingShape";
 import { callStatus, bookingStatusType } from "../types/genralTypes";
@@ -7,6 +7,7 @@ import customerService from "./customerService";
 import couponService from "./couponService";
 import paymentService from "./paymentService";
 import { HttpError } from "../utils/httpError";
+import { bookingLogger } from "../utils/logger";
 
 const TERMINAL_CALL_STATUSES: callStatus[] = [
   "successful",
@@ -60,7 +61,14 @@ class BookingService {
         )
       );
 
-      if (hasMatch) return candidate;
+      if (hasMatch) {
+        bookingLogger.info("Reusable unpaid/recent booking match found", {
+          matchedBookingId: candidate.bookingId,
+          callerEmail: caller.email,
+          action: "FIND_REUSABLE_MATCH_FOUND",
+        });
+        return candidate;
+      }
     }
 
     return null;
@@ -82,6 +90,11 @@ class BookingService {
     if (couponCode) {
       const validation = await couponService.validateCoupon(couponCode);
       if (!validation.valid || !validation.coupon) {
+        bookingLogger.warn("Booking creation blocked: invalid coupon", {
+          couponCode,
+          reason: validation.reason,
+          action: "CREATE_BOOKING_INVALID_COUPON",
+        });
         throw new HttpError(400, validation.reason || "Invalid coupon code");
       }
       discountAmount = couponService.computeDiscount(
@@ -110,6 +123,13 @@ class BookingService {
       match.paymentStatus = "pending";
       const saved = await match.save();
       if (appliedCouponCode) await couponService.incrementUsage(appliedCouponCode);
+
+      bookingLogger.info("Booking re-used for unpaid near-duplicate", {
+        bookingId: saved.bookingId,
+        reuseCount: saved.reuseCount,
+        action: "CREATE_BOOKING_REUSED",
+      });
+
       return saved;
     }
 
@@ -134,11 +154,23 @@ class BookingService {
     if (newBooking) {
       if (appliedCouponCode) await couponService.incrementUsage(appliedCouponCode);
 
+      bookingLogger.info("Booking created", {
+        bookingId: newBooking.bookingId,
+        recipientCount: recipients.length,
+        totalPrice,
+        duplicateOfPaid: newBooking.duplicateOfPaid,
+        action: "CREATE_BOOKING_SUCCESS",
+      });
+
       // get the rep with the lest amount of bookings
       const assignedRep = await getLeastLoadedRep();
 
       // return the booking without an assigned rep if there's no rep found.
       if (!assignedRep) {
+        bookingLogger.warn("Booking created with no rep available to assign", {
+          bookingId: newBooking.bookingId,
+          action: "CREATE_BOOKING_NO_REP_AVAILABLE",
+        });
         return newBooking;
       }
 
@@ -147,6 +179,10 @@ class BookingService {
       return await newBooking.save();
     }
     // return null if booking couldn't be created
+    bookingLogger.error("Booking creation returned no document", {
+      bookingId,
+      action: "CREATE_BOOKING_FAILED",
+    });
     return null;
   }
 
@@ -182,10 +218,76 @@ class BookingService {
       booking.caller?.email || caller.email
     );
 
+    bookingLogger.info("Checkout completed: booking created and payment initialized", {
+      bookingId: booking.bookingId,
+      action: "CHECKOUT_BOOKING_SUCCESS",
+    });
+
     return {
       bookingId: booking.bookingId,
       paymentURL: paymentData.authorization_url,
     };
+  }
+
+  // Customer self-service update. v2 bookings merge caller fields directly
+  // and match recipients by _id, only assigning the customer-editable subset
+  // (never callStatus/price/callRecordingURL — those are rep/system-owned).
+  // Legacy (pre-migration) documents fall back to the old flat dynamic-field
+  // update as a defensive safety net; in practice migrate-bookings-v2.ts
+  // has already backfilled recipients[] onto every existing booking.
+  async updateBookingByCustomer(
+    booking: IBooking,
+    updates: {
+      caller?: Partial<ICaller>;
+      recipients?: (Partial<IRecipient> & { _id: string })[];
+    }
+  ) {
+    const disallowedStatus = ["successful"];
+    const isBookingLocked = isLegacyBooking(booking)
+      ? disallowedStatus.includes(booking.status as string)
+      : booking.bookingStatus === "completed";
+
+    if (isBookingLocked) {
+      bookingLogger.warn("Update booking by customer blocked: booking locked", {
+        bookingId: booking.bookingId,
+        action: "UPDATE_BOOKING_BY_CUSTOMER_LOCKED",
+      });
+      throw new HttpError(400, "Can't update this booking");
+    }
+
+    if (updates.caller) {
+      booking.caller = { ...(booking.caller ?? {}), ...updates.caller } as ICaller;
+    }
+
+    if (updates.recipients) {
+      for (const update of updates.recipients) {
+        const target = booking.recipients?.find(
+          (r) => r._id?.toString() === update._id
+        );
+        if (!target) {
+          bookingLogger.warn(
+            "Update booking by customer: recipient not found",
+            {
+              bookingId: booking.bookingId,
+              recipientId: update._id,
+              action: "UPDATE_BOOKING_BY_CUSTOMER_RECIPIENT_NOT_FOUND",
+            }
+          );
+          continue;
+        }
+        const { _id, ...allowedFields } = update;
+        Object.assign(target, allowedFields);
+      }
+    }
+
+    const saved = await booking.save();
+
+    bookingLogger.info("Booking updated by customer", {
+      bookingId: booking.bookingId,
+      action: "UPDATE_BOOKING_BY_CUSTOMER_SUCCESS",
+    });
+
+    return saved;
   }
 
   // fetch bookng by generated ID
@@ -252,7 +354,14 @@ class BookingService {
     const recipient = booking.recipients?.find(
       (r) => r._id?.toString() === recipientId
     );
-    if (!recipient) return null;
+    if (!recipient) {
+      bookingLogger.warn("Update call status failed: recipient not found", {
+        bookingId,
+        recipientId,
+        action: "UPDATE_CALL_STATUS_RECIPIENT_NOT_FOUND",
+      });
+      return null;
+    }
 
     recipient.callStatus = newStatus;
 
@@ -261,7 +370,20 @@ class BookingService {
 
     const saved = await booking.save();
 
+    bookingLogger.info("Call status updated", {
+      bookingId,
+      recipientId,
+      newStatus,
+      bookingStatus: booking.bookingStatus,
+      action: "UPDATE_CALL_STATUS_SUCCESS",
+    });
+
     if (!wasCompleted && booking.bookingStatus === "completed") {
+      bookingLogger.info("Booking transitioned to completed — recording customer tier", {
+        bookingId,
+        callerEmail: booking.caller?.email,
+        action: "BOOKING_COMPLETED_TIER_HOOK",
+      });
       await customerService.recordCompletedBooking(booking.caller!);
     }
 
