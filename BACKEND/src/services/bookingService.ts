@@ -290,6 +290,72 @@ class BookingService {
     return saved;
   }
 
+  // Admin correction path — broader field set than updateBookingByCustomer
+  // (occassion/callType/price/country included), no booking-lock check.
+  // Staff fixing a genuine data-entry mistake is a different trust boundary
+  // than a customer editing their own booking post-payment.
+  async updateBookingByAdmin(
+    booking: IBooking,
+    updates: {
+      caller?: Partial<ICaller>;
+      recipients?: (Partial<IRecipient> & { _id: string })[];
+    }
+  ) {
+    if (updates.caller) {
+      booking.caller = { ...(booking.caller ?? {}), ...updates.caller } as ICaller;
+    }
+
+    if (isLegacyBooking(booking)) {
+      const flatUpdate = updates.recipients?.[0];
+      if (updates.caller) {
+        booking.callerName = updates.caller.name ?? booking.callerName;
+        booking.callerPhone = updates.caller.phone ?? booking.callerPhone;
+        booking.callerEmail = updates.caller.email ?? booking.callerEmail;
+        booking.relationship = updates.caller.relationship ?? booking.relationship;
+      }
+      if (flatUpdate) {
+        const { _id, ...fields } = flatUpdate;
+        Object.assign(booking, fields);
+        if (fields.price !== undefined) {
+          booking.price = String(fields.price);
+          booking.totalPrice = fields.price;
+        }
+      }
+      } else if (updates.recipients) {
+      for (const update of updates.recipients) {
+        const target = booking.recipients?.find(
+          (r) => r._id?.toString() === update._id
+        );
+        if (!target) {
+          bookingLogger.warn("Update booking by admin: recipient not found", {
+            bookingId: booking.bookingId,
+            recipientId: update._id,
+            action: "UPDATE_BOOKING_BY_ADMIN_RECIPIENT_NOT_FOUND",
+          });
+          continue;
+        }
+        const { _id, ...allowedFields } = update;
+        Object.assign(target, allowedFields);
+      }
+
+      // keep totalPrice consistent whenever a recipient's price/count changes
+      const rawTotal = (booking.recipients ?? []).reduce(
+        (sum, r) => sum + (r.price ?? 0),
+        0
+      );
+      booking.totalPrice = rawTotal - (booking.discountAmount ?? 0);
+    }
+
+    const saved = await booking.save();
+
+    bookingLogger.info("Booking updated by admin", {
+      bookingId: booking.bookingId,
+      action: "UPDATE_BOOKING_BY_ADMIN_SUCCESS",
+    });
+
+    return saved;
+  }
+
   // fetch bookng by generated ID
   async getBookingByBookingId(bookingId: string) {
     // fetch the booking from DB and return
@@ -470,6 +536,45 @@ class BookingService {
       {
         $group: {
           _id: "$effectiveStatuses",
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+  }
+
+  // Booking-level completion breakdown (pending/in_progress/completed) — one
+  // entry per booking, not per call. Distinct from getAnalytics above: that
+  // answers "how many calls are left to place" (rep workload); this answers
+  // "how many customer orders are still incomplete" (what was actually paid
+  // for). They intentionally diverge once a booking holds multiple
+  // recipients with different call outcomes.
+  async getBookingStatusBreakdown(matchStage: any) {
+    return await Booking.aggregate([
+      { $match: matchStage },
+      {
+        $project: {
+          effectiveBookingStatus: {
+            $ifNull: [
+              "$bookingStatus",
+              {
+                $cond: [
+                  {
+                    $in: [
+                      "$status",
+                      ["successful", "unsuccessful", "rejected"],
+                    ],
+                  },
+                  "completed",
+                  "pending",
+                ],
+              },
+            ],
+          },
+        },
+      },
+      {
+        $group: {
+          _id: "$effectiveBookingStatus",
           count: { $sum: 1 },
         },
       },

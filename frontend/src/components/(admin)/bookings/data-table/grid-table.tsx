@@ -1,6 +1,13 @@
 import { Booking } from "@/lib/types";
 import { getStatusColor, getStatusIcon } from "@/lib/getStatusColor";
 import { formatToYMD } from "@/lib/formatDate";
+import {
+  getDisplayCallerName,
+  getDisplayBookingStatus,
+  getDisplayTotalPrice,
+  getExtraRecipientsLabel,
+  getPrimaryRecipient,
+} from "@/lib/bookingDisplay";
 import ItemDropDown from "./itemDropdown";
 import { useRouter } from "next/navigation";
 
@@ -18,6 +25,10 @@ export default function GridItem({
   setShowDeleteModal: (val: boolean) => void;
 }) {
   const router = useRouter();
+  const status = getDisplayBookingStatus(booking);
+  const recipient = getPrimaryRecipient(booking);
+  const extraRecipients = getExtraRecipientsLabel(booking);
+
   return (
     <div className="">
       <div
@@ -50,25 +61,40 @@ export default function GridItem({
 
             <div
               className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(
-                booking.status as string,
+                status,
                 "badge"
               )}`}
             >
-              {getStatusIcon(booking.status as string, true)}
-              <span className="ml-1 capitalize">{booking.status}</span>
+              {getStatusIcon(status, true)}
+              <span className="ml-1 capitalize">{status.replace("_", " ")}</span>
             </div>
           </div>
 
           <div className="flex items-center justify-between">
             <div>
               <div className="w-full flex items-center justify-between">
-                <h3 className="text-sm  text-gray-900">{booking.callerName}</h3>
+                <h3 className="text-sm text-gray-900">
+                  {getDisplayCallerName(booking)}
+                </h3>
+              </div>
+
+              <div className="w-full flex justify-between">
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <p className="text-xs text-gray-700">
+                    To: {recipient.recipientName}
+                  </p>
+                  {extraRecipients && (
+                    <span className="shrink-0 rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-600">
+                      {extraRecipients}
+                    </span>
+                  )}
+                </div>
               </div>
 
               <div className="w-full flex justify-between">
                 <div className="flex gap-2 md:gap-8 items-center">
                   <p className="text-xs  text-gray-700 capitalize">
-                    {`${booking.occassion} (${booking.callType}) `}
+                    {`${recipient.occassion} (${recipient.callType}) `}
                   </p>
                 </div>
               </div>
@@ -77,11 +103,12 @@ export default function GridItem({
                 <div className="flex gap-2 md:gap-8 items-center">
                   <p className="text-xs  text-gray-700 capitalize">
                     <span className="font-medium text-brand-start">
-                      {booking.country}
+                      {recipient.country}
                     </span>
                     {role !== "callrep" && booking?.assignedRep?.firstName
                       ? ` | Rep: ${booking.assignedRep.firstName}`
                       : ""}
+                    {` | N${getDisplayTotalPrice(booking).toLocaleString()}`}
                   </p>
                 </div>
               </div>

@@ -132,3 +132,64 @@ export const updateBookingByCustomerSchema = z
   .refine((data) => data.caller || data.recipients, {
     message: "At least one of caller or recipients is required",
   });
+
+// Admin update — broader than the customer-safe schema above by design.
+// Admins are trusted staff correcting genuine data-entry mistakes (wrong
+// occasion, wrong price, wrong country), not the price-manipulation surface
+// the customer-facing schema guards against. Still never includes
+// callStatus/paymentStatus/paymentReference/assignedRep — those go through
+// their own dedicated routes (recipient status, assign, payment).
+export const updateCallerByAdminSchema = z
+  .object({
+    name: z.string().min(1),
+    phone: z.string().min(1),
+    email: z.email().min(1),
+    gender: z.enum(["male", "female", "prefer_not_to_say"]),
+    relationship: z.string().min(1),
+  })
+  .partial();
+
+export const updateRecipientByAdminSchema = z
+  .object({
+    _id: z.string().min(1, "Recipient _id is required to target an update"),
+    recipientName: z.string().min(1),
+    recipientPhone: z.string().min(1),
+    country: z.string().min(1),
+    occassion: z.enum(occassionValues),
+    callType: z.enum(["regular", "special"]),
+    callDate: z.coerce.date(),
+    price: z.coerce.number().nonnegative("Price must be non-negative"),
+    message: z
+      .string()
+      .refine((val) => wordCount(val) <= MESSAGE_WORD_LIMIT, {
+        message: `Message must be ${MESSAGE_WORD_LIMIT} words or fewer`,
+      }),
+    specialInstruction: z
+      .string()
+      .refine((val) => !val || wordCount(val) <= SPECIAL_INSTRUCTION_WORD_LIMIT, {
+        message: `Special instruction must be ${SPECIAL_INSTRUCTION_WORD_LIMIT} words or fewer`,
+      }),
+    callRecordingURL: z.string(),
+  })
+  .partial({
+    recipientName: true,
+    recipientPhone: true,
+    country: true,
+    occassion: true,
+    callType: true,
+    callDate: true,
+    price: true,
+    message: true,
+    specialInstruction: true,
+    callRecordingURL: true,
+  });
+
+export const updateBookingByAdminSchema = z
+  .object({
+    caller: updateCallerByAdminSchema,
+    recipients: z.array(updateRecipientByAdminSchema),
+  })
+  .partial()
+  .refine((data) => data.caller || data.recipients, {
+    message: "At least one of caller or recipients is required",
+  });

@@ -1,7 +1,6 @@
 import { useBookingFilter } from "./bookingFilterContext";
 import {
   useBookings,
-  useUpdateStatus,
   useDeleteBooking,
   useSendBookingConfirmation,
 } from "@/hooks/useBookings";
@@ -9,6 +8,7 @@ import MiniLoader from "../ui/miniLoader";
 import { XCircle, Calendar } from "lucide-react";
 import Pagination from "../ui/pagination";
 import { BookingFilterContex, BookingFilters, Booking } from "@/lib/types";
+import { getDisplayCallerEmail } from "@/lib/bookingDisplay";
 import { useEffect, useState } from "react";
 import { getColumnsByRole } from "./data-table/columns";
 import { DataTable } from "../ui/data-table";
@@ -29,7 +29,6 @@ export default function BookingTable() {
   const { user } = useAdminAuth();
   const fullFilter: BookingFilterContex = useBookingFilter();
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
-  const [updateStatusAction, setUpdateStatusAction] = useState(false);
   const [resendMailStatusAction, setResendMailStatusAction] = useState(false);
   const [verifyTransactionAction, setVerifyTransactionAction] = useState(false);
   const [showActionStatusModal, setShowActionStatusModal] = useState(false);
@@ -51,17 +50,13 @@ export default function BookingTable() {
 
   const { data: bookings, meta } = data ?? { data: [], meta: undefined };
 
-  const updateStatusMutation = useUpdateStatus({
-    id: selectedBooking?._id as string,
-    status: selectedBooking?.status as string,
-  });
   const deleteBookingMutation = useDeleteBooking(deletedBooking?._id as string);
   const resendMailMutation = useSendBookingConfirmation(
     selectedBooking?.bookingId as string
   );
   const verifyTransactionMutation = useVerifyTransaction();
   const completePaymentMutation = useInitializeTransaction({
-    email: selectedBooking?.callerEmail as string,
+    email: selectedBooking ? getDisplayCallerEmail(selectedBooking) : "",
   });
 
   const tableColumns = getColumnsByRole(
@@ -69,9 +64,7 @@ export default function BookingTable() {
     (booking: Booking, action: string) => {
       setSelectedBooking(booking);
       const runAction = () => {
-        action === "update"
-          ? setUpdateStatusAction(true)
-          : action === "assign"
+        action === "assign"
           ? setShowAssignModal(true)
           : action === "resend"
           ? setResendMailStatusAction(true)
@@ -86,16 +79,6 @@ export default function BookingTable() {
     (booking: Booking) => setDeletedBooking(booking),
     (val: boolean) => setShowDeleteModal(val)
   );
-
-  useEffect(() => {
-    if (selectedBooking && updateStatusAction) {
-      updateStatusMutation.mutateAsync();
-      setShowActionStatusModal(true);
-      queryClient.invalidateQueries({
-        queryKey: ["booking", selectedBooking?._id],
-      });
-    }
-  }, [selectedBooking, updateStatusAction]);
 
   useEffect(() => {
     if (selectedBooking && resendMailStatusAction) {
@@ -122,19 +105,6 @@ export default function BookingTable() {
       completePaymentMutation.mutateAsync(selectedBooking.bookingId);
     }
   }, [selectedBooking, completePaymentAction]);
-
-  useEffect(() => {
-    if (updateStatusMutation.isSuccess) {
-      queryClient.invalidateQueries({
-        queryKey: ["bookings"],
-      });
-      refetch();
-
-      queryClient.refetchQueries({
-        queryKey: ["booking", selectedBooking?._id],
-      });
-    }
-  }, [updateStatusMutation.isSuccess]);
 
   useEffect(() => {
     if (deleteBookingMutation.isSuccess) {
@@ -185,7 +155,6 @@ export default function BookingTable() {
     if (
       isLoading ||
       isFetching ||
-      updateStatusMutation.isPending ||
       deleteBookingMutation.isPending ||
       resendMailMutation.isPending ||
       showActionStatusModal
@@ -199,12 +168,7 @@ export default function BookingTable() {
     return () => {
       document.body.style.overflow = "";
     };
-  }, [
-    isLoading,
-    isFetching,
-    updateStatusMutation.isPending,
-    showActionStatusModal,
-  ]);
+  }, [isLoading, isFetching, showActionStatusModal]);
 
   useEffect(() => {
     if (deletedBooking && confirmDelete) {
@@ -252,7 +216,6 @@ export default function BookingTable() {
       <div>
         {(isLoading ||
           isFetching ||
-          updateStatusMutation.isPending ||
           deleteBookingMutation.isPending ||
           resendMailMutation.isPending ||
           verifyTransactionMutation.isPending ||
@@ -271,18 +234,6 @@ export default function BookingTable() {
             <p className="text-sm md:text-[1rem]">No Bookings Available</p>
           </div>
         )}
-
-        {showActionStatusModal &&
-          updateStatusMutation.error &&
-          !updateStatusMutation.isPending && updateStatusAction && (
-            <ActionStatusModal
-              setShowModal={() => {
-                setShowActionStatusModal(false);
-                setUpdateStatusAction(false);
-              }}
-              error={updateStatusMutation.error.message}
-            ></ActionStatusModal>
-          )}
 
         {showActionStatusModal &&
           deleteBookingMutation.error &&
@@ -326,18 +277,6 @@ export default function BookingTable() {
                 setCompletePaymentAction(false);
               }}
               error={"Error generating payment link"}
-            ></ActionStatusModal>
-          )}
-
-        {showActionStatusModal &&
-          !updateStatusMutation.error &&
-          updateStatusMutation.isSuccess && updateStatusAction && (
-            <ActionStatusModal
-              setShowModal={() => {
-                setShowActionStatusModal(false);
-                setUpdateStatusAction(false);
-              }}
-              success="Booking status updated successfully!"
             ></ActionStatusModal>
           )}
 
@@ -406,9 +345,7 @@ export default function BookingTable() {
                     setSelectedBooking={(booking: Booking, action: string) => {
                       setSelectedBooking(booking);
                       const runAction = () => {
-                        action === "update"
-                          ? setUpdateStatusAction(true)
-                          : action === "assign"
+                        action === "assign"
                           ? setShowAssignModal(true)
                           : action === "resend"
                           ? setResendMailStatusAction(true)

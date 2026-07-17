@@ -51,25 +51,65 @@ export interface AdminAuthContextType {
 // Bookings
 export type FilterType = "daily" | "weekly" | "monthly" | "yearly" | "custom";
 
-export interface Booking {
+export interface BookingCallerData {
+  name: string;
+  phone: string;
+  email: string;
+  gender?: "male" | "female" | "prefer_not_to_say";
+  relationship?: string;
+}
+
+export interface BookingRecipientData {
   _id: string;
-  bookingId: string;
-  callerName: string;
-  callerPhone: string;
-  callerEmail?: string;
-  relationship: string;
   recipientName: string;
   recipientPhone: string;
   country: string;
   occassion: string;
   callType: string;
   callDate: string;
-  price: string;
+  price: number;
+  message?: string;
+  specialInstruction?: string;
+  callStatus?: string;
+  callRecording?: string;
+  callRecordingURL?: string;
+}
+
+export interface Booking {
+  _id: string;
+  bookingId: string;
+
+  // v1 legacy flat fields — present on documents created before the schema
+  // refactor; optional since v2 bookings never set them. Read via caller/
+  // recipients below instead, with these only as a fallback for un-migrated docs.
+  callerName?: string;
+  callerPhone?: string;
+  callerEmail?: string;
+  relationship?: string;
+  recipientName?: string;
+  recipientPhone?: string;
+  country?: string;
+  occassion?: string;
+  callType?: string;
+  callDate?: string;
+  price?: string;
   message?: string;
   specialInstruction?: string;
   status?: string;
   callRecording?: string;
   callRecordingURL?: string;
+
+  // v2 nested shape
+  caller?: BookingCallerData;
+  recipients?: BookingRecipientData[];
+  bookingStatus?: "pending" | "in_progress" | "completed";
+  totalPrice?: number;
+  couponCode?: string;
+  discountAmount?: number;
+  reuseCount?: number;
+  duplicateOfPaid?: boolean;
+
+  // shared / unchanged across v1 and v2
   contactConsent?: string;
   confirmationMailsent?: boolean;
   paymentStatus: string;
@@ -153,8 +193,40 @@ export interface CustomerBookingUpdatePayload {
   recipients?: CustomerUpdateRecipient[];
 }
 
+// Admin correction (PUT /booking/admin/:bookingId) — broader than the
+// customer-safe payload above: occassion/callType/price/callRecordingURL are
+// editable since admins are trusted staff fixing genuine data-entry mistakes,
+// not the price-manipulation surface the customer schema guards against.
+export interface AdminUpdateCaller {
+  name?: string;
+  phone?: string;
+  email?: string;
+  gender?: "male" | "female" | "prefer_not_to_say";
+  relationship?: string;
+}
+
+export interface AdminUpdateRecipient {
+  _id: string;
+  recipientName?: string;
+  recipientPhone?: string;
+  country?: string;
+  occassion?: string;
+  callType?: string;
+  callDate?: string;
+  price?: number;
+  message?: string;
+  specialInstruction?: string;
+  callRecordingURL?: string;
+}
+
+export interface AdminBookingUpdatePayload {
+  caller?: AdminUpdateCaller;
+  recipients?: AdminUpdateRecipient[];
+}
+
 export interface BookingFilters {
   status?: string;
+  bookingStatus?: string;
   callType?: string;
   occassion?: string;
   country?: string;

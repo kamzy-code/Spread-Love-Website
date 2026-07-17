@@ -178,6 +178,53 @@ class BookingController {
 
   // Admin Endpoints
 
+  // caller/recipients are validated by validateRequest (updateBookingByAdminSchema);
+  // bookingId (Mongo _id) validated by validateParams (bookingIdParamSchema)
+  async updateBookingByAdmin(req: AuthRequest, res: Response, next: NextFunction) {
+    const { bookingId } = req.params;
+    const { caller, recipients } = req.body;
+    const user = req.user!;
+
+    bookingLogger.info("Update booking by admin initiated", {
+      userId: user.userId,
+      role: user.role,
+      bookingId,
+      action: "UPDATE_BOOKING_BY_ADMIN",
+    });
+
+    try {
+      const booking = await bookingService.getBookingById(
+        bookingId,
+        user.userId,
+        user.role
+      );
+
+      if (!booking) {
+        bookingLogger.warn("Update booking by admin failed: Booking not found", {
+          userId: user.userId,
+          bookingId,
+          action: "UPDATE_BOOKING_BY_ADMIN_FAILED",
+        });
+        next(new HttpError(404, "Booking not found"));
+        return;
+      }
+
+      await bookingService.updateBookingByAdmin(booking, { caller, recipients });
+
+      res.status(200).json({ message: "Update Successful" });
+      return;
+    } catch (error: any) {
+      bookingLogger.error(`Update booking by admin error: ${error.message}`, {
+        userId: user.userId,
+        bookingId,
+        action: "UPDATE_BOOKING_BY_ADMIN_FAILED",
+        error,
+      });
+      next(error);
+      return;
+    }
+  }
+
   // get a booking by the MongoDB id and not the generated booking ID
   async getBookingById(req: AuthRequest, res: Response, next: NextFunction) {
     // extract booking Id from URL and get the user object created from the JWT token
@@ -311,6 +358,7 @@ class BookingController {
     // extract all possible filtering parameters from the request query object.
     const {
       status,
+      bookingStatus,
       assignedRep,
       callType,
       country,
@@ -349,8 +397,11 @@ class BookingController {
     const andConditions: any[] = [];
 
     if (paymentStatus) searchQuery.paymentStatus = paymentStatus;
+    if (bookingStatus) searchQuery.bookingStatus = bookingStatus;
+
     if (assignedRep)
       searchQuery.assignedRep = new Types.ObjectId(assignedRep as string);
+    
     if (confirmationMailsent !== undefined && confirmationMailsent !== null) {
       if (typeof confirmationMailsent === "boolean") {
         searchQuery.confirmationMailsent = confirmationMailsent;
@@ -794,6 +845,9 @@ class BookingController {
     try {
       // Current period
       const analytics = await bookingService.getAnalytics(matchStage);
+      const bookingBreakdown = await bookingService.getBookingStatusBreakdown(
+        matchStage
+      );
       const totalBookings = await bookingService.getTotalBookingsCount(
         matchStage
       );
@@ -837,6 +891,7 @@ class BookingController {
       res.status(200).json({
         totalBookings,
         breakdown: analytics,
+        bookingBreakdown,
         percentageIncrease,
         ...(user.role === "superadmin" && {
           totalRevenue,

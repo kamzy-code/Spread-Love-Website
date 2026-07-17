@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import AdminShell from "../ui/AdminShell";
 import FilterContextProvider from "./bookingFilterContext";
 import { Filter } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import BookingTable from "./bookingTable";
 
 const FILTER_OPTIONS = [
@@ -15,6 +15,7 @@ const FILTER_OPTIONS = [
   { key: "assignedRep", label: "Assigned Rep" },
   { key: "callType", label: "Call Type" },
   { key: "status", label: "Status" },
+  { key: "bookingStatus", label: "Booking Status" },
   { key: "occasion", label: "Occasion" },
   { key: "country", label: "Country" },
   { key: "confirmationMailsent", label: "Confirmation Mail" },
@@ -38,6 +39,7 @@ const SORT_OPTIONS = [
 
 export default function Booking() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { authStatus, authError, loading } = useAdminAuth();
   const [mounted, setMounted] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -49,6 +51,7 @@ export default function Booking() {
     assignedRep: false,
     callType: false,
     status: false,
+    bookingStatus: false,
     occasion: false,
     country: false,
     confirmationMailsent: false,
@@ -79,6 +82,21 @@ export default function Booking() {
     }
     setMounted(true);
   }, []);
+
+  // Arriving from an analytics card link (?status=... or ?bookingStatus=...)
+  // — surface the matching filter panel so the applied filter is visible,
+  // not just silently active.
+  useEffect(() => {
+    const hasStatus = searchParams.has("status");
+    const hasBookingStatus = searchParams.has("bookingStatus");
+    if (hasStatus || hasBookingStatus) {
+      setActiveFilters((prev) => ({
+        ...prev,
+        ...(hasStatus && { status: true }),
+        ...(hasBookingStatus && { bookingStatus: true }),
+      }));
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {

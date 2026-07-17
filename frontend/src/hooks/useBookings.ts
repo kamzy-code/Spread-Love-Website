@@ -1,5 +1,6 @@
 import { useQuery, keepPreviousData, useMutation } from "@tanstack/react-query";
 import {
+  AdminBookingUpdatePayload,
   BookingFilters,
   CreateBookingPayload,
   CreateBookingResponse,
@@ -67,27 +68,58 @@ export const useBookings = (filters: BookingFilters, searchValue: string) => {
   });
 };
 
-export const useUpdateStatus = (body: { id: string; status: string }) => {
+// Legacy-booking equivalent of useUpdateRecipientStatus below (single
+// implicit recipient, no recipientId). id/status passed at call time via
+// mutate(), not baked into the hook.
+export const useUpdateStatus = () => {
   return useMutation({
-    mutationFn: async () => {
-      const res = await fetch(`${apiUrl}/booking/admin/${body.id}/status`, {
-        credentials: "include",
+    mutationFn: ({ id, status }: { id: string; status: string }) =>
+      apiCall(`/booking/admin/${id}/status`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ status: body.status }),
-      });
+        body: JSON.stringify({ status }),
+      }),
+  });
+};
 
-      if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error.message || "Failed to update status");
-      }
-    },
+// v2 bookings: a call's outcome is recorded per recipient, not on the whole
+// booking (a booking can hold multiple recipients with independent
+// outcomes) — this is what the detail page's per-recipient action menu calls,
+// scoped to that recipient's _id. useUpdateStatus above remains the
+// legacy-booking equivalent (single recipient, no recipientId).
+export const useUpdateRecipientStatus = () => {
+  return useMutation({
+    mutationFn: ({
+      bookingId,
+      recipientId,
+      status,
+    }: {
+      bookingId: string;
+      recipientId: string;
+      status: string;
+    }) =>
+      apiCall(`/booking/admin/${bookingId}/recipients/${recipientId}/status`, {
+        method: "PUT",
+        body: JSON.stringify({ status }),
+      }),
+  });
+};
 
-    onError: (error) => {
-      throw new Error(error.message || "Failed to update status");
-    },
+// Admin correction (broader field set than the customer self-service update
+// — see AdminBookingUpdatePayload). bookingId here is the Mongo _id, matching
+// every other /booking/admin/* route.
+export const useUpdateBookingByAdmin = () => {
+  return useMutation({
+    mutationFn: ({
+      bookingId,
+      payload,
+    }: {
+      bookingId: string;
+      payload: AdminBookingUpdatePayload;
+    }) =>
+      apiCall(`/booking/admin/${bookingId}`, {
+        method: "PUT",
+        body: JSON.stringify(payload),
+      }),
   });
 };
 

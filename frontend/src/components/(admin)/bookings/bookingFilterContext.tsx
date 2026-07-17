@@ -1,8 +1,10 @@
-import { useState, createContext, useContext, useEffect } from "react";
+"use client";
+import { useState, createContext, useContext, useEffect, useRef } from "react";
 
 import { useQueryClient } from "@tanstack/react-query";
+import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
-import { STATUS_LIST } from "../dashboard/analytics";
+import { STATUS_LIST, BOOKING_STATUS_LIST } from "../dashboard/analytics";
 import { services } from "@/components/services/serviceList";
 import { Search } from "lucide-react";
 import { useDebounce } from "@/hooks/useDebounce";
@@ -56,8 +58,22 @@ export default function FilterContextProvider({
 }) {
   // states an values
   const queryClient = useQueryClient();
+  const searchParams = useSearchParams();
 
   const savedFilter = sessionStorage.getItem("bookingFilters");
+  const savedFilterParsed: BookingFilters | null = savedFilter
+    ? JSON.parse(savedFilter)
+    : null;
+
+  // A link from an analytics card (?status=... or ?bookingStatus=...)
+  const urlStatus = searchParams.get("status") || undefined;
+  const urlBookingStatus = searchParams.get("bookingStatus") || undefined;
+
+  const statusIsNewFilter =
+    urlStatus !== undefined && urlStatus !== savedFilterParsed?.status;
+  const bookingStatusIsNewFilter =
+    urlBookingStatus !== undefined &&
+    urlBookingStatus !== savedFilterParsed?.bookingStatus;
 
   const [filterType, setFilterType] = useState<FilterType>(() => {
     if (savedFilter) {
@@ -67,27 +83,35 @@ export default function FilterContextProvider({
     return "daily";
   });
   const [formData, setFormData] = useState<BookingFilters>(() => {
-    if (savedFilter) return JSON.parse(savedFilter);
+    const base = savedFilterParsed
+      ? savedFilterParsed
+      : {
+          singleDate:
+            filterType === "weekly"
+              ? getDefaultWeek()
+              : filterType === "monthly"
+                ? getDefaultMonth()
+                : filterType === "yearly"
+                  ? getDefaultYear()
+                  : getDefaultDate(),
+          startDate: "",
+          endDate: "",
+          fetchParam: "callDate",
+          status: "",
+          bookingStatus: "",
+          callType: "",
+          occassion: "",
+          assignedRep: "",
+          country: "",
+          confirmationMailsent: undefined,
+          paymentStatus: "",
+          page: 1,
+        };
     return {
-      singleDate:
-        filterType === "weekly"
-          ? getDefaultWeek()
-          : filterType === "monthly"
-          ? getDefaultMonth()
-          : filterType === "yearly"
-          ? getDefaultYear()
-          : getDefaultDate(),
-      startDate: "",
-      endDate: "",
-      fetchParam: "callDate",
-      status: "",
-      callType: "",
-      occassion: "",
-      assignedRep: "",
-      country: "",
-      confirmationMailsent: undefined,
-      paymentStatus: "",
-      page: 1,
+      ...base,
+      ...(urlStatus && { status: urlStatus }),
+      ...(urlBookingStatus && { bookingStatus: urlBookingStatus }),
+      ...((statusIsNewFilter || bookingStatusIsNewFilter) && { page: 1 }),
     };
   });
   const [searchTerm, setSearchTerm] = useState("");
@@ -102,6 +126,7 @@ export default function FilterContextProvider({
     startDate: formData.startDate,
     endDate: formData.endDate,
     status: formData.status,
+    bookingStatus: formData.bookingStatus,
     callType: formData.callType,
     occassion: formData.occassion,
     assignedRep: formData.assignedRep,
@@ -116,7 +141,7 @@ export default function FilterContextProvider({
 
   const { data } = useFetchReps(
     { limit: 100, page: 1, role: "callrep" },
-    "callreps"
+    "callreps",
   );
   const reps: Rep[] = data?.data || [];
 
@@ -147,7 +172,7 @@ export default function FilterContextProvider({
   };
 
   const handleOnChange = (
-    e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
+    e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -160,18 +185,18 @@ export default function FilterContextProvider({
       queryKey: ["bookings", { ...appliedFormData, search: debouncedValue }],
     });
 
-    // new
     setAppliedFormData((prev) => ({
       ...prev,
       ...formData,
       filterType: filterType,
+      page: 1,
     }));
   };
 
   useEffect(() => {
     sessionStorage.setItem(
       "bookingFilters",
-      JSON.stringify({ ...appliedFormData})
+      JSON.stringify({ ...appliedFormData }),
     );
   }, [appliedFormData]);
 
@@ -183,31 +208,39 @@ export default function FilterContextProvider({
     }));
   }, [sortOptions]);
 
+
+ 
+  const isFirstSearchRun = useRef(true);
   useEffect(() => {
-    setFormData((prev) => {
-      const updated = { ...prev };
+    if (isFirstSearchRun.current) {
+      isFirstSearchRun.current = false;
+      return;
+    }
+    setAppliedFormData((prev) => ({ ...prev, page: 1 }));
+  }, [debouncedValue]);
+
+  useEffect(() => {
+    const applyFilters = (updated: BookingFilters) => {
       if (!activeFilters.assignedRep) updated.assignedRep = "";
       if (!activeFilters.callType) updated.callType = "";
       if (!activeFilters.status) updated.status = "";
+      if (!activeFilters.bookingStatus) updated.bookingStatus = "";
       if (!activeFilters.occasion) updated.occassion = "";
       if (!activeFilters.country) updated.country = "";
       if (!activeFilters.confirmationMailsent)
         updated.confirmationMailsent = undefined;
       if (!activeFilters.paymentStatus) updated.paymentStatus = "";
+    };
+    setFormData((prev) => {
+      const updated = { ...prev };
+     applyFilters(updated);
 
       return updated;
     });
 
     setAppliedFormData((prev) => {
       const updated = { ...prev };
-      if (!activeFilters.assignedRep) updated.assignedRep = "";
-      if (!activeFilters.callType) updated.callType = "";
-      if (!activeFilters.status) updated.status = "";
-      if (!activeFilters.occasion) updated.occassion = "";
-      if (!activeFilters.country) updated.country = "";
-      if (!activeFilters.confirmationMailsent)
-        updated.confirmationMailsent = undefined;
-      if (!activeFilters.paymentStatus) updated.paymentStatus = "";
+     applyFilters(updated);
 
       return updated;
     });
@@ -341,7 +374,7 @@ export default function FilterContextProvider({
                           onChange={handleOnChange}
                           value={formData.startDate}
                         />
-                      </div> 
+                      </div>
 
                       <div className="flex flex-row items-center space-x-2 w-auto">
                         <label className="text-gray-700 font-medium text-sm">
@@ -358,7 +391,7 @@ export default function FilterContextProvider({
                     </div>
                   )}
 
-                   <div className="flex flex-row items-center space-x-2 w-auto">
+                  <div className="flex flex-row items-center space-x-2 w-auto">
                     <label className="text-gray-700 font-medium text-sm">
                       Fetch By:{" "}
                     </label>
@@ -376,7 +409,7 @@ export default function FilterContextProvider({
                 </div>
 
                 {Object.entries(activeFilters).some(
-                  ([key, value]) => key !== "date" && value
+                  ([key, value]) => key !== "date" && value,
                 ) && (
                   <div className="flex flex-row flex-wrap gap-4">
                     {activeFilters.assignedRep && (
@@ -435,6 +468,29 @@ export default function FilterContextProvider({
                         >
                           <option value="">All</option>
                           {STATUS_LIST.map((status) => {
+                            return (
+                              <option key={status.key} value={status.key}>
+                                {status.label}
+                              </option>
+                            );
+                          })}
+                        </select>
+                      </div>
+                    )}
+                    {activeFilters.bookingStatus && (
+                      <div className="flex flex-row items-center space-x-2 w-auto">
+                        <label className="text-gray-700 font-medium text-sm">
+                          Booking Status:{" "}
+                        </label>
+                        <select
+                          name="bookingStatus"
+                          className="px-4 border border-gray-300 rounded-sm h-6 flex items-center justify-center text-sm focus:ring-2 focus:ring-brand-end focus:border-transparent"
+                          onChange={handleOnChange}
+                          value={formData.bookingStatus}
+                          required
+                        >
+                          <option value="">All</option>
+                          {BOOKING_STATUS_LIST.map((status) => {
                             return (
                               <option key={status.key} value={status.key}>
                                 {status.label}
@@ -522,16 +578,16 @@ export default function FilterContextProvider({
                                 value === ""
                                   ? undefined
                                   : value === "true"
-                                  ? true
-                                  : false,
+                                    ? true
+                                    : false,
                             }));
                           }}
                           value={
                             formData.confirmationMailsent === undefined
                               ? ""
                               : formData.confirmationMailsent === true
-                              ? "true"
-                              : "false"
+                                ? "true"
+                                : "false"
                           }
                           required
                         >
@@ -587,7 +643,7 @@ export const useBookingFilter = () => {
   const context = useContext(filterContext);
   if (context === null) {
     throw new Error(
-      "useBookingFilter must be used within a BookingFilterProvider"
+      "useBookingFilter must be used within a BookingFilterProvider",
     );
   }
   return context;

@@ -6,6 +6,11 @@ import { getStatusColor, getStatusIcon } from "@/lib/getStatusColor";
 import { useFilter } from "./dashboardFilterContext";
 import { useRouter } from "next/navigation";
 import { FilterType, Booking, BookingFilters } from "@/lib/types";
+import {
+  getDisplayCallerName,
+  getDisplayBookingStatus,
+  getPrimaryRecipient,
+} from "@/lib/bookingDisplay";
 
 export default function RecentBookings() {
   const { appliedFilterType, appliedFetchParam, appliedDate, appliedEndDate, appliedStartDate } =
@@ -78,6 +83,7 @@ export default function RecentBookings() {
         ) : (
           <div>
             {(bookings as Booking[])?.map((booking: Booking) => {
+              const status = getDisplayBookingStatus(booking);
               return (
                 <div
                   key={booking.bookingId}
@@ -86,21 +92,21 @@ export default function RecentBookings() {
                 >
                   <div>
                     <h3 className="text-brand-start text-sm font-medium">
-                      {booking.callerName}
+                      {getDisplayCallerName(booking)}
                     </h3>
                     <p className="text-xs text-gray-700 max-w-[70%] sm:max-w-full">{`${
-                      booking.occassion
+                      getPrimaryRecipient(booking).occassion
                     } - ${formatToYMD(booking.createdAt)}`}</p>
                   </div>
 
                   <div
                     className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(
-                      booking.status as string,
+                      status,
                       "badge"
                     )}`}
                   >
-                    {getStatusIcon(booking.status as string, true)}
-                    <span className="ml-1 capitalize">{booking.status}</span>
+                    {getStatusIcon(status, true)}
+                    <span className="ml-1 capitalize">{status.replace("_", " ")}</span>
                   </div>
                 </div>
               );

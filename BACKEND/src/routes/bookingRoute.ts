@@ -6,6 +6,7 @@ import {
   assignCallToRepQuerySchema,
   bookingIdParamSchema,
   createBookingSchema,
+  updateBookingByAdminSchema,
   updateBookingByCustomerSchema,
   updateBookingStatusSchema,
 } from "../validation/bookingSchemas";
@@ -61,6 +62,15 @@ router.put(
   checkRole("superadmin", "salesrep", "callrep"),
   validateRequest(updateBookingStatusSchema),
   bookingController.updateBookingStatus
+);
+
+router.put(
+  "/admin/:bookingId",
+  authMiddleware,
+  checkRole("superadmin", "salesrep"),
+  validateParams(bookingIdParamSchema),
+  validateRequest(updateBookingByAdminSchema),
+  bookingController.updateBookingByAdmin
 );
 
 router.delete(
