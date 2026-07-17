@@ -1,4 +1,4 @@
-import { useBookingFilter } from "./bookingFilterContext";
+import { useBookingFilterStore } from "@/store/bookingFilterStore";
 import {
   useBookings,
   useDeleteBooking,
@@ -7,7 +7,7 @@ import {
 import MiniLoader from "../ui/miniLoader";
 import { XCircle, Calendar } from "lucide-react";
 import Pagination from "../ui/pagination";
-import { BookingFilterContex, BookingFilters, Booking } from "@/lib/types";
+import { BookingFilters, Booking } from "@/lib/types";
 import { getDisplayCallerEmail } from "@/lib/bookingDisplay";
 import { useEffect, useState } from "react";
 import { getColumnsByRole } from "./data-table/columns";
@@ -27,7 +27,9 @@ import CompletePaymentModal from "./completePayment";
 export default function BookingTable() {
   const queryClient = useQueryClient();
   const { user } = useAdminAuth();
-  const fullFilter: BookingFilterContex = useBookingFilter();
+  const appliedFormData = useBookingFilterStore((s) => s.appliedFormData);
+  const debouncedValue = useBookingFilterStore((s) => s.debouncedValue);
+  const setPage = useBookingFilterStore((s) => s.setPage);
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
   const [resendMailStatusAction, setResendMailStatusAction] = useState(false);
   const [verifyTransactionAction, setVerifyTransactionAction] = useState(false);
@@ -40,12 +42,9 @@ export default function BookingTable() {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  const { setPage, ...filter } = fullFilter;
-  const { search: searchTerm } = filter;
-
   const { data, error, isLoading, isFetching, refetch } = useBookings(
-    filter as BookingFilters,
-    searchTerm as string
+    { ...appliedFormData, search: debouncedValue } as BookingFilters,
+    debouncedValue
   );
 
   const { data: bookings, meta } = data ?? { data: [], meta: undefined };

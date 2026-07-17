@@ -246,10 +246,6 @@ export interface BookingFilters {
   paymentURL?: string;
 }
 
-export type BookingFilterContex = BookingFilters & {
-  setPage: (newPage: number) => void;
-};
-
 export type Rep = {
   _id: string;
   firstName: string;
