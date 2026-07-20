@@ -5,16 +5,6 @@ export type PaginationMeta = {
   totalPages: number;
 };
 
-// Dashboard
-export interface dashboardFilterContextType {
-  appliedFilterType: string;
-  appliedFetchParam: string;
-  appliedDate?: string;
-  appliedStartDate?: string;
-  appliedEndDate?: string;
-  repId?: string;
-}
-
 // Auth
 export type AdminUser = {
   firstName: string;

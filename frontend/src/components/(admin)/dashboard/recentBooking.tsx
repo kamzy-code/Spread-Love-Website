@@ -3,7 +3,7 @@ import MiniLoader from "../ui/miniLoader";
 import { Calendar, XCircle } from "lucide-react";
 import { formatToYMD } from "@/lib/formatDate";
 import { getStatusColor, getStatusIcon } from "@/lib/getStatusColor";
-import { useFilter } from "./dashboardFilterContext";
+import { useDashboardFilterStore } from "@/store/dashboardFilterStore";
 import { useRouter } from "next/navigation";
 import { FilterType, Booking, BookingFilters } from "@/lib/types";
 import {
@@ -13,8 +13,12 @@ import {
 } from "@/lib/bookingDisplay";
 
 export default function RecentBookings() {
-  const { appliedFilterType, appliedFetchParam, appliedDate, appliedEndDate, appliedStartDate } =
-    useFilter();
+  const useFilterStore = useDashboardFilterStore();
+  const appliedFilterType = useFilterStore((s) => s.appliedFilterType);
+  const appliedFetchParam = useFilterStore((s) => s.appliedFetchParam);
+  const appliedDate = useFilterStore((s) => s.appliedDate);
+  const appliedEndDate = useFilterStore((s) => s.appliedEndDate);
+  const appliedStartDate = useFilterStore((s) => s.appliedStartDate);
 
   const filters: BookingFilters = {
     filterType: appliedFilterType as FilterType,

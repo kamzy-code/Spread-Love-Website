@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { useAdminAuth } from "@/hooks/authContext";
 import MiniLoader from "../ui/miniLoader";
-import { useFilter } from "./dashboardFilterContext";
+import { useDashboardFilterStore } from "@/store/dashboardFilterStore";
 import StatCard, { StatCardData } from "./StatCard";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
@@ -99,17 +99,15 @@ export const BOOKING_STATUS_LIST = [
   },
 ];
 
-export default function Analytics() {
+export default function Analytics({ repId }: { repId?: string }) {
   const { user } = useAdminAuth();
 
-  const {
-    appliedFilterType,
-    appliedDate,
-    appliedEndDate,
-    appliedStartDate,
-    appliedFetchParam,
-    repId,
-  } = useFilter();
+  const useFilterStore = useDashboardFilterStore(repId);
+  const appliedFilterType = useFilterStore((s) => s.appliedFilterType);
+  const appliedDate = useFilterStore((s) => s.appliedDate);
+  const appliedEndDate = useFilterStore((s) => s.appliedEndDate);
+  const appliedStartDate = useFilterStore((s) => s.appliedStartDate);
+  const appliedFetchParam = useFilterStore((s) => s.appliedFetchParam);
 
   console.log("appliedFetchParam", appliedFetchParam);
 
