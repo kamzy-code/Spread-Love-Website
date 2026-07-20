@@ -10,7 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { MoreVertical, MoreHorizontal } from "lucide-react";
 import { Booking } from "@/lib/types";
-import { useAdminAuth } from "@/hooks/authContext";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
 
 export default function ItemDropDown({
   booking,

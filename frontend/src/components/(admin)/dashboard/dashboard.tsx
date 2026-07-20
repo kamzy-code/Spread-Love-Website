@@ -1,6 +1,6 @@
 "use client";
 
-import { useAdminAuth } from "@/hooks/authContext";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { useEffect, useState } from "react";
 import AdminShell from "../ui/AdminShell";
 import PageError from "../ui/pageError";

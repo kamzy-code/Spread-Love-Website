@@ -23,7 +23,7 @@ export type AuthStatus =
   | "unauthenticated"
   | "error";
 
-export interface AdminAuthContextType {
+export interface AdminAuthHook {
   user: AdminUser | null;
   isAuthenticated: boolean;
   loading: boolean;
@@ -253,10 +253,6 @@ export type RepFilter = {
   search?: string;
   page?: number;
   limit: number;
-};
-
-export type RepFiltercontext = RepFilter & {
-  setPage: (newPage: number) => void;
 };
 
 // Logs

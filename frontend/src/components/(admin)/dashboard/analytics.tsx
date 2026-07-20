@@ -10,7 +10,7 @@ import {
   Clock,
   PackageCheck,
 } from "lucide-react";
-import { useAdminAuth } from "@/hooks/authContext";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
 import MiniLoader from "../ui/miniLoader";
 import { useDashboardFilterStore } from "@/store/dashboardFilterStore";
 import StatCard, { StatCardData } from "./StatCard";

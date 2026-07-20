@@ -4,7 +4,7 @@ import MiniLoader from "../../ui/miniLoader";
 import { XCircle } from "lucide-react";
 import DetailsPage from "./detailsPage";
 import { useRouter } from "next/navigation";
-import { useAdminAuth } from "@/hooks/authContext";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { useState, useEffect } from "react";
 import PageLoading from "../../ui/pageLoading";
 import PageError from "../../ui/pageError";

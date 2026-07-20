@@ -12,7 +12,7 @@ import { getDisplayCallerEmail } from "@/lib/bookingDisplay";
 import { useEffect, useState } from "react";
 import { getColumnsByRole } from "./data-table/columns";
 import { DataTable } from "../ui/data-table";
-import { useAdminAuth } from "@/hooks/authContext";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
 import GridItem from "./data-table/grid-table";
 import { useQueryClient } from "@tanstack/react-query";
 import ActionStatusModal from "../ui/updateModal";

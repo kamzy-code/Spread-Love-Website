@@ -1,4 +1,4 @@
-import { useAdminAuth } from "@/hooks/authContext";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { useUpdateRep } from "@/hooks/useReps";
 import { Rep } from "@/lib/types";
 import { motion } from "framer-motion";

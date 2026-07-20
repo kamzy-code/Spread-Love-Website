@@ -6,7 +6,7 @@ import ActionStatusModal from "../../ui/updateModal";
 import { deepEqual } from "@/lib/hasBookingChanged";
 import { getStatusColor, getStatusIcon } from "@/lib/getStatusColor";
 import { Booking, CallerFormState, AdminBookingUpdatePayload } from "@/lib/types";
-import { useAdminAuth } from "@/hooks/authContext";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { isLegacyBooking } from "@/lib/bookingShape";
 import { getDisplayBookingStatus, getPrimaryRecipient } from "@/lib/bookingDisplay";
 import {

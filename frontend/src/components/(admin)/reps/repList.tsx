@@ -1,4 +1,4 @@
-import { useRepFilter } from "./repsContext";
+import { useRepFilterStore } from "@/store/repFilterStore";
 import { useFetchReps } from "@/hooks/useReps";
 import { useEffect } from "react";
 import { XCircle, Users } from "lucide-react";
@@ -10,12 +10,14 @@ import Pagination from "../ui/pagination";
 export default function RepList() {
   const router = useRouter();
 
-  const { setPage, ...filter } = useRepFilter();
-  const { search: searchTerm } = filter;
+  const appliedFormData = useRepFilterStore((s) => s.appliedFormData);
+  const searchTerm = useRepFilterStore((s) => s.debouncedValue);
+  const setPage = useRepFilterStore((s) => s.setPage);
+  const filter = { ...appliedFormData, search: searchTerm };
 
   const { data, error, isLoading, isFetching, refetch } = useFetchReps(
     filter,
-    searchTerm as string
+    searchTerm
   );
 
   const { data: reps, meta } = data ?? { data: [], meta: undefined };
