@@ -33,7 +33,10 @@ export const useFetchCustomers = (filter: CustomerFilter) => {
 // route is behind auth) and downloads the response as a file, since a plain
 // <a href> can't attach the auth cookie reliably cross-origin.
 export const exportCustomersCsv = async (
-  filter: Pick<CustomerFilter, "tier" | "search" | "filterType" | "singleDate" | "startDate" | "endDate">
+  filter: Pick<
+    CustomerFilter,
+    "tier" | "search" | "filterType" | "singleDate" | "startDate" | "endDate" | "fetchParam"
+  >
 ) => {
   const queryString = buildQueryParams(filter as Record<string, unknown>);
 

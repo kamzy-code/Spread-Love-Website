@@ -35,7 +35,7 @@ export default function CustomerFilterPanel({ showFilter }: { showFilter: boolea
   const submitSearch = useCustomerFilterStore((s) => s.submitSearch);
   const applyFilter = useCustomerFilterStore((s) => s.applyFilter);
 
-  const handleTierChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setFormField(e.target.name, e.target.value);
   };
 
@@ -63,6 +63,7 @@ export default function CustomerFilterPanel({ showFilter }: { showFilter: boolea
         singleDate: appliedFormData.singleDate,
         startDate: appliedFormData.startDate,
         endDate: appliedFormData.endDate,
+        fetchParam: appliedFormData.fetchParam,
       });
     } catch (error) {
       setExportError(error instanceof Error ? error.message : "Failed to export customers");
@@ -80,14 +81,14 @@ export default function CustomerFilterPanel({ showFilter }: { showFilter: boolea
           exit={{ y: -20 }}
           transition={{ delay: 0.2 }}
         >
-          <form className="flex flex-col lg:flex-row gap-4">
-            <div className="flex flex-col sm:flex-row gap-4">
+          <form className="flex flex-col lg:flex-row lg:flex-wrap gap-4">
+            <div className="flex flex-col sm:flex-row sm:flex-wrap gap-4">
               <div className="flex flex-row items-center space-x-2 w-auto">
                 <label className="text-gray-700 font-medium text-sm">Tier: </label>
                 <select
                   name="tier"
                   className="px-4 border border-gray-300 rounded-sm h-6 flex items-center justify-center text-sm focus:ring-2 focus:ring-brand-end focus:border-transparent"
-                  onChange={handleTierChange}
+                  onChange={handleSelectChange}
                   value={formData.tier}
                   required
                 >
@@ -166,6 +167,22 @@ export default function CustomerFilterPanel({ showFilter }: { showFilter: boolea
                     value={formData.singleDate}
                     placeholder="Enter year"
                   />
+                </div>
+              )}
+
+              {formData.filterType !== "" && (
+                <div className="flex flex-row items-center space-x-2 w-auto">
+                  <label className="text-gray-700 font-medium text-sm">Fetch By: </label>
+                  <select
+                    name="fetchParam"
+                    className="px-4 border border-gray-300 rounded-sm h-6 flex items-center justify-center text-sm focus:ring-2 focus:ring-brand-end focus:border-transparent"
+                    onChange={handleSelectChange}
+                    value={formData.fetchParam}
+                    required
+                  >
+                    <option value="bookingDate">Booking Date</option>
+                    <option value="callDate">Call Date</option>
+                  </select>
                 </div>
               )}
             </div>

@@ -1,21 +1,24 @@
 import { Response, NextFunction } from "express";
 import customerService from "../services/customerService";
+import bookingService from "../services/bookingService";
 import { AuthRequest } from "../middlewares/authMiddleware";
 import { bookingLogger } from "../utils/logger";
 import { toCsv } from "../utils/toCsv";
 import getDateRange from "../utils/getDateRange";
 
-// "Booked within a period" filters on lastBookingAt — the only booking-date
-// signal the Customer record carries (it's a rolling most-recent-booking
-// field, not a full booking history).
-const buildSearchQuery = (
+// "Booked within a period" has to match against actual bookings, not the
+// Customer record's lastBookingAt — that field only ever holds the single
+// most-recent booking, so a customer whose OTHER booking(s) fall in the
+// requested range would otherwise be silently missed.
+const buildSearchQuery = async (
   tier: unknown,
   search: unknown,
   filterType: unknown,
   singleDate: unknown,
   startDate: unknown,
-  endDate: unknown
-): any => {
+  endDate: unknown,
+  fetchParam: unknown
+): Promise<any> => {
   const searchQuery: any = {};
   if (tier) searchQuery.tier = tier;
   if (search) {
@@ -30,7 +33,11 @@ const buildSearchQuery = (
     endDate as string
   );
   if (dateRange) {
-    searchQuery.lastBookingAt = { $gte: dateRange.start, $lte: dateRange.end };
+    const emails = await bookingService.getDistinctCallerEmailsInDateRange(
+      dateRange,
+      (fetchParam as string) || "bookingDate"
+    );
+    searchQuery.email = { $in: emails };
   }
 
   return searchQuery;
@@ -46,6 +53,7 @@ class CustomerController {
       singleDate,
       startDate,
       endDate,
+      fetchParam,
       page = "1",
       limit = "10",
       sortParam = "lastBookingAt",
@@ -59,12 +67,20 @@ class CustomerController {
       query: { ...req.query },
     });
 
-    const searchQuery = buildSearchQuery(tier, search, filterType, singleDate, startDate, endDate);
-    const skip = (parseInt(page as string) - 1) * parseInt(limit as string);
-    const numericLimit = parseInt(limit as string);
-    const sortOrderCast: 1 | -1 = sortOrder === "1" ? 1 : -1;
-
     try {
+      const searchQuery = await buildSearchQuery(
+        tier,
+        search,
+        filterType,
+        singleDate,
+        startDate,
+        endDate,
+        fetchParam
+      );
+      const skip = (parseInt(page as string) - 1) * parseInt(limit as string);
+      const numericLimit = parseInt(limit as string);
+      const sortOrderCast: 1 | -1 = sortOrder === "1" ? 1 : -1;
+
       const customers = await customerService.getAllCustomers(
         searchQuery,
         sortParam as string,
@@ -104,7 +120,7 @@ class CustomerController {
 
   async exportCustomersCsv(req: AuthRequest, res: Response, next: NextFunction) {
     const user = req.user!;
-    const { tier, search, filterType, singleDate, startDate, endDate } = req.query;
+    const { tier, search, filterType, singleDate, startDate, endDate, fetchParam } = req.query;
 
     bookingLogger.info("Export customers CSV initiated", {
       userId: user.userId,
@@ -113,9 +129,16 @@ class CustomerController {
       query: { ...req.query },
     });
 
-    const searchQuery = buildSearchQuery(tier, search, filterType, singleDate, startDate, endDate);
-
     try {
+      const searchQuery = await buildSearchQuery(
+        tier,
+        search,
+        filterType,
+        singleDate,
+        startDate,
+        endDate,
+        fetchParam
+      );
       const customers = await customerService.getAllCustomersForExport(searchQuery);
 
       const csv = toCsv(

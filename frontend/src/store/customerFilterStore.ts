@@ -29,6 +29,7 @@ function defaultFormData(): CustomerFilter {
     singleDate: "",
     startDate: "",
     endDate: "",
+    fetchParam: "bookingDate",
   };
 }
 

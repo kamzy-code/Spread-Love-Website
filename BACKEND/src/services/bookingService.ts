@@ -605,6 +605,36 @@ class BookingService {
     return await Booking.countDocuments(matchStage);
   }
 
+  // Customer directory "booked within X" filter needs every booking in the
+  // range, not just each customer's single lastBookingAt field — this finds
+  // the distinct caller emails across all matching bookings (legacy + v2
+  // shape), for the customer controller to filter Customer docs by.
+  async getDistinctCallerEmailsInDateRange(
+    dateRange: { start: Date; end: Date },
+    fetchParam: string
+  ): Promise<string[]> {
+    const dateQuery =
+      fetchParam === "bookingDate"
+        ? { createdAt: { $gte: dateRange.start, $lte: dateRange.end } }
+        : {
+            $or: [
+              { callDate: { $gte: dateRange.start, $lte: dateRange.end } },
+              { "recipients.callDate": { $gte: dateRange.start, $lte: dateRange.end } },
+            ],
+          };
+
+    const [v2Emails, legacyEmails] = await Promise.all([
+      Booking.distinct("caller.email", dateQuery),
+      Booking.distinct("callerEmail", dateQuery),
+    ]);
+
+    const emails = new Set<string>();
+    [...v2Emails, ...legacyEmails].forEach((email) => {
+      if (email) emails.add(String(email).toLowerCase());
+    });
+    return Array.from(emails);
+  }
+
   async getTotalRevenue(matchStage: any) {
     const result = await Booking.aggregate([
       { $match: matchStage },

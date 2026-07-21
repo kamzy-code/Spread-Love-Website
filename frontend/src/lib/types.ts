@@ -281,6 +281,7 @@ export type CustomerFilter = {
   singleDate?: string;
   startDate?: string;
   endDate?: string;
+  fetchParam?: string;
 };
 
 // Logs
