@@ -9,6 +9,8 @@ export interface ICustomer extends Document {
   completedBookings: number;
   tier: customerTier;
   lastBookingAt: Date;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const customerSchema: Schema = new Schema<ICustomer>(

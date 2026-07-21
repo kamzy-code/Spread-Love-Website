@@ -8,6 +8,7 @@ import emailRouter from "./routes/emailRoute";
 import logRouter from "./routes/logRouter";
 import paymentRouter from "./routes/paymentRoute";
 import couponRouter from "./routes/couponRoute";
+import customerRouter from "./routes/customerRoute";
 import rateLimit from "express-rate-limit";
 import cookieParser from "cookie-parser";
 import { errorHandler } from "./middlewares/errorHandler";
@@ -28,6 +29,7 @@ app.use(
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"], // Ad
+    exposedHeaders: ["Content-Disposition"], // needed for frontend CSV export filenames
   })
 );
 app.use(express.json());
@@ -68,6 +70,7 @@ app.use("/api/email", emailRouter);
 app.use("/api/logs", logRouter);
 app.use("/api/payment", paymentRouter);
 app.use("/api/coupon", couponRouter);
+app.use("/api/customer", customerRouter);
 
 app.use((req, res) => {
   res.status(404).json({ message: "Route not found" });

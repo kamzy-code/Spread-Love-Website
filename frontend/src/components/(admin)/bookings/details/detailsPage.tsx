@@ -5,10 +5,15 @@ import { useQueryClient } from "@tanstack/react-query";
 import ActionStatusModal from "../../ui/updateModal";
 import { deepEqual } from "@/lib/hasBookingChanged";
 import { getStatusColor, getStatusIcon } from "@/lib/getStatusColor";
+import { getTierColor, getTierIcon, getTierLabel } from "@/lib/getTierColor";
 import { Booking, CallerFormState, AdminBookingUpdatePayload } from "@/lib/types";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { isLegacyBooking } from "@/lib/bookingShape";
-import { getDisplayBookingStatus, getPrimaryRecipient } from "@/lib/bookingDisplay";
+import {
+  getDisplayBookingStatus,
+  getDisplayCustomerTier,
+  getPrimaryRecipient,
+} from "@/lib/bookingDisplay";
 import {
   useUpdateBookingByAdmin,
   useUpdateStatus,
@@ -64,6 +69,7 @@ export default function DetailsPage({ data }: { data: Booking }) {
   const canEdit = user?.role !== "callrep";
   const legacy = isLegacyBooking(data);
   const bookingStatus = getDisplayBookingStatus(data);
+  const customerTier = getDisplayCustomerTier(data);
 
   const updateBookingMutation = useUpdateBookingByAdmin();
   const updateRecipientStatusMutation = useUpdateRecipientStatus();
@@ -182,7 +188,16 @@ export default function DetailsPage({ data }: { data: Booking }) {
             <p className="text-gray-700 text-md">ID: {data.bookingId}</p>
           </div>
 
-          <div className="flex">
+          <div className="flex gap-2">
+            <p
+              className={`flex flex-row gap-2 px-4 py-2 rounded-full items-center ${getTierColor(
+                customerTier,
+                "badge",
+              )}`}
+            >
+              {getTierIcon(customerTier)}
+              <span>{getTierLabel(customerTier)}</span>
+            </p>
             <p
               className={`flex flex-row gap-2 px-4 py-2 rounded-full items-center ${getStatusColor(
                 bookingStatus,

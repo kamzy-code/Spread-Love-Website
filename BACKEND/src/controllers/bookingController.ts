@@ -250,7 +250,7 @@ class BookingController {
 
     try {
       // call service class to fetch booking from DB
-      const booking = await bookingService.getBookingById(
+      const booking = await bookingService.getBookingByIdForDisplay(
         bookingId,
         user.userId,
         user.role
@@ -481,10 +481,12 @@ class BookingController {
           { callerName: regex },
           { bookingId: regex },
           { callerPhone: regex },
+          { callerEmail: regex },
           { recipientName: regex },
           { recipientPhone: regex },
           { "caller.name": regex },
           { "caller.phone": regex },
+          { "caller.email": regex },
           { "recipients.recipientName": regex },
           { "recipients.recipientPhone": regex },
         ],

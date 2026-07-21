@@ -9,6 +9,7 @@ import {
   Book,
   Bell,
   Menu,
+  Contact,
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -35,6 +36,11 @@ const links = [
     label: "Reps",
     href: "/admin/reps",
     icon: <Users className="h-5 w-5 mr-3" />,
+  },
+  {
+    label: "Customers",
+    href: "/admin/customers",
+    icon: <Contact className="h-5 w-5 mr-3" />,
   },
   {
     label: "Profile",
@@ -160,7 +166,8 @@ export default function TopNav() {
                     ? "gradient-background text-white"
                     : "text-gray-700 hover:bg-gray-100"
                 } ${
-                  item.label === "Reps" && user?.role === "callrep"
+                  (item.label === "Reps" || item.label === "Customers") &&
+                  user?.role === "callrep"
                     ? "hidden"
                     : ""
                 }`}

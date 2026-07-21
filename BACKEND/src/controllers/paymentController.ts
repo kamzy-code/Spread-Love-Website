@@ -2,6 +2,8 @@ import { Request, Response, NextFunction } from "express";
 import { paymentLogger } from "../utils/logger";
 import paymentService from "../services/paymentService";
 import emailService from "../services/emailService";
+import customerService from "../services/customerService";
+import { getCallerFromBooking } from "../utils/bookingShape";
 import { HttpError } from "../utils/httpError";
 import bookingService from "../services/bookingService";
 class PaymentController {
@@ -102,6 +104,8 @@ class PaymentController {
         result.data.status === "success" &&
         result.data.amount >= expectedAmount * 100
       ) {
+        const wasPaid = booking.paymentStatus === "paid";
+
         booking.paymentStatus = "paid";
         booking.paymentReference = reference as string;
 
@@ -111,6 +115,25 @@ class PaymentController {
           reference,
           action: "VERIFY_TRANSACTION_SUCCESS",
         });
+
+        // Customer tiering is keyed off payment confirmation, not booking
+        // completion — only fire on the actual pending/failed -> paid
+        // transition so re-verifying an already-paid reference (customer
+        // refresh, admin re-check) never double-counts a booking.
+        if (!wasPaid) {
+          try {
+            await customerService.recordPaidBooking(getCallerFromBooking(booking));
+          } catch (tierError: any) {
+            paymentLogger.error(
+              `Customer tier recording failed after payment verification: ${tierError.message}`,
+              {
+                reference,
+                bookingId: booking.bookingId,
+                action: "VERIFY_TRANSACTION_TIER_HOOK_FAILED",
+              }
+            );
+          }
+        }
 
         // Best-effort: a failed confirmation email must not fail an
         // already-verified payment response back to the customer.

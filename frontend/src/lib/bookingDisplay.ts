@@ -47,3 +47,6 @@ export const getDisplayBookingStatus = (booking: Booking): string =>
 
 export const getDisplayTotalPrice = (booking: Booking): number =>
   booking.totalPrice ?? (Number(booking.price) || 0);
+
+export const getDisplayCustomerTier = (booking: Booking): NonNullable<Booking["customerTier"]> =>
+  booking.customerTier ?? "new";

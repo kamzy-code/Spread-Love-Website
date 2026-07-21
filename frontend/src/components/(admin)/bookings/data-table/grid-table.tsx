@@ -1,10 +1,12 @@
 import { Booking } from "@/lib/types";
 import { getStatusColor, getStatusIcon } from "@/lib/getStatusColor";
+import { getTierColor, getTierIcon, getTierLabel } from "@/lib/getTierColor";
 import { formatToYMD } from "@/lib/formatDate";
 import {
   getDisplayCallerName,
   getDisplayBookingStatus,
   getDisplayTotalPrice,
+  getDisplayCustomerTier,
   getExtraRecipientsLabel,
   getPrimaryRecipient,
 } from "@/lib/bookingDisplay";
@@ -26,6 +28,7 @@ export default function GridItem({
 }) {
   const router = useRouter();
   const status = getDisplayBookingStatus(booking);
+  const tier = getDisplayCustomerTier(booking);
   const recipient = getPrimaryRecipient(booking);
   const extraRecipients = getExtraRecipientsLabel(booking);
 
@@ -72,9 +75,18 @@ export default function GridItem({
 
           <div className="flex items-center justify-between">
             <div>
-              <div className="w-full flex items-center justify-between">
-                <h3 className="text-sm text-gray-900">
+              <div className="w-full flex items-center gap-1.5 justify-between">
+                <h3 className="text-sm text-gray-900 flex items-center gap-1.5">
                   {getDisplayCallerName(booking)}
+                  <span
+                    className={`inline-flex shrink-0 items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${getTierColor(
+                      tier,
+                      "badge"
+                    )}`}
+                  >
+                    {getTierIcon(tier, true)}
+                    {getTierLabel(tier)}
+                  </span>
                 </h3>
               </div>
 

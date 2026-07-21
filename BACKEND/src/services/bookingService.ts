@@ -397,6 +397,20 @@ class BookingService {
     });
   }
 
+  // Read-only variant of getBookingById for admin display — returns a plain
+  // object (not a Mongoose document) with the caller's customer tier
+  // attached. Never use this for a booking that will be mutated/saved
+  // afterwards (see getBookingById, which stays a live document for that).
+  async getBookingByIdForDisplay(bookingId: string, userId: string, role: string) {
+    const booking = await this.getBookingById(bookingId, userId, role);
+    if (!booking) return null;
+
+    const email = booking.caller?.email ?? booking.callerEmail;
+    const tier = await customerService.getTierByEmail(email);
+
+    return { ...booking.toObject(), customerTier: tier };
+  }
+
   // Update a call's status. For legacy (flat-shape) bookings this writes the
   // top-level `status` field directly. For v2 bookings it updates the
   // matching recipient's `callStatus` and recomputes `bookingStatus` in the
@@ -430,8 +444,6 @@ class BookingService {
     }
 
     recipient.callStatus = newStatus;
-
-    const wasCompleted = booking.bookingStatus === "completed";
     booking.bookingStatus = deriveBookingStatus(booking.recipients!);
 
     const saved = await booking.save();
@@ -444,14 +456,6 @@ class BookingService {
       action: "UPDATE_CALL_STATUS_SUCCESS",
     });
 
-    if (!wasCompleted && booking.bookingStatus === "completed") {
-      bookingLogger.info("Booking transitioned to completed — recording customer tier", {
-        bookingId,
-        callerEmail: booking.caller?.email,
-        action: "BOOKING_COMPLETED_TIER_HOOK",
-      });
-      await customerService.recordCompletedBooking(booking.caller!);
-    }
 
     return saved;
   }
@@ -488,7 +492,7 @@ class BookingService {
         ? { ...query, assignedRep: new Types.ObjectId(userId) }
         : query;
 
-    return await Booking.find(baseQuery)
+    const bookings = await Booking.find(baseQuery)
       .sort({ [sortParam]: sortOrder })
       .skip(skip)
       .limit(limit)
@@ -496,6 +500,22 @@ class BookingService {
         path: "assignedRep",
         select: "-password -__v -createdAt -updatedAt", // Optional: exclude sensitive fields
       });
+
+    // Single batch lookup for the whole page rather than one query per row.
+    const emails = Array.from(
+      new Set(
+        bookings
+          .map((b) => (b.caller?.email ?? b.callerEmail)?.toLowerCase())
+          .filter((email): email is string => !!email)
+      )
+    );
+    const tierByEmail = await customerService.getTiersByEmails(emails);
+
+    return bookings.map((booking) => {
+      const email = (booking.caller?.email ?? booking.callerEmail)?.toLowerCase();
+      const customerTier = email ? tierByEmail.get(email) ?? "new" : "new";
+      return { ...booking.toObject(), customerTier };
+    });
   }
 
   async generateBookingId(): Promise<string> {

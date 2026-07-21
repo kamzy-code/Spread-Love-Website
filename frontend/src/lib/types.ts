@@ -98,6 +98,7 @@ export interface Booking {
   discountAmount?: number;
   reuseCount?: number;
   duplicateOfPaid?: boolean;
+  customerTier?: "new" | "regular" | "vip" | "diamond";
 
   // shared / unchanged across v1 and v2
   contactConsent?: string;
@@ -253,6 +254,33 @@ export type RepFilter = {
   search?: string;
   page?: number;
   limit: number;
+};
+
+// Customers
+export type CustomerTier = "new" | "regular" | "vip" | "diamond";
+
+export type Customer = {
+  _id: string;
+  email: string;
+  name: string;
+  phone: string;
+  completedBookings: number;
+  tier: CustomerTier;
+  lastBookingAt?: string;
+  createdAt: string;
+};
+
+export type CustomerFilter = {
+  tier?: CustomerTier | "";
+  search?: string;
+  page?: number;
+  limit: number;
+  // "" = all time — the customer directory's natural default, unlike
+  // booking/dashboard views which default to a period.
+  filterType?: FilterType | "";
+  singleDate?: string;
+  startDate?: string;
+  endDate?: string;
 };
 
 // Logs

@@ -4,10 +4,12 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Booking } from "@/lib/types";
 import { formatToYMD } from "@/lib/formatDate";
 import { getStatusColor, getStatusIcon } from "@/lib/getStatusColor";
+import { getTierColor, getTierIcon, getTierLabel } from "@/lib/getTierColor";
 import {
   getDisplayCallerName,
   getDisplayBookingStatus,
   getDisplayTotalPrice,
+  getDisplayCustomerTier,
   getExtraRecipientsLabel,
   getPrimaryRecipient,
 } from "@/lib/bookingDisplay";
@@ -48,7 +50,24 @@ export function getColumnsByRole(
     {
       id: "callerName",
       header: "Caller",
-      cell: ({ row }) => getDisplayCallerName(row.original),
+      cell: ({ row }) => {
+        const booking = row.original;
+        const tier = getDisplayCustomerTier(booking);
+        return (
+          <div className="flex items-center gap-1.5">
+            <span>{getDisplayCallerName(booking)}</span>
+            <span
+              className={`inline-flex shrink-0 items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${getTierColor(
+                tier,
+                "badge"
+              )}`}
+            >
+              {getTierIcon(tier, true)}
+              {getTierLabel(tier)}
+            </span>
+          </div>
+        );
+      },
     },
     {
       id: "recipientName",

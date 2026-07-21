@@ -1,16 +1,54 @@
-import { Customer } from "../models/customerModel";
+import { Customer, customerTier } from "../models/customerModel";
 import { ICaller } from "../models/bookingModel";
 import { computeTier } from "../utils/customerTier";
 import { bookingLogger } from "../utils/logger";
 
 class CustomerService {
-  // called when a booking transitions to bookingStatus "completed"
-  async recordCompletedBooking(caller: ICaller) {
+  async getTierByEmail(email?: string): Promise<customerTier> {
+    if (!email) return "new";
+    const customer = await Customer.findOne({ email: email.toLowerCase() }).select("tier");
+    return customer?.tier ?? "new";
+  }
+
+  async getTiersByEmails(emails: string[]): Promise<Map<string, customerTier>> {
+    if (emails.length === 0) return new Map();
+    const customers = await Customer.find({ email: { $in: emails } }).select("email tier");
+    return new Map(customers.map((c) => [c.email, c.tier]));
+  }
+
+  async getAllCustomers(
+    searchQuery: any,
+    sortParam: string,
+    sortOrder: 1 | -1,
+    skip: number,
+    limit: number
+  ) {
+    return Customer.find(searchQuery)
+      .sort({ [sortParam]: sortOrder })
+      .skip(skip)
+      .limit(limit);
+  }
+
+  async countTotalCustomers(searchQuery: any) {
+    return Customer.countDocuments(searchQuery);
+  }
+
+  // No pagination — the CSV export is the full filtered set in one file.
+  async getAllCustomersForExport(searchQuery: any) {
+    return Customer.find(searchQuery).sort({ completedBookings: -1 });
+  }
+
+  // Called when a booking's payment is confirmed ("paid") — this is the
+  // client's definition of a countable booking for tiering purposes, not
+  // booking/call completion. Callers must only invoke this on the
+  // pending/failed -> paid transition (not on every re-verification) to
+  // avoid double-counting the same booking.
+  async recordPaidBooking(caller: ICaller) {
     const email = caller.email?.toLowerCase();
     if (!email) {
       bookingLogger.warn("Skipped tier update: caller has no email", {
         service: "customerService",
-        action: "RECORD_COMPLETED_BOOKING_NO_EMAIL",
+        action: "RECORD_PAID_BOOKING_NO_EMAIL",
       });
       return;
     }
@@ -38,7 +76,7 @@ class CustomerService {
       previousTier,
       tier: customer.tier,
       service: "customerService",
-      action: "RECORD_COMPLETED_BOOKING_SUCCESS",
+      action: "RECORD_PAID_BOOKING_SUCCESS",
     });
   }
 }
