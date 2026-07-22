@@ -1,6 +1,6 @@
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
-import { BarChart3, Users, Calendar, User, LogOut, Book, Contact } from "lucide-react";
+import { BarChart3, Users, Calendar, User, LogOut, Book, Contact, Ticket, Layers } from "lucide-react";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
@@ -26,6 +26,16 @@ const links = [
     label: "Customers",
     href: "/admin/customers",
     icon: <Contact className="h-5 w-5 mr-3" />,
+  },
+  {
+    label: "Coupons",
+    href: "/admin/coupons",
+    icon: <Ticket className="h-5 w-5 mr-3" />,
+  },
+  {
+    label: "Services",
+    href: "/admin/services",
+    icon: <Layers className="h-5 w-5 mr-3" />,
   },
   {
     label: "Profile",
@@ -78,7 +88,11 @@ export default function SideNav() {
                 ? "gradient-background text-white"
                 : "text-gray-700 hover:bg-gray-100"
             } ${
-              (label === "Reps" || label === "Customers") && user?.role === "callrep"
+              (label === "Reps" ||
+                label === "Customers" ||
+                label === "Coupons" ||
+                label === "Services") &&
+              user?.role === "callrep"
                 ? "hidden"
                 : ""
             }`}

@@ -2,7 +2,7 @@
 import { motion } from "framer-motion";
 import { Search } from "lucide-react";
 import { STATUS_LIST, BOOKING_STATUS_LIST } from "../dashboard/analytics";
-import { services } from "@/components/services/serviceList";
+import { useFetchServices } from "@/hooks/useServices";
 import { useFetchReps } from "@/hooks/useReps";
 import { Rep } from "@/lib/types";
 import { useBookingFilterStore, ActiveFilters } from "@/store/bookingFilterStore";
@@ -31,6 +31,7 @@ export default function BookingFilterPanel({
 
   const { data } = useFetchReps({ limit: 100, page: 1, role: "callrep" }, "callreps");
   const reps: Rep[] = data?.data || [];
+  const { data: services = [] } = useFetchServices();
 
   const handleOnChange = (
     e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>,
@@ -274,7 +275,7 @@ export default function BookingFilterPanel({
                       >
                         <option value="">All</option>
                         {services.map((service) => (
-                          <option key={service.id} value={service.title}>
+                          <option key={service._id} value={service.title}>
                             {service.title}
                           </option>
                         ))}

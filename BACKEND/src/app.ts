@@ -9,6 +9,8 @@ import logRouter from "./routes/logRouter";
 import paymentRouter from "./routes/paymentRoute";
 import couponRouter from "./routes/couponRoute";
 import customerRouter from "./routes/customerRoute";
+import auditLogRouter from "./routes/auditLogRoute";
+import serviceRouter from "./routes/serviceRoute";
 import rateLimit from "express-rate-limit";
 import cookieParser from "cookie-parser";
 import { errorHandler } from "./middlewares/errorHandler";
@@ -71,6 +73,8 @@ app.use("/api/logs", logRouter);
 app.use("/api/payment", paymentRouter);
 app.use("/api/coupon", couponRouter);
 app.use("/api/customer", customerRouter);
+app.use("/api/audit-log", auditLogRouter);
+app.use("/api/service", serviceRouter);
 
 app.use((req, res) => {
   res.status(404).json({ message: "Route not found" });

@@ -7,7 +7,8 @@
     "build": "tsc",
     "start": "node dist/server.js",
     "migrate:v2": "ts-node src/scripts/migrate-bookings-v2.ts",
-    "seed:customers-v2": "ts-node src/scripts/seed-customers-v2.ts"
+    "seed:customers-v2": "ts-node src/scripts/seed-customers-v2.ts",
+    "seed:services": "ts-node src/scripts/seed-services.ts"
   },
   "keywords": [],
   "author": "",

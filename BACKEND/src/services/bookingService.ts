@@ -6,6 +6,7 @@ import { callStatus, bookingStatusType } from "../types/genralTypes";
 import customerService from "./customerService";
 import couponService from "./couponService";
 import paymentService from "./paymentService";
+import auditLogService from "./auditLogService";
 import { HttpError } from "../utils/httpError";
 import { bookingLogger } from "../utils/logger";
 
@@ -299,8 +300,11 @@ class BookingService {
     updates: {
       caller?: Partial<ICaller>;
       recipients?: (Partial<IRecipient> & { _id: string })[];
-    }
+    },
+    changedBy: string
   ) {
+    const previousEmail = (booking.caller?.email ?? booking.callerEmail ?? "").toLowerCase();
+
     if (updates.caller) {
       booking.caller = { ...(booking.caller ?? {}), ...updates.caller } as ICaller;
     }
@@ -347,6 +351,18 @@ class BookingService {
     }
 
     const saved = await booking.save();
+
+    const newEmail = (saved.caller?.email ?? saved.callerEmail ?? "").toLowerCase();
+    if (updates.caller?.email !== undefined && newEmail !== previousEmail) {
+      await auditLogService.record({
+        entity: "booking",
+        entityId: booking.bookingId,
+        field: "callerEmail",
+        oldValue: previousEmail,
+        newValue: newEmail,
+        changedBy,
+      });
+    }
 
     bookingLogger.info("Booking updated by admin", {
       bookingId: booking.bookingId,

@@ -216,6 +216,8 @@ export default function DetailsPage({ data }: { data: Booking }) {
               caller={caller}
               editForm={editForm}
               onChange={handleCallerChange}
+              bookingId={data.bookingId}
+              isSuperAdmin={user?.role === "superadmin"}
             />
 
             <div className="grid grid-cols-1 gap-4">

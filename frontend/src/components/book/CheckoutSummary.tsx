@@ -1,5 +1,6 @@
 import React from "react";
 import { getPriceForRecipient } from "@/lib/pricing";
+import { useFetchServices } from "@/hooks/useServices";
 import {
   CallerFormState,
   CouponValidationResponse,
@@ -31,8 +32,10 @@ export const CheckoutSummary: React.FC<CheckoutSummaryProps> = ({
   isCouponValidating,
   couponResult,
 }) => {
+  const { data: services = [] } = useFetchServices();
   const recipientPrices = recipients.map((recipient) =>
     getPriceForRecipient(
+      services,
       recipient.occassion,
       recipient.callType,
       recipient.country,

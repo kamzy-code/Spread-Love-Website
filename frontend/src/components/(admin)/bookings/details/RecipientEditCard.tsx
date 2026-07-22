@@ -1,5 +1,6 @@
 import { countries } from "@/lib/countries";
-import { services, callType as callTypeOptions } from "@/components/services/serviceList";
+import { callType as callTypeOptions } from "@/components/services/serviceList";
+import { useFetchServices } from "@/hooks/useServices";
 import { formatToYMD } from "@/lib/formatDate";
 import { getStatusColor, getStatusIcon } from "@/lib/getStatusColor";
 import RecipientActionMenu from "./RecipientActionMenu";
@@ -57,6 +58,7 @@ export default function RecipientEditCard({
   onUpdateStatus,
   statusActionDisabled,
 }: RecipientEditCardProps) {
+  const { data: services = [] } = useFetchServices();
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
   ) => onChange(index, e);
@@ -158,7 +160,7 @@ export default function RecipientEditCard({
               required
             >
               {services.map((service) => (
-                <option key={service.id} value={service.title}>
+                <option key={service._id} value={service.title}>
                   {service.title}
                 </option>
               ))}

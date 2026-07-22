@@ -209,7 +209,7 @@ class BookingController {
         return;
       }
 
-      await bookingService.updateBookingByAdmin(booking, { caller, recipients });
+      await bookingService.updateBookingByAdmin(booking, { caller, recipients }, user.userId);
 
       res.status(200).json({ message: "Update Successful" });
       return;

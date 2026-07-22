@@ -13,6 +13,7 @@ import {
 } from "@/lib/bookingValidation";
 import { CallerFormState, CouponValidationResponse } from "@/lib/types";
 import { getPriceForRecipient } from "@/lib/pricing";
+import { useFetchServices } from "@/hooks/useServices";
 import { CallerFields } from "./CallerFields";
 import { RecipientCard } from "./RecipientCard";
 import { CheckoutSummary } from "./CheckoutSummary";
@@ -96,6 +97,7 @@ export default function BookingForm() {
   const checkoutMutation = useBookingCheckout();
   const couponMutation = useValidateCoupon();
 
+  const { data: services = [] } = useFetchServices();
   const recipients = watch("recipients");
   // gender is a validated enum by the time this is read for real use (the
   // "details" step's zod validation already required a non-empty choice) —
@@ -108,6 +110,7 @@ export default function BookingForm() {
     (sum, recipient) =>
       sum +
       getPriceForRecipient(
+        services,
         recipient.occassion,
         recipient.callType,
         recipient.country,
@@ -135,6 +138,7 @@ export default function BookingForm() {
         recipients: values.recipients.map((recipient) => ({
           ...recipient,
           price: getPriceForRecipient(
+            services,
             recipient.occassion,
             recipient.callType,
             recipient.country,

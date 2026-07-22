@@ -290,3 +290,76 @@ export interface LogFile {
   size: number;
   createdAt: string;
 }
+
+// Audit log — superadmin-only view of admin-made edits to protected fields
+export type AuditEntity = "booking" | "service";
+
+export type AuditLogEntry = {
+  _id: string;
+  entity: AuditEntity;
+  entityId: string;
+  field: string;
+  oldValue: string;
+  newValue: string;
+  changedBy: { _id: string; firstName: string; lastName: string; email: string } | string | null;
+  createdAt: string;
+};
+
+// Coupons
+export type DiscountType = "flat" | "percent";
+
+export type Coupon = {
+  _id: string;
+  code: string;
+  discountType: DiscountType;
+  value: number;
+  usageLimit: number;
+  usedCount: number;
+  expiresAt: string;
+  active: boolean;
+  createdBy: string;
+  createdAt: string;
+};
+
+export type CouponFormValues = {
+  code: string;
+  discountType: DiscountType;
+  value: number;
+  usageLimit: number;
+  expiresAt: string;
+};
+
+// Services
+export type ServiceIconKey =
+  | "cake"
+  | "heart"
+  | "users"
+  | "graduationCap"
+  | "partyPopper"
+  | "gift"
+  | "phone"
+  | "sun";
+
+export type ServicePricing = {
+  features: string[];
+  localPrice: number;
+  internationalPrice: number;
+};
+
+export type Service = {
+  _id: string;
+  title: string;
+  description: string;
+  category: string;
+  thumbnail: string;
+  iconKey: ServiceIconKey;
+  regular: ServicePricing;
+  special: ServicePricing;
+  active: boolean;
+  createdAt: string;
+};
+
+export type ServicePricingUpdate = {
+  regular?: Partial<ServicePricing>;
+  special?: Partial<ServicePricing>;
+};

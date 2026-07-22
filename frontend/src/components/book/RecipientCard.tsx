@@ -7,7 +7,8 @@ import {
   UseFormWatch,
 } from "react-hook-form";
 import { countries } from "@/lib/countries";
-import { services, callType as callTypeOptions } from "../services/serviceList";
+import { callType as callTypeOptions } from "../services/serviceList";
+import { useFetchServices } from "@/hooks/useServices";
 import { getPriceForRecipient } from "@/lib/pricing";
 import {
   MESSAGE_WORD_LIMIT,
@@ -35,10 +36,11 @@ export const RecipientCard: React.FC<RecipientCardProps> = ({
   watch,
   errors,
 }) => {
+  const { data: services = [] } = useFetchServices();
   const occassion = watch(`recipients.${index}.occassion`);
   const callType = watch(`recipients.${index}.callType`);
   const country = watch(`recipients.${index}.country`);
-  const price = getPriceForRecipient(occassion, callType, country);
+  const price = getPriceForRecipient(services, occassion, callType, country);
 
   return (
     <div className="p-6 space-y-4">
