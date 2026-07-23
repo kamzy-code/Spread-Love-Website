@@ -19,6 +19,24 @@ class ServiceService {
     return Service.findById(id);
   }
 
+  // Server-side source of truth for what a recipient's call should cost —
+  // never trust a client-submitted price. Returns null if the occasion
+  // doesn't match an active service, so the caller can reject the booking
+  // instead of silently defaulting to 0 or trusting client input.
+  async getPriceForOccasion(
+    title: string,
+    callType: "regular" | "special",
+    country: string
+  ): Promise<number | null> {
+    const service = await Service.findOne({ title, active: true });
+    if (!service) return null;
+
+    const pricing = service[callType];
+    if (!pricing) return null;
+
+    return country === "Nigeria" ? pricing.localPrice : pricing.internationalPrice;
+  }
+
   async createService(data: Partial<IService>) {
     const service = await Service.create(data);
     bookingLogger.info("Service created", {

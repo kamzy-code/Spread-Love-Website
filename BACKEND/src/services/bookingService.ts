@@ -7,6 +7,7 @@ import customerService from "./customerService";
 import couponService from "./couponService";
 import paymentService from "./paymentService";
 import auditLogService from "./auditLogService";
+import serviceService from "./serviceService";
 import { HttpError } from "../utils/httpError";
 import { bookingLogger } from "../utils/logger";
 
@@ -82,6 +83,33 @@ class BookingService {
     contactConsent: string,
     couponCode?: string
   ) {
+    // Never trust a client-submitted price — recompute each recipient's
+    // price server-side from the active Service catalog before it's summed
+    // into the total. A recipient whose occasion/callType no longer matches
+    // an active service (renamed, deactivated, or a stale client payload)
+    // fails the whole booking rather than silently charging 0 or whatever
+    // the client sent.
+    for (const recipient of recipients) {
+      const price = await serviceService.getPriceForOccasion(
+        recipient.occassion,
+        recipient.callType,
+        recipient.country
+      );
+      if (price === null) {
+        bookingLogger.warn("Booking creation blocked: no active service pricing", {
+          occassion: recipient.occassion,
+          callType: recipient.callType,
+          country: recipient.country,
+          action: "CREATE_BOOKING_INVALID_SERVICE",
+        });
+        throw new HttpError(
+          400,
+          `No active pricing found for "${recipient.occassion}" (${recipient.callType})`
+        );
+      }
+      recipient.price = price;
+    }
+
     const rawTotal = recipients.reduce((sum, r) => sum + r.price, 0);
 
     let totalPrice = rawTotal;
