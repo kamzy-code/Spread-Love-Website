@@ -86,33 +86,35 @@ export default function ServiceAdminList({ isSuperAdmin }: { isSuperAdmin: boole
               <p className="text-xs text-gray-400">(Local / International)</p>
             </div>
 
-            <div className="flex gap-4 pt-2">
-              <button
-                className="flex items-center gap-1.5 text-xs text-brand-start hover:underline"
-                onClick={() => setEditingService(service)}
-              >
-                <Pencil className="h-3.5 w-3.5" />
-                Edit Pricing
-              </button>
-              <button
-                className={`flex items-center gap-1.5 text-xs hover:underline ${
-                  service.active ? "text-red-500" : "text-green-600"
-                }`}
-                onClick={() => setTogglingService(service)}
-              >
-                {service.active ? (
-                  <>
-                    <Ban className="h-3.5 w-3.5" />
-                    Deactivate
-                  </>
-                ) : (
-                  <>
-                    <CheckCircle className="h-3.5 w-3.5" />
-                    Reactivate
-                  </>
-                )}
-              </button>
-            </div>
+            {isSuperAdmin && (
+              <div className="flex gap-4 pt-2">
+                <button
+                  className="flex items-center gap-1.5 text-xs text-brand-start hover:underline"
+                  onClick={() => setEditingService(service)}
+                >
+                  <Pencil className="h-3.5 w-3.5" />
+                  Edit Pricing
+                </button>
+                <button
+                  className={`flex items-center gap-1.5 text-xs hover:underline ${
+                    service.active ? "text-red-500" : "text-green-600"
+                  }`}
+                  onClick={() => setTogglingService(service)}
+                >
+                  {service.active ? (
+                    <>
+                      <Ban className="h-3.5 w-3.5" />
+                      Deactivate
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle className="h-3.5 w-3.5" />
+                      Reactivate
+                    </>
+                  )}
+                </button>
+              </div>
+            )}
 
             <ServicePriceAuditLog serviceId={service._id} isSuperAdmin={isSuperAdmin} />
           </div>

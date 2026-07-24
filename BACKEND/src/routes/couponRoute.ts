@@ -17,11 +17,11 @@ router.post(
   couponController.validateCoupon,
 );
 
-// admin CRUD
+// admin — mutations are superadmin-only; salesrep gets read access only
 router.post(
   "/admin",
   authMiddleware,
-  checkRole("superadmin", "salesrep"),
+  checkRole("superadmin"),
   validateRequest(createCoupounSchema),
   couponController.createCoupon,
 );
@@ -42,7 +42,7 @@ router.get(
 router.put(
   "/admin/:id",
   authMiddleware,
-  checkRole("superadmin", "salesrep"),
+  checkRole("superadmin"),
   validateRequest(updateCouponSchema),
   couponController.updateCoupon,
 );
@@ -50,7 +50,7 @@ router.put(
 router.put(
   "/admin/:id/deactivate",
   authMiddleware,
-  checkRole("superadmin", "salesrep"),
+  checkRole("superadmin"),
   couponController.deactivateCoupon,
 );
 

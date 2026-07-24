@@ -13,7 +13,7 @@ const router = express.Router();
 // public — services page + booking form pricing
 router.get("/", serviceController.getActiveServices);
 
-// admin CRUD
+// admin — mutations are superadmin-only; salesrep gets read access only
 router.get(
   "/admin",
   authMiddleware,
@@ -24,7 +24,7 @@ router.get(
 router.post(
   "/admin",
   authMiddleware,
-  checkRole("superadmin", "salesrep"),
+  checkRole("superadmin"),
   validateRequest(createServiceSchema),
   serviceController.createService,
 );
@@ -32,7 +32,7 @@ router.post(
 router.put(
   "/admin/:id/pricing",
   authMiddleware,
-  checkRole("superadmin", "salesrep"),
+  checkRole("superadmin"),
   validateRequest(updateServicePricingSchema),
   serviceController.updateServicePricing,
 );
@@ -40,7 +40,7 @@ router.put(
 router.put(
   "/admin/:id/details",
   authMiddleware,
-  checkRole("superadmin", "salesrep"),
+  checkRole("superadmin"),
   validateRequest(updateServiceDetailsSchema),
   serviceController.updateServiceDetails,
 );
@@ -48,14 +48,14 @@ router.put(
 router.put(
   "/admin/:id/deactivate",
   authMiddleware,
-  checkRole("superadmin", "salesrep"),
+  checkRole("superadmin"),
   serviceController.deactivateService,
 );
 
 router.put(
   "/admin/:id/reactivate",
   authMiddleware,
-  checkRole("superadmin", "salesrep"),
+  checkRole("superadmin"),
   serviceController.reactivateService,
 );
 

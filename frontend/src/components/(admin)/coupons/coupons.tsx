@@ -67,19 +67,21 @@ export default function Coupons() {
         >
           <div className="flex items-center justify-between">
             <h1 className="text-3xl font-bold">Coupons</h1>
-            <button
-              className="flex rounded-md h-8 justify-center text-sm items-center gap-2 px-4 py-2 btn-primary hover:scale-105 transition"
-              onClick={() => setShowCreateForm(true)}
-            >
-              <Plus className="h-5 w-5" />
-              <p className="hidden md:flex">Add</p>
-            </button>
+            {user?.role === "superadmin" && (
+              <button
+                className="flex rounded-md h-8 justify-center text-sm items-center gap-2 px-4 py-2 btn-primary hover:scale-105 transition"
+                onClick={() => setShowCreateForm(true)}
+              >
+                <Plus className="h-5 w-5" />
+                <p className="hidden md:flex">Add</p>
+              </button>
+            )}
           </div>
 
-          <CouponList adminId={user!._id}></CouponList>
+          <CouponList adminId={user!._id} isSuperAdmin={user?.role === "superadmin"}></CouponList>
         </motion.div>
 
-        {showCreateForm && (
+        {showCreateForm && user?.role === "superadmin" && (
           <CouponFormModal
             adminId={user!._id}
             onClose={() => setShowCreateForm(false)}

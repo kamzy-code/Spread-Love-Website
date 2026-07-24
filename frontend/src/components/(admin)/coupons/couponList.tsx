@@ -8,7 +8,13 @@ import { useFetchCoupons, useDeactivateCoupon } from "@/hooks/useCoupons";
 import CouponFormModal from "./CouponFormModal";
 import DeactivateCouponModal from "./DeactivateCouponModal";
 
-export default function CouponList({ adminId }: { adminId: string }) {
+export default function CouponList({
+  adminId,
+  isSuperAdmin,
+}: {
+  adminId: string;
+  isSuperAdmin: boolean;
+}) {
   const queryClient = useQueryClient();
   const { data: coupons, error, isLoading, refetch } = useFetchCoupons();
   const [editingCoupon, setEditingCoupon] = useState<Coupon | null>(null);
@@ -93,24 +99,26 @@ export default function CouponList({ adminId }: { adminId: string }) {
                 </div>
               </div>
 
-              <div className="flex gap-4 pt-2">
-                <button
-                  className="flex items-center gap-1.5 text-xs text-brand-start hover:underline"
-                  onClick={() => setEditingCoupon(coupon)}
-                >
-                  <Pencil className="h-3.5 w-3.5" />
-                  Edit
-                </button>
-                {coupon.active && (
+              {isSuperAdmin && (
+                <div className="flex gap-4 pt-2">
                   <button
-                    className="flex items-center gap-1.5 text-xs text-red-500 hover:underline"
-                    onClick={() => setDeactivatingCoupon(coupon)}
+                    className="flex items-center gap-1.5 text-xs text-brand-start hover:underline"
+                    onClick={() => setEditingCoupon(coupon)}
                   >
-                    <Ban className="h-3.5 w-3.5" />
-                    Deactivate
+                    <Pencil className="h-3.5 w-3.5" />
+                    Edit
                   </button>
-                )}
-              </div>
+                  {coupon.active && (
+                    <button
+                      className="flex items-center gap-1.5 text-xs text-red-500 hover:underline"
+                      onClick={() => setDeactivatingCoupon(coupon)}
+                    >
+                      <Ban className="h-3.5 w-3.5" />
+                      Deactivate
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
           );
         })}
