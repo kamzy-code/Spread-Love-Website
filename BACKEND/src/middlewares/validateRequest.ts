@@ -30,7 +30,14 @@ export const validateQuery = (schema: ZodType) => {
       return;
     }
 
-    req.query = result.data as typeof req.query;
+    // Express 5's req.query is a getter-only property — reassigning it
+    // throws. Mutate the existing object in place instead so downstream
+    // code still sees the zod-parsed/coerced values.
+    const parsed = result.data as Record<string, unknown>;
+    for (const key of Object.keys(req.query)) {
+      if (!(key in parsed)) delete (req.query as Record<string, unknown>)[key];
+    }
+    Object.assign(req.query, parsed);
     next();
   };
 };
