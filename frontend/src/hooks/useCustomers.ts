@@ -1,6 +1,7 @@
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { buildQueryParams } from "@/lib/buildQueryParams";
 import { CustomerFilter } from "@/lib/types";
+import { apiCall } from "@/lib/apiClient";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
@@ -9,18 +10,7 @@ export const useFetchCustomers = (filter: CustomerFilter) => {
     queryKey: ["customers", filter],
     queryFn: async ({ signal }) => {
       const queryString = buildQueryParams(filter as Record<string, unknown>);
-
-      const res = await fetch(`${apiUrl}/customer/admin?${queryString}`, {
-        credentials: "include",
-        signal,
-      });
-
-      if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error.message || "Failed to fetch customers");
-      }
-
-      const data = await res.json();
+      const data = await apiCall(`/customer/admin?${queryString}`, { signal });
       return { data: data.data, meta: data.meta };
     },
     staleTime: 1000 * 60 * 5,
