@@ -1,6 +1,8 @@
 import express from "express";
 import auditLogController from "../controllers/auditLogController";
 import { authMiddleware, checkRole } from "../middlewares/authMiddleware";
+import { validateQuery } from "../middlewares/validateRequest";
+import { getAuditLogsQuerySchema } from "../validation/auditLogSchemas";
 
 const router = express.Router();
 
@@ -9,6 +11,7 @@ router.get(
   "/admin",
   authMiddleware,
   checkRole("superadmin"),
+  validateQuery(getAuditLogsQuerySchema),
   auditLogController.getLogsForEntity,
 );
 
