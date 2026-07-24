@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { Ban, CheckCircle } from "lucide-react";
+import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
 
 export default function ToggleServiceStatusModal({
   serviceTitle,
@@ -15,6 +16,7 @@ export default function ToggleServiceStatusModal({
   isPending: boolean;
 }) {
   const isDeactivating = action === "deactivate";
+  useLockBodyScroll();
 
   return (
     <div>

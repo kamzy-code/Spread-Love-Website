@@ -1,11 +1,14 @@
 import { motion } from "framer-motion";
 import { XCircle,} from "lucide-react";
+import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
 
 export default function LogoutErrorModal({
   setShowModal,
 }: {
   setShowModal: () => void;
 }) {
+  useLockBodyScroll();
+
   return (
     <div>
       <div

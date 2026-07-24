@@ -6,6 +6,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Coupon, CouponFormValues } from "@/lib/types";
 import { useCreateCoupon, useUpdateCoupon } from "@/hooks/useCoupons";
 import { deepEqual } from "@/lib/hasBookingChanged";
+import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
 
 const emptyForm: CouponFormValues = {
   code: "",
@@ -38,6 +39,8 @@ export default function CouponFormModal({
     coupon ? toFormValues(coupon) : emptyForm
   );
   const [errorMessage, setErrorMessage] = useState("");
+
+  useLockBodyScroll();
 
   const createMutation = useCreateCoupon(adminId);
   const updateMutation = useUpdateCoupon(coupon?._id ?? "");

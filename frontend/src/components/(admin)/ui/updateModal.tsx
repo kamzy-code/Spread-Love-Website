@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { XCircle, CheckCircle, } from "lucide-react";
+import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
 
 export default function ActionStatusModal({
   setShowModal,
@@ -10,6 +11,8 @@ export default function ActionStatusModal({
   error?: string;
   success?: string
 }) {
+  useLockBodyScroll();
+
   return (
     <div>
       <div

@@ -6,6 +6,7 @@ import { useCreateRep } from "@/hooks/useReps";
 import CreateRepModal from "./createSuccessModal";
 import { useRepFilterStore } from "@/store/repFilterStore";
 import { useFetchReps } from "@/hooks/useReps";
+import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
 
 export default function CreateRep({
   setShowCreateForm,
@@ -74,6 +75,8 @@ export default function CreateRep({
   };
 
   const createMutation = useCreateRep(formData);
+
+  useLockBodyScroll();
 
   useEffect(() => {
     setMounted(true);

@@ -6,6 +6,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Service } from "@/lib/types";
 import { useUpdateServicePricing } from "@/hooks/useServices";
 import { deepEqual } from "@/lib/hasBookingChanged";
+import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
 
 export default function ServicePriceEditModal({
   service,
@@ -20,6 +21,8 @@ export default function ServicePriceEditModal({
   const [specialLocal, setSpecialLocal] = useState(service.special.localPrice);
   const [specialIntl, setSpecialIntl] = useState(service.special.internationalPrice);
   const [errorMessage, setErrorMessage] = useState("");
+
+  useLockBodyScroll();
 
   const mutation = useUpdateServicePricing(service._id);
 
