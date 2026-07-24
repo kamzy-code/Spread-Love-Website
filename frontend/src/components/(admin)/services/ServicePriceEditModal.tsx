@@ -5,6 +5,7 @@ import { X } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Service } from "@/lib/types";
 import { useUpdateServicePricing } from "@/hooks/useServices";
+import { deepEqual } from "@/lib/hasBookingChanged";
 
 export default function ServicePriceEditModal({
   service,
@@ -30,14 +31,32 @@ export default function ServicePriceEditModal({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mutation.isSuccess]);
 
+  const pricingUpdate = {
+    regular: { localPrice: regularLocal, internationalPrice: regularIntl },
+    special: { localPrice: specialLocal, internationalPrice: specialIntl },
+  };
+  const hasNotChanged = deepEqual(pricingUpdate, {
+    regular: {
+      localPrice: service.regular.localPrice,
+      internationalPrice: service.regular.internationalPrice,
+    },
+    special: {
+      localPrice: service.special.localPrice,
+      internationalPrice: service.special.internationalPrice,
+    },
+  });
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage("");
+
+    if (hasNotChanged) {
+      onClose();
+      return;
+    }
+
     try {
-      await mutation.mutateAsync({
-        regular: { localPrice: regularLocal, internationalPrice: regularIntl },
-        special: { localPrice: specialLocal, internationalPrice: specialIntl },
-      });
+      await mutation.mutateAsync(pricingUpdate);
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "Failed to update pricing");
     }
@@ -126,7 +145,7 @@ export default function ServicePriceEditModal({
 
             <button
               type="submit"
-              disabled={mutation.isPending}
+              disabled={mutation.isPending || hasNotChanged}
               className="btn-primary rounded-lg w-full h-12 flex items-center justify-center disabled:opacity-50"
             >
               {mutation.isPending ? "Saving..." : "Save Changes"}

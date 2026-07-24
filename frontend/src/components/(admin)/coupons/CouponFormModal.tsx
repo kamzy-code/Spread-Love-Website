@@ -5,6 +5,7 @@ import { X } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Coupon, CouponFormValues } from "@/lib/types";
 import { useCreateCoupon, useUpdateCoupon } from "@/hooks/useCoupons";
+import { deepEqual } from "@/lib/hasBookingChanged";
 
 const emptyForm: CouponFormValues = {
   code: "",
@@ -60,9 +61,17 @@ export default function CouponFormModal({
     }));
   };
 
+  const hasNotChanged = isEditing && deepEqual(formData, toFormValues(coupon));
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage("");
+
+    if (hasNotChanged) {
+      onClose();
+      return;
+    }
+
     try {
       await mutation.mutateAsync(formData);
     } catch (error) {
@@ -168,7 +177,7 @@ export default function CouponFormModal({
 
             <button
               type="submit"
-              disabled={mutation.isPending}
+              disabled={mutation.isPending || hasNotChanged}
               className="btn-primary rounded-lg w-full h-12 flex items-center justify-center disabled:opacity-50"
             >
               {mutation.isPending ? "Saving..." : isEditing ? "Save Changes" : "Create Coupon"}

@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useQueryClient } from "@tanstack/react-query";
 import ActionStatusModal from "../../ui/updateModal";
@@ -56,8 +56,8 @@ export default function DetailsPage({ data }: { data: Booking }) {
   const { user } = useAdminAuth();
   const queryClient = useQueryClient();
 
-  const [initialCaller] = useState(buildCallerState(data));
-  const [initialRecipients] = useState(buildRecipientsState(data));
+  const [initialCaller, setInitialCaller] = useState(buildCallerState(data));
+  const [initialRecipients, setInitialRecipients] = useState(buildRecipientsState(data));
   const [caller, setCaller] = useState(initialCaller);
   const [recipients, setRecipients] = useState(initialRecipients);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -65,6 +65,18 @@ export default function DetailsPage({ data }: { data: Booking }) {
   const [showModal, setShowModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+
+  // Resync local form state from freshly fetched data (e.g. after a save
+  // invalidates the query) — but never while the admin is mid-edit, or an
+  // in-progress edit would get clobbered by the refetch.
+  useEffect(() => {
+    if (editForm) return;
+    setInitialCaller(buildCallerState(data));
+    setInitialRecipients(buildRecipientsState(data));
+    setCaller(buildCallerState(data));
+    setRecipients(buildRecipientsState(data));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data, editForm]);
 
   const canEdit = user?.role !== "callrep";
   const legacy = isLegacyBooking(data);
@@ -98,6 +110,8 @@ export default function DetailsPage({ data }: { data: Booking }) {
   };
 
   const handleUpdateRecipientStatus = async (index: number, status: string) => {
+    if (recipients[index].callStatus === status) return;
+
     try {
       if (legacy) {
         await updateLegacyStatusMutation.mutateAsync({ id: data._id, status });
