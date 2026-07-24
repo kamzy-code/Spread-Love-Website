@@ -332,6 +332,27 @@ class BookingService {
     changedBy: string
   ) {
     const previousEmail = (booking.caller?.email ?? booking.callerEmail ?? "").toLowerCase();
+    const previousCallerName = booking.caller?.name ?? booking.callerName;
+    const previousCallerPhone = booking.caller?.phone ?? booking.callerPhone;
+    const previousCallerRelationship = booking.caller?.relationship ?? booking.relationship;
+
+    const previousRecipients = isLegacyBooking(booking)
+      ? [
+          {
+            id: booking.bookingId,
+            occassion: booking.occassion,
+            callType: booking.callType,
+            price: booking.price,
+            country: booking.country,
+          },
+        ]
+      : (booking.recipients ?? []).map((r) => ({
+          id: r._id!.toString(),
+          occassion: r.occassion,
+          callType: r.callType,
+          price: r.price,
+          country: r.country,
+        }));
 
     if (updates.caller) {
       booking.caller = { ...(booking.caller ?? {}), ...updates.caller } as ICaller;
@@ -390,6 +411,47 @@ class BookingService {
         newValue: newEmail,
         changedBy,
       });
+    }
+
+    await auditLogService.recordDiffs("booking", booking.bookingId, changedBy, [
+      { field: "callerName", oldValue: previousCallerName, newValue: saved.caller?.name ?? saved.callerName },
+      { field: "callerPhone", oldValue: previousCallerPhone, newValue: saved.caller?.phone ?? saved.callerPhone },
+      {
+        field: "callerRelationship",
+        oldValue: previousCallerRelationship,
+        newValue: saved.caller?.relationship ?? saved.relationship,
+      },
+    ]);
+
+    const newRecipients = isLegacyBooking(saved)
+      ? [
+          {
+            id: saved.bookingId,
+            occassion: saved.occassion,
+            callType: saved.callType,
+            price: saved.price,
+            country: saved.country,
+          },
+        ]
+      : (saved.recipients ?? []).map((r) => ({
+          id: r._id!.toString(),
+          occassion: r.occassion,
+          callType: r.callType,
+          price: r.price,
+          country: r.country,
+        }));
+
+    for (const newR of newRecipients) {
+      const oldR = previousRecipients.find((r) => r.id === newR.id);
+      if (!oldR) continue;
+
+      const prefix = isLegacyBooking(saved) ? "" : `recipient.${newR.id}.`;
+      await auditLogService.recordDiffs("booking", booking.bookingId, changedBy, [
+        { field: `${prefix}occassion`, oldValue: oldR.occassion, newValue: newR.occassion },
+        { field: `${prefix}callType`, oldValue: oldR.callType, newValue: newR.callType },
+        { field: `${prefix}price`, oldValue: oldR.price, newValue: newR.price },
+        { field: `${prefix}country`, oldValue: oldR.country, newValue: newR.country },
+      ]);
     }
 
     bookingLogger.info("Booking updated by admin", {
@@ -471,8 +533,15 @@ class BookingService {
     if (!booking) return null;
 
     if (isLegacyBooking(booking) || !recipientId) {
+      const oldStatus = booking.status;
       booking.status = newStatus;
-      return await booking.save();
+      const saved = await booking.save();
+
+      await auditLogService.recordDiffs("booking", booking.bookingId, userId, [
+        { field: "status", oldValue: oldStatus, newValue: newStatus },
+      ]);
+
+      return saved;
     }
 
     const recipient = booking.recipients?.find(
@@ -487,10 +556,15 @@ class BookingService {
       return null;
     }
 
+    const oldCallStatus = recipient.callStatus;
     recipient.callStatus = newStatus;
     booking.bookingStatus = deriveBookingStatus(booking.recipients!);
 
     const saved = await booking.save();
+
+    await auditLogService.recordDiffs("booking", booking.bookingId, userId, [
+      { field: `recipient.${recipientId}.callStatus`, oldValue: oldCallStatus, newValue: newStatus },
+    ]);
 
     bookingLogger.info("Call status updated", {
       bookingId,
@@ -506,19 +580,23 @@ class BookingService {
 
   // Delete booking by MongoDB ID
   async deleteBookingById(bookingId: string, userId: string, role: string) {
-    // check users role
-    if (role === "callrep") {
-      // if the admin is a call rep, delete the booking if the iD is found and the booking was assigned to the call rep
-      return await Booking.deleteOne({
-        _id: new Types.ObjectId(bookingId),
-        assignedRep: userId,
+    const booking = await this.getBookingById(bookingId, userId, role);
+    if (!booking) return { deletedCount: 0 };
+
+    const result = await Booking.deleteOne({ _id: new Types.ObjectId(bookingId) });
+
+    if (result.deletedCount > 0) {
+      await auditLogService.record({
+        entity: "booking",
+        entityId: booking.bookingId,
+        field: "status",
+        oldValue: "active",
+        newValue: "deleted",
+        changedBy: userId,
       });
     }
 
-    // else delete the booking if the Id matches regardless of the role
-    return await Booking.deleteOne({
-      _id: new Types.ObjectId(bookingId),
-    });
+    return result;
   }
 
   async getAllBooking(

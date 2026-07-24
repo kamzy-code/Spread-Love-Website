@@ -103,17 +103,73 @@ class ServiceService {
 
   async updateServiceDetails(
     id: string,
-    updates: Partial<Pick<IService, "title" | "description" | "category" | "thumbnail" | "iconKey">>
+    updates: Partial<Pick<IService, "title" | "description" | "category" | "thumbnail" | "iconKey">>,
+    changedBy: string
   ) {
-    return Service.findByIdAndUpdate(id, updates, { new: true });
+    const service = await Service.findById(id);
+    if (!service) return null;
+
+    const fields: (keyof typeof updates)[] = [
+      "title",
+      "description",
+      "category",
+      "thumbnail",
+      "iconKey",
+    ];
+    const diffs = fields
+      .filter((field) => updates[field] !== undefined)
+      .map((field) => ({
+        field,
+        oldValue: service[field],
+        newValue: updates[field],
+      }));
+
+    Object.assign(service, updates);
+    const saved = await service.save();
+
+    await auditLogService.recordDiffs("service", service.id, changedBy, diffs);
+
+    return saved;
   }
 
-  async deactivateService(id: string) {
-    return Service.findByIdAndUpdate(id, { active: false }, { new: true });
+  async deactivateService(id: string, changedBy: string) {
+    const before = await Service.findById(id);
+    if (!before) return null;
+
+    const service = await Service.findByIdAndUpdate(id, { active: false }, { new: true });
+
+    if (before.active) {
+      await auditLogService.record({
+        entity: "service",
+        entityId: id,
+        field: "status",
+        oldValue: "active",
+        newValue: "inactive",
+        changedBy,
+      });
+    }
+
+    return service;
   }
 
-  async reactivateService(id: string) {
-    return Service.findByIdAndUpdate(id, { active: true }, { new: true });
+  async reactivateService(id: string, changedBy: string) {
+    const before = await Service.findById(id);
+    if (!before) return null;
+
+    const service = await Service.findByIdAndUpdate(id, { active: true }, { new: true });
+
+    if (!before.active) {
+      await auditLogService.record({
+        entity: "service",
+        entityId: id,
+        field: "status",
+        oldValue: "inactive",
+        newValue: "active",
+        changedBy,
+      });
+    }
+
+    return service;
   }
 }
 

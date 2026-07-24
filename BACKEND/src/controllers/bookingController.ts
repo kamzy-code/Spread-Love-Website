@@ -8,6 +8,7 @@ import { Types } from "mongoose";
 import { castSortOder } from "../utils/castSortOrder";
 import getDateRange from "../utils/getDateRange";
 import adminService from "../services/adminService";
+import auditLogService from "../services/auditLogService";
 import {
   subDays,
   subMonths,
@@ -698,7 +699,10 @@ class BookingController {
         targetRep = targetRep._id as string;
       }
 
-      // update the assigned rep to the new targetted rep
+      // update the assigned rep to the new targetted rep — assignedRep comes
+      // populated from getBookingById, so pull the id off the populated doc
+      // rather than calling .toString() on the whole document.
+      const previousAssignedRep = (booking.assignedRep as any)?._id?.toString();
       booking.assignedRep = new Types.ObjectId(targetRep);
 
       // create an array of booking that can't be updated based on their status
@@ -740,6 +744,10 @@ class BookingController {
         booking.status = "pending" as callStatus;
       }
       await booking.save();
+
+      await auditLogService.recordDiffs("booking", booking.bookingId, user.userId, [
+        { field: "assignedRep", oldValue: previousAssignedRep, newValue: String(targetRep) },
+      ]);
 
       res.status(200).json({ message: "Booking assigned", repId: targetRep });
       bookingLogger.info("Assign call to rep successful", {

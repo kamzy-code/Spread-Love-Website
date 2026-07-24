@@ -1,10 +1,10 @@
 import mongoose, { Schema, Document } from "mongoose";
 
 // Generic admin-edit audit trail — reused across admin-editable-field
-// features (customer email today, service prices next) rather than a
+// features (customer email, service prices, coupons, reps) rather than a
 // bespoke log per feature. Read access is superadmin-only — enforced in
 // the route, not here.
-export type auditEntity = "booking" | "service";
+export type auditEntity = "booking" | "service" | "coupon" | "rep";
 
 export interface IAuditLog extends Document {
   entity: auditEntity;
@@ -18,7 +18,7 @@ export interface IAuditLog extends Document {
 
 const auditLogSchema: Schema = new Schema<IAuditLog>(
   {
-    entity: { type: String, enum: ["booking", "service"], required: true },
+    entity: { type: String, enum: ["booking", "service", "coupon", "rep"], required: true },
     entityId: { type: String, required: true },
     field: { type: String, required: true },
     oldValue: { type: String, default: "" },

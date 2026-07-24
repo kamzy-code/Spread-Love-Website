@@ -1,5 +1,6 @@
 import { Coupon, ICoupon } from "../models/couponModel";
 import { bookingLogger } from "../utils/logger";
+import auditLogService from "./auditLogService";
 
 interface CouponValidationResult {
   valid: boolean;
@@ -8,13 +9,23 @@ interface CouponValidationResult {
 }
 
 class CouponService {
-  async createCoupon(data: Partial<ICoupon>) {
+  async createCoupon(data: Partial<ICoupon>, changedBy: string) {
     const coupon = await Coupon.create(data);
     bookingLogger.info("Coupon created", {
       code: coupon.code,
       service: "couponService",
       action: "CREATE_COUPON_SUCCESS",
     });
+
+    await auditLogService.record({
+      entity: "coupon",
+      entityId: coupon.id,
+      field: "status",
+      oldValue: "",
+      newValue: "created",
+      changedBy,
+    });
+
     return coupon;
   }
 
@@ -26,12 +37,51 @@ class CouponService {
     return await Coupon.findById(id);
   }
 
-  async updateCoupon(id: string, updates: Partial<ICoupon>) {
-    return await Coupon.findByIdAndUpdate(id, updates, { new: true });
+  async updateCoupon(id: string, updates: Partial<ICoupon>, changedBy: string) {
+    const coupon = await Coupon.findById(id);
+    if (!coupon) return null;
+
+    const fields: (keyof ICoupon)[] = [
+      "code",
+      "discountType",
+      "value",
+      "usageLimit",
+      "expiresAt",
+    ];
+    const diffs = fields
+      .filter((field) => updates[field] !== undefined)
+      .map((field) => ({
+        field,
+        oldValue: coupon[field],
+        newValue: updates[field],
+      }));
+
+    Object.assign(coupon, updates);
+    const saved = await coupon.save();
+
+    await auditLogService.recordDiffs("coupon", coupon.id, changedBy, diffs);
+
+    return saved;
   }
 
-  async deactivateCoupon(id: string) {
-    return await Coupon.findByIdAndUpdate(id, { active: false }, { new: true });
+  async deactivateCoupon(id: string, changedBy: string) {
+    const before = await Coupon.findById(id);
+    if (!before) return null;
+
+    const coupon = await Coupon.findByIdAndUpdate(id, { active: false }, { new: true });
+
+    if (before.active) {
+      await auditLogService.record({
+        entity: "coupon",
+        entityId: id,
+        field: "status",
+        oldValue: "active",
+        newValue: "inactive",
+        changedBy,
+      });
+    }
+
+    return coupon;
   }
 
   // never trust client-side discount math — always re-validate server-side

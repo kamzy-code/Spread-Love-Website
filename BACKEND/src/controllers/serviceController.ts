@@ -64,8 +64,9 @@ class ServiceController {
   }
 
   async updateServiceDetails(req: AuthRequest, res: Response, next: NextFunction) {
+    const user = req.user!;
     try {
-      const service = await serviceService.updateServiceDetails(req.params.id, req.body);
+      const service = await serviceService.updateServiceDetails(req.params.id, req.body, user.userId);
       if (!service) {
         next(new HttpError(404, "Service not found"));
         return;
@@ -79,8 +80,9 @@ class ServiceController {
   }
 
   async deactivateService(req: AuthRequest, res: Response, next: NextFunction) {
+    const user = req.user!;
     try {
-      const service = await serviceService.deactivateService(req.params.id);
+      const service = await serviceService.deactivateService(req.params.id, user.userId);
       if (!service) {
         next(new HttpError(404, "Service not found"));
         return;
@@ -94,8 +96,9 @@ class ServiceController {
   }
 
   async reactivateService(req: AuthRequest, res: Response, next: NextFunction) {
+    const user = req.user!;
     try {
-      const service = await serviceService.reactivateService(req.params.id);
+      const service = await serviceService.reactivateService(req.params.id, user.userId);
       if (!service) {
         next(new HttpError(404, "Service not found"));
         return;

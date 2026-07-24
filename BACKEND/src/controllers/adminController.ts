@@ -174,7 +174,7 @@ class AdminController {
     }
 
     try {
-      const rep = await adminService.deleteRepById(repId, user.role);
+      const rep = await adminService.deleteRepById(repId, user.role, user.userId);
 
       // return not found if no rep was found
       if (!rep || (rep && rep?.deletedCount < 1)) {

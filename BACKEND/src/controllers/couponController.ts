@@ -1,11 +1,13 @@
 import { Request, Response, NextFunction } from "express";
 import couponService from "../services/couponService";
+import { AuthRequest } from "../middlewares/authMiddleware";
 import { HttpError } from "../utils/httpError";
 
 class CouponController {
-  async createCoupon(req: Request, res: Response, next: NextFunction) {
+  async createCoupon(req: AuthRequest, res: Response, next: NextFunction) {
+    const user = req.user!;
     try {
-      const coupon = await couponService.createCoupon(req.body);
+      const coupon = await couponService.createCoupon(req.body, user.userId);
       res.status(201).json({ message: "Coupon created", coupon });
       return;
     } catch (error) {
@@ -40,9 +42,10 @@ class CouponController {
     }
   }
 
-  async updateCoupon(req: Request, res: Response, next: NextFunction) {
+  async updateCoupon(req: AuthRequest, res: Response, next: NextFunction) {
+    const user = req.user!;
     try {
-      const coupon = await couponService.updateCoupon(req.params.id, req.body);
+      const coupon = await couponService.updateCoupon(req.params.id, req.body, user.userId);
       if (!coupon) {
         next(new HttpError(404, "Coupon not found"));
         return;
@@ -55,9 +58,10 @@ class CouponController {
     }
   }
 
-  async deactivateCoupon(req: Request, res: Response, next: NextFunction) {
+  async deactivateCoupon(req: AuthRequest, res: Response, next: NextFunction) {
+    const user = req.user!;
     try {
-      const coupon = await couponService.deactivateCoupon(req.params.id);
+      const coupon = await couponService.deactivateCoupon(req.params.id, user.userId);
       if (!coupon) {
         next(new HttpError(404, "Coupon not found"));
         return;
