@@ -1,18 +1,21 @@
 import { motion } from "framer-motion";
-import { Ban } from "lucide-react";
+import { Ban, CheckCircle } from "lucide-react";
 import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
 
-export default function DeactivateCouponModal({
+export default function ToggleCouponStatusModal({
   couponCode,
+  action,
   onCancel,
   onConfirm,
   isPending,
 }: {
   couponCode: string;
+  action: "deactivate" | "reactivate";
   onCancel: () => void;
   onConfirm: () => void;
   isPending: boolean;
 }) {
+  const isDeactivating = action === "deactivate";
   useLockBodyScroll();
 
   return (
@@ -27,9 +30,19 @@ export default function DeactivateCouponModal({
             transition={{ duration: 0.5 }}
             className="card p-8 md:min-w-sm"
           >
-            <Ban className="h-16 w-16 text-red-500 mx-auto mb-4" />
-            <h3 className="text-2xl font-semibold mb-4">Deactivate Coupon</h3>
-            <p className="text-gray-700 mb-6">{`Deactivate coupon ${couponCode}?`}</p>
+            {isDeactivating ? (
+              <Ban className="h-16 w-16 text-red-500 mx-auto mb-4" />
+            ) : (
+              <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
+            )}
+            <h3 className="text-2xl font-semibold mb-4">
+              {isDeactivating ? "Deactivate Coupon" : "Reactivate Coupon"}
+            </h3>
+            <p className="text-gray-700 mb-6">
+              {isDeactivating
+                ? `Deactivate coupon ${couponCode}?`
+                : `Make coupon ${couponCode} usable again?`}
+            </p>
 
             <div className="w-full flex justify-center items-center gap-4">
               <button
@@ -44,7 +57,7 @@ export default function DeactivateCouponModal({
                 disabled={isPending}
                 className="btn-primary flex items-center justify-center mx-auto disabled:opacity-50"
               >
-                {isPending ? "Deactivating..." : "Confirm"}
+                {isPending ? "Saving..." : "Confirm"}
               </button>
             </div>
           </motion.div>

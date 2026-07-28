@@ -74,6 +74,22 @@ class CouponController {
     }
   }
 
+  async reactivateCoupon(req: AuthRequest, res: Response, next: NextFunction) {
+    const user = req.user!;
+    try {
+      const coupon = await couponService.reactivateCoupon(req.params.id, user.userId);
+      if (!coupon) {
+        next(new HttpError(404, "Coupon not found"));
+        return;
+      }
+      res.status(200).json({ message: "Coupon reactivated", coupon });
+      return;
+    } catch (error) {
+      next(error);
+      return;
+    }
+  }
+
   // public: used at checkout to preview a discount before booking creation.
   // code/totalPrice are validated by validateRequest (validateCouponSchema).
   async validateCoupon(req: Request, res: Response, next: NextFunction) {

@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { XCircle, Ticket, Pencil, Ban } from "lucide-react";
+import { XCircle, Ticket, Pencil, Ban, CheckCircle } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import MiniLoader from "../ui/miniLoader";
 import { Coupon } from "@/lib/types";
 import { formatToYMD } from "@/lib/formatDate";
-import { useFetchCoupons, useDeactivateCoupon } from "@/hooks/useCoupons";
+import { useFetchCoupons, useDeactivateCoupon, useReactivateCoupon } from "@/hooks/useCoupons";
 import CouponFormModal from "./CouponFormModal";
-import DeactivateCouponModal from "./DeactivateCouponModal";
+import ToggleCouponStatusModal from "./ToggleCouponStatusModal";
 
 export default function CouponList({
   adminId,
@@ -18,14 +18,19 @@ export default function CouponList({
   const queryClient = useQueryClient();
   const { data: coupons, error, isLoading, refetch } = useFetchCoupons();
   const [editingCoupon, setEditingCoupon] = useState<Coupon | null>(null);
-  const [deactivatingCoupon, setDeactivatingCoupon] = useState<Coupon | null>(null);
+  const [togglingCoupon, setTogglingCoupon] = useState<Coupon | null>(null);
   const deactivateMutation = useDeactivateCoupon();
+  const reactivateMutation = useReactivateCoupon();
 
-  const handleConfirmDeactivate = async () => {
-    if (!deactivatingCoupon) return;
-    await deactivateMutation.mutateAsync(deactivatingCoupon._id);
+  const handleConfirmToggle = async () => {
+    if (!togglingCoupon) return;
+    if (togglingCoupon.active) {
+      await deactivateMutation.mutateAsync(togglingCoupon._id);
+    } else {
+      await reactivateMutation.mutateAsync(togglingCoupon._id);
+    }
     queryClient.invalidateQueries({ queryKey: ["coupons"] });
-    setDeactivatingCoupon(null);
+    setTogglingCoupon(null);
   };
 
   if (error)
@@ -108,15 +113,24 @@ export default function CouponList({
                     <Pencil className="h-3.5 w-3.5" />
                     Edit
                   </button>
-                  {coupon.active && (
-                    <button
-                      className="flex items-center gap-1.5 text-xs text-red-500 hover:underline"
-                      onClick={() => setDeactivatingCoupon(coupon)}
-                    >
-                      <Ban className="h-3.5 w-3.5" />
-                      Deactivate
-                    </button>
-                  )}
+                  <button
+                    className={`flex items-center gap-1.5 text-xs hover:underline ${
+                      coupon.active ? "text-red-500" : "text-green-600"
+                    }`}
+                    onClick={() => setTogglingCoupon(coupon)}
+                  >
+                    {coupon.active ? (
+                      <>
+                        <Ban className="h-3.5 w-3.5" />
+                        Deactivate
+                      </>
+                    ) : (
+                      <>
+                        <CheckCircle className="h-3.5 w-3.5" />
+                        Reactivate
+                      </>
+                    )}
+                  </button>
                 </div>
               )}
             </div>
@@ -132,12 +146,13 @@ export default function CouponList({
         />
       )}
 
-      {deactivatingCoupon && (
-        <DeactivateCouponModal
-          couponCode={deactivatingCoupon.code}
-          onCancel={() => setDeactivatingCoupon(null)}
-          onConfirm={handleConfirmDeactivate}
-          isPending={deactivateMutation.isPending}
+      {togglingCoupon && (
+        <ToggleCouponStatusModal
+          couponCode={togglingCoupon.code}
+          action={togglingCoupon.active ? "deactivate" : "reactivate"}
+          onCancel={() => setTogglingCoupon(null)}
+          onConfirm={handleConfirmToggle}
+          isPending={deactivateMutation.isPending || reactivateMutation.isPending}
         />
       )}
     </div>

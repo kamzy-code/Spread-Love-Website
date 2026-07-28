@@ -39,3 +39,10 @@ export const useDeactivateCoupon = () => {
       apiCall(`/coupon/admin/${couponId}/deactivate`, { method: "PUT" }),
   });
 };
+
+export const useReactivateCoupon = () => {
+  return useMutation({
+    mutationFn: (couponId: string) =>
+      apiCall(`/coupon/admin/${couponId}/reactivate`, { method: "PUT" }),
+  });
+};

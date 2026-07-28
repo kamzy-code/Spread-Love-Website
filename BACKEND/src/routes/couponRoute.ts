@@ -54,6 +54,13 @@ router.put(
   couponController.deactivateCoupon,
 );
 
+router.put(
+  "/admin/:id/reactivate",
+  authMiddleware,
+  checkRole("superadmin"),
+  couponController.reactivateCoupon,
+);
+
 router.use((req, res) => {
   res.status(404).json({ message: "Coupon route not found" });
 });

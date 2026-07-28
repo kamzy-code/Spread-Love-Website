@@ -84,6 +84,26 @@ class CouponService {
     return coupon;
   }
 
+  async reactivateCoupon(id: string, changedBy: string) {
+    const before = await Coupon.findById(id);
+    if (!before) return null;
+
+    const coupon = await Coupon.findByIdAndUpdate(id, { active: true }, { new: true });
+
+    if (!before.active) {
+      await auditLogService.record({
+        entity: "coupon",
+        entityId: id,
+        field: "status",
+        oldValue: "inactive",
+        newValue: "active",
+        changedBy,
+      });
+    }
+
+    return coupon;
+  }
+
   // never trust client-side discount math — always re-validate server-side
   async validateCoupon(code: string): Promise<CouponValidationResult> {
     const coupon = await Coupon.findOne({ code: code.toUpperCase().trim() });
