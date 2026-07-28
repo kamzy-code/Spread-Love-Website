@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useQueryClient } from "@tanstack/react-query";
 import ActionStatusModal from "../../ui/updateModal";
+import AuditLogSidebar from "../../ui/AuditLogSidebar";
 import { deepEqual } from "@/lib/hasBookingChanged";
 import { getStatusColor, getStatusIcon } from "@/lib/getStatusColor";
 import { getTierColor, getTierIcon, getTierLabel } from "@/lib/getTierColor";
@@ -192,8 +193,8 @@ export default function DetailsPage({ data }: { data: Booking }) {
   const isPending = isSubmitting || updateBookingMutation.isPending;
 
   return (
-    <section className="flex w-full">
-      <motion.div className="py-6 md:py-8 w-full space-y-4">
+    <section className="flex flex-col lg:flex-row w-full gap-6">
+      <motion.div className="py-6 md:py-8 flex-1 min-w-0 space-y-4">
         <div className="flex flex-col md:flex-row justify-between md:items-center gap-4">
           <div>
             <h2 className="gradient-text font-bold text-xl md:text-2xl">
@@ -230,8 +231,6 @@ export default function DetailsPage({ data }: { data: Booking }) {
               caller={caller}
               editForm={editForm}
               onChange={handleCallerChange}
-              bookingId={data.bookingId}
-              isSuperAdmin={user?.role === "superadmin"}
             />
 
             <div className="grid grid-cols-1 gap-4">
@@ -365,6 +364,12 @@ export default function DetailsPage({ data }: { data: Booking }) {
           ></ActionStatusModal>
         )}
       </motion.div>
+
+      <AuditLogSidebar
+        entity="booking"
+        entityId={data.bookingId}
+        isSuperAdmin={user?.role === "superadmin"}
+      />
     </section>
   );
 }

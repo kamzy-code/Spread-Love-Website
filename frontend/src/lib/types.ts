@@ -292,7 +292,7 @@ export interface LogFile {
 }
 
 // Audit log — superadmin-only view of admin-made edits to protected fields
-export type AuditEntity = "booking" | "service";
+export type AuditEntity = "booking" | "service" | "coupon" | "rep";
 
 export type AuditLogEntry = {
   _id: string;

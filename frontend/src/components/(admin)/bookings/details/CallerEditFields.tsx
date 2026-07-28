@@ -1,21 +1,16 @@
 import { GENDER_OPTIONS } from "@/lib/bookingOptions";
 import { CallerFormState } from "@/lib/types";
-import EmailAuditLog from "./EmailAuditLog";
 
 interface CallerEditFieldsProps {
   caller: CallerFormState;
   editForm: boolean;
   onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
-  bookingId: string;
-  isSuperAdmin: boolean;
 }
 
 export default function CallerEditFields({
   caller,
   editForm,
   onChange,
-  bookingId,
-  isSuperAdmin,
 }: CallerEditFieldsProps) {
   return (
     <div>
@@ -69,7 +64,6 @@ export default function CallerEditFields({
           ) : (
             <p className="py-3 w-full">{caller.email}</p>
           )}
-          <EmailAuditLog bookingId={bookingId} isSuperAdmin={isSuperAdmin} />
         </div>
 
         <div className="flex flex-col space-y-2">
