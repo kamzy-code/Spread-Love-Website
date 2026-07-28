@@ -84,6 +84,7 @@ export default function CouponDetails({ id }: { id: string }) {
     }
     queryClient.invalidateQueries({ queryKey: ["coupon", id] });
     queryClient.invalidateQueries({ queryKey: ["coupons"] });
+    queryClient.invalidateQueries({ queryKey: ["auditLogs", "coupon", id] });
     setToggling(false);
   };
 
@@ -203,6 +204,7 @@ export default function CouponDetails({ id }: { id: string }) {
           adminId={user!._id}
           onClose={() => {
             queryClient.invalidateQueries({ queryKey: ["coupon", id] });
+            queryClient.invalidateQueries({ queryKey: ["auditLogs", "coupon", id] });
             setEditingCoupon(false);
           }}
         />

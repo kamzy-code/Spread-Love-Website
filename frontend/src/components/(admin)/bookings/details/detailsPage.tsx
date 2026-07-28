@@ -88,8 +88,10 @@ export default function DetailsPage({ data }: { data: Booking }) {
   const updateRecipientStatusMutation = useUpdateRecipientStatus();
   const updateLegacyStatusMutation = useUpdateStatus();
 
-  const invalidate = () =>
+  const invalidate = () => {
     queryClient.invalidateQueries({ queryKey: ["booking", data._id] });
+    queryClient.invalidateQueries({ queryKey: ["auditLogs", "booking", data.bookingId] });
+  };
 
   const handleCallerChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,

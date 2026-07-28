@@ -65,6 +65,10 @@ export default function AssignModal({
         queryKey: ["booking", booking._id],
       });
 
+      queryClient.invalidateQueries({
+        queryKey: ["auditLogs", "booking", booking.bookingId],
+      });
+
       queryClient.refetchQueries({
         queryKey:["bookings"]
       })
