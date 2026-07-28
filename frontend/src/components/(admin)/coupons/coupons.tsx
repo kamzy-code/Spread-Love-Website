@@ -78,7 +78,7 @@ export default function Coupons() {
             )}
           </div>
 
-          <CouponList adminId={user!._id} isSuperAdmin={user?.role === "superadmin"}></CouponList>
+          <CouponList></CouponList>
         </motion.div>
 
         {showCreateForm && user?.role === "superadmin" && (

@@ -13,6 +13,18 @@ export const useFetchCoupons = () => {
   });
 };
 
+export const useFetchCoupon = (id: string) => {
+  return useQuery({
+    queryKey: ["coupon", id],
+    queryFn: async ({ signal }) => {
+      const data = await apiCall(`/coupon/admin/${id}`, { signal });
+      return data.coupon as Coupon;
+    },
+    enabled: !!id,
+    staleTime: 1000 * 60,
+  });
+};
+
 export const useCreateCoupon = (createdBy: string) => {
   return useMutation({
     mutationFn: (body: CouponFormValues) =>
