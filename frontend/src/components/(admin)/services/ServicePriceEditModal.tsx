@@ -3,10 +3,16 @@ import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
-import { Service } from "@/lib/types";
+import { Service, ServicePricing } from "@/lib/types";
 import { useUpdateServicePricing } from "@/hooks/useServices";
 import { deepEqual } from "@/lib/hasBookingChanged";
 import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
+import PricingFields from "./PricingFields";
+
+const toPricingState = (service: Service) => ({
+  regular: { ...service.regular },
+  special: { ...service.special },
+});
 
 export default function ServicePriceEditModal({
   service,
@@ -16,10 +22,9 @@ export default function ServicePriceEditModal({
   onClose: () => void;
 }) {
   const queryClient = useQueryClient();
-  const [regularLocal, setRegularLocal] = useState(service.regular.localPrice);
-  const [regularIntl, setRegularIntl] = useState(service.regular.internationalPrice);
-  const [specialLocal, setSpecialLocal] = useState(service.special.localPrice);
-  const [specialIntl, setSpecialIntl] = useState(service.special.internationalPrice);
+  const [pricing, setPricing] = useState<{ regular: ServicePricing; special: ServicePricing }>(
+    toPricingState(service)
+  );
   const [errorMessage, setErrorMessage] = useState("");
 
   useLockBodyScroll();
@@ -36,20 +41,7 @@ export default function ServicePriceEditModal({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mutation.isSuccess]);
 
-  const pricingUpdate = {
-    regular: { localPrice: regularLocal, internationalPrice: regularIntl },
-    special: { localPrice: specialLocal, internationalPrice: specialIntl },
-  };
-  const hasNotChanged = deepEqual(pricingUpdate, {
-    regular: {
-      localPrice: service.regular.localPrice,
-      internationalPrice: service.regular.internationalPrice,
-    },
-    special: {
-      localPrice: service.special.localPrice,
-      internationalPrice: service.special.internationalPrice,
-    },
-  });
+  const hasNotChanged = deepEqual(pricing, toPricingState(service));
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,7 +53,7 @@ export default function ServicePriceEditModal({
     }
 
     try {
-      await mutation.mutateAsync(pricingUpdate);
+      await mutation.mutateAsync(pricing);
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "Failed to update pricing");
     }
@@ -90,61 +82,17 @@ export default function ServicePriceEditModal({
             onSubmit={handleSubmit}
             className="space-y-4 text-brand-start w-full py-4 text-start"
           >
-            <div>
-              <h3 className="font-semibold text-gray-700 mb-2">Regular Call</h3>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="flex flex-col space-y-2">
-                  <label className="text-gray-700 text-sm">Local (₦)</label>
-                  <input
-                    className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent"
-                    type="number"
-                    min={0}
-                    value={regularLocal}
-                    onChange={(e) => setRegularLocal(Number(e.target.value))}
-                    required
-                  />
-                </div>
-                <div className="flex flex-col space-y-2">
-                  <label className="text-gray-700 text-sm">International (₦)</label>
-                  <input
-                    className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent"
-                    type="number"
-                    min={0}
-                    value={regularIntl}
-                    onChange={(e) => setRegularIntl(Number(e.target.value))}
-                    required
-                  />
-                </div>
-              </div>
-            </div>
+            <PricingFields
+              label="Regular Call"
+              pricing={pricing.regular}
+              onChange={(regular) => setPricing((prev) => ({ ...prev, regular }))}
+            />
 
-            <div>
-              <h3 className="font-semibold text-gray-700 mb-2">Special Call</h3>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="flex flex-col space-y-2">
-                  <label className="text-gray-700 text-sm">Local (₦)</label>
-                  <input
-                    className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent"
-                    type="number"
-                    min={0}
-                    value={specialLocal}
-                    onChange={(e) => setSpecialLocal(Number(e.target.value))}
-                    required
-                  />
-                </div>
-                <div className="flex flex-col space-y-2">
-                  <label className="text-gray-700 text-sm">International (₦)</label>
-                  <input
-                    className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent"
-                    type="number"
-                    min={0}
-                    value={specialIntl}
-                    onChange={(e) => setSpecialIntl(Number(e.target.value))}
-                    required
-                  />
-                </div>
-              </div>
-            </div>
+            <PricingFields
+              label="Special Call"
+              pricing={pricing.special}
+              onChange={(special) => setPricing((prev) => ({ ...prev, special }))}
+            />
 
             {errorMessage && <p className="text-red-500 text-sm">{errorMessage}</p>}
 
