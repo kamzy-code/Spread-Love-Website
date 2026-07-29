@@ -88,7 +88,19 @@ class ServiceService {
       }
 
       if (tierUpdate.features !== undefined) {
-        service[tier].features = tierUpdate.features;
+        const oldFeatures = service[tier].features;
+        const newFeatures = tierUpdate.features;
+        if (JSON.stringify(oldFeatures) !== JSON.stringify(newFeatures)) {
+          await auditLogService.record({
+            entity: "service",
+            entityId: service.id,
+            field: `${tier}.features`,
+            oldValue: oldFeatures.join(", "),
+            newValue: newFeatures.join(", "),
+            changedBy,
+          });
+          service[tier].features = newFeatures;
+        }
       }
     }
 
