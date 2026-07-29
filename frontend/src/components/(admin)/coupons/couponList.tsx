@@ -3,10 +3,35 @@ import { XCircle, Ticket } from "lucide-react";
 import MiniLoader from "../ui/miniLoader";
 import { formatToYMD } from "@/lib/formatDate";
 import { useFetchCoupons } from "@/hooks/useCoupons";
+import { CouponFilters } from "./CouponFilterPanel";
 
-export default function CouponList() {
+const getCouponStatus = (coupon: { active: boolean; expiresAt: string; usedCount: number; usageLimit: number }) => {
+  const isExpired = new Date(coupon.expiresAt) < new Date();
+  const isExhausted = coupon.usedCount >= coupon.usageLimit;
+  if (!coupon.active) return "inactive";
+  if (isExpired) return "expired";
+  if (isExhausted) return "exhausted";
+  return "active";
+};
+
+const STATUS_LABELS: Record<string, { label: string; color: string }> = {
+  inactive: { label: "Inactive", color: "text-gray-500" },
+  expired: { label: "Expired", color: "text-red-500" },
+  exhausted: { label: "Exhausted", color: "text-red-500" },
+  active: { label: "Active", color: "text-green-500" },
+};
+
+export default function CouponList({ filters }: { filters: CouponFilters }) {
   const router = useRouter();
-  const { data: coupons, error, isLoading, refetch } = useFetchCoupons();
+  const { data: allCoupons, error, isLoading, refetch } = useFetchCoupons();
+
+  const coupons = allCoupons?.filter((coupon) => {
+    if (filters.discountType && coupon.discountType !== filters.discountType) return false;
+    if (filters.status && getCouponStatus(coupon) !== filters.status) return false;
+    if (filters.search && !coupon.code.toLowerCase().includes(filters.search.toLowerCase()))
+      return false;
+    return true;
+  });
 
   if (error)
     return (
@@ -33,22 +58,16 @@ export default function CouponList() {
     return (
       <div className="flex flex-col justify-center items-center text-gray-500 py-12">
         <Ticket className="h-6 w-6" />
-        <p className="text-sm">No Coupons Yet</p>
+        <p className="text-sm">
+          {allCoupons && allCoupons.length > 0 ? "No coupons match your filters" : "No Coupons Yet"}
+        </p>
       </div>
     );
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
       {coupons.map((coupon) => {
-        const isExpired = new Date(coupon.expiresAt) < new Date();
-        const isExhausted = coupon.usedCount >= coupon.usageLimit;
-        const status = !coupon.active
-          ? { label: "Inactive", color: "text-gray-500" }
-          : isExpired
-            ? { label: "Expired", color: "text-red-500" }
-            : isExhausted
-              ? { label: "Exhausted", color: "text-red-500" }
-              : { label: "Active", color: "text-green-500" };
+        const status = STATUS_LABELS[getCouponStatus(coupon)];
 
         return (
           <div

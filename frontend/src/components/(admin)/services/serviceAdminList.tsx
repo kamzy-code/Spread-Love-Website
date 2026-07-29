@@ -1,12 +1,21 @@
 import { useRouter } from "next/navigation";
-import { XCircle } from "lucide-react";
+import { XCircle, Layers } from "lucide-react";
 import MiniLoader from "../ui/miniLoader";
 import { getServiceIcon } from "@/lib/serviceIcons";
 import { useFetchAdminServices } from "@/hooks/useServices";
+import { ServiceFilters } from "./ServiceFilterPanel";
 
-export default function ServiceAdminList() {
+export default function ServiceAdminList({ filters }: { filters: ServiceFilters }) {
   const router = useRouter();
-  const { data: services, error, isLoading, refetch } = useFetchAdminServices();
+  const { data: allServices, error, isLoading, refetch } = useFetchAdminServices();
+
+  const services = allServices?.filter((service) => {
+    if (filters.category && service.category !== filters.category) return false;
+    if (filters.status && (filters.status === "active") !== service.active) return false;
+    if (filters.search && !service.title.toLowerCase().includes(filters.search.toLowerCase()))
+      return false;
+    return true;
+  });
 
   if (error)
     return (
@@ -29,9 +38,19 @@ export default function ServiceAdminList() {
       </div>
     );
 
+  if (!services || services.length === 0)
+    return (
+      <div className="flex flex-col justify-center items-center text-gray-500 py-12">
+        <Layers className="h-6 w-6" />
+        <p className="text-sm">
+          {allServices && allServices.length > 0 ? "No services match your filters" : "No Services Yet"}
+        </p>
+      </div>
+    );
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
-      {services?.map((service) => (
+      {services.map((service) => (
         <div
           key={service._id}
           className="card p-6 space-y-3 cursor-pointer hover:shadow-md transition"

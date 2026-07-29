@@ -6,15 +6,20 @@ import PageError from "../ui/pageError";
 import AdminShell from "../ui/AdminShell";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, TriangleAlert } from "lucide-react";
+import { Filter, Plus, TriangleAlert } from "lucide-react";
 import CouponList from "./couponList";
 import CouponFormModal from "./CouponFormModal";
+import CouponFilterPanel, { CouponFilters } from "./CouponFilterPanel";
+
+const emptyFilters: CouponFilters = { search: "", discountType: "", status: "" };
 
 export default function Coupons() {
   const router = useRouter();
   const { user, authStatus, authError, loading } = useAdminAuth();
   const [mounted, setMounted] = useState(false);
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [showFilter, setShowFilter] = useState(false);
+  const [filters, setFilters] = useState<CouponFilters>(emptyFilters);
   const allowedRoles = ["superadmin", "salesrep"];
 
   useEffect(() => {
@@ -67,18 +72,35 @@ export default function Coupons() {
         >
           <div className="flex items-center justify-between">
             <h1 className="text-3xl font-bold">Coupons</h1>
-            {user?.role === "superadmin" && (
+            <div className="flex gap-4">
               <button
-                className="flex rounded-md h-8 justify-center text-sm items-center gap-2 px-4 py-2 btn-primary hover:scale-105 transition"
-                onClick={() => setShowCreateForm(true)}
+                className="flex rounded-md h-8 justify-center text-sm items-center gap-2 px-4 py-2 border border-brand-end hover:bg-brand-end hover:scale-105 hover:text-white transition text-brand-end active:bg-brand-end active:text-white"
+                onClick={() => setShowFilter(!showFilter)}
               >
-                <Plus className="h-5 w-5" />
-                <p className="hidden md:flex">Add</p>
+                <Filter className="h-5 w-5" />
+                <p className="hidden md:flex">Filter</p>
               </button>
-            )}
+              {user?.role === "superadmin" && (
+                <button
+                  className="flex rounded-md h-8 justify-center text-sm items-center gap-2 px-4 py-2 btn-primary hover:scale-105 transition"
+                  onClick={() => setShowCreateForm(true)}
+                >
+                  <Plus className="h-5 w-5" />
+                  <p className="hidden md:flex">Add</p>
+                </button>
+              )}
+            </div>
           </div>
 
-          <CouponList></CouponList>
+          <div className="space-y-8">
+            <CouponFilterPanel
+              showFilter={showFilter}
+              filters={filters}
+              onChange={setFilters}
+            />
+
+            <CouponList filters={filters}></CouponList>
+          </div>
         </motion.div>
 
         {showCreateForm && user?.role === "superadmin" && (
