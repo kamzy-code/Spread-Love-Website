@@ -1,14 +1,8 @@
 import { z } from "zod";
-import { occassion } from "../types/genralTypes";
 import { wordCount } from "../utils/wordCount";
 
 export const MESSAGE_WORD_LIMIT = 200;
 export const SPECIAL_INSTRUCTION_WORD_LIMIT = 70;
-
-// Assert that `occassion` is a non-empty array/tuple of strings.
-// The type `[string, ...string[]]` means "at least one string, followed by zero or more strings".
-// This narrows the type so `z.enum(occassionValues)` can accept it.
-const occassionValues = occassion as [string, ...string[]];
 
 export const callerSchema = z.object({
   name: z.string().min(1, "Caller name is required"),
@@ -27,7 +21,11 @@ export const recipientSchema = z.object({
   recipientName: z.string().min(1, "Recipient name is required"),
   recipientPhone: z.string().min(1, "Recipient phone is required"),
   country: z.string().min(1, "Country is required"),
-  occassion: z.enum(occassionValues),
+  // Occasion is validated against the live Service collection at creation
+  // time (see serviceService.getPriceForOccasion), not a static enum — a
+  // service created via the admin UI is immediately bookable without a
+  // matching code change here.
+  occassion: z.string().min(1, "Occasion is required"),
   callType: z.enum(["regular", "special"]),
   callDate: z.coerce.date(),
   price: z.coerce.number().nonnegative("Price must be non-negative"),
@@ -155,7 +153,7 @@ export const updateRecipientByAdminSchema = z
     recipientName: z.string().min(1),
     recipientPhone: z.string().min(1),
     country: z.string().min(1),
-    occassion: z.enum(occassionValues),
+    occassion: z.string().min(1),
     callType: z.enum(["regular", "special"]),
     callDate: z.coerce.date(),
     price: z.coerce.number().nonnegative("Price must be non-negative"),

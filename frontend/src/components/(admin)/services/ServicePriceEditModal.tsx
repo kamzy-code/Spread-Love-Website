@@ -29,6 +29,8 @@ export default function ServicePriceEditModal({
   useEffect(() => {
     if (mutation.isSuccess) {
       queryClient.invalidateQueries({ queryKey: ["services"] });
+      queryClient.invalidateQueries({ queryKey: ["service", service._id] });
+      queryClient.invalidateQueries({ queryKey: ["auditLogs", "service", service._id] });
       onClose();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

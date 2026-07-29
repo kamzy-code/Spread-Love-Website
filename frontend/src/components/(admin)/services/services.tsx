@@ -6,13 +6,15 @@ import PageError from "../ui/pageError";
 import AdminShell from "../ui/AdminShell";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { TriangleAlert } from "lucide-react";
+import { Plus, TriangleAlert } from "lucide-react";
 import ServiceAdminList from "./serviceAdminList";
+import CreateServiceModal from "./CreateServiceModal";
 
 export default function AdminServices() {
   const router = useRouter();
   const { user, authStatus, authError, loading } = useAdminAuth();
   const [mounted, setMounted] = useState(false);
+  const [showCreateForm, setShowCreateForm] = useState(false);
   const allowedRoles = ["superadmin", "salesrep"];
 
   useEffect(() => {
@@ -65,10 +67,23 @@ export default function AdminServices() {
         >
           <div className="flex items-center justify-between">
             <h1 className="text-3xl font-bold">Services</h1>
+            {user?.role === "superadmin" && (
+              <button
+                className="flex rounded-md h-8 justify-center text-sm items-center gap-2 px-4 py-2 btn-primary hover:scale-105 transition"
+                onClick={() => setShowCreateForm(true)}
+              >
+                <Plus className="h-5 w-5" />
+                <p className="hidden md:flex">Add</p>
+              </button>
+            )}
           </div>
 
-          <ServiceAdminList isSuperAdmin={user?.role === "superadmin"}></ServiceAdminList>
+          <ServiceAdminList></ServiceAdminList>
         </motion.div>
+
+        {showCreateForm && user?.role === "superadmin" && (
+          <CreateServiceModal onClose={() => setShowCreateForm(false)} />
+        )}
       </AdminShell>
     </AnimatePresence>
   );

@@ -363,3 +363,15 @@ export type ServicePricingUpdate = {
   regular?: Partial<ServicePricing>;
   special?: Partial<ServicePricing>;
 };
+
+export type ServiceDetailsUpdate = Partial<
+  Pick<Service, "title" | "description" | "category" | "thumbnail" | "iconKey">
+>;
+
+export type ServiceCreatePayload = Pick<
+  Service,
+  "title" | "description" | "category" | "thumbnail" | "iconKey"
+> & {
+  regular: ServicePricing;
+  special: ServicePricing;
+};

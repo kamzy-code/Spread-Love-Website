@@ -28,6 +28,21 @@ class ServiceController {
     }
   }
 
+  async getServiceById(req: AuthRequest, res: Response, next: NextFunction) {
+    try {
+      const service = await serviceService.getServiceById(req.params.id);
+      if (!service) {
+        next(new HttpError(404, "Service not found"));
+        return;
+      }
+      res.status(200).json({ message: "Service fetched successfully", data: service });
+      return;
+    } catch (error) {
+      next(error);
+      return;
+    }
+  }
+
   async createService(req: AuthRequest, res: Response, next: NextFunction) {
     try {
       const service = await serviceService.createService(req.body);

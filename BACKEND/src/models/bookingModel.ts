@@ -4,8 +4,6 @@ import {
   callStatus,
   callType,
   genderType,
-  occassion,
-  occassionType,
 } from "../types/genralTypes";
 
 const callStatusValues: callStatus[] = [
@@ -30,7 +28,9 @@ export interface IRecipient {
   recipientName: string;
   recipientPhone: string;
   country: string;
-  occassion: occassionType;
+  // Validated against the live Service collection, not a static enum — see
+  // serviceService.getPriceForOccasion.
+  occassion: string;
   callType: callType;
   callDate: Date;
   price: number;
@@ -53,7 +53,7 @@ export interface IBooking extends Document {
   recipientName?: string;
   recipientPhone?: string;
   country?: string;
-  occassion?: occassionType;
+  occassion?: string;
   callType?: callType;
   callDate?: Date;
   price?: string;
@@ -98,7 +98,7 @@ const recipientSchema = new Schema<IRecipient>({
   recipientName: { type: String, required: true },
   recipientPhone: { type: String, required: true },
   country: { type: String, required: true },
-  occassion: { type: String, enum: Object.values(occassion), required: true },
+  occassion: { type: String, required: true },
   callType: { type: String, required: true },
   callDate: { type: Date, required: true },
   price: { type: Number, required: true },
@@ -127,7 +127,6 @@ const bookingSchema: Schema = new Schema<IBooking>(
     country: { type: String, required: false },
     occassion: {
       type: String,
-      enum: Object.values(occassion),
       required: false,
     },
     callType: { type: String, required: false },

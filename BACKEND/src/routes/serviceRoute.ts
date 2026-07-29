@@ -21,6 +21,13 @@ router.get(
   serviceController.getAllServicesForAdmin,
 );
 
+router.get(
+  "/admin/:id",
+  authMiddleware,
+  checkRole("superadmin", "salesrep"),
+  serviceController.getServiceById,
+);
+
 router.post(
   "/admin",
   authMiddleware,
