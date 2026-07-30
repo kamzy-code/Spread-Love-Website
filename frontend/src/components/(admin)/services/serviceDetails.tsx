@@ -15,6 +15,7 @@ import PageError from "../ui/pageError";
 import AdminShell from "../ui/AdminShell";
 import AuditLogSidebar from "../ui/AuditLogSidebar";
 import MiniLoader from "../ui/miniLoader";
+import ImageWithPlaceholder from "../ui/ImageWithPlaceholder";
 import ServicePriceEditModal from "./ServicePriceEditModal";
 import ServiceDetailsEditModal from "./ServiceDetailsEditModal";
 import ToggleServiceStatusModal from "./ToggleServiceStatusModal";
@@ -137,11 +138,10 @@ export default function ServiceDetails({ id }: { id: string }) {
                 </div>
 
                 {service.thumbnail && (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
+                  <ImageWithPlaceholder
                     src={service.thumbnail}
                     alt={service.title}
-                    className="w-full max-h-64 object-cover rounded-xl border border-gray-200"
+                    className="w-full h-64 rounded-xl border border-gray-200"
                   />
                 )}
 
