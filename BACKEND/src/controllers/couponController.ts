@@ -7,7 +7,10 @@ class CouponController {
   async createCoupon(req: AuthRequest, res: Response, next: NextFunction) {
     const user = req.user!;
     try {
-      const coupon = await couponService.createCoupon(req.body, user.userId);
+      const coupon = await couponService.createCoupon(
+        { ...req.body, createdBy: user.userId },
+        user.userId
+      );
       res.status(201).json({ message: "Coupon created", coupon });
       return;
     } catch (error) {

@@ -102,10 +102,7 @@ export default function Coupons() {
         </motion.div>
 
         {showCreateForm && user?.role === "superadmin" && (
-          <CouponFormModal
-            adminId={user!._id}
-            onClose={() => setShowCreateForm(false)}
-          />
+          <CouponFormModal onClose={() => setShowCreateForm(false)} />
         )}
       </AdminShell>
     </AnimatePresence>

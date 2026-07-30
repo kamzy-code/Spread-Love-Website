@@ -26,11 +26,9 @@ const toFormValues = (coupon: Coupon): CouponFormValues => ({
 
 export default function CouponFormModal({
   coupon,
-  adminId,
   onClose,
 }: {
   coupon?: Coupon;
-  adminId: string;
   onClose: () => void;
 }) {
   const isEditing = !!coupon;
@@ -42,7 +40,7 @@ export default function CouponFormModal({
 
   useLockBodyScroll();
 
-  const createMutation = useCreateCoupon(adminId);
+  const createMutation = useCreateCoupon();
   const updateMutation = useUpdateCoupon(coupon?._id ?? "");
   const mutation = isEditing ? updateMutation : createMutation;
 

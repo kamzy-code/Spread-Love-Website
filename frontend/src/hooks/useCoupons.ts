@@ -46,12 +46,12 @@ export const useFetchCoupon = (id: string) => {
   });
 };
 
-export const useCreateCoupon = (createdBy: string) => {
+export const useCreateCoupon = () => {
   return useMutation({
     mutationFn: (body: CouponFormValues) =>
       apiCall("/coupon/admin", {
         method: "POST",
-        body: JSON.stringify({ ...body, createdBy }),
+        body: JSON.stringify(body),
       }),
   });
 };

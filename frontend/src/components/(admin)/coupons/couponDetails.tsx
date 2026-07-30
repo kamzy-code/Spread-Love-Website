@@ -201,7 +201,6 @@ export default function CouponDetails({ id }: { id: string }) {
       {editingCoupon && coupon && (
         <CouponFormModal
           coupon={coupon}
-          adminId={user!._id}
           onClose={() => {
             queryClient.invalidateQueries({ queryKey: ["coupon", id] });
             queryClient.invalidateQueries({ queryKey: ["auditLogs", "coupon", id] });

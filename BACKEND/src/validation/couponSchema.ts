@@ -8,7 +8,6 @@ export const createCoupounSchema = z.object({
     expiresAt: z.coerce.date().refine((date) => date > new Date(), {
         message: "Expiration date must be in the future",
     }),
-    createdBy: z.string().min(1, "Created by (admin ID) is required"),
 })
 
 export const validateCouponSchema = z.object({
