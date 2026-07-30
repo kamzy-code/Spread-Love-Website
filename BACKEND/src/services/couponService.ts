@@ -29,8 +29,12 @@ class CouponService {
     return coupon;
   }
 
-  async listCoupons() {
-    return await Coupon.find().sort({ createdAt: -1 });
+  async listCoupons(searchQuery: any, skip: number, limit: number) {
+    return await Coupon.find(searchQuery).sort({ createdAt: -1 }).skip(skip).limit(limit);
+  }
+
+  async countTotalCoupons(searchQuery: any) {
+    return await Coupon.countDocuments(searchQuery);
   }
 
   async getCouponById(id: string) {

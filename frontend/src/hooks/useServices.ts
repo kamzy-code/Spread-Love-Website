@@ -1,11 +1,13 @@
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, keepPreviousData, useMutation } from "@tanstack/react-query";
 import {
   Service,
+  ServiceFilter,
   ServicePricingUpdate,
   ServiceDetailsUpdate,
   ServiceCreatePayload,
 } from "@/lib/types";
 import { apiCall } from "@/lib/apiClient";
+import { buildQueryParams } from "@/lib/buildQueryParams";
 
 // Public — services page + booking form. Active services only.
 export const useFetchServices = () => {
@@ -21,14 +23,29 @@ export const useFetchServices = () => {
 };
 
 // Admin — every service, including deactivated ones.
-export const useFetchAdminServices = () => {
+export const useFetchAdminServices = (filter: ServiceFilter, searchValue: string) => {
   return useQuery({
-    queryKey: ["services", "admin"],
+    queryKey: ["services", "admin", filter, searchValue.toLowerCase()],
     queryFn: async ({ signal }) => {
-      const data = await apiCall("/service/admin", { signal });
-      return data.data as Service[];
+      const queryString = buildQueryParams(filter as Record<string, unknown>);
+      const data = await apiCall(`/service/admin?${queryString}`, { signal });
+      return { data: data.data as Service[], meta: data.meta };
     },
     staleTime: 1000 * 60,
+    placeholderData: keepPreviousData,
+  });
+};
+
+// Distinct categories across every service — powers the category filter
+// dropdown independent of the current page/filter of the paginated list.
+export const useFetchServiceCategories = () => {
+  return useQuery({
+    queryKey: ["services", "categories"],
+    queryFn: async ({ signal }) => {
+      const data = await apiCall("/service/admin/categories", { signal });
+      return data.data as string[];
+    },
+    staleTime: 1000 * 60 * 5,
   });
 };
 

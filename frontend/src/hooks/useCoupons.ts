@@ -1,15 +1,18 @@
-import { useQuery, useMutation } from "@tanstack/react-query";
-import { Coupon, CouponFormValues } from "@/lib/types";
+import { useQuery, keepPreviousData, useMutation } from "@tanstack/react-query";
+import { Coupon, CouponFilter, CouponFormValues } from "@/lib/types";
 import { apiCall } from "@/lib/apiClient";
+import { buildQueryParams } from "@/lib/buildQueryParams";
 
-export const useFetchCoupons = () => {
+export const useFetchCoupons = (filter: CouponFilter, searchValue: string) => {
   return useQuery({
-    queryKey: ["coupons"],
+    queryKey: ["coupons", filter, searchValue.toLowerCase()],
     queryFn: async ({ signal }) => {
-      const data = await apiCall("/coupon/admin", { signal });
-      return data.coupons as Coupon[];
+      const queryString = buildQueryParams(filter as Record<string, unknown>);
+      const data = await apiCall(`/coupon/admin?${queryString}`, { signal });
+      return { data: data.coupons as Coupon[], meta: data.meta };
     },
     staleTime: 1000 * 60,
+    placeholderData: keepPreviousData,
   });
 };
 

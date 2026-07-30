@@ -329,6 +329,14 @@ export type CouponFormValues = {
   expiresAt: string;
 };
 
+export type CouponFilter = {
+  discountType?: string;
+  status?: string;
+  search?: string;
+  page?: number;
+  limit: number;
+};
+
 // Services
 export type ServiceIconKey =
   | "cake"
@@ -374,4 +382,12 @@ export type ServiceCreatePayload = Pick<
 > & {
   regular: ServicePricing;
   special: ServicePricing;
+};
+
+export type ServiceFilter = {
+  category?: string;
+  status?: string;
+  search?: string;
+  page?: number;
+  limit: number;
 };

@@ -1,11 +1,12 @@
 import express from "express";
 import couponController from "../controllers/couponController";
 import { authMiddleware, checkRole } from "../middlewares/authMiddleware";
-import { validateRequest } from "../middlewares/validateRequest";
+import { validateRequest, validateQuery } from "../middlewares/validateRequest";
 import {
   createCoupounSchema,
   updateCouponSchema,
   validateCouponSchema,
+  getAllCouponsQuerySchema,
 } from "../validation/couponSchema";
 
 const router = express.Router();
@@ -29,6 +30,7 @@ router.get(
   "/admin",
   authMiddleware,
   checkRole("superadmin", "salesrep"),
+  validateQuery(getAllCouponsQuerySchema),
   couponController.getAllCoupons,
 );
 

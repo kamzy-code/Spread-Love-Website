@@ -40,6 +40,14 @@ export const updateServicePricingSchema = z
     message: "At least one of regular or special pricing is required",
   });
 
+export const getAllServicesQuerySchema = z.object({
+  category: z.string().optional(),
+  status: z.enum(["active", "inactive"]).optional(),
+  search: z.string().optional(),
+  page: z.string().regex(/^\d+$/, "page must be a number").optional(),
+  limit: z.string().regex(/^\d+$/, "limit must be a number").optional(),
+});
+
 export const updateServiceDetailsSchema = z.object({
   title: z.string().min(1).optional(),
   description: z.string().min(1).optional(),

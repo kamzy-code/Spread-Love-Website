@@ -4,15 +4,12 @@ import { useAdminAuth } from "@/hooks/useAdminAuth";
 import PageLoading from "../ui/pageLoading";
 import PageError from "../ui/pageError";
 import AdminShell from "../ui/AdminShell";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Filter, Plus, TriangleAlert } from "lucide-react";
 import ServiceAdminList from "./serviceAdminList";
 import CreateServiceModal from "./CreateServiceModal";
-import ServiceFilterPanel, { ServiceFilters } from "./ServiceFilterPanel";
-import { useFetchAdminServices } from "@/hooks/useServices";
-
-const emptyFilters: ServiceFilters = { search: "", category: "", status: "" };
+import ServiceFilterPanel from "./ServiceFilterPanel";
 
 export default function AdminServices() {
   const router = useRouter();
@@ -20,12 +17,6 @@ export default function AdminServices() {
   const [mounted, setMounted] = useState(false);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [showFilter, setShowFilter] = useState(false);
-  const [filters, setFilters] = useState<ServiceFilters>(emptyFilters);
-  const { data: services } = useFetchAdminServices();
-  const categoryOptions = useMemo(
-    () => Array.from(new Set((services ?? []).map((s) => s.category))).sort(),
-    [services]
-  );
   const allowedRoles = ["superadmin", "salesrep"];
 
   useEffect(() => {
@@ -99,14 +90,9 @@ export default function AdminServices() {
           </div>
 
           <div className="space-y-8">
-            <ServiceFilterPanel
-              showFilter={showFilter}
-              filters={filters}
-              categoryOptions={categoryOptions}
-              onChange={setFilters}
-            />
+            <ServiceFilterPanel showFilter={showFilter} />
 
-            <ServiceAdminList filters={filters}></ServiceAdminList>
+            <ServiceAdminList></ServiceAdminList>
           </div>
         </motion.div>
 

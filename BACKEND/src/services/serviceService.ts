@@ -11,8 +11,18 @@ class ServiceService {
   }
 
   // Admin management — everything, including deactivated services.
-  async listAllServices() {
-    return Service.find().sort({ createdAt: 1 });
+  async listAllServices(searchQuery: any, skip: number, limit: number) {
+    return Service.find(searchQuery).sort({ createdAt: 1 }).skip(skip).limit(limit);
+  }
+
+  async countTotalServices(searchQuery: any) {
+    return Service.countDocuments(searchQuery);
+  }
+
+  // Distinct categories across every service (active + inactive) — powers
+  // the admin category filter dropdown.
+  async listCategories() {
+    return Service.distinct("category");
   }
 
   async getServiceById(id: string) {

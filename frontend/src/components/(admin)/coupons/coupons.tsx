@@ -9,9 +9,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Filter, Plus, TriangleAlert } from "lucide-react";
 import CouponList from "./couponList";
 import CouponFormModal from "./CouponFormModal";
-import CouponFilterPanel, { CouponFilters } from "./CouponFilterPanel";
-
-const emptyFilters: CouponFilters = { search: "", discountType: "", status: "" };
+import CouponFilterPanel from "./CouponFilterPanel";
 
 export default function Coupons() {
   const router = useRouter();
@@ -19,7 +17,6 @@ export default function Coupons() {
   const [mounted, setMounted] = useState(false);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [showFilter, setShowFilter] = useState(false);
-  const [filters, setFilters] = useState<CouponFilters>(emptyFilters);
   const allowedRoles = ["superadmin", "salesrep"];
 
   useEffect(() => {
@@ -93,13 +90,9 @@ export default function Coupons() {
           </div>
 
           <div className="space-y-8">
-            <CouponFilterPanel
-              showFilter={showFilter}
-              filters={filters}
-              onChange={setFilters}
-            />
+            <CouponFilterPanel showFilter={showFilter} />
 
-            <CouponList filters={filters}></CouponList>
+            <CouponList></CouponList>
           </div>
         </motion.div>
 

@@ -18,9 +18,43 @@ class ServiceController {
   }
 
   async getAllServicesForAdmin(req: AuthRequest, res: Response, next: NextFunction) {
+    // category/status/search/page/limit are validated by validateQuery
+    // (getAllServicesQuerySchema)
+    const { category, status, search, page = "1", limit = "10" } = req.query;
+
+    const searchQuery: any = {};
+    if (category) searchQuery.category = category;
+    if (status) searchQuery.active = status === "active";
+    if (search) searchQuery.title = new RegExp(search as string, "i");
+
+    const skip = (parseInt(page as string) - 1) * parseInt(limit as string);
+    const numericLimit = parseInt(limit as string);
+
     try {
-      const services = await serviceService.listAllServices();
-      res.status(200).json({ message: "Services fetched successfully", data: services });
+      const services = await serviceService.listAllServices(searchQuery, skip, numericLimit);
+      const total = await serviceService.countTotalServices(searchQuery);
+
+      res.status(200).json({
+        message: "Services fetched successfully",
+        data: services,
+        meta: {
+          total,
+          page: Number(page),
+          limit: numericLimit,
+          totalPages: Math.ceil(total / numericLimit),
+        },
+      });
+      return;
+    } catch (error) {
+      next(error);
+      return;
+    }
+  }
+
+  async getServiceCategories(req: AuthRequest, res: Response, next: NextFunction) {
+    try {
+      const categories = await serviceService.listCategories();
+      res.status(200).json({ message: "Categories fetched successfully", data: categories });
       return;
     } catch (error) {
       next(error);

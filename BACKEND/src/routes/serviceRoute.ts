@@ -1,11 +1,12 @@
 import express from "express";
 import serviceController from "../controllers/serviceController";
 import { authMiddleware, checkRole } from "../middlewares/authMiddleware";
-import { validateRequest } from "../middlewares/validateRequest";
+import { validateRequest, validateQuery } from "../middlewares/validateRequest";
 import {
   createServiceSchema,
   updateServicePricingSchema,
   updateServiceDetailsSchema,
+  getAllServicesQuerySchema,
 } from "../validation/serviceSchemas";
 
 const router = express.Router();
@@ -18,7 +19,16 @@ router.get(
   "/admin",
   authMiddleware,
   checkRole("superadmin", "salesrep"),
+  validateQuery(getAllServicesQuerySchema),
   serviceController.getAllServicesForAdmin,
+);
+
+// must come before /admin/:id so "categories" isn't swallowed as an id
+router.get(
+  "/admin/categories",
+  authMiddleware,
+  checkRole("superadmin", "salesrep"),
+  serviceController.getServiceCategories,
 );
 
 router.get(

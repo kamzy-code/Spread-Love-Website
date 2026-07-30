@@ -1,9 +1,11 @@
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { XCircle, Ticket } from "lucide-react";
 import MiniLoader from "../ui/miniLoader";
 import { formatToYMD } from "@/lib/formatDate";
 import { useFetchCoupons } from "@/hooks/useCoupons";
-import { CouponFilters } from "./CouponFilterPanel";
+import { useCouponFilterStore } from "@/store/couponFilterStore";
+import Pagination from "../ui/pagination";
 
 const getCouponStatus = (coupon: { active: boolean; expiresAt: string; usedCount: number; usageLimit: number }) => {
   const isExpired = new Date(coupon.expiresAt) < new Date();
@@ -21,17 +23,23 @@ const STATUS_LABELS: Record<string, { label: string; color: string }> = {
   active: { label: "Active", color: "text-green-500" },
 };
 
-export default function CouponList({ filters }: { filters: CouponFilters }) {
+export default function CouponList() {
   const router = useRouter();
-  const { data: allCoupons, error, isLoading, refetch } = useFetchCoupons();
 
-  const coupons = allCoupons?.filter((coupon) => {
-    if (filters.discountType && coupon.discountType !== filters.discountType) return false;
-    if (filters.status && getCouponStatus(coupon) !== filters.status) return false;
-    if (filters.search && !coupon.code.toLowerCase().includes(filters.search.toLowerCase()))
-      return false;
-    return true;
-  });
+  const appliedFormData = useCouponFilterStore((s) => s.appliedFormData);
+  const searchTerm = useCouponFilterStore((s) => s.debouncedValue);
+  const setPage = useCouponFilterStore((s) => s.setPage);
+  const filter = { ...appliedFormData, search: searchTerm };
+
+  const { data, error, isLoading, isFetching, refetch } = useFetchCoupons(filter, searchTerm);
+  const { data: coupons, meta } = data ?? { data: [], meta: undefined };
+
+  useEffect(() => {
+    document.body.style.overflow = isLoading || isFetching ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isLoading, isFetching]);
 
   if (error)
     return (
@@ -47,62 +55,66 @@ export default function CouponList({ filters }: { filters: CouponFilters }) {
       </div>
     );
 
-  if (isLoading)
-    return (
-      <div className="py-12 flex justify-center">
-        <MiniLoader></MiniLoader>
-      </div>
-    );
-
-  if (!coupons || coupons.length === 0)
-    return (
-      <div className="flex flex-col justify-center items-center text-gray-500 py-12">
-        <Ticket className="h-6 w-6" />
-        <p className="text-sm">
-          {allCoupons && allCoupons.length > 0 ? "No coupons match your filters" : "No Coupons Yet"}
-        </p>
-      </div>
-    );
-
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
-      {coupons.map((coupon) => {
-        const status = STATUS_LABELS[getCouponStatus(coupon)];
+    <div>
+      {(isLoading || isFetching) && (
+        <div className="py-12 flex justify-center">
+          <MiniLoader></MiniLoader>
+        </div>
+      )}
 
-        return (
-          <div
-            key={coupon._id}
-            className="card p-6 space-y-3 cursor-pointer hover:shadow-md transition"
-            onClick={() => router.push(`/admin/coupons/${coupon._id}`)}
-          >
-            <div className="flex justify-between items-start">
-              <h2 className="font-medium text-brand-start">{coupon.code}</h2>
-              <p className={status.color}>{status.label}</p>
-            </div>
+      {!isLoading && !isFetching && coupons.length === 0 && (
+        <div className="flex flex-col justify-center items-center text-gray-500 py-12">
+          <Ticket className="h-6 w-6" />
+          <p className="text-sm">No Coupons Found</p>
+        </div>
+      )}
 
-            <div className="text-gray-700 text-sm space-y-2">
-              <div className="flex justify-between items-center">
-                <p>Discount:</p>
-                <p className="text-brand-start">
-                  {coupon.discountType === "percent"
-                    ? `${coupon.value}%`
-                    : `₦${coupon.value.toLocaleString()}`}
-                </p>
-              </div>
-              <div className="flex justify-between items-center">
-                <p>Usage:</p>
-                <p className="text-brand-start">
-                  {coupon.usedCount} / {coupon.usageLimit}
-                </p>
-              </div>
-              <div className="flex justify-between items-center">
-                <p>Expires:</p>
-                <p className="text-brand-start">{formatToYMD(coupon.expiresAt)}</p>
-              </div>
-            </div>
+      {!isLoading && !isFetching && coupons.length > 0 && (
+        <div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
+            {coupons.map((coupon) => {
+              const status = STATUS_LABELS[getCouponStatus(coupon)];
+
+              return (
+                <div
+                  key={coupon._id}
+                  className="card p-6 space-y-3 cursor-pointer hover:shadow-md transition"
+                  onClick={() => router.push(`/admin/coupons/${coupon._id}`)}
+                >
+                  <div className="flex justify-between items-start">
+                    <h2 className="font-medium text-brand-start">{coupon.code}</h2>
+                    <p className={status.color}>{status.label}</p>
+                  </div>
+
+                  <div className="text-gray-700 text-sm space-y-2">
+                    <div className="flex justify-between items-center">
+                      <p>Discount:</p>
+                      <p className="text-brand-start">
+                        {coupon.discountType === "percent"
+                          ? `${coupon.value}%`
+                          : `₦${coupon.value.toLocaleString()}`}
+                      </p>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <p>Usage:</p>
+                      <p className="text-brand-start">
+                        {coupon.usedCount} / {coupon.usageLimit}
+                      </p>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <p>Expires:</p>
+                      <p className="text-brand-start">{formatToYMD(coupon.expiresAt)}</p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
-        );
-      })}
+
+          {meta && <Pagination meta={meta} setPage={setPage}></Pagination>}
+        </div>
+      )}
     </div>
   );
 }
