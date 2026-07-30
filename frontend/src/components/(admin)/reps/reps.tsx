@@ -35,6 +35,12 @@ export default function Reprsentatives() {
     };
   }, [showCreateForm]);
 
+  useEffect(() => {
+    if (authStatus === "unauthenticated") {
+      router.replace("/admin");
+    }
+  }, [authStatus, router]);
+
   if (!mounted) {
     return null;
   }
@@ -48,7 +54,6 @@ export default function Reprsentatives() {
   }
 
   if (authStatus !== "authenticated") {
-    router.replace("/admin");
     return null;
   }
 

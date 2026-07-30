@@ -22,6 +22,12 @@ export default function Dashboard() {
     setMounted(true);
   }, []);
 
+  useEffect(() => {
+    if (authStatus === "unauthenticated") {
+      router.replace("/admin");
+    }
+  }, [authStatus, router]);
+
   if (!mounted) {
     return null;
   }
@@ -35,7 +41,6 @@ export default function Dashboard() {
   }
 
   if (authStatus !== "authenticated") {
-    router.replace("/admin");
     return null;
   }
 

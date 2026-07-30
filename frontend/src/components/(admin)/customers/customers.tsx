@@ -21,6 +21,12 @@ export default function Customers() {
     setMounted(true);
   }, []);
 
+  useEffect(() => {
+    if (authStatus === "unauthenticated") {
+      router.replace("/admin");
+    }
+  }, [authStatus, router]);
+
   if (!mounted) {
     return null;
   }
@@ -34,7 +40,6 @@ export default function Customers() {
   }
 
   if (authStatus !== "authenticated") {
-    router.replace("/admin");
     return null;
   }
 

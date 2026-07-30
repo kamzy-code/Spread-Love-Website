@@ -93,6 +93,12 @@ export default function Booking() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [dropdownOpen, sortDropDown]);
 
+  useEffect(() => {
+    if (authStatus === "unauthenticated") {
+      router.replace("/admin");
+    }
+  }, [authStatus, router]);
+
   if (!mounted) {
     return null;
   }
@@ -106,7 +112,6 @@ export default function Booking() {
   }
 
   if (authStatus !== "authenticated") {
-    router.replace("/admin");
     return null;
   }
 

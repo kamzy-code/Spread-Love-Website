@@ -19,6 +19,12 @@ export default function Logs() {
     setMounted(true);
   }, []);
 
+  useEffect(() => {
+    if (authStatus === "unauthenticated") {
+      router.replace("/admin");
+    }
+  }, [authStatus, router]);
+
   if (!mounted) {
     return null;
   }
@@ -32,7 +38,6 @@ export default function Logs() {
   }
 
   if (authStatus !== "authenticated") {
-    router.replace("/admin");
     return null;
   }
   if (user?.role !== "superadmin") {
