@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import CreateErrorModal from "./errorModal";
 import { useVerifyTransaction } from "@/hooks/usePayment";
 import { useBookingCheckout } from "@/hooks/useBookings";
-import { useValidateCoupon } from "@/hooks/useCoupon";
+import { useValidateCoupon } from "@/hooks/useCoupons";
 import {
   bookingDetailsSchema,
   BookingFormValues,

@@ -1,7 +1,25 @@
 import { useQuery, keepPreviousData, useMutation } from "@tanstack/react-query";
-import { Coupon, CouponFilter, CouponFormValues } from "@/lib/types";
+import { Coupon, CouponFilter, CouponFormValues, CouponValidationResponse } from "@/lib/types";
 import { apiCall } from "@/lib/apiClient";
 import { buildQueryParams } from "@/lib/buildQueryParams";
+
+// Public — checkout preview only. The authoritative discount is always
+// recomputed server-side again at booking creation (bookingService.createBooking).
+export const useValidateCoupon = () => {
+  return useMutation({
+    mutationFn: ({
+      code,
+      totalPrice,
+    }: {
+      code: string;
+      totalPrice: number;
+    }): Promise<CouponValidationResponse> =>
+      apiCall("/coupon/validate", {
+        method: "POST",
+        body: JSON.stringify({ code, totalPrice }),
+      }),
+  });
+};
 
 export const useFetchCoupons = (filter: CouponFilter, searchValue: string) => {
   return useQuery({
