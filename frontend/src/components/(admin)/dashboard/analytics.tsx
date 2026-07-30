@@ -109,8 +109,6 @@ export default function Analytics({ repId }: { repId?: string }) {
   const appliedStartDate = useFilterStore((s) => s.appliedStartDate);
   const appliedFetchParam = useFilterStore((s) => s.appliedFetchParam);
 
-  console.log("appliedFetchParam", appliedFetchParam);
-
   const { data, error, isLoading, isFetching, refetch } = useQuery({
     queryKey: [
       "analytics",
