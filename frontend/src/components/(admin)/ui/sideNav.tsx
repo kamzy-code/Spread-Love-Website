@@ -72,7 +72,11 @@ export default function SideNav() {
               (pathname.includes(href) && href !== "/admin")
                 ? "gradient-background text-white"
                 : "text-gray-700 hover:bg-gray-100"
-            } ${label === "Reps" && user?.role === "callrep" ? "hidden" : ""}`}
+            } ${
+              label === "Reps" && user?.role === "callrep" ? "hidden" : ""
+            } ${
+              label === "Logs" && user?.role !== "superadmin" ? "hidden" : ""
+            }`}
           >
             {icon} {label}
           </button>

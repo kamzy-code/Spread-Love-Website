@@ -554,6 +554,10 @@ class BookingController {
       ];
     }
 
+    // if the user is a call rep, only fetch bookings assigned to them
+    if (user.role === "callrep")
+      searchQuery.assignedRep = new Types.ObjectId(user.userId);
+
     const skip = (parseInt(page as string) - 1) * parseInt(limit as string);
     const numericLimit = parseInt(limit as string);
 

@@ -1,5 +1,8 @@
 # Root
 .env
+.claude
+plan
+prod_snapshot
 
 # Node
 node_modules/
@@ -8,6 +11,7 @@ node_modules/
 /backend/dist/
 /backend/node_modules/
 /backend/.env
+/backend/src/scripts/
 
 # Frontend
 /frontend/.next/

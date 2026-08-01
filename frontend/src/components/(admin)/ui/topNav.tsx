@@ -163,6 +163,10 @@ export default function TopNav() {
                   item.label === "Reps" && user?.role === "callrep"
                     ? "hidden"
                     : ""
+                } ${
+                  item.label === "Logs" && user?.role !== "superadmin"
+                    ? "hidden"
+                    : ""
                 }`}
               >
                 {item.icon} {item.label}
