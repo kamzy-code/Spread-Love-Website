@@ -464,10 +464,15 @@ class BookingController {
         andConditions.push({
           $or: [
             { callDate: { $gte: dateRange.start, $lte: dateRange.end } },
+            // $elemMatch is required here: without it, Mongo treats $gte and
+            // $lte as independently satisfiable by different array elements,
+            // so a booking with recipients on e.g. Aug 10 and Aug 15 would
+            // wrongly match every date in between too.
             {
-              "recipients.callDate": {
-                $gte: dateRange.start,
-                $lte: dateRange.end,
+              recipients: {
+                $elemMatch: {
+                  callDate: { $gte: dateRange.start, $lte: dateRange.end },
+                },
               },
             },
           ],

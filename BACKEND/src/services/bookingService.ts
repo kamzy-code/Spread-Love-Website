@@ -747,7 +747,16 @@ class BookingService {
         : {
             $or: [
               { callDate: { $gte: dateRange.start, $lte: dateRange.end } },
-              { "recipients.callDate": { $gte: dateRange.start, $lte: dateRange.end } },
+              // $elemMatch keeps $gte/$lte scoped to the same recipient —
+              // see the identical fix (and its comment) in
+              // bookingController.getAllBooking.
+              {
+                recipients: {
+                  $elemMatch: {
+                    callDate: { $gte: dateRange.start, $lte: dateRange.end },
+                  },
+                },
+              },
             ],
           };
 
