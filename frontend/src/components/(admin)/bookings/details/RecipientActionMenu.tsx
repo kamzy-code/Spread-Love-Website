@@ -68,16 +68,16 @@ export default function RecipientActionMenu({
                   onUpdateStatus(option.value);
                 }}
               >
-                <label className="flex items-center px-2 py-1 cursor-pointer">
+                <div className="flex items-center px-2 py-1 cursor-pointer">
                   <input
                     type="radio"
                     name="recipientStatus"
                     checked={currentStatus === option.value}
                     readOnly
-                    className="mr-2"
+                    className="mr-2 pointer-events-none"
                   />
                   {option.label}
-                </label>
+                </div>
               </DropdownMenuItem>
             ))}
           </DropdownMenuSubContent>
