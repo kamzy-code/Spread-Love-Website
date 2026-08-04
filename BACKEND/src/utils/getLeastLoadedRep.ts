@@ -1,3 +1,4 @@
+import { startOfDay, endOfDay } from "date-fns";
 import { Admin } from "../models/adminModel";
 import { Booking } from "../models/bookingModel";
 
@@ -10,12 +11,15 @@ export const getLeastLoadedRep = async (
     return null;
   }
 
-  // Simple load balancing: assign to rep with fewest bookings today
+  const now = new Date();
+  const todayStart = startOfDay(now);
+  const todayEnd = endOfDay(now);
+
   const repBookings = await Promise.all(
     callReps.map(async (rep) => {
       const count = await Booking.countDocuments({
         assignedRep: rep._id,
-        status: { $in: ["pending", "rescheduled"] },
+        createdAt: { $gte: todayStart, $lte: todayEnd },
       });
       return { repId: rep._id as string, count };
     })
