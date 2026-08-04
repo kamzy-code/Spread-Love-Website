@@ -57,17 +57,22 @@ export default function Booking() {
     setMounted(true);
   }, []);
 
-  // Arriving from an analytics card link (?status=... or ?bookingStatus=...)
-  // — surface the matching filter panel so the applied filter is visible,
-  // and sync the store (only actually resets the applied filter/page if the
-  // value differs from what's already applied, so plain back-navigation to
-  // this page is a no-op).
+  // Arriving from an analytics card link (?status=... or ?bookingStatus=...,
+  // optionally ?repId=... from a specific rep's analytics view) — surface
+  // the matching filter panel so the applied filter is visible, and sync the
+  // store (only actually resets the applied filter/page if the value
+  // differs from what's already applied, so plain back-navigation to this
+  // page is a no-op).
   useEffect(() => {
     const status = searchParams.get("status") || undefined;
     const bookingStatus = searchParams.get("bookingStatus") || undefined;
+    const assignedRep = searchParams.get("repId") || undefined;
     if (status) toggleActiveFilterOn("status");
     if (bookingStatus) toggleActiveFilterOn("bookingStatus");
-    if (status || bookingStatus) syncFromUrl({ status, bookingStatus });
+    if (assignedRep) toggleActiveFilterOn("assignedRep");
+    if (status || bookingStatus || assignedRep) {
+      syncFromUrl({ status, bookingStatus, assignedRep });
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
 

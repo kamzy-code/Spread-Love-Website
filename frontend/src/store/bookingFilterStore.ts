@@ -104,7 +104,11 @@ interface BookingFilterState {
   setPage: (page: number) => void;
   toggleActiveFilter: (key: string) => void;
   setSortOptions: (options: SortOptions) => void;
-  syncFromUrl: (params: { status?: string; bookingStatus?: string }) => void;
+  syncFromUrl: (params: {
+    status?: string;
+    bookingStatus?: string;
+    assignedRep?: string;
+  }) => void;
 }
 
 let clearSearchTimer: ReturnType<typeof setTimeout> | null = null;
@@ -227,21 +231,25 @@ export const useBookingFilterStore = create<BookingFilterState>((set, get) => ({
     });
   },
 
-  // Called when the bookings page reads ?status=/?bookingStatus= from the URL
-  // (e.g. an analytics-card deep link). Compares against the live store, not a
-  // sessionStorage snapshot re-parsed on every mount, so navigating back to
-  // this page without the query actually changing never resets pagination.
-  syncFromUrl: ({ status, bookingStatus }) => {
+  // Called when the bookings page reads ?status=/?bookingStatus=/?repId= from
+  // the URL (e.g. an analytics-card deep link). Compares against the live
+  // store, not a sessionStorage snapshot re-parsed on every mount, so
+  // navigating back to this page without the query actually changing never
+  // resets pagination.
+  syncFromUrl: ({ status, bookingStatus, assignedRep }) => {
     set((state) => {
       const statusChanged = status !== undefined && status !== state.appliedFormData.status;
       const bookingStatusChanged =
         bookingStatus !== undefined && bookingStatus !== state.appliedFormData.bookingStatus;
+      const assignedRepChanged =
+        assignedRep !== undefined && assignedRep !== state.appliedFormData.assignedRep;
 
-      if (!statusChanged && !bookingStatusChanged) return state;
+      if (!statusChanged && !bookingStatusChanged && !assignedRepChanged) return state;
 
       const overrides = {
         ...(statusChanged && { status }),
         ...(bookingStatusChanged && { bookingStatus }),
+        ...(assignedRepChanged && { assignedRep }),
         page: 1,
       };
       const formData = { ...state.formData, ...overrides };

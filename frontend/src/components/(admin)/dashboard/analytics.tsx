@@ -158,11 +158,17 @@ export default function Analytics({ repId }: { repId?: string }) {
     });
   }
 
+  // Arriving here from a specific rep's page (repId set) should carry that
+  // scoping into the booking list too, not just drop it at the door — the
+  // admin is looking at this rep's numbers, so "Pending Calls" should mean
+  // "this rep's pending calls," not every rep's.
+  const repIdParam = repId ? `&repId=${repId}` : "";
+
   const bookingCompletionCards = BOOKING_STATUS_LIST.map((status) => ({
     title: `${status.label} Bookings`,
     value: bookingStatusCounts[status.key],
     icon: status.icon,
-    href: `/admin/bookings?bookingStatus=${status.key}`,
+    href: `/admin/bookings?bookingStatus=${status.key}${repIdParam}`,
   }));
 
   const cards: Omit<StatCardData, "hidden">[] = [
@@ -190,7 +196,7 @@ export default function Analytics({ repId }: { repId?: string }) {
       title: `${status.label} Calls`,
       value: statusCounts[status.key],
       icon: status.icon,
-      href: `/admin/bookings?status=${status.key}`,
+      href: `/admin/bookings?status=${status.key}${repIdParam}`,
     })),
     {
       title: "Total Revenue",
