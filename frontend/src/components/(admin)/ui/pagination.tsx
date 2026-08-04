@@ -9,9 +9,9 @@ interface PaginationProps {
 }
 
 export default function Pagination({ meta, setPage }: PaginationProps) {
-  const { page, totalPages } = meta;
+  const { page, totalPages, total } = meta;
 
-  
+
   const handleChange = (newPage: number) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setPage(newPage);
@@ -19,26 +19,34 @@ export default function Pagination({ meta, setPage }: PaginationProps) {
   };
 
   return (
-    <div className="flex items-center justify-center space-x-4 py-4">
-      <button
-        onClick={() => handleChange(page - 1)}
-        disabled={page === 1}
-        className="px-3 py-2 rounded-md border border-gray-300 text-sm hover:bg-gray-100 disabled:opacity-50"
-      >
-        <ChevronLeft size={16} />
-      </button>
+    <div className="flex flex-col items-center justify-center gap-1 py-4">
+      <div className="flex items-center justify-center space-x-4">
+        <button
+          onClick={() => handleChange(page - 1)}
+          disabled={page === 1}
+          className="px-3 py-2 rounded-md border border-gray-300 text-sm hover:bg-gray-100 disabled:opacity-50"
+        >
+          <ChevronLeft size={16} />
+        </button>
 
-      <span className="text-sm text-gray-700">
-        Page <strong>{page}</strong> of <strong>{totalPages}</strong>
-      </span>
+        <span className="text-sm text-gray-700">
+          Page <strong>{page}</strong> of <strong>{totalPages}</strong>
+        </span>
 
-      <button
-        onClick={() => handleChange(page + 1)}
-        disabled={page === totalPages}
-        className="px-3 py-2 rounded-md border border-gray-300 text-sm hover:bg-gray-100 disabled:opacity-50"
-      >
-        <ChevronRight size={16} />
-      </button>
+        <button
+          onClick={() => handleChange(page + 1)}
+          disabled={page === totalPages}
+          className="px-3 py-2 rounded-md border border-gray-300 text-sm hover:bg-gray-100 disabled:opacity-50"
+        >
+          <ChevronRight size={16} />
+        </button>
+      </div>
+
+      {total !== undefined && (
+        <span className="text-xs text-gray-500">
+          {total} {total === 1 ? "result" : "results"}
+        </span>
+      )}
     </div>
   );
 }

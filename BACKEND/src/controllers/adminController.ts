@@ -61,7 +61,7 @@ class AdminController {
         message: "Reps fetched successfully",
         data: reps,
         meta: {
-          totalReps,
+          total: totalReps,
           page: Number(page),
           limit: numericLimit,
           totalPages: Math.ceil(totalReps / numericLimit),
