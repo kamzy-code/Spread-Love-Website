@@ -12,7 +12,7 @@ const router = express.Router();
 router.get(
   "/admin",
   authMiddleware,
-  checkRole("superadmin", "salesrep"),
+  checkRole("superadmin"),
   validateQuery(getAllCustomersQuerySchema),
   customerController.getAllCustomers,
 );
@@ -20,7 +20,7 @@ router.get(
 router.get(
   "/admin/export",
   authMiddleware,
-  checkRole("superadmin", "salesrep"),
+  checkRole("superadmin"),
   validateQuery(exportCustomersCsvQuerySchema),
   customerController.exportCustomersCsv,
 );

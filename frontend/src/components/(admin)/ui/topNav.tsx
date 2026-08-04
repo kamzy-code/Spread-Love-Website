@@ -178,11 +178,12 @@ export default function TopNav() {
                     ? "gradient-background text-white"
                     : "text-gray-700 hover:bg-gray-100"
                 } ${
-                  (item.label === "Reps" ||
-                    item.label === "Customers" ||
+                  ((item.label === "Reps" ||
                     item.label === "Coupons" ||
                     item.label === "Services") &&
-                  user?.role === "callrep"
+                    user?.role === "callrep") ||
+                  ((item.label === "Customers" || item.label === "Logs") &&
+                    user?.role !== "superadmin")
                     ? "hidden"
                     : ""
                 }`}

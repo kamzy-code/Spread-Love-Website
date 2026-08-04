@@ -88,11 +88,10 @@ export default function SideNav() {
                 ? "gradient-background text-white"
                 : "text-gray-700 hover:bg-gray-100"
             } ${
-              (label === "Reps" ||
-                label === "Customers" ||
-                label === "Coupons" ||
-                label === "Services") &&
-              user?.role === "callrep"
+              ((label === "Reps" || label === "Coupons" || label === "Services") &&
+                user?.role === "callrep") ||
+              ((label === "Customers" || label === "Logs") &&
+                user?.role !== "superadmin")
                 ? "hidden"
                 : ""
             }`}

@@ -15,7 +15,7 @@ export default function Customers() {
   const { user, authStatus, authError, loading } = useAdminAuth();
   const [mounted, setMounted] = useState(false);
   const [showFilter, setShowFilter] = useState(true);
-  const allowedRoles = ["superadmin", "salesrep"];
+  const allowedRoles = ["superadmin"];
 
   useEffect(() => {
     setMounted(true);
