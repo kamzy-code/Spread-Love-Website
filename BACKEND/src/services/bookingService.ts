@@ -150,6 +150,12 @@ class BookingService {
       match.reuseCount = (match.reuseCount || 0) + 1;
       match.paymentURL = "";
       match.paymentStatus = "pending";
+      // A reuse fully replaces the booking's content with a new checkout
+      // attempt — Mongoose's `timestamps` option marks createdAt immutable
+      // by default, so a plain assignment is silently dropped; `set()` with
+      // overwriteImmutable is required to actually move it off the original
+      // (possibly stale, e.g. from a prior day) attempt.
+      match.set("createdAt", new Date(), undefined, { overwriteImmutable: true });
       const saved = await match.save();
       if (appliedCouponCode) await couponService.incrementUsage(appliedCouponCode);
 

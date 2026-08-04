@@ -81,6 +81,9 @@ export interface IBooking extends Document {
   paymentURL?: string;
   paymentStatus: string;
   paymentReference?: string;
+
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const callerSchema = new Schema<ICaller>(
