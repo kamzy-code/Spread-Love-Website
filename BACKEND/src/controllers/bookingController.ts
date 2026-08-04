@@ -834,6 +834,18 @@ class BookingController {
       // Add more as needed
     }
 
+    
+    const callDateMatch = (range: { start: Date; end: Date }) => ({
+      $or: [
+        { callDate: { $gte: range.start, $lte: range.end } },
+        {
+          recipients: {
+            $elemMatch: { callDate: { $gte: range.start, $lte: range.end } },
+          },
+        },
+      ],
+    });
+
     if (dateRange) {
       if (fetchParam === "bookingDate") {
         matchStage.createdAt = {
@@ -841,20 +853,21 @@ class BookingController {
           $lte: dateRange.end,
         };
       } else {
-        matchStage.callDate = {
-          $gte: dateRange.start,
-          $lte: dateRange.end,
-        };
+        Object.assign(matchStage, callDateMatch(dateRange));
       }
     }
 
     // Build previous period match stage
     const matchStagePrev = { ...matchStage };
     if (prevDateRange) {
-      matchStagePrev.callDate = {
-        $gte: prevDateRange.start,
-        $lte: prevDateRange.end,
-      };
+      if (fetchParam === "bookingDate") {
+        matchStagePrev.createdAt = {
+          $gte: prevDateRange.start,
+          $lte: prevDateRange.end,
+        };
+      } else {
+        Object.assign(matchStagePrev, callDateMatch(prevDateRange));
+      }
     }
 
     try {
