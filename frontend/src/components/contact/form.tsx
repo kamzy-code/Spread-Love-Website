@@ -2,8 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Send } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
-
-const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+import { apiCall } from "@/lib/apiClient";
 
 function ContactForm() {
   const [mounted, setMounted] = useState(false);
@@ -55,31 +54,17 @@ function ContactForm() {
   };
 
   const mutation = useMutation({
-    mutationFn: async () => {
-      const res = await fetch(`${apiUrl}/email/contact`, {
-        credentials: "include",
+    mutationFn: () =>
+      apiCall("/email/contact", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify(formData),
-      });
-
-      if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error.message || "Failed to send booking confirmation");
-      }
-    },
+      }),
 
     retry: 3,
 
     onSuccess: () => {
       setIsSubmitted(true);
       setFormData({ name: "", email: "", subject: "", message: "" });
-    },
-
-    onError: (error) => {
-      throw new Error(error.message || "Failed to send booking confirmation");
     },
   });
 

@@ -1,22 +1,11 @@
 import { useQuery, keepPreviousData, useMutation } from "@tanstack/react-query";
-
-const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+import { apiCall, apiCallText, apiCallBlob } from "@/lib/apiClient";
 
 export const useFetchLogs = () => {
   return useQuery({
     queryKey: ["logs"],
     queryFn: async ({ signal }) => {
-      const res = await fetch(`${apiUrl}/logs/admin`, {
-        credentials: "include",
-        signal,
-      });
-
-      if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error.message || "Failed to fetch logs");
-      }
-
-      const data = await res.json();
+      const data = await apiCall("/logs/admin", { signal });
       return data.files;
     },
     staleTime: 1000 * 60 * 2,
@@ -28,20 +17,7 @@ export const useFetchLogs = () => {
 export const useGetLogContent = (file: string) => {
   return useQuery({
     queryKey: ["logs", file],
-    queryFn: async ({ signal }) => {
-      const res = await fetch(`${apiUrl}/logs/admin/${file}`, {
-        credentials: "include",
-        signal,
-      });
-
-      if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error.message || `Failed to fetch log - ${file}`);
-      }
-
-      const data = await res.text();
-      return data;
-    },
+    queryFn: ({ signal }) => apiCallText(`/logs/admin/${file}`, { signal }),
     staleTime: 1000 * 30,
     gcTime: 1000 * 60 * 5,
     enabled: !!file,
@@ -51,26 +27,11 @@ export const useGetLogContent = (file: string) => {
 export const useZipLogs = (body: { files: string[] }) => {
   return useMutation({
     mutationFn: async () => {
-      const res = await fetch(`${apiUrl}/logs/admin/zip`, {
-        credentials: "include",
+      const data = await apiCall("/logs/admin/zip", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify(body),
       });
-
-      if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error.message || "Failed to zip logs");
-      }
-
-      const data = await res.json();
       return data.archive;
-    },
-
-    onError: (error) => {
-      throw new Error(error.message || "Failed to zip logs");
     },
   });
 };
@@ -78,36 +39,19 @@ export const useZipLogs = (body: { files: string[] }) => {
 export const useDownloadLogs = (file: string) => {
   return useMutation({
     mutationFn: async () => {
-      const res = await fetch(`${apiUrl}/logs/admin/download/${file}`, {
-        credentials: "include",
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error.message || "Failed to download logs");
-      }
-
-      const blob = await res.blob();
+      const { blob } = await apiCallBlob(`/logs/admin/download/${file}`);
       return { blob, file };
     },
 
-     onSuccess: ({ blob, file}) => {
+    onSuccess: ({ blob, file }) => {
       const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = url;
       a.download = file;
       document.body.appendChild(a);
       a.click();
       a.remove();
       window.URL.revokeObjectURL(url);
-    },
-
-    onError: (error) => {
-      throw new Error(error.message || "Failed to download logs");
     },
   });
 };

@@ -4,25 +4,11 @@ import { motion } from "framer-motion";
 import BookingDetails from "@/components/manage/bookingDetails";
 import BookingNotFound from "./searchNotFound";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { apiCall } from "@/lib/apiClient";
 
-const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 // Fetch Request
-const getBooking = async (bookingId: string, signal: AbortSignal) => {
-  const response = await fetch(`${apiUrl}/booking/${bookingId}`, {
-    signal,
-    method: "GET",
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  const data = await response.json();
-  if (!response.ok) {
-    // Attach status and statusText for more context if needed
-    throw new Error(data.message || response.statusText || "Unknown error");
-  }
-  return data;
-};
+const getBooking = (bookingId: string, signal: AbortSignal) =>
+  apiCall(`/booking/${bookingId}`, { signal });
 
 export default function SearchForm({ id }: { id?: string }) {
   const [mounted, setMounted] = useState(false);

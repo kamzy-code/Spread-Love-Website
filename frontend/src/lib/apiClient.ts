@@ -8,7 +8,6 @@ const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 const DEFAULT_TIMEOUT_MS = 15000;
 
-
 export const NETWORK_ERROR_MESSAGE =
   "We couldn't connect to the server. Please check your connection and try again.";
 
@@ -19,7 +18,10 @@ interface ApiOptions extends RequestInit {
 // Shared transport: fetch + timeout + network-failure normalization. A raw
 // fetch() rejection is a browser-specific TypeError ("Failed to fetch" in
 // Chrome/Edge, different text elsewhere) — never let that reach a caller.
-async function doFetch(endpoint: string, options?: ApiOptions): Promise<Response> {
+async function doFetch(
+  endpoint: string,
+  options?: ApiOptions,
+): Promise<Response> {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), DEFAULT_TIMEOUT_MS);
 
@@ -30,17 +32,13 @@ async function doFetch(endpoint: string, options?: ApiOptions): Promise<Response
         "Content-Type": "application/json",
         ...options?.headers,
       },
-      // Prefer a caller-supplied signal (e.g. React Query's cancellation
-      // signal) over our own timeout controller, so query cancellation
-      // still works as expected.
-
       signal: options?.signal ?? controller.signal,
       ...options,
     });
   } catch (err) {
     if (err instanceof DOMException && err.name === "AbortError") {
       throw new Error(
-        "The request took too long. Please check your connection and try again."
+        "The request took too long. Please check your connection and try again.",
       );
     }
     throw new Error(NETWORK_ERROR_MESSAGE);
@@ -69,12 +67,34 @@ export const apiCall = async (endpoint: string, options?: ApiOptions) => {
   return data;
 };
 
+// For endpoints that return plain text instead of JSON (e.g. raw log file
+// content) — shares doFetch's timeout/network-failure handling.
+export const apiCallText = async (
+  endpoint: string,
+  options?: ApiOptions,
+): Promise<string> => {
+  const response = await doFetch(endpoint, options);
+
+  if (!response.ok) {
+    let message = "Something went wrong. Please try again.";
+    try {
+      const data = await response.json();
+      message = data?.message || message;
+    } catch {
+      // non-JSON error body — keep the generic message
+    }
+    throw new Error(message);
+  }
+
+  return response.text();
+};
+
 // For endpoints that return a file (CSV export, etc.) instead of JSON —
 // shares doFetch's timeout/network-failure handling so this path doesn't
 // regress back to raw, unguarded fetch().
 export const apiCallBlob = async (
   endpoint: string,
-  options?: ApiOptions
+  options?: ApiOptions,
 ): Promise<{ blob: Blob; filename: string | null }> => {
   const response = await doFetch(endpoint, options);
 

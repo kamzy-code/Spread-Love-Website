@@ -10,21 +10,10 @@ import PageLoading from "../../ui/pageLoading";
 import PageError from "../../ui/pageError";
 import AdminShell from "../../ui/AdminShell";
 import { Booking } from "@/lib/types";
-
-const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+import { apiCall } from "@/lib/apiClient";
 
 const fetchBookingDetails = async (id: string, signal: AbortSignal) => {
-  const res = await fetch(`${apiUrl}/booking/admin/${id}`, {
-    credentials: "include",
-    signal,
-  });
-
-  if (!res.ok) {
-    const error = await res.json();
-    throw new Error(error.message || "Failed to fetch bookings");
-  }
-
-  const data = await res.json();
+  const data = await apiCall(`/booking/admin/${id}`, { signal });
   return data.booking;
 };
 

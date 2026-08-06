@@ -14,10 +14,9 @@ import { useAdminAuth } from "@/hooks/useAdminAuth";
 import MiniLoader from "../ui/miniLoader";
 import { useDashboardFilterStore } from "@/store/dashboardFilterStore";
 import StatCard, { StatCardData } from "./StatCard";
+import { apiCall } from "@/lib/apiClient";
 
-const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-
-const getAnalytics = async (
+const getAnalytics = (
   signal: AbortSignal,
   filterType: string,
   fetchParam: string,
@@ -25,29 +24,15 @@ const getAnalytics = async (
   startDate?: string,
   endDate?: string,
   repId?: string
-) => {
-  const response = await fetch(
-    `${apiUrl}/booking/admin/analytics${
+) =>
+  apiCall(
+    `/booking/admin/analytics${
       repId ? `/${repId}` : ""
     }?filterType=${filterType}&fetchParam=${fetchParam}${date ? `&date=${date}` : ""}${
       startDate ? `&startDate=${startDate}` : ""
     }${endDate ? `&endDate=${endDate}` : ""}`,
-    {
-      signal,
-      method: "GET",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
+    { signal }
   );
-
-  const data = await response.json();
-  if (!response.ok) {
-    throw new Error(data.message || response.statusText || "Unknown error");
-  }
-  return data;
-};
 
 export const STATUS_LIST = [
   {

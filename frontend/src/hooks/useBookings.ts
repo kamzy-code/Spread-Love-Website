@@ -9,8 +9,6 @@ import {
 import { buildQueryParams } from "@/lib/buildQueryParams";
 import { apiCall } from "@/lib/apiClient";
 
-const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-
 // One request: server generates the booking ID, creates (or re-uses) the
 // booking, and initializes the Paystack transaction — returns a ready-to-use
 // paymentURL. Navigation on success is the caller's concern, not the hook's.
@@ -48,18 +46,7 @@ export const useBookings = (filters: BookingFilters, searchValue: string) => {
     queryKey: ["bookings", filters, searchValue.toLowerCase()],
     queryFn: async ({ signal }) => {
       const queryString = buildQueryParams(filters as Record<string, unknown>);
-
-      const res = await fetch(`${apiUrl}/booking/admin?${queryString}`, {
-        credentials: "include",
-        signal,
-      });
-
-      if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error.message || "Failed to fetch bookings");
-      }
-
-      const data = await res.json();
+      const data = await apiCall(`/booking/admin?${queryString}`, { signal });
       return { data: data.data, meta: data.meta };
     },
     staleTime: 1000 * 60 * 2,
@@ -125,74 +112,22 @@ export const useUpdateBookingByAdmin = () => {
 
 export const useAssignBooking = (bookingId: string, repId: string) => {
   return useMutation({
-    mutationFn: async () => {
-      const res = await fetch(
-        `${apiUrl}/booking/admin/assign/${bookingId}?repId=${repId}`,
-        {
-          credentials: "include",
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error.message || "Failed to assign booking");
-      }
-    },
-
-    onError: (error) => {
-      throw new Error(error.message || "Failed to assign booking");
-    },
+    mutationFn: () =>
+      apiCall(`/booking/admin/assign/${bookingId}?repId=${repId}`, {
+        method: "PUT",
+      }),
   });
 };
 
 export const useDeleteBooking = (id: string) => {
   return useMutation({
-    mutationFn: async () => {
-      const res = await fetch(`${apiUrl}/booking/admin/${id}`, {
-        credentials: "include",
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error.message || "Failed to delete booking");
-      }
-    },
-
-    onError: (error) => {
-      throw new Error(error.message || "Failed to delete booking");
-    },
+    mutationFn: () => apiCall(`/booking/admin/${id}`, { method: "DELETE" }),
   });
 };
 
 export const useSendBookingConfirmation = (bookingId: string) => {
   return useMutation({
-    mutationFn: async () => {
-      const res = await fetch(`${apiUrl}/email/confirm/${bookingId}`, {
-        credentials: "include",
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error.message || "Failed to send booking confirmation");
-      }
-    },
-
+    mutationFn: () => apiCall(`/email/confirm/${bookingId}`, { method: "POST" }),
     retry: 3,
-
-    onError: (error) => {
-      throw new Error(error.message || "Failed to send booking confirmation");
-    },
   });
 };

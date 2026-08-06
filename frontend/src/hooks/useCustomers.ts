@@ -1,9 +1,7 @@
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { buildQueryParams } from "@/lib/buildQueryParams";
 import { CustomerFilter } from "@/lib/types";
-import { apiCall } from "@/lib/apiClient";
-
-const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+import { apiCall, apiCallBlob } from "@/lib/apiClient";
 
 export const useFetchCustomers = (filter: CustomerFilter) => {
   return useQuery({
@@ -30,24 +28,12 @@ export const exportCustomersCsv = async (
 ) => {
   const queryString = buildQueryParams(filter as Record<string, unknown>);
 
-  const res = await fetch(`${apiUrl}/customer/admin/export?${queryString}`, {
-    credentials: "include",
-  });
-
-  if (!res.ok) {
-    const error = await res.json();
-    throw new Error(error.message || "Failed to export customers");
-  }
-
-  const blob = await res.blob();
-  const disposition = res.headers.get("Content-Disposition");
-  const filenameMatch = disposition?.match(/filename="(.+)"/);
-  const filename = filenameMatch?.[1] ?? "customers.csv";
+  const { blob, filename } = await apiCallBlob(`/customer/admin/export?${queryString}`);
 
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
-  link.download = filename;
+  link.download = filename ?? "customers.csv";
   document.body.appendChild(link);
   link.click();
   link.remove();
