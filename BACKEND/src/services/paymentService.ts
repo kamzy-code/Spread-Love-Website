@@ -80,9 +80,7 @@ export class PaymentService {
     };
 
     return new Promise((resolve, reject) => {
-      // Paystack has no reachability guarantee — without a timeout a hung
-      // connection stalls the request indefinitely instead of surfacing
-      // an error the caller (and eventually the customer) can act on.
+ 
       const req = https.request(options, (res) => {
         let data = "";
 
