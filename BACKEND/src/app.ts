@@ -40,7 +40,7 @@ app.use(cookieParser());
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100, // Limit each IP to 100 requests per windowMs
-  message: "Too many requests from this IP, please try again later.",
+  message: { message: "Too many requests. Please try again in a few minutes." },
 });
 app.use("/api", limiter);
 
