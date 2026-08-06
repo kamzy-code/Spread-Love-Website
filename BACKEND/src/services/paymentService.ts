@@ -80,6 +80,9 @@ export class PaymentService {
     };
 
     return new Promise((resolve, reject) => {
+      // Paystack has no reachability guarantee — without a timeout a hung
+      // connection stalls the request indefinitely instead of surfacing
+      // an error the caller (and eventually the customer) can act on.
       const req = https.request(options, (res) => {
         let data = "";
 
@@ -111,7 +114,10 @@ export class PaymentService {
               resolve(parsed);
             } else {
               reject(
-                new Error(parsed.message || "Failed to initialize transaction")
+                new HttpError(
+                  502,
+                  "Payment provider is currently unavailable. Please try again shortly."
+                )
               );
             }
           } catch (err: any) {
@@ -122,9 +128,18 @@ export class PaymentService {
               error: err.message,
               action: "INITIALIZE_TRANSACTION_PARSE_ERROR",
             });
-            reject(err);
+            reject(
+              new HttpError(
+                502,
+                "Payment provider is currently unavailable. Please try again shortly."
+              )
+            );
           }
         });
+      });
+
+      req.setTimeout(15000, () => {
+        req.destroy(new Error("Paystack request timed out"));
       });
 
       req.on("error", (error) => {
@@ -135,7 +150,12 @@ export class PaymentService {
           error: error.message,
           action: "INITIALIZE_TRANSACTION_REQUEST_ERROR",
         });
-        reject(error);
+        reject(
+          new HttpError(
+            502,
+            "Payment provider is currently unavailable. Please try again shortly."
+          )
+        );
       });
 
       req.write(params);
@@ -181,9 +201,18 @@ export class PaymentService {
               error: err,
               action: "VERIFY_TRANSACTION_FAILED",
             });
-            reject(err);
+            reject(
+              new HttpError(
+                502,
+                "Payment provider is currently unavailable. Please try again shortly."
+              )
+            );
           }
         });
+      });
+
+      req.setTimeout(15000, () => {
+        req.destroy(new Error("Paystack request timed out"));
       });
 
       req.on("error", (error) => {
@@ -192,7 +221,12 @@ export class PaymentService {
           error,
           action: "VERIFY_TRANSACTION_FAILED",
         });
-        reject(error);
+        reject(
+          new HttpError(
+            502,
+            "Payment provider is currently unavailable. Please try again shortly."
+          )
+        );
       });
 
       req.end();

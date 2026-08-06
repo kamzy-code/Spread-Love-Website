@@ -3,6 +3,7 @@ import { format } from "date-fns/format";
 import { IBooking } from "../models/bookingModel";
 import { isLegacyBooking } from "../utils/bookingShape";
 import { emailLogger } from "../utils/logger";
+import { HttpError } from "../utils/httpError";
 
 // Normalizes a booking's recipient(s) to a flat list regardless of shape, so
 // the email template only has one code path to render — legacy bookings
@@ -96,7 +97,11 @@ ${recipientLinesText}
     try {
       await transporter.sendMail(mailOptions);
     } catch (error: any) {
-      throw new Error(error.message || "Error sending confirmation mail");
+      emailLogger.error("Failed to send email", {
+        error: error.message,
+        action: "SEND_EMAIL_FAILED",
+      });
+      throw new HttpError(502, "Failed to send email. Please try again or contact support.");
     }
   }
 
@@ -176,7 +181,11 @@ ${recipientLinesText}
      try {
       const mailStatus = await transporter.sendMail(mailOptions);
     } catch (error: any) {
-      throw new Error(error.message || "Error sending confirmation mail");
+      emailLogger.error("Failed to send email", {
+        error: error.message,
+        action: "SEND_EMAIL_FAILED",
+      });
+      throw new HttpError(502, "Failed to send email. Please try again or contact support.");
     }
   }
 }
