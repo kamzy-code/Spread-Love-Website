@@ -28,6 +28,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongodb": "4.0",
     "mongoose": "^8.15.1",
+    "resend": "^6.18.1",
     "winston": "^3.17.0",
     "winston-daily-rotate-file": "^5.0.0",
     "zod": "^4.4.3"

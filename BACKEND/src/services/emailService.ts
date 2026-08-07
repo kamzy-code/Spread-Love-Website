@@ -89,11 +89,6 @@ ${recipientLinesText}
     };
 
     try {
-      // resend.emails.send() does not throw for API-level failures (bad
-      // API key, unverified domain, rate limit, invalid recipient, etc.)
-      // — it resolves with { data: null, error }. Only a genuine network
-      // failure rejects the promise. Check `error` explicitly or a failed
-      // send is silently treated as success.
       const { error } = await resend.emails.send(mailOptions);
       if (error) {
         throw new Error(error.message);
