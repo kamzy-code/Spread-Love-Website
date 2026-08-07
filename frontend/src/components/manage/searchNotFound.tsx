@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { MessageCircle, XCircle } from "lucide-react";
+import { NETWORK_ERROR_MESSAGE } from "@/lib/apiClient";
 
 export default function BookingNotFound({
   id,
@@ -8,20 +9,38 @@ export default function BookingNotFound({
   id: string;
   error: string;
 }) {
-  const getBookingErrorMessage = (error: string, id?: string): string => {
+  const getBookingErrorCopy = (
+    error: string,
+    id?: string
+  ): { title: string; body: string } => {
     switch (error) {
-      case "Failed to Fetch":
-        return "We couldn't connect to the server. Please check your internet connection and try again.";
-      case "Booking Not Found":
-        return `We couldn't find a booking with ID "${
-          id ?? ""
-        }". Please check your booking ID and try again.`;
+      case NETWORK_ERROR_MESSAGE:
+        return {
+          title: "Connection Error",
+          body: "We couldn't connect to the server. Please check your internet connection and try again.",
+        };
+      case "Booking not found":
+        return {
+          title: "Booking Not Found",
+          body: `We couldn't find a booking with ID "${
+            id ?? ""
+          }". Please check your booking ID and try again.`,
+        };
       case "Booking ID required":
-        return "Please enter a booking ID to search for your booking.";
+        return {
+          title: "Booking ID Required",
+          body: "Please enter a booking ID to search for your booking.",
+        };
       default:
-        return error || "An unexpected error occurred. Please try again.";
+        return {
+          title: "Something Went Wrong",
+          body: error || "An unexpected error occurred. Please try again.",
+        };
     }
   };
+
+  const { title, body } = getBookingErrorCopy(error, id);
+
   return (
     <section className="py-12 bg-white">
       <div className="container-max section-padding">
@@ -33,10 +52,8 @@ export default function BookingNotFound({
             className="card p-8"
           >
             <XCircle className="h-16 w-16 text-red-500 mx-auto mb-4" />
-            <h3 className="text-2xl font-semibold mb-4">{error}</h3>
-            <p className="text-gray-700 mb-6">
-              {getBookingErrorMessage(error, id)}
-            </p>
+            <h3 className="text-2xl font-semibold mb-4">{title}</h3>
+            <p className="text-gray-700 mb-6">{body}</p>
             <button
               onClick={() =>
                 window.open(

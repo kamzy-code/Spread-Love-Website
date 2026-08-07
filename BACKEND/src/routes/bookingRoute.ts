@@ -1,6 +1,15 @@
 import express from "express";
 import bookingController from "../controllers/bookingController";
 import { authMiddleware, checkRole } from "../middlewares/authMiddleware";
+import { validateRequest, validateQuery, validateParams } from "../middlewares/validateRequest";
+import {
+  assignCallToRepQuerySchema,
+  bookingIdParamSchema,
+  createBookingSchema,
+  updateBookingByAdminSchema,
+  updateBookingByCustomerSchema,
+  updateBookingStatusSchema,
+} from "../validation/bookingSchemas";
 
 const router = express.Router();
 
@@ -36,13 +45,32 @@ router.put(
   "/admin/assign/:bookingId",
   authMiddleware,
   checkRole("superadmin", "salesrep"),
+  validateParams(bookingIdParamSchema),
+  validateQuery(assignCallToRepQuerySchema),
   bookingController.assignCallToRep
 );
 router.put(
   "/admin/:bookingId/status",
   authMiddleware,
   checkRole("superadmin", "salesrep", "callrep"),
+  validateRequest(updateBookingStatusSchema),
   bookingController.updateBookingStatus
+);
+router.put(
+  "/admin/:bookingId/recipients/:recipientId/status",
+  authMiddleware,
+  checkRole("superadmin", "salesrep", "callrep"),
+  validateRequest(updateBookingStatusSchema),
+  bookingController.updateBookingStatus
+);
+
+router.put(
+  "/admin/:bookingId",
+  authMiddleware,
+  checkRole("superadmin", "salesrep"),
+  validateParams(bookingIdParamSchema),
+  validateRequest(updateBookingByAdminSchema),
+  bookingController.updateBookingByAdmin
 );
 
 router.delete(
@@ -53,10 +81,17 @@ router.delete(
 );
 
 // customer endpoints
-router.post("/create", bookingController.createBooking);
-router.get("/id/generate", bookingController.generateBookingID);
+router.post(
+  "/create",
+  validateRequest(createBookingSchema),
+  bookingController.createBooking
+);
 router.get("/:bookingId", bookingController.getBookingByBookingId);
-router.put("/:bookingId/update", bookingController.updateBookingByCustomer);
+router.put(
+  "/:bookingId/update",
+  validateRequest(updateBookingByCustomerSchema),
+  bookingController.updateBookingByCustomer
+);
 
 router.use((req, res) => {
   res.status(404).json({ message: "Booking route not found" });

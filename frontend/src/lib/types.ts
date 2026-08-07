@@ -5,16 +5,6 @@ export type PaginationMeta = {
   totalPages: number;
 };
 
-// Dashboard
-export interface dashboardFilterContextType {
-  appliedFilterType: string;
-  appliedFetchParam: string;
-  appliedDate?: string;
-  appliedStartDate?: string;
-  appliedEndDate?: string;
-  repId?: string;
-}
-
 // Auth
 export type AdminUser = {
   firstName: string;
@@ -33,7 +23,7 @@ export type AuthStatus =
   | "unauthenticated"
   | "error";
 
-export interface AdminAuthContextType {
+export interface AdminAuthHook {
   user: AdminUser | null;
   isAuthenticated: boolean;
   loading: boolean;
@@ -51,25 +41,66 @@ export interface AdminAuthContextType {
 // Bookings
 export type FilterType = "daily" | "weekly" | "monthly" | "yearly" | "custom";
 
-export interface Booking {
+export interface BookingCallerData {
+  name: string;
+  phone: string;
+  email: string;
+  gender?: "male" | "female" | "prefer_not_to_say";
+  relationship?: string;
+}
+
+export interface BookingRecipientData {
   _id: string;
-  bookingId: string;
-  callerName: string;
-  callerPhone: string;
-  callerEmail?: string;
-  relationship: string;
   recipientName: string;
   recipientPhone: string;
   country: string;
   occassion: string;
   callType: string;
   callDate: string;
-  price: string;
+  price: number;
+  message?: string;
+  specialInstruction?: string;
+  callStatus?: string;
+  callRecording?: string;
+  callRecordingURL?: string;
+}
+
+export interface Booking {
+  _id: string;
+  bookingId: string;
+
+  // v1 legacy flat fields — present on documents created before the schema
+  // refactor; optional since v2 bookings never set them. Read via caller/
+  // recipients below instead, with these only as a fallback for un-migrated docs.
+  callerName?: string;
+  callerPhone?: string;
+  callerEmail?: string;
+  relationship?: string;
+  recipientName?: string;
+  recipientPhone?: string;
+  country?: string;
+  occassion?: string;
+  callType?: string;
+  callDate?: string;
+  price?: string;
   message?: string;
   specialInstruction?: string;
   status?: string;
   callRecording?: string;
   callRecordingURL?: string;
+
+  // v2 nested shape
+  caller?: BookingCallerData;
+  recipients?: BookingRecipientData[];
+  bookingStatus?: "pending" | "in_progress" | "completed";
+  totalPrice?: number;
+  couponCode?: string;
+  discountAmount?: number;
+  reuseCount?: number;
+  duplicateOfPaid?: boolean;
+  customerTier?: "new" | "regular" | "vip" | "diamond";
+
+  // shared / unchanged across v1 and v2
   contactConsent?: string;
   confirmationMailsent?: boolean;
   paymentStatus: string;
@@ -78,8 +109,115 @@ export interface Booking {
   createdAt: string;
 }
 
+// v2 booking creation (multi-recipient checkout flow)
+export interface BookingCaller {
+  name: string;
+  phone: string;
+  email: string;
+  gender: "male" | "female" | "prefer_not_to_say" | "";
+  relationship: string;
+}
+
+export interface BookingRecipient {
+  recipientName: string;
+  recipientPhone: string;
+  country: string;
+  occassion: string;
+  callType: string;
+  callDate: string;
+  price: number;
+  message?: string;
+  specialInstruction?: string;
+  callRecording?: "yes" | "no";
+}
+
+export interface CreateBookingPayload {
+  caller: BookingCaller;
+  recipients: BookingRecipient[];
+  contactConsent?: "yes" | "no";
+  couponCode?: string;
+}
+
+export interface CreateBookingResponse {
+  message: string;
+  bookingId: string;
+  paymentURL: string;
+}
+
+export interface CouponValidationResponse {
+  valid: boolean;
+  message?: string;
+  discountAmount?: number;
+  newTotal?: number;
+}
+
+// Local form state — same shape as the API types above, minus fields that
+// are derived rather than user-entered (e.g. recipient price is computed
+// from occassion/callType/country, not typed in).
+export type CallerFormState = BookingCaller;
+export type RecipientFormState = Omit<BookingRecipient, "price">;
+
+// Customer self-service update (PUT /booking/:bookingId/update) — deliberately
+// a smaller, all-partial field set. Mirrors updateBookingByCustomerSchema on
+// the backend: no callStatus/price/occassion — those are rep/system-owned or
+// price-determining, never customer-editable after the fact.
+export interface CustomerUpdateCaller {
+  name?: string;
+  phone?: string;
+  email?: string;
+  gender?: "male" | "female" | "prefer_not_to_say";
+  relationship?: string;
+}
+
+export interface CustomerUpdateRecipient {
+  _id: string;
+  recipientName?: string;
+  recipientPhone?: string;
+  country?: string;
+  callDate?: string;
+  message?: string;
+  specialInstruction?: string;
+}
+
+export interface CustomerBookingUpdatePayload {
+  caller?: CustomerUpdateCaller;
+  recipients?: CustomerUpdateRecipient[];
+}
+
+// Admin correction (PUT /booking/admin/:bookingId) — broader than the
+// customer-safe payload above: occassion/callType/price/callRecordingURL are
+// editable since admins are trusted staff fixing genuine data-entry mistakes,
+// not the price-manipulation surface the customer schema guards against.
+export interface AdminUpdateCaller {
+  name?: string;
+  phone?: string;
+  email?: string;
+  gender?: "male" | "female" | "prefer_not_to_say";
+  relationship?: string;
+}
+
+export interface AdminUpdateRecipient {
+  _id: string;
+  recipientName?: string;
+  recipientPhone?: string;
+  country?: string;
+  occassion?: string;
+  callType?: string;
+  callDate?: string;
+  price?: number;
+  message?: string;
+  specialInstruction?: string;
+  callRecordingURL?: string;
+}
+
+export interface AdminBookingUpdatePayload {
+  caller?: AdminUpdateCaller;
+  recipients?: AdminUpdateRecipient[];
+}
+
 export interface BookingFilters {
   status?: string;
+  bookingStatus?: string;
   callType?: string;
   occassion?: string;
   country?: string;
@@ -98,10 +236,6 @@ export interface BookingFilters {
   paymentStatus?: string;
   paymentURL?: string;
 }
-
-export type BookingFilterContex = BookingFilters & {
-  setPage: (newPage: number) => void;
-};
 
 export type Rep = {
   _id: string;
@@ -122,8 +256,32 @@ export type RepFilter = {
   limit: number;
 };
 
-export type RepFiltercontext = RepFilter & {
-  setPage: (newPage: number) => void;
+// Customers
+export type CustomerTier = "new" | "regular" | "vip" | "diamond";
+
+export type Customer = {
+  _id: string;
+  email: string;
+  name: string;
+  phone: string;
+  completedBookings: number;
+  tier: CustomerTier;
+  lastBookingAt?: string;
+  createdAt: string;
+};
+
+export type CustomerFilter = {
+  tier?: CustomerTier | "";
+  search?: string;
+  page?: number;
+  limit: number;
+  // "" = all time — the customer directory's natural default, unlike
+  // booking/dashboard views which default to a period.
+  filterType?: FilterType | "";
+  singleDate?: string;
+  startDate?: string;
+  endDate?: string;
+  fetchParam?: string;
 };
 
 // Logs
@@ -132,3 +290,104 @@ export interface LogFile {
   size: number;
   createdAt: string;
 }
+
+// Audit log — superadmin-only view of admin-made edits to protected fields
+export type AuditEntity = "booking" | "service" | "coupon" | "rep";
+
+export type AuditLogEntry = {
+  _id: string;
+  entity: AuditEntity;
+  entityId: string;
+  field: string;
+  oldValue: string;
+  newValue: string;
+  changedBy: { _id: string; firstName: string; lastName: string; email: string } | string | null;
+  createdAt: string;
+};
+
+// Coupons
+export type DiscountType = "flat" | "percent";
+
+export type Coupon = {
+  _id: string;
+  code: string;
+  discountType: DiscountType;
+  value: number;
+  usageLimit: number;
+  usedCount: number;
+  expiresAt: string;
+  active: boolean;
+  createdBy: string;
+  createdAt: string;
+};
+
+export type CouponFormValues = {
+  code: string;
+  discountType: DiscountType;
+  value: number;
+  usageLimit: number;
+  expiresAt: string;
+};
+
+export type CouponFilter = {
+  discountType?: string;
+  status?: string;
+  search?: string;
+  page?: number;
+  limit: number;
+};
+
+// Services
+export type ServiceIconKey =
+  | "cake"
+  | "heart"
+  | "users"
+  | "graduationCap"
+  | "partyPopper"
+  | "gift"
+  | "phone"
+  | "sun";
+
+export type ServicePricing = {
+  features: string[];
+  localPrice: number;
+  internationalPrice: number;
+};
+
+export type Service = {
+  _id: string;
+  title: string;
+  description: string;
+  category: string;
+  thumbnail: string;
+  iconKey: ServiceIconKey;
+  regular: ServicePricing;
+  special: ServicePricing;
+  active: boolean;
+  createdAt: string;
+};
+
+export type ServicePricingUpdate = {
+  regular?: Partial<ServicePricing>;
+  special?: Partial<ServicePricing>;
+};
+
+export type ServiceDetailsUpdate = Partial<
+  Pick<Service, "title" | "description" | "category" | "thumbnail" | "iconKey">
+>;
+
+export type ServiceCreatePayload = Pick<
+  Service,
+  "title" | "description" | "category" | "thumbnail" | "iconKey"
+> & {
+  regular: ServicePricing;
+  special: ServicePricing;
+};
+
+export type ServiceFilter = {
+  category?: string;
+  status?: string;
+  search?: string;
+  page?: number;
+  limit: number;
+};

@@ -9,6 +9,9 @@ import {
   Book,
   Bell,
   Menu,
+  Contact,
+  Ticket,
+  Layers,
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -16,7 +19,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { useMutation } from "@tanstack/react-query";
-import { useAdminAuth } from "@/hooks/authContext";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { useRouter } from "next/navigation";
 import LogoutErrorModal from "./logoutErrorModal";
 
@@ -35,6 +38,21 @@ const links = [
     label: "Reps",
     href: "/admin/reps",
     icon: <Users className="h-5 w-5 mr-3" />,
+  },
+  {
+    label: "Customers",
+    href: "/admin/customers",
+    icon: <Contact className="h-5 w-5 mr-3" />,
+  },
+  {
+    label: "Coupons",
+    href: "/admin/coupons",
+    icon: <Ticket className="h-5 w-5 mr-3" />,
+  },
+  {
+    label: "Services",
+    href: "/admin/services",
+    icon: <Layers className="h-5 w-5 mr-3" />,
   },
   {
     label: "Profile",
@@ -160,7 +178,12 @@ export default function TopNav() {
                     ? "gradient-background text-white"
                     : "text-gray-700 hover:bg-gray-100"
                 } ${
-                  item.label === "Reps" && user?.role === "callrep"
+                  ((item.label === "Reps" ||
+                    item.label === "Coupons" ||
+                    item.label === "Services") &&
+                    user?.role === "callrep") ||
+                  ((item.label === "Customers" || item.label === "Logs") &&
+                    user?.role !== "superadmin")
                     ? "hidden"
                     : ""
                 } ${

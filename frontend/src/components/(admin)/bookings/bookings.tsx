@@ -1,20 +1,22 @@
 "use client";
-import { useAdminAuth } from "@/hooks/authContext";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { useState, useEffect, useRef } from "react";
 import PageLoading from "../ui/pageLoading";
 import PageError from "../ui/pageError";
 import { motion, AnimatePresence } from "framer-motion";
 import AdminShell from "../ui/AdminShell";
-import FilterContextProvider from "./bookingFilterContext";
+import BookingFilterPanel from "./BookingFilterPanel";
 import { Filter } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import BookingTable from "./bookingTable";
+import { useBookingFilterStore } from "@/store/bookingFilterStore";
 
 const FILTER_OPTIONS = [
   { key: "date", label: "Date", alwaysOn: true },
   { key: "assignedRep", label: "Assigned Rep" },
   { key: "callType", label: "Call Type" },
   { key: "status", label: "Status" },
+  { key: "bookingStatus", label: "Booking Status" },
   { key: "occasion", label: "Occasion" },
   { key: "country", label: "Country" },
   { key: "confirmationMailsent", label: "Confirmation Mail" },
@@ -38,47 +40,47 @@ const SORT_OPTIONS = [
 
 export default function Booking() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { authStatus, authError, loading } = useAdminAuth();
   const [mounted, setMounted] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [sortDropDown, setSortDropDown] = useState(false);
-  const [activeFilters, setActiveFilters] = useState<{
-    [key: string]: boolean;
-  }>({
-    date: true,
-    assignedRep: false,
-    callType: false,
-    status: false,
-    occasion: false,
-    country: false,
-    confirmationMailsent: false,
-    paymentStatus: false,
-  });
-  const [sortOptions, setSortoptions] = useState({
-    sortParam: "createdAt",
-    sortOrder: "1",
-  });
+  const activeFilters = useBookingFilterStore((s) => s.activeFilters);
+  const toggleActiveFilter = useBookingFilterStore((s) => s.toggleActiveFilter);
+  const sortOptions = useBookingFilterStore((s) => s.sortOptions);
+  const setSortOptions = useBookingFilterStore((s) => s.setSortOptions);
+  const syncFromUrl = useBookingFilterStore((s) => s.syncFromUrl);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Handler for toggling filters
-  const handleFilterToggle = (key: string) => {
-    if (key === "date") return; // Date is always on
-
-    setActiveFilters((prev) => ({ ...prev, [key]: !prev[key] }));
-  };
-
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const saved = sessionStorage.getItem("activeBookingFilters");
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        setActiveFilters(parsed.activeFilters);
-        setSortoptions(parsed.sortOptions);
-      }
-    }
     setMounted(true);
   }, []);
+
+  // Arriving from an analytics card link (?status=... or ?bookingStatus=...,
+  // optionally ?repId=... from a specific rep's analytics view) — surface
+  // the matching filter panel so the applied filter is visible, and sync the
+  // store (only actually resets the applied filter/page if the value
+  // differs from what's already applied, so plain back-navigation to this
+  // page is a no-op).
+  useEffect(() => {
+    const status = searchParams.get("status") || undefined;
+    const bookingStatus = searchParams.get("bookingStatus") || undefined;
+    const assignedRep = searchParams.get("repId") || undefined;
+    if (status) toggleActiveFilterOn("status");
+    if (bookingStatus) toggleActiveFilterOn("bookingStatus");
+    if (assignedRep) toggleActiveFilterOn("assignedRep");
+    if (status || bookingStatus || assignedRep) {
+      syncFromUrl({ status, bookingStatus, assignedRep });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
+
+  function toggleActiveFilterOn(key: string) {
+    if (!useBookingFilterStore.getState().activeFilters[key]) {
+      toggleActiveFilter(key);
+    }
+  }
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -97,13 +99,10 @@ export default function Booking() {
   }, [dropdownOpen, sortDropDown]);
 
   useEffect(() => {
-    if (mounted) {
-      sessionStorage.setItem(
-        "activeBookingFilters",
-        JSON.stringify({ activeFilters, sortOptions })
-      );
+    if (authStatus === "unauthenticated") {
+      router.replace("/admin");
     }
-  }, [activeFilters, sortOptions, mounted]);
+  }, [authStatus, router]);
 
   if (!mounted) {
     return null;
@@ -118,7 +117,6 @@ export default function Booking() {
   }
 
   if (authStatus !== "authenticated") {
-    router.replace("/admin");
     return null;
   }
 
@@ -163,7 +161,7 @@ export default function Booking() {
                           type="checkbox"
                           checked={!!activeFilters[filter.key]}
                           disabled={filter.alwaysOn}
-                          onChange={() => handleFilterToggle(filter.key)}
+                          onChange={() => toggleActiveFilter(filter.key)}
                           className="mr-2"
                         />
                         {filter.label}
@@ -197,9 +195,9 @@ export default function Booking() {
                             sortOptions.sortOrder === option.sortOrder
                           }
                           onChange={() =>
-                            setSortoptions({
+                            setSortOptions({
                               sortParam: option.sortParam,
-                              sortOrder: option.sortOrder,
+                              sortOrder: option.sortOrder as "1" | "-1",
                             })
                           }
                           className="mr-2"
@@ -213,17 +211,9 @@ export default function Booking() {
             </div>
           </div>
 
-          <div className="flex-1">
-            {activeFilters && sortOptions && (
-              <FilterContextProvider
-                activeFilters={activeFilters}
-                sortOptions={sortOptions}
-              >
-                <div className="">
-                  <BookingTable></BookingTable>
-                </div>
-              </FilterContextProvider>
-            )}
+          <div className="flex-1 space-y-8">
+            <BookingFilterPanel activeFilters={activeFilters} />
+            <BookingTable></BookingTable>
           </div>
         </motion.div>
       </AdminShell>

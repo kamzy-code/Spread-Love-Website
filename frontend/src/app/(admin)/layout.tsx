@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "@/app/globals.css";
 import Providers from "./providers";
-import { AdminAuthProvider } from "@/hooks/authContext";
+import { AdminAuthInit } from "@/hooks/useAdminAuth";
 
 export const metadata: Metadata = {
   title: {
@@ -19,7 +19,8 @@ export default function AdminLayout({
   return (
     <Providers>
       <main>
-        <AdminAuthProvider>{children}</AdminAuthProvider>
+        <AdminAuthInit />
+        {children}
       </main>
     </Providers>
   );

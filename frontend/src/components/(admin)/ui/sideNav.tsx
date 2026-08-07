@@ -1,7 +1,7 @@
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
-import { BarChart3, Users, Calendar, User, LogOut, Book } from "lucide-react";
-import { useAdminAuth } from "@/hooks/authContext";
+import { BarChart3, Users, Calendar, User, LogOut, Book, Contact, Ticket, Layers } from "lucide-react";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import LogoutErrorModal from "./logoutErrorModal";
@@ -21,6 +21,21 @@ const links = [
     label: "Reps",
     href: "/admin/reps",
     icon: <Users className="h-5 w-5 mr-3" />,
+  },
+  {
+    label: "Customers",
+    href: "/admin/customers",
+    icon: <Contact className="h-5 w-5 mr-3" />,
+  },
+  {
+    label: "Coupons",
+    href: "/admin/coupons",
+    icon: <Ticket className="h-5 w-5 mr-3" />,
+  },
+  {
+    label: "Services",
+    href: "/admin/services",
+    icon: <Layers className="h-5 w-5 mr-3" />,
   },
   {
     label: "Profile",
@@ -73,9 +88,12 @@ export default function SideNav() {
                 ? "gradient-background text-white"
                 : "text-gray-700 hover:bg-gray-100"
             } ${
-              label === "Reps" && user?.role === "callrep" ? "hidden" : ""
-            } ${
-              label === "Logs" && user?.role !== "superadmin" ? "hidden" : ""
+              ((label === "Reps" || label === "Coupons" || label === "Services") &&
+                user?.role === "callrep") ||
+              ((label === "Customers" || label === "Logs") &&
+                user?.role !== "superadmin")
+                ? "hidden"
+                : ""
             }`}
           >
             {icon} {label}

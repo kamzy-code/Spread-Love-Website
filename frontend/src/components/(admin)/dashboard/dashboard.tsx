@@ -1,11 +1,11 @@
 "use client";
 
-import { useAdminAuth } from "@/hooks/authContext";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { useEffect, useState } from "react";
 import AdminShell from "../ui/AdminShell";
 import PageError from "../ui/pageError";
 import PageLoading from "../ui/pageLoading";
-import DashboardContextProvider from "./dashboardFilterContext";
+import DashboardFilterPanel from "./DashboardFilterPanel";
 import Analytics from "./analytics";
 import RecentBookings from "./recentBooking";
 import { Filter } from "lucide-react";
@@ -22,6 +22,12 @@ export default function Dashboard() {
     setMounted(true);
   }, []);
 
+  useEffect(() => {
+    if (authStatus === "unauthenticated") {
+      router.replace("/admin");
+    }
+  }, [authStatus, router]);
+
   if (!mounted) {
     return null;
   }
@@ -35,7 +41,6 @@ export default function Dashboard() {
   }
 
   if (authStatus !== "authenticated") {
-    router.replace("/admin");
     return null;
   }
 
@@ -60,14 +65,15 @@ export default function Dashboard() {
             </button>
           </div>
 
-          <DashboardContextProvider showFilter={showFilter}>
+          <div className="space-y-8">
+            <DashboardFilterPanel showFilter={showFilter} />
             <div>
               <Analytics></Analytics>
             </div>
             <div>
               <RecentBookings></RecentBookings>
             </div>
-          </DashboardContextProvider>
+          </div>
         </motion.div>
       </AdminShell>
     </AnimatePresence>

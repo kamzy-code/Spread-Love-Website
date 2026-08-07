@@ -1,13 +1,13 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { useAdminAuth } from "@/hooks/authContext";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
 import PageLoading from "../ui/pageLoading";
 import PageError from "../ui/pageError";
 import AdminShell from "../ui/AdminShell";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Filter, Plus, TriangleAlert } from "lucide-react";
-import RepsContextProvider from "./repsContext";
+import RepFilterPanel from "./RepFilterPanel";
 import RepList from "./repList";
 import CreateRepForm from "./createRep";
 
@@ -35,6 +35,12 @@ export default function Reprsentatives() {
     };
   }, [showCreateForm]);
 
+  useEffect(() => {
+    if (authStatus === "unauthenticated") {
+      router.replace("/admin");
+    }
+  }, [authStatus, router]);
+
   if (!mounted) {
     return null;
   }
@@ -48,7 +54,6 @@ export default function Reprsentatives() {
   }
 
   if (authStatus !== "authenticated") {
-    router.replace("/admin");
     return null;
   }
 
@@ -103,7 +108,9 @@ export default function Reprsentatives() {
             </div>
           </div>
 
-          <RepsContextProvider showFilter={showFilter}>
+          <div className="space-y-8">
+            <RepFilterPanel showFilter={showFilter} />
+
             {showCreateForm && (
               <div>
                 <CreateRepForm
@@ -115,7 +122,7 @@ export default function Reprsentatives() {
             <div>
               <RepList></RepList>
             </div>
-          </RepsContextProvider>
+          </div>
         </motion.div>
       </AdminShell>
     </AnimatePresence>

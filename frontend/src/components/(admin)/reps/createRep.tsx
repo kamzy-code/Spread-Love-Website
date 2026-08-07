@@ -4,17 +4,19 @@ import Image from "next/image";
 import { Eye, EyeOff, TriangleAlert, X } from "lucide-react";
 import { useCreateRep } from "@/hooks/useReps";
 import CreateRepModal from "./createSuccessModal";
-import { useRepFilter } from "./repsContext";
+import { useRepFilterStore } from "@/store/repFilterStore";
 import { useFetchReps } from "@/hooks/useReps";
+import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
 
 export default function CreateRep({
   setShowCreateForm,
 }: {
   setShowCreateForm: (val: boolean) => void;
 }) {
-  const { setPage, ...filter } = useRepFilter();
-  const { search: searchTerm } = filter;
-  const { refetch } = useFetchReps(filter, searchTerm as string);
+  const appliedFormData = useRepFilterStore((s) => s.appliedFormData);
+  const searchTerm = useRepFilterStore((s) => s.debouncedValue);
+  const filter = { ...appliedFormData, search: searchTerm };
+  const { refetch } = useFetchReps(filter, searchTerm);
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -73,6 +75,8 @@ export default function CreateRep({
   };
 
   const createMutation = useCreateRep(formData);
+
+  useLockBodyScroll();
 
   useEffect(() => {
     setMounted(true);

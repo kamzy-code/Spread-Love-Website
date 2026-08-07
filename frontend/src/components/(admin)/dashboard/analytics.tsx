@@ -4,18 +4,19 @@ import {
   CheckCircle,
   Users,
   TrendingUp,
-  TrendingDown,
   XCircle,
   RefreshCcw,
   Ban,
+  Clock,
+  PackageCheck,
 } from "lucide-react";
-import { useAdminAuth } from "@/hooks/authContext";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
 import MiniLoader from "../ui/miniLoader";
-import { useFilter } from "./dashboardFilterContext";
+import { useDashboardFilterStore } from "@/store/dashboardFilterStore";
+import StatCard, { StatCardData } from "./StatCard";
+import { apiCall } from "@/lib/apiClient";
 
-const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-
-const getAnalytics = async (
+const getAnalytics = (
   signal: AbortSignal,
   filterType: string,
   fetchParam: string,
@@ -23,29 +24,15 @@ const getAnalytics = async (
   startDate?: string,
   endDate?: string,
   repId?: string
-) => {
-  const response = await fetch(
-    `${apiUrl}/booking/admin/analytics${
+) =>
+  apiCall(
+    `/booking/admin/analytics${
       repId ? `/${repId}` : ""
     }?filterType=${filterType}&fetchParam=${fetchParam}${date ? `&date=${date}` : ""}${
       startDate ? `&startDate=${startDate}` : ""
     }${endDate ? `&endDate=${endDate}` : ""}`,
-    {
-      signal,
-      method: "GET",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
+    { signal }
   );
-
-  const data = await response.json();
-  if (!response.ok) {
-    throw new Error(data.message || response.statusText || "Unknown error");
-  }
-  return data;
-};
 
 export const STATUS_LIST = [
   {
@@ -75,19 +62,37 @@ export const STATUS_LIST = [
   },
 ];
 
-export default function Analytics() {
+// Booking-level completion, distinct from STATUS_LIST above (which counts
+// individual calls). A booking with 3 recipients contributes exactly one
+// entry here, not up to three — "how many orders are still incomplete"
+// rather than "how many calls are left to place".
+export const BOOKING_STATUS_LIST = [
+  {
+    key: "pending",
+    label: "Pending",
+    icon: <RefreshCcw className="h-4 w-4 md:h-6 md:w-6" />,
+  },
+  {
+    key: "in_progress",
+    label: "In Progress",
+    icon: <Clock className="h-4 w-4 md:h-6 md:w-6" />,
+  },
+  {
+    key: "completed",
+    label: "Completed",
+    icon: <PackageCheck className="h-4 w-4 md:h-6 md:w-6" />,
+  },
+];
+
+export default function Analytics({ repId }: { repId?: string }) {
   const { user } = useAdminAuth();
 
-  const {
-    appliedFilterType,
-    appliedDate,
-    appliedEndDate,
-    appliedStartDate,
-    appliedFetchParam,
-    repId,
-  } = useFilter();
-
-  console.log("appliedFetchParam", appliedFetchParam);
+  const useFilterStore = useDashboardFilterStore(repId);
+  const appliedFilterType = useFilterStore((s) => s.appliedFilterType);
+  const appliedDate = useFilterStore((s) => s.appliedDate);
+  const appliedEndDate = useFilterStore((s) => s.appliedEndDate);
+  const appliedStartDate = useFilterStore((s) => s.appliedStartDate);
+  const appliedFetchParam = useFilterStore((s) => s.appliedFetchParam);
 
   const { data, error, isLoading, isFetching, refetch } = useQuery({
     queryKey: [
@@ -126,7 +131,32 @@ export default function Analytics() {
     });
   }
 
-  const cards = [
+  const bookingStatusCounts: Record<string, number> = {};
+
+  BOOKING_STATUS_LIST.forEach((status) => {
+    bookingStatusCounts[status.key] = 0;
+  });
+
+  if (data?.bookingBreakdown) {
+    data.bookingBreakdown.forEach((item: { _id: string; count: number }) => {
+      bookingStatusCounts[item._id] = item.count;
+    });
+  }
+
+  // Arriving here from a specific rep's page (repId set) should carry that
+  // scoping into the booking list too, not just drop it at the door — the
+  // admin is looking at this rep's numbers, so "Pending Calls" should mean
+  // "this rep's pending calls," not every rep's.
+  const repIdParam = repId ? `&repId=${repId}` : "";
+
+  const bookingCompletionCards = BOOKING_STATUS_LIST.map((status) => ({
+    title: `${status.label} Bookings`,
+    value: bookingStatusCounts[status.key],
+    icon: status.icon,
+    href: `/admin/bookings?bookingStatus=${status.key}${repIdParam}`,
+  }));
+
+  const cards: Omit<StatCardData, "hidden">[] = [
     {
       title: "Total Bookings",
       value: data?.totalBookings ?? "-",
@@ -144,10 +174,14 @@ export default function Analytics() {
           : "neutral",
       icon: <Calendar className="h-4 w-4 md:h-6 md:w-6" />,
     },
+    // Labeled "Calls", not "Bookings" — a multi-recipient v2 booking
+    // contributes one tally entry per recipient's call outcome, so this is a
+    // per-call breakdown, not a distinct-booking count.
     ...STATUS_LIST.map((status) => ({
-      title: `${status.label} Bookings`,
+      title: `${status.label} Calls`,
       value: statusCounts[status.key],
       icon: status.icon,
+      href: `/admin/bookings?status=${status.key}${repIdParam}`,
     })),
     {
       title: "Total Revenue",
@@ -198,55 +232,31 @@ export default function Analytics() {
       {/* Stats Grid */}
       <div className="grid grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
         {cards.map((card) => (
-          <div
-            className={`${
-              (user?.role === "callrep" || repId) &&
-              card.title === "Active Reps"
-                ? "hidden"
-                : ""
-            } ${
-              user?.role !== "superadmin" && card.title === "Total Revenue"
-                ? "hidden"
-                : ""
-            }`}
+          <StatCard
             key={card.title}
-          >
-            <div className="card p-4 md:p-6 flex flex-col items-start justify-center w-full h-full gap-2">
-              <div className="text-sm md:text-md font-semibold text-gray-500">
-                {card.title}
-              </div>
-              <div className="w-full flex flex-row items-center justify-between">
-                <div className="text-lg md:text-2xl font-bold">
-                  {card.value}
-                </div>
-
-                <div className="text-brand-end">{card.icon}</div>
-              </div>
-
-              {card.change ? (
-                <div
-                  className={`mt-1 text-sm flex items-center ${
-                    card.trend === "up"
-                      ? "text-green-600"
-                      : card.trend === "down"
-                      ? "text-red-600"
-                      : "text-gray-500"
-                  }`}
-                >
-                  {card.trend === "up" && (
-                    <TrendingUp className="h-4 w-4 mr-1" />
-                  )}
-                  {card.trend === "down" && (
-                    <TrendingDown className="h-4 w-4 mr-1" />
-                  )}
-                  {card.change}
-                </div>
-              ) : (
-                <div className={`mt-1  h-4`}></div>
-              )}
-            </div>
-          </div>
+            {...card}
+            hidden={
+              ((user?.role === "callrep" || !!repId) &&
+                card.title === "Active Reps") ||
+              (user?.role !== "superadmin" && card.title === "Total Revenue")
+            }
+          />
         ))}
+      </div>
+
+      {/* Booking Completion — separate from the per-call breakdown above:
+          this counts distinct orders (bookingStatus), not individual calls,
+          since a multi-recipient booking otherwise never shows up as a
+          single line item anywhere. */}
+      <div>
+        <h3 className="text-sm md:text-md font-semibold text-gray-500 mb-3">
+          Booking Completion
+        </h3>
+        <div className="grid grid-cols-2 xl:grid-cols-3 gap-6">
+          {bookingCompletionCards.map((card) => (
+            <StatCard key={card.title} {...card} />
+          ))}
+        </div>
       </div>
     </div>
   );

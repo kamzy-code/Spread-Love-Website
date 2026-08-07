@@ -1,6 +1,6 @@
 import AdminShell from "./AdminShell";
 import { TriangleAlert } from "lucide-react";
-import { useAdminAuth } from "@/hooks/authContext";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
 
 export default function PageError() {
   const {reload} = useAdminAuth();

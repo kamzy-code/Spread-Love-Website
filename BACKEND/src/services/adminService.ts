@@ -4,6 +4,7 @@ import bcrypt from "bcrypt";
 import { HttpError } from "../utils/httpError";
 import { adminLogger } from "../utils/logger";
 import { NextFunction } from "express";
+import auditLogService from "./auditLogService";
 
 interface UpdateRepOptions {
   targetRepId: string;
@@ -40,12 +41,25 @@ class AdminService {
       .select("-password -__v -createdAt -updatedAt");
   }
 
-  async deleteRepById(repId: string, role: string) {
+  async deleteRepById(repId: string, role: string, changedBy: string) {
     if (role === "callrep" || role === "salesrep") return;
 
-    return await Admin.deleteOne({
+    const result = await Admin.deleteOne({
       _id: new Types.ObjectId(repId),
     });
+
+    if (result.deletedCount > 0) {
+      await auditLogService.record({
+        entity: "rep",
+        entityId: repId,
+        field: "status",
+        oldValue: "active",
+        newValue: "deleted",
+        changedBy,
+      });
+    }
+
+    return result;
   }
 
   async updateRepInfo(args: UpdateRepOptions, next: NextFunction) {
@@ -136,6 +150,12 @@ class AdminService {
         "phone",
         "password",
       ];
+      const auditableFields = ["firstName", "lastName", "email", "status", "role", "phone"];
+      const before: Record<string, unknown> = {};
+      auditableFields.forEach((field) => {
+        before[field] = (rep as any)[field];
+      });
+
       allowedFields.forEach((field) => {
         if (info[field] !== undefined) {
           (rep as any)[field] = info[field];
@@ -144,6 +164,17 @@ class AdminService {
 
       await rep.save();
       const { password, ...repData } = rep.toObject();
+
+      await auditLogService.recordDiffs(
+        "rep",
+        targetRepId,
+        updaterId,
+        auditableFields.map((field) => ({
+          field,
+          oldValue: before[field],
+          newValue: (rep as any)[field],
+        }))
+      );
 
       adminLogger.info("Rep updated successfully", {
         targetRep: targetRepId,

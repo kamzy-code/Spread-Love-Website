@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import { classifyError } from "./errorClassifier";
 
 export function errorHandler(
   err: any,
@@ -12,8 +13,10 @@ export function errorHandler(
     return next(err);
   }
 
-  res.status(err.status || 500).json({
-    message: err.message || "Internal Server Error",
+  const { status, message } = classifyError(err);
+
+  res.status(status).json({
+    message,
     error: process.env.NODE_ENV === "production" ? undefined : err,
   });
   return;

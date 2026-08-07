@@ -2,12 +2,13 @@ import { Request, Response, NextFunction } from "express";
 import bookingService from "../services/bookingService";
 import { getLeastLoadedRep } from "../utils/getLeastLoadedRep";
 import { callStatus } from "../types/genralTypes";
+import { isLegacyBooking } from "../utils/bookingShape";
 import { AuthRequest } from "../middlewares/authMiddleware";
 import { Types } from "mongoose";
 import { castSortOder } from "../utils/castSortOrder";
-import { callType, occassionType } from "../types/genralTypes";
 import getDateRange from "../utils/getDateRange";
 import adminService from "../services/adminService";
+import auditLogService from "../services/auditLogService";
 import {
   subDays,
   subMonths,
@@ -21,94 +22,42 @@ import {
 } from "date-fns";
 import { HttpError } from "../utils/httpError";
 import { bookingLogger } from "../utils/logger";
-import { url } from "inspector";
-import { query } from "winston";
 
 class BookingController {
   // Customer Endpoints
+  // Orchestrates ID generation, booking creation (or re-use), and Paystack
+  // initialization server-side in one request — see bookingService.checkoutBooking.
   async createBooking(req: Request, res: Response, next: NextFunction) {
-    const {
-      bookingId,
-      callerName,
-      callerPhone,
-      callerEmail,
-      relationship,
-      recipientName,
-      recipientPhone,
-      country,
-      occassion,
-      callType,
-      callDate,
-      price,
-      message,
-      specialInstruction,
-      contactConsent = "no",
-      callRecording = "no",
-    } = req.body;
+    // body has already been validated against createBookingSchema by validateRequest
+    const { caller, recipients, contactConsent = "no", couponCode } = req.body;
 
-    bookingLogger.info("Booking creation initiated", {
-      bookingId,
-      callerName,
+    bookingLogger.info("Booking checkout initiated", {
+      callerName: caller.name,
       action: "CREATE_BOOKING",
     });
 
-    // return error if booking ID wasn't submitted
-    if (!bookingId) {
-      bookingLogger.warn("Booking creation failed: Booking ID required", {
-        action: "CREATE_BOOKING_FAILED",
-      });
-      next(new HttpError(400, "Booking ID required"));
-      return;
-    }
-
     try {
-      // call the service class to create a new booking and save in the DB
-      const newBooking = await bookingService.createBooking(
-        bookingId,
-        callerName,
-        callerPhone,
-        callerEmail,
-        relationship,
-        recipientName,
-        recipientPhone,
-        country,
-        occassion as occassionType,
-        callType as callType,
-        callDate as Date,
-        price,
-        message,
-        specialInstruction,
+      const { bookingId, paymentURL } = await bookingService.checkoutBooking(
+        caller,
+        recipients,
         contactConsent,
-        callRecording
+        couponCode
       );
 
-      // return failed if booking creation was unsuccessful
-      if (!newBooking) {
-        bookingLogger.warn("Booking creation failed: Booking not created", {
-          bookingId,
-          callerName,
-          action: "CREATE_BOOKING_FAILED",
-        });
-        next(new HttpError(500, "Failed to create booking"));
-        return;
-      }
-
-      // retrun successful with Booking ID if successful
       res.status(201).json({
         message: "Booking created successfully",
-        bookingId: newBooking.bookingId,
+        bookingId,
+        paymentURL,
       });
-      bookingLogger.info("Booking creation successful", {
-        id: newBooking._id,
-        bookingId: newBooking.bookingId,
-        callerName,
+      bookingLogger.info("Booking checkout successful", {
+        bookingId,
+        callerName: caller.name,
         action: "CREATE_BOOKING_SUCCESS",
       });
       return;
     } catch (error: any) {
-      bookingLogger.error(`Booking creation error: ${error.message}`, {
-        bookingId,
-        callerName,
+      bookingLogger.error(`Booking checkout error: ${error.message}`, {
+        callerName: caller.name,
         action: "CREATE_BOOKING_FAILED",
         error,
       });
@@ -178,36 +127,23 @@ class BookingController {
     }
   }
 
+  // caller/recipients are validated by validateRequest (updateBookingByCustomerSchema)
   async updateBookingByCustomer(
     req: Request,
     res: Response,
     next: NextFunction
   ) {
-    // extract the booking ID from URL and the update info from the request body
     const { bookingId } = req.params;
-    const info = req.body;
+    const { caller, recipients } = req.body;
 
     bookingLogger.info("Update booking by customer initiated", {
       bookingId,
       action: "UPDATE_BOOKING_BY_CUSTOMER",
     });
 
-    if (!bookingId) {
-      bookingLogger.warn(
-        "Update booking by customer failed: Booking ID required",
-        {
-          action: "UPDATE_BOOKING_BY_CUSTOMER_FAILED",
-        }
-      );
-      next(new HttpError(400, "Booking ID required"));
-      return;
-    }
-
     try {
-      // call service class to fetch the booking to be updated
       const booking = await bookingService.getBookingByBookingId(bookingId);
 
-      // if no booking was found return error message
       if (!booking) {
         bookingLogger.warn(
           "Update booking by customer failed: Booking not found",
@@ -220,66 +156,12 @@ class BookingController {
         return;
       }
 
-      // create an array of fields that shouldn't be updated by the customer
-      const disallowedFields = [
-        "bookingId",
-        "status",
-        "assingedRep",
-        "callType",
-      ];
-
-      // Loop through each key in the info object to check which fields can be updated
-      for (const field of Object.keys(info)) {
-        // If the field is not in the disallowedFields array, proceed to update
-        if (!disallowedFields.includes(field)) {
-          // Define statuses for which bookings cannot be updated
-          const disallowedStatus = ["successful"];
-
-          // If the booking status is in the disallowedStatus array, return an error and stop further processing
-          if (disallowedStatus.includes(booking.status as string)) {
-            bookingLogger.warn(
-              `Update booking by customer failed: Can't update booking with status ${booking.status}`,
-              {
-                bookingId,
-                bookingStatus: booking.status,
-                action: "UPDATE_BOOKING_BY_CUSTOMER_FAILED",
-              }
-            );
-            next(new HttpError(400, "Can't update this Booking"));
-            return;
-          }
-
-          // Dynamically update the booking object with the new value for the allowed field
-          // E.g., if field = "callerName", then booking["callerName"] = info["callerName"]
-          (booking as any)[field] = info[field];
-        } else {
-          // If the field is in the disallowedFields array, return an error and stop further processing
-          bookingLogger.warn(
-            `Update booking by customer failed: Field '${field}' cannot be updated by the customer`,
-            {
-              bookingId,
-              field,
-              action: "UPDATE_BOOKING_BY_CUSTOMER_FAILED",
-            }
-          );
-          next(
-            new HttpError(
-              403,
-              `Field '${field}' cannot be updated by the customer`
-            )
-          );
-          return;
-        }
-      }
-
-      // save the updated booking object and return success message
-      await booking.save();
-      res.status(200).json({ message: "Update Successful" });
-      bookingLogger.info("Update booking by customer successful", {
-        id: booking._id,
-        bookingId,
-        action: "UPDATE_BOOKING_BY_CUSTOMER_SUCCESS",
+      await bookingService.updateBookingByCustomer(booking, {
+        caller,
+        recipients,
       });
+
+      res.status(200).json({ message: "Update Successful" });
       return;
     } catch (error: any) {
       bookingLogger.error(
@@ -295,42 +177,54 @@ class BookingController {
     }
   }
 
-  async generateBookingID(req: Request, res: Response, next: NextFunction) {
-    bookingLogger.info("Generate Booking ID initiated", {
-      action: "GENERATE_BOOKING_ID",
-    });
-    try {
-      // call service method to generate ID
-      const ID = await bookingService.generateBookingId();
+  // Admin Endpoints
 
-      if (!ID) {
-        bookingLogger.warn("Generate Booking ID failed: ID not generated", {
-          action: "GENERATE_BOOKING_ID_FAILED",
+  // caller/recipients are validated by validateRequest (updateBookingByAdminSchema);
+  // bookingId (Mongo _id) validated by validateParams (bookingIdParamSchema)
+  async updateBookingByAdmin(req: AuthRequest, res: Response, next: NextFunction) {
+    const { bookingId } = req.params;
+    const { caller, recipients } = req.body;
+    const user = req.user!;
+
+    bookingLogger.info("Update booking by admin initiated", {
+      userId: user.userId,
+      role: user.role,
+      bookingId,
+      action: "UPDATE_BOOKING_BY_ADMIN",
+    });
+
+    try {
+      const booking = await bookingService.getBookingById(
+        bookingId,
+        user.userId,
+        user.role
+      );
+
+      if (!booking) {
+        bookingLogger.warn("Update booking by admin failed: Booking not found", {
+          userId: user.userId,
+          bookingId,
+          action: "UPDATE_BOOKING_BY_ADMIN_FAILED",
         });
-        next(new HttpError(500, "Failed to generate Booking ID"));
+        next(new HttpError(404, "Booking not found"));
         return;
       }
 
-      // return the booking ID
-      res.status(200).json({
-        ID,
-      });
-      bookingLogger.info("Generate Booking ID successful", {
-        id: ID,
-        action: "GENERATE_BOOKING_ID_SUCCESS",
-      });
+      await bookingService.updateBookingByAdmin(booking, { caller, recipients }, user.userId);
+
+      res.status(200).json({ message: "Update Successful" });
       return;
     } catch (error: any) {
-      bookingLogger.error(`Generate Booking ID error: ${error.message}`, {
-        action: "GENERATE_BOOKING_ID_FAILED",
+      bookingLogger.error(`Update booking by admin error: ${error.message}`, {
+        userId: user.userId,
+        bookingId,
+        action: "UPDATE_BOOKING_BY_ADMIN_FAILED",
         error,
       });
       next(error);
       return;
     }
   }
-
-  // Admin Endpoints
 
   // get a booking by the MongoDB id and not the generated booking ID
   async getBookingById(req: AuthRequest, res: Response, next: NextFunction) {
@@ -357,7 +251,7 @@ class BookingController {
 
     try {
       // call service class to fetch booking from DB
-      const booking = await bookingService.getBookingById(
+      const booking = await bookingService.getBookingByIdForDisplay(
         bookingId,
         user.userId,
         user.role
@@ -465,6 +359,7 @@ class BookingController {
     // extract all possible filtering parameters from the request query object.
     const {
       status,
+      bookingStatus,
       assignedRep,
       callType,
       country,
@@ -498,13 +393,16 @@ class BookingController {
 
     // create an empty query object for the DB search
     const searchQuery: any = {};
+    // each entry is an independent $or block; combined at the end via $and
+    // so legacy-shape and v2-shape (recipients[]) bookings both match.
+    const andConditions: any[] = [];
 
-    // add query fields to the query object only if they exist.
-    if (status) searchQuery.status = status;
-    if (occassion) searchQuery.occassion = occassion;
     if (paymentStatus) searchQuery.paymentStatus = paymentStatus;
+    if (bookingStatus) searchQuery.bookingStatus = bookingStatus;
+
     if (assignedRep)
       searchQuery.assignedRep = new Types.ObjectId(assignedRep as string);
+    
     if (confirmationMailsent !== undefined && confirmationMailsent !== null) {
       if (typeof confirmationMailsent === "boolean") {
         searchQuery.confirmationMailsent = confirmationMailsent;
@@ -513,13 +411,40 @@ class BookingController {
       }
     }
 
-    if (callType) searchQuery.callType = callType;
-    if (country) {
-      if (country === "local") {
-        searchQuery.country = /nigeria/i; // case-insensitive match for "nigeria"
-      } else if (country === "international") {
-        searchQuery.country = { $not: /nigeria/i }; // case-insensitive "not nigeria"
-      }
+    // status/occassion/callType/country can live on the flat (legacy) fields
+    // or on a recipient inside recipients[] (v2) — $elemMatch keeps all of a
+    // v2 filter combination scoped to the same recipient.
+    const legacyMatch: any = {};
+    const recipientMatch: any = {};
+    let hasShapeFilter = false;
+
+    if (status) {
+      legacyMatch.status = status;
+      recipientMatch.callStatus = status;
+      hasShapeFilter = true;
+    }
+    if (occassion) {
+      legacyMatch.occassion = occassion;
+      recipientMatch.occassion = occassion;
+      hasShapeFilter = true;
+    }
+    if (callType) {
+      legacyMatch.callType = callType;
+      recipientMatch.callType = callType;
+      hasShapeFilter = true;
+    }
+    if (country === "local" || country === "international") {
+      const countryPattern =
+        country === "local" ? /nigeria/i : { $not: /nigeria/i };
+      legacyMatch.country = countryPattern;
+      recipientMatch.country = countryPattern;
+      hasShapeFilter = true;
+    }
+
+    if (hasShapeFilter) {
+      andConditions.push({
+        $or: [legacyMatch, { recipients: { $elemMatch: recipientMatch } }],
+      });
     }
 
     const dateRange = getDateRange(
@@ -536,22 +461,46 @@ class BookingController {
           $lte: dateRange.end,
         };
       } else {
-        searchQuery.callDate = {
-          $gte: dateRange.start,
-          $lte: dateRange.end,
-        };
+        andConditions.push({
+          $or: [
+            { callDate: { $gte: dateRange.start, $lte: dateRange.end } },
+            // $elemMatch is required here: without it, Mongo treats $gte and
+            // $lte as independently satisfiable by different array elements,
+            // so a booking with recipients on e.g. Aug 10 and Aug 15 would
+            // wrongly match every date in between too.
+            {
+              recipients: {
+                $elemMatch: {
+                  callDate: { $gte: dateRange.start, $lte: dateRange.end },
+                },
+              },
+            },
+          ],
+        });
       }
     }
 
     if (search) {
       const regex = new RegExp(req.query.search as string, "i");
-      searchQuery.$or = [
-        { callerName: regex },
-        { bookingId: regex },
-        { callerPhone: regex },
-        { recipientName: regex },
-        { recipientPhone: regex },
-      ];
+      andConditions.push({
+        $or: [
+          { callerName: regex },
+          { bookingId: regex },
+          { callerPhone: regex },
+          { callerEmail: regex },
+          { recipientName: regex },
+          { recipientPhone: regex },
+          { "caller.name": regex },
+          { "caller.phone": regex },
+          { "caller.email": regex },
+          { "recipients.recipientName": regex },
+          { "recipients.recipientPhone": regex },
+        ],
+      });
+    }
+
+    if (andConditions.length > 0) {
+      searchQuery.$and = andConditions;
     }
 
     // if the user is a call rep, only fetch bookings assigned to them
@@ -627,8 +576,9 @@ class BookingController {
     res: Response,
     next: NextFunction
   ) {
-    // extract the booking ID, new status and user object.
-    const { bookingId } = req.params;
+    // extract the booking ID, optional recipient ID (v2 bookings only),
+    // new status and user object.
+    const { bookingId, recipientId } = req.params;
     const { status } = req.body;
     const user = req.user!;
 
@@ -636,37 +586,19 @@ class BookingController {
       userId: user.userId,
       role: user.role,
       id: bookingId,
+      recipientId,
       status,
       action: "UPDATE_BOOKING_STATUS",
     });
 
     try {
-      // create an array of allowed status value
-      const allowedStatus = [
-        "pending",
-        "successful",
-        "rejected",
-        "rescheduled",
-        "unsuccessful",
-      ];
-
-      // return error message if new status is not in the allowed status array
-      if (!allowedStatus.includes(status)) {
-        bookingLogger.warn("Update booking status failed: Invalid status", {
-          userId: user.userId,
-          role: user.role,
-          id: bookingId,
-          status,
-          action: "UPDATE_BOOKING_STATUS_FAILED",
-        });
-        next(new HttpError(400, "Invalid status"));
-        return;
-      }
-
-      const booking = await bookingService.getBookingById(
+      // status is validated by validateRequest (updateBookingStatusSchema)
+      const booking = await bookingService.updateCallStatus(
         bookingId,
         user.userId,
-        user.role
+        user.role,
+        status,
+        recipientId
       );
 
       if (!booking) {
@@ -679,9 +611,6 @@ class BookingController {
         next(new HttpError(404, "Booking not found"));
         return;
       }
-
-      booking.status = status;
-      await booking.save();
 
       res.status(201).json({ message: "Status updated" });
       bookingLogger.info("Update booking status successful", {
@@ -721,26 +650,7 @@ class BookingController {
       action: "ASSIGN_CALL_TO_REP",
     });
 
-    if (!bookingId) {
-      bookingLogger.warn("Assign call to rep failed: Booking ID required", {
-        userId: user.userId,
-        role: user.role,
-        action: "ASSIGN_CALL_TO_REP_FAILED",
-      });
-      next(new HttpError(400, "Booking ID required"));
-      return;
-    }
-
-    if (!repId) {
-      bookingLogger.warn("Assign call to rep failed: Rep ID required", {
-        userId: user.userId,
-        role: user.role,
-        action: "ASSIGN_CALL_TO_REP_FAILED",
-      });
-      next(new HttpError(400, "Rep ID required"));
-      return;
-    }
-
+    // repId is validated by validateQuery (assignCallToRepQuerySchema)
     // check the auto assign status
     const isAutoAssign = (repId as string) === "auto";
 
@@ -798,22 +708,32 @@ class BookingController {
         targetRep = targetRep._id as string;
       }
 
-      // update the assigned rep to the new targetted rep
+      // update the assigned rep to the new targetted rep — assignedRep comes
+      // populated from getBookingById, so pull the id off the populated doc
+      // rather than calling .toString() on the whole document.
+      const previousAssignedRep = (booking.assignedRep as any)?._id?.toString();
       booking.assignedRep = new Types.ObjectId(targetRep);
 
       // create an array of booking that can't be updated based on their status
       const disallowedStatuses = ["successful", "unsuccessful", "rejected"];
+      const currentStatus = isLegacyBooking(booking)
+        ? (booking.status as string)
+        : booking.bookingStatus;
 
       // check if the booking has a status that's part of the disallowed statuses and return error message without saving the updated booking object.
-      if (disallowedStatuses.includes(booking.status as string)) {
+      const isBlocked = isLegacyBooking(booking)
+        ? disallowedStatuses.includes(currentStatus as string)
+        : currentStatus === "completed";
+
+      if (isBlocked) {
         bookingLogger.warn(
-          `Assign call to rep failed: Can't re-assign booking with status ${booking.status}`,
+          `Assign call to rep failed: Can't re-assign booking with status ${currentStatus}`,
           {
             userId: user.userId,
             role: user.role,
             id: bookingId,
             repId: targetRep,
-            status: booking.status,
+            status: currentStatus,
             action: "ASSIGN_CALL_TO_REP_FAILED",
           }
         );
@@ -821,15 +741,22 @@ class BookingController {
         next(
           new HttpError(
             400,
-            ` Can't re-assign booking with status ${booking.status}`
+            ` Can't re-assign booking with status ${currentStatus}`
           )
         );
         return;
       }
 
-      // else update the booking status to pending if the booking status is not part of the disallowed statuses, save and return success message with the new rep ID
-      booking.status = "pending" as callStatus;
+      // legacy bookings reset to pending on reassignment; v2 per-recipient
+      // call statuses are untouched by a rep reassignment
+      if (isLegacyBooking(booking)) {
+        booking.status = "pending" as callStatus;
+      }
       await booking.save();
+
+      await auditLogService.recordDiffs("booking", booking.bookingId, user.userId, [
+        { field: "assignedRep", oldValue: previousAssignedRep, newValue: String(targetRep) },
+      ]);
 
       res.status(200).json({ message: "Booking assigned", repId: targetRep });
       bookingLogger.info("Assign call to rep successful", {
@@ -911,6 +838,18 @@ class BookingController {
       // Add more as needed
     }
 
+    
+    const callDateMatch = (range: { start: Date; end: Date }) => ({
+      $or: [
+        { callDate: { $gte: range.start, $lte: range.end } },
+        {
+          recipients: {
+            $elemMatch: { callDate: { $gte: range.start, $lte: range.end } },
+          },
+        },
+      ],
+    });
+
     if (dateRange) {
       if (fetchParam === "bookingDate") {
         matchStage.createdAt = {
@@ -918,25 +857,29 @@ class BookingController {
           $lte: dateRange.end,
         };
       } else {
-        matchStage.callDate = {
-          $gte: dateRange.start,
-          $lte: dateRange.end,
-        };
+        Object.assign(matchStage, callDateMatch(dateRange));
       }
     }
 
     // Build previous period match stage
     const matchStagePrev = { ...matchStage };
     if (prevDateRange) {
-      matchStagePrev.callDate = {
-        $gte: prevDateRange.start,
-        $lte: prevDateRange.end,
-      };
+      if (fetchParam === "bookingDate") {
+        matchStagePrev.createdAt = {
+          $gte: prevDateRange.start,
+          $lte: prevDateRange.end,
+        };
+      } else {
+        Object.assign(matchStagePrev, callDateMatch(prevDateRange));
+      }
     }
 
     try {
       // Current period
       const analytics = await bookingService.getAnalytics(matchStage);
+      const bookingBreakdown = await bookingService.getBookingStatusBreakdown(
+        matchStage
+      );
       const totalBookings = await bookingService.getTotalBookingsCount(
         matchStage
       );
@@ -980,6 +923,7 @@ class BookingController {
       res.status(200).json({
         totalBookings,
         breakdown: analytics,
+        bookingBreakdown,
         percentageIncrease,
         ...(user.role === "superadmin" && {
           totalRevenue,

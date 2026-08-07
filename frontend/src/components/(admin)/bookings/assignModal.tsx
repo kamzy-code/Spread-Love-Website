@@ -6,6 +6,7 @@ import { useFetchReps } from "@/hooks/useReps";
 import { useAssignBooking } from "@/hooks/useBookings";
 import ActionStatusModal from "../ui/updateModal";
 import { useQueryClient } from "@tanstack/react-query";
+import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
 
 export default function AssignModal({
   setShowAssignForm,
@@ -48,6 +49,8 @@ export default function AssignModal({
     assignMutation.mutate();
   };
 
+  useLockBodyScroll();
+
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -60,6 +63,10 @@ export default function AssignModal({
 
       queryClient.invalidateQueries({
         queryKey: ["booking", booking._id],
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: ["auditLogs", "booking", booking.bookingId],
       });
 
       queryClient.refetchQueries({

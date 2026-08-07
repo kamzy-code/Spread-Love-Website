@@ -7,6 +7,10 @@ import adminRouter from "./routes/adminRoute";
 import emailRouter from "./routes/emailRoute";
 import logRouter from "./routes/logRouter";
 import paymentRouter from "./routes/paymentRoute";
+import couponRouter from "./routes/couponRoute";
+import customerRouter from "./routes/customerRoute";
+import auditLogRouter from "./routes/auditLogRoute";
+import serviceRouter from "./routes/serviceRoute";
 import rateLimit from "express-rate-limit";
 import cookieParser from "cookie-parser";
 import { errorHandler } from "./middlewares/errorHandler";
@@ -27,6 +31,7 @@ app.use(
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"], // Ad
+    exposedHeaders: ["Content-Disposition"], // needed for frontend CSV export filenames
   })
 );
 app.use(express.json());
@@ -35,7 +40,7 @@ app.use(cookieParser());
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100, // Limit each IP to 100 requests per windowMs
-  message: "Too many requests from this IP, please try again later.",
+  message: { message: "Too many requests. Please try again in a few minutes." },
 });
 app.use("/api", limiter);
 
@@ -66,6 +71,10 @@ app.use("/api/rep", adminRouter);
 app.use("/api/email", emailRouter);
 app.use("/api/logs", logRouter);
 app.use("/api/payment", paymentRouter);
+app.use("/api/coupon", couponRouter);
+app.use("/api/customer", customerRouter);
+app.use("/api/audit-log", auditLogRouter);
+app.use("/api/service", serviceRouter);
 
 app.use((req, res) => {
   res.status(404).json({ message: "Route not found" });

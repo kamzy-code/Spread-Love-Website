@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { User, Lock, EyeOff, Eye, TriangleAlert } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { useAdminAuth } from "@/hooks/authContext";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
 
 export default function LoginForm() {
   const { login, loading, user } = useAdminAuth();

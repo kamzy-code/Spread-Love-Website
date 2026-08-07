@@ -3,13 +3,22 @@ import MiniLoader from "../ui/miniLoader";
 import { Calendar, XCircle } from "lucide-react";
 import { formatToYMD } from "@/lib/formatDate";
 import { getStatusColor, getStatusIcon } from "@/lib/getStatusColor";
-import { useFilter } from "./dashboardFilterContext";
+import { useDashboardFilterStore } from "@/store/dashboardFilterStore";
 import { useRouter } from "next/navigation";
 import { FilterType, Booking, BookingFilters } from "@/lib/types";
+import {
+  getDisplayCallerName,
+  getDisplayBookingStatus,
+  getPrimaryRecipient,
+} from "@/lib/bookingDisplay";
 
 export default function RecentBookings() {
-  const { appliedFilterType, appliedFetchParam, appliedDate, appliedEndDate, appliedStartDate } =
-    useFilter();
+  const useFilterStore = useDashboardFilterStore();
+  const appliedFilterType = useFilterStore((s) => s.appliedFilterType);
+  const appliedFetchParam = useFilterStore((s) => s.appliedFetchParam);
+  const appliedDate = useFilterStore((s) => s.appliedDate);
+  const appliedEndDate = useFilterStore((s) => s.appliedEndDate);
+  const appliedStartDate = useFilterStore((s) => s.appliedStartDate);
 
   const filters: BookingFilters = {
     filterType: appliedFilterType as FilterType,
@@ -78,6 +87,7 @@ export default function RecentBookings() {
         ) : (
           <div>
             {(bookings as Booking[])?.map((booking: Booking) => {
+              const status = getDisplayBookingStatus(booking);
               return (
                 <div
                   key={booking.bookingId}
@@ -86,21 +96,21 @@ export default function RecentBookings() {
                 >
                   <div>
                     <h3 className="text-brand-start text-sm font-medium">
-                      {booking.callerName}
+                      {getDisplayCallerName(booking)}
                     </h3>
                     <p className="text-xs text-gray-700 max-w-[70%] sm:max-w-full">{`${
-                      booking.occassion
+                      getPrimaryRecipient(booking).occassion
                     } - ${formatToYMD(booking.createdAt)}`}</p>
                   </div>
 
                   <div
                     className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(
-                      booking.status as string,
+                      status,
                       "badge"
                     )}`}
                   >
-                    {getStatusIcon(booking.status as string, true)}
-                    <span className="ml-1 capitalize">{booking.status}</span>
+                    {getStatusIcon(status, true)}
+                    <span className="ml-1 capitalize">{status.replace("_", " ")}</span>
                   </div>
                 </div>
               );

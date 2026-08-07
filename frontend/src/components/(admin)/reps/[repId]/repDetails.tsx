@@ -3,7 +3,7 @@ import { useFetchRep } from "@/hooks/useReps";
 import { useState, useEffect } from "react";
 import { XCircle, Users, TriangleAlert } from "lucide-react";
 import MiniLoader from "../../ui/miniLoader";
-import { useAdminAuth } from "@/hooks/authContext";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
 import PageLoading from "../../ui/pageLoading";
 import PageError from "../../ui/pageError";
 import { motion } from "framer-motion";

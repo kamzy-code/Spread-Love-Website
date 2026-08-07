@@ -5,15 +5,12 @@ import {
   DropdownMenuLabel,
   DropdownMenuItem,
   DropdownMenuSeparator,
-  DropdownMenuSub,
-  DropdownMenuSubTrigger,
-  DropdownMenuSubContent,
 } from "@/components/ui/dropdown-menu";
 
 import { Button } from "@/components/ui/button";
 import { MoreVertical, MoreHorizontal } from "lucide-react";
 import { Booking } from "@/lib/types";
-import { useAdminAuth } from "@/hooks/authContext";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
 
 export default function ItemDropDown({
   booking,
@@ -57,111 +54,9 @@ export default function ItemDropDown({
 
         <DropdownMenuSeparator />
 
-        {/* Submenu for Update Status */}
-        <DropdownMenuSub>
-          <DropdownMenuSubTrigger onClick={(e) => e.stopPropagation()}>
-            Update Status
-          </DropdownMenuSubTrigger>
-          <DropdownMenuSubContent>
-            <DropdownMenuItem
-              onClick={(e) => {
-                e.stopPropagation();
-                setSelectedbooking({ ...booking, status: "pending" }, "update");
-              }}
-            >
-              <label className={`flex items-center px-2 py-1 cursor-pointer`}>
-                <input
-                  type="radio"
-                  name="statusOption"
-                  checked={booking.status === "pending"}
-                  readOnly
-                  className="mr-2"
-                />
-                Pending
-              </label>
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={(e) => {
-                e.stopPropagation();
-                setSelectedbooking(
-                  { ...booking, status: "successful" },
-                  "update"
-                );
-              }}
-            >
-              <label className={`flex items-center px-2 py-1 cursor-pointer`}>
-                <input
-                  type="radio"
-                  name="statusOption"
-                  checked={booking.status === "successful"}
-                  readOnly
-                  className="mr-2"
-                />
-                Successful
-              </label>
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={(e) => {
-                e.stopPropagation();
-                setSelectedbooking(
-                  { ...booking, status: "rejected" },
-                  "update"
-                );
-              }}
-            >
-              <label className={`flex items-center px-2 py-1 cursor-pointer`}>
-                <input
-                  type="radio"
-                  name="statusOption"
-                  checked={booking.status === "rejected"}
-                  readOnly
-                  className="mr-2"
-                />
-                Rejected
-              </label>
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={(e) => {
-                e.stopPropagation();
-                setSelectedbooking(
-                  { ...booking, status: "rescheduled" },
-                  "update"
-                );
-              }}
-            >
-              <label className={`flex items-center px-2 py-1 cursor-pointer`}>
-                <input
-                  type="radio"
-                  name="statusOption"
-                  checked={booking.status === "rescheduled"}
-                  readOnly
-                  className="mr-2"
-                />
-                Rescheduled
-              </label>
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={(e) => {
-                e.stopPropagation();
-                setSelectedbooking(
-                  { ...booking, status: "unsuccessful" },
-                  "update"
-                );
-              }}
-            >
-              <label className={`flex items-center px-2 py-1 cursor-pointer`}>
-                <input
-                  type="radio"
-                  name="statusOption"
-                  checked={booking.status === "unsuccessful"}
-                  readOnly
-                  className="mr-2"
-                />
-                Unsuccessful
-              </label>
-            </DropdownMenuItem>
-          </DropdownMenuSubContent>
-        </DropdownMenuSub>
+        {/* Call-status updates are per-recipient now (a v2 booking can hold
+            multiple recipients with independent outcomes) — that action lives
+            on the booking detail page, scoped to each recipient, not here. */}
 
         {user?.role !== "callrep" && (
           <>

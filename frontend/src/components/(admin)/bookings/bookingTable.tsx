@@ -1,18 +1,18 @@
-import { useBookingFilter } from "./bookingFilterContext";
+import { useBookingFilterStore } from "@/store/bookingFilterStore";
 import {
   useBookings,
-  useUpdateStatus,
   useDeleteBooking,
   useSendBookingConfirmation,
 } from "@/hooks/useBookings";
 import MiniLoader from "../ui/miniLoader";
 import { XCircle, Calendar } from "lucide-react";
 import Pagination from "../ui/pagination";
-import { BookingFilterContex, BookingFilters, Booking } from "@/lib/types";
+import { BookingFilters, Booking } from "@/lib/types";
+import { getDisplayCallerEmail } from "@/lib/bookingDisplay";
 import { useEffect, useState } from "react";
 import { getColumnsByRole } from "./data-table/columns";
 import { DataTable } from "../ui/data-table";
-import { useAdminAuth } from "@/hooks/authContext";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
 import GridItem from "./data-table/grid-table";
 import { useQueryClient } from "@tanstack/react-query";
 import ActionStatusModal from "../ui/updateModal";
@@ -27,9 +27,10 @@ import CompletePaymentModal from "./completePayment";
 export default function BookingTable() {
   const queryClient = useQueryClient();
   const { user } = useAdminAuth();
-  const fullFilter: BookingFilterContex = useBookingFilter();
+  const appliedFormData = useBookingFilterStore((s) => s.appliedFormData);
+  const debouncedValue = useBookingFilterStore((s) => s.debouncedValue);
+  const setPage = useBookingFilterStore((s) => s.setPage);
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
-  const [updateStatusAction, setUpdateStatusAction] = useState(false);
   const [resendMailStatusAction, setResendMailStatusAction] = useState(false);
   const [verifyTransactionAction, setVerifyTransactionAction] = useState(false);
   const [showActionStatusModal, setShowActionStatusModal] = useState(false);
@@ -41,30 +42,20 @@ export default function BookingTable() {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  const { setPage, ...filter } = fullFilter;
-  const { search: searchTerm } = filter;
-
   const { data, error, isLoading, isFetching, refetch } = useBookings(
-    filter as BookingFilters,
-    searchTerm as string
+    { ...appliedFormData, search: debouncedValue } as BookingFilters,
+    debouncedValue
   );
 
   const { data: bookings, meta } = data ?? { data: [], meta: undefined };
 
-  const updateStatusMutation = useUpdateStatus({
-    id: selectedBooking?._id as string,
-    status: selectedBooking?.status as string,
-  });
   const deleteBookingMutation = useDeleteBooking(deletedBooking?._id as string);
   const resendMailMutation = useSendBookingConfirmation(
     selectedBooking?.bookingId as string
   );
-  const verifyTransactionMutation = useVerifyTransaction(
-    selectedBooking?.bookingId as string
-  );
+  const verifyTransactionMutation = useVerifyTransaction();
   const completePaymentMutation = useInitializeTransaction({
-    email: selectedBooking?.callerEmail as string,
-    price: selectedBooking?.price as string,
+    email: selectedBooking ? getDisplayCallerEmail(selectedBooking) : "",
   });
 
   const tableColumns = getColumnsByRole(
@@ -72,9 +63,7 @@ export default function BookingTable() {
     (booking: Booking, action: string) => {
       setSelectedBooking(booking);
       const runAction = () => {
-        action === "update"
-          ? setUpdateStatusAction(true)
-          : action === "assign"
+        action === "assign"
           ? setShowAssignModal(true)
           : action === "resend"
           ? setResendMailStatusAction(true)
@@ -91,16 +80,6 @@ export default function BookingTable() {
   );
 
   useEffect(() => {
-    if (selectedBooking && updateStatusAction) {
-      updateStatusMutation.mutateAsync();
-      setShowActionStatusModal(true);
-      queryClient.invalidateQueries({
-        queryKey: ["booking", selectedBooking?._id],
-      });
-    }
-  }, [selectedBooking, updateStatusAction]);
-
-  useEffect(() => {
     if (selectedBooking && resendMailStatusAction) {
       resendMailMutation.mutateAsync();
       setShowActionStatusModal(true);
@@ -112,7 +91,7 @@ export default function BookingTable() {
 
   useEffect(() => {
     if (selectedBooking && verifyTransactionAction) {
-      verifyTransactionMutation.mutateAsync();
+      verifyTransactionMutation.mutateAsync(selectedBooking?.bookingId as string);
       setShowActionStatusModal(true);
       queryClient.invalidateQueries({
         queryKey: ["booking", selectedBooking?._id],
@@ -125,19 +104,6 @@ export default function BookingTable() {
       completePaymentMutation.mutateAsync(selectedBooking.bookingId);
     }
   }, [selectedBooking, completePaymentAction]);
-
-  useEffect(() => {
-    if (updateStatusMutation.isSuccess) {
-      queryClient.invalidateQueries({
-        queryKey: ["bookings"],
-      });
-      refetch();
-
-      queryClient.refetchQueries({
-        queryKey: ["booking", selectedBooking?._id],
-      });
-    }
-  }, [updateStatusMutation.isSuccess]);
 
   useEffect(() => {
     if (deleteBookingMutation.isSuccess) {
@@ -188,7 +154,6 @@ export default function BookingTable() {
     if (
       isLoading ||
       isFetching ||
-      updateStatusMutation.isPending ||
       deleteBookingMutation.isPending ||
       resendMailMutation.isPending ||
       showActionStatusModal
@@ -202,12 +167,7 @@ export default function BookingTable() {
     return () => {
       document.body.style.overflow = "";
     };
-  }, [
-    isLoading,
-    isFetching,
-    updateStatusMutation.isPending,
-    showActionStatusModal,
-  ]);
+  }, [isLoading, isFetching, showActionStatusModal]);
 
   useEffect(() => {
     if (deletedBooking && confirmDelete) {
@@ -255,7 +215,6 @@ export default function BookingTable() {
       <div>
         {(isLoading ||
           isFetching ||
-          updateStatusMutation.isPending ||
           deleteBookingMutation.isPending ||
           resendMailMutation.isPending ||
           verifyTransactionMutation.isPending ||
@@ -274,18 +233,6 @@ export default function BookingTable() {
             <p className="text-sm md:text-[1rem]">No Bookings Available</p>
           </div>
         )}
-
-        {showActionStatusModal &&
-          updateStatusMutation.error &&
-          !updateStatusMutation.isPending && updateStatusAction && (
-            <ActionStatusModal
-              setShowModal={() => {
-                setShowActionStatusModal(false);
-                setUpdateStatusAction(false);
-              }}
-              error={updateStatusMutation.error.message}
-            ></ActionStatusModal>
-          )}
 
         {showActionStatusModal &&
           deleteBookingMutation.error &&
@@ -329,18 +276,6 @@ export default function BookingTable() {
                 setCompletePaymentAction(false);
               }}
               error={"Error generating payment link"}
-            ></ActionStatusModal>
-          )}
-
-        {showActionStatusModal &&
-          !updateStatusMutation.error &&
-          updateStatusMutation.isSuccess && updateStatusAction && (
-            <ActionStatusModal
-              setShowModal={() => {
-                setShowActionStatusModal(false);
-                setUpdateStatusAction(false);
-              }}
-              success="Booking status updated successfully!"
             ></ActionStatusModal>
           )}
 
@@ -409,9 +344,7 @@ export default function BookingTable() {
                     setSelectedBooking={(booking: Booking, action: string) => {
                       setSelectedBooking(booking);
                       const runAction = () => {
-                        action === "update"
-                          ? setUpdateStatusAction(true)
-                          : action === "assign"
+                        action === "assign"
                           ? setShowAssignModal(true)
                           : action === "resend"
                           ? setResendMailStatusAction(true)

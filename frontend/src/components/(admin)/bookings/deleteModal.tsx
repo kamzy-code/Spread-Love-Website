@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { Trash2 } from "lucide-react";
+import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
 
 export default function DeleteConfirmationModal({
   setShowDeleteModal: setShowDeleteModal,
@@ -12,6 +13,8 @@ export default function DeleteConfirmationModal({
   resetDeletedBooking: () => void;
   bookingID: string;
 }) {
+  useLockBodyScroll();
+
   return (
     <div>
       <div className="fixed z-50 bg-black/50 top-0 left-0 right-0 bottom-0"></div>

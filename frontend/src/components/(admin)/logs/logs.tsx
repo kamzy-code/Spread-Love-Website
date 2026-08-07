@@ -1,5 +1,5 @@
 "use client";
-import { useAdminAuth } from "@/hooks/authContext";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { useState, useEffect } from "react";
 import PageLoading from "../ui/pageLoading";
 import PageError from "../ui/pageError";
@@ -19,6 +19,12 @@ export default function Logs() {
     setMounted(true);
   }, []);
 
+  useEffect(() => {
+    if (authStatus === "unauthenticated") {
+      router.replace("/admin");
+    }
+  }, [authStatus, router]);
+
   if (!mounted) {
     return null;
   }
@@ -32,7 +38,6 @@ export default function Logs() {
   }
 
   if (authStatus !== "authenticated") {
-    router.replace("/admin");
     return null;
   }
   if (user?.role !== "superadmin") {

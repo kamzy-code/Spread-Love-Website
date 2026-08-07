@@ -1,31 +1,24 @@
 import { Request, Response, NextFunction } from "express";
 import { paymentLogger } from "../utils/logger";
 import paymentService from "../services/paymentService";
+import emailService from "../services/emailService";
+import customerService from "../services/customerService";
+import { getCallerFromBooking } from "../utils/bookingShape";
 import { HttpError } from "../utils/httpError";
 import bookingService from "../services/bookingService";
 class PaymentController {
+  // email/bookingId are validated by validateQuery/validateParams middleware
+  // (initializeTransactionQuerySchema/initializeTransactionParamsSchema)
+  // before this handler runs.
   async initializeTransaction(req: Request, res: Response, next: NextFunction) {
-    const { email, amount } = req.query;
+    const { email } = req.query;
     const { bookingId } = req.params;
 
     paymentLogger.info("Initialize transaction triggered", {
       email,
-      amount,
       bookingId,
       action: "INITIALIZE_TRANSACTION",
     });
-
-    if (!email || !amount || !bookingId) {
-      paymentLogger.warn("Initialized transaction failed: Missing fields", {
-        email,
-        amount,
-        bookingId,
-        action: "INITIALIZE_TRANSACTION_FAILED",
-      });
-
-      next(new HttpError(400, "All fields are required"));
-      return;
-    }
 
     try {
       const booking = await bookingService.getBookingByBookingId(bookingId);
@@ -35,7 +28,6 @@ class PaymentController {
           "Initialized transaction failed: Booking not found",
           {
             email,
-            amount,
             bookingId,
             action: "INITIALIZE_TRANSACTION_FAILED",
           }
@@ -45,44 +37,26 @@ class PaymentController {
         return;
       }
 
-      if (booking.paymentURL) {
-        res.status(200).json({
-          message: "Transaction initialized successfully",
-          data: { authorization_url: booking.paymentURL },
-        });
-
-        paymentLogger.info(
-          "Paystack initialize transaction URL retrieved from booking data",
-          {
-            email,
-            amount: Number(amount) * 100,
-            paymentURL: booking.paymentURL,
-            bookingId,
-            action: "INITIALIZE_TRANSACTION_SUCCESS",
-          }
-        );
-
-        return;
-      }
-
-      const response = await paymentService.initialzeTransaction(
-        email as string,
-        Number(amount),
-        bookingId as string
+      const data = await paymentService.initializePaymentForBooking(
+        booking,
+        email as string
       );
 
-      booking.paymentURL = response.data.authorization_url;
-      await booking.save();
+      paymentLogger.info("Transaction initialized successfully", {
+        email,
+        bookingId,
+        paymentURL: data.authorization_url,
+        action: "INITIALIZE_TRANSACTION_SUCCESS",
+      });
 
       res.status(200).json({
         message: "Transaction initialized successfully",
-        data: response.data,
+        data,
       });
       return;
     } catch (error: any) {
       paymentLogger.error(`Initialize transaction failed: ${error.message}`, {
         email,
-        amount,
         bookingId,
         error: error.message,
         action: "INITIALIZE_TRANSACTION_FAILED",
@@ -93,6 +67,7 @@ class PaymentController {
     }
   }
 
+  // reference is validated by validateQuery middleware (verifyPaymentQuerySchema).
   async verifyPaymentController(
     req: Request,
     res: Response,
@@ -104,15 +79,7 @@ class PaymentController {
       action: "VERIFY_TRANSACTION",
     });
 
-    if (!reference) {
-      paymentLogger.warn("Verification failed: No reference provided", {
-        action: "VERIFY_TRANSACTION_FAILED",
-      });
-      next(new HttpError(400, "Transaction reference is required"));
-      return;
-    }
-
-    const booking = await bookingService.getBookingByBookingId(
+    const booking = await bookingService.getBookingByPaymentReference(
       reference as string
     );
 
@@ -130,11 +97,15 @@ class PaymentController {
         reference as string
       );
 
+      const expectedAmount = booking.totalPrice ?? Number(booking.price);
+
       if (
         result.status &&
         result.data.status === "success" &&
-        result.data.amount >= Number(booking.price) * 100
+        result.data.amount >= expectedAmount * 100
       ) {
+        const wasPaid = booking.paymentStatus === "paid";
+
         booking.paymentStatus = "paid";
         booking.paymentReference = reference as string;
 
@@ -144,6 +115,40 @@ class PaymentController {
           reference,
           action: "VERIFY_TRANSACTION_SUCCESS",
         });
+
+        // Customer tiering is keyed off payment confirmation, not booking
+        // completion — only fire on the actual pending/failed -> paid
+        // transition so re-verifying an already-paid reference (customer
+        // refresh, admin re-check) never double-counts a booking.
+        if (!wasPaid) {
+          try {
+            await customerService.recordPaidBooking(getCallerFromBooking(booking));
+          } catch (tierError: any) {
+            paymentLogger.error(
+              `Customer tier recording failed after payment verification: ${tierError.message}`,
+              {
+                reference,
+                bookingId: booking.bookingId,
+                action: "VERIFY_TRANSACTION_TIER_HOOK_FAILED",
+              }
+            );
+          }
+        }
+
+        // Best-effort: a failed confirmation email must not fail an
+        // already-verified payment response back to the customer.
+        try {
+          await emailService.sendBookingConfirmationIfDue(booking);
+        } catch (emailError: any) {
+          paymentLogger.error(
+            `Confirmation mail failed after payment verification: ${emailError.message}`,
+            {
+              reference,
+              bookingId: booking.bookingId,
+              action: "VERIFY_TRANSACTION_CONFIRMATION_MAIL_FAILED",
+            }
+          );
+        }
 
         res.status(200).json({
           message: "Payment verified successfully",

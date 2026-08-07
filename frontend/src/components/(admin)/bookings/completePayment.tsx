@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { X } from "lucide-react";
 import { useState } from "react";
+import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
 
 export default function CompletePaymentModal({
   paymentLink,
@@ -10,6 +11,7 @@ export default function CompletePaymentModal({
   setShowPaymentModal: (val: boolean) => void;
 }) {
   const [linkCopied, setLinkCopied] = useState(false);
+  useLockBodyScroll();
 
   return (
     <div className="">

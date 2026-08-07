@@ -1,8 +1,9 @@
 # Root
 .env
-.claude
-plan
-prod_snapshot
+/plan
+/prod_snapshot
+/scripts
+/.claude
 
 # Node
 node_modules/
@@ -11,7 +12,8 @@ node_modules/
 /backend/dist/
 /backend/node_modules/
 /backend/.env
-/backend/src/scripts/
+/backend/src/scripts/refresh-dev-db.sh
+/backend/src/prod_snapshot
 
 # Frontend
 /frontend/.next/

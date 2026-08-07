@@ -1,4 +1,4 @@
-import { useAdminAuth } from "@/hooks/authContext";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { useUpdateRep } from "@/hooks/useReps";
 import { Rep } from "@/lib/types";
 import { motion } from "framer-motion";
@@ -8,7 +8,7 @@ import ActionStatusModal from "../../ui/updateModal";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { Eye, EyeOff, Filter } from "lucide-react";
-import DashboardContextProvider from "../../dashboard/dashboardFilterContext";
+import DashboardFilterPanel from "../../dashboard/DashboardFilterPanel";
 import Analytics from "../../dashboard/analytics";
 
 export function Details({ repData }: { repData: Rep }) {
@@ -487,9 +487,8 @@ export function Details({ repData }: { repData: Rep }) {
               Filter
             </button>
           </div>
-          <DashboardContextProvider showFilter={showFilter} repId={repData._id}>
-            <Analytics></Analytics>
-          </DashboardContextProvider>
+          <DashboardFilterPanel showFilter={showFilter} repId={repData._id} />
+          <Analytics repId={repData._id}></Analytics>
         </div>
       )}
 

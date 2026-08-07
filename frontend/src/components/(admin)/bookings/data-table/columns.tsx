@@ -4,6 +4,15 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Booking } from "@/lib/types";
 import { formatToYMD } from "@/lib/formatDate";
 import { getStatusColor, getStatusIcon } from "@/lib/getStatusColor";
+import { getTierColor, getTierIcon, getTierLabel } from "@/lib/getTierColor";
+import {
+  getDisplayCallerName,
+  getDisplayBookingStatus,
+  getDisplayTotalPrice,
+  getDisplayCustomerTier,
+  getExtraRecipientsLabel,
+  getPrimaryRecipient,
+} from "@/lib/bookingDisplay";
 import { ArrowUpDown, ArrowDownUp } from "lucide-react";
 import ItemDropDown from "./itemDropdown";
 
@@ -39,12 +48,44 @@ export function getColumnsByRole(
       },
     },
     {
-      accessorKey: "callerName",
+      id: "callerName",
       header: "Caller",
+      cell: ({ row }) => {
+        const booking = row.original;
+        const tier = getDisplayCustomerTier(booking);
+        return (
+          <div className="flex items-center gap-1.5">
+            <span>{getDisplayCallerName(booking)}</span>
+            <span
+              className={`inline-flex shrink-0 items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${getTierColor(
+                tier,
+                "badge"
+              )}`}
+            >
+              {getTierIcon(tier, true)}
+              {getTierLabel(tier)}
+            </span>
+          </div>
+        );
+      },
     },
     {
-      accessorKey: "recipientName",
+      id: "recipientName",
       header: "Receiver",
+      cell: ({ row }) => {
+        const booking = row.original;
+        const extra = getExtraRecipientsLabel(booking);
+        return (
+          <div className="flex items-center gap-1.5">
+            <span>{getPrimaryRecipient(booking).recipientName}</span>
+            {extra && (
+              <span className="shrink-0 rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-600">
+                {extra}
+              </span>
+            )}
+          </div>
+        );
+      },
     },
     {
       accessorKey: "createdAt",
@@ -69,22 +110,28 @@ export function getColumnsByRole(
       },
     },
     {
-      accessorKey: "occassion",
+      id: "occassion",
       header: "Occassion",
+      // Multi-recipient bookings can have a different occasion per
+      // recipient — this shows the primary (first) recipient's; the full
+      // breakdown lives on the detail page.
+      cell: ({ row }) => getPrimaryRecipient(row.original).occassion,
     },
     {
-      accessorKey: "callType",
+      id: "callType",
       header: "Call Type",
+      cell: ({ row }) => getPrimaryRecipient(row.original).callType,
     },
     {
-      accessorKey: "country",
+      id: "country",
       header: "Country",
+      cell: ({ row }) => getPrimaryRecipient(row.original).country,
     },
     {
-      accessorKey: "status",
+      id: "status",
       header: "Status",
       cell: ({ row }) => {
-        const status: string = row.getValue("status");
+        const status = getDisplayBookingStatus(row.original);
         return (
           <span
             className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(
@@ -93,7 +140,7 @@ export function getColumnsByRole(
             )}`}
           >
             {getStatusIcon(status, true)}
-            <span className="ml-1 capitalize">{status}</span>
+            <span className="ml-1 capitalize">{status.replace("_", " ")}</span>
           </span>
         );
       },
@@ -115,8 +162,9 @@ export function getColumnsByRole(
   };
 
   const priceColumn: ColumnDef<Booking> = {
-    accessorKey: "price",
+    id: "price",
     header: "Price",
+    cell: ({ row }) => `N${getDisplayTotalPrice(row.original).toLocaleString()}`,
   };
 
   const actionsColumn: ColumnDef<Booking> = {
