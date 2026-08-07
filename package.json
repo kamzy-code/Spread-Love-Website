@@ -14,5 +14,8 @@
   "description": "",
   "devDependencies": {
     "concurrently": "^9.1.2"
+  },
+  "dependencies": {
+    "resend": "^6.18.1"
   }
 }

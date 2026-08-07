@@ -1,9 +1,11 @@
-import nodemailer from "nodemailer";
 import { format } from "date-fns/format";
 import { IBooking } from "../models/bookingModel";
 import { isLegacyBooking } from "../utils/bookingShape";
 import { emailLogger } from "../utils/logger";
 import { HttpError } from "../utils/httpError";
+import { Resend } from "resend";
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 // Normalizes a booking's recipient(s) to a flat list regardless of shape, so
 // the email template only has one code path to render — legacy bookings
@@ -26,23 +28,15 @@ class EmailService {
   async sendBookingConfirmationEmail(
     to: string,
     subject: string,
-    booking: any
+    booking: any,
   ): Promise<void> {
     const callerName = booking.caller?.name ?? booking.callerName ?? "Customer";
     const recipients = getRecipientsForEmail(booking);
 
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
-
     const recipientLinesText = recipients
       .map(
         (r: any, i: number) =>
-          `  Recipient ${i + 1}: ${r.recipientName} (${r.recipientPhone}, ${r.country}) — ${format(r.callDate, "yyyy-MM-dd")}`
+          `  Recipient ${i + 1}: ${r.recipientName} (${r.recipientPhone}, ${r.country}) — ${format(r.callDate, "yyyy-MM-dd")}`,
       )
       .join("\n");
 
@@ -52,12 +46,12 @@ class EmailService {
         <li style="margin-bottom: 8px;">
           <strong>${r.recipientName}</strong> — ${r.recipientPhone}, ${r.country}<br/>
           Call Date: ${format(r.callDate, "yyyy-MM-dd")}
-        </li>`
+        </li>`,
       )
       .join("");
 
     const mailOptions = {
-      from: process.env.EMAIL_USER,
+      from: "noreply@spreadlovenetwork.com",
       to: to,
       subject: subject,
       text: `Thank you for your booking! Your booking has been confirmed.
@@ -95,13 +89,24 @@ ${recipientLinesText}
     };
 
     try {
-      await transporter.sendMail(mailOptions);
+      // resend.emails.send() does not throw for API-level failures (bad
+      // API key, unverified domain, rate limit, invalid recipient, etc.)
+      // — it resolves with { data: null, error }. Only a genuine network
+      // failure rejects the promise. Check `error` explicitly or a failed
+      // send is silently treated as success.
+      const { error } = await resend.emails.send(mailOptions);
+      if (error) {
+        throw new Error(error.message);
+      }
     } catch (error: any) {
-      emailLogger.error("Failed to send email", {
+      emailLogger.error("Failed to send Booking Confirmation email", {
         error: error.message,
-        action: "SEND_EMAIL_FAILED",
+        action: "SEND_BOOKING_CONFIRMATION_EMAIL_FAILED",
       });
-      throw new HttpError(502, "Failed to send email. Please try again or contact support.");
+      throw new HttpError(
+        502,
+        "Failed to send Booking Confirmation email. Please try again or contact support.",
+      );
     }
   }
 
@@ -110,21 +115,31 @@ ${recipientLinesText}
   // the payment-verify flow (automatic send on successful payment), so the
   // "already sent" / "not paid" / "no email" rules only live in one place.
   async sendBookingConfirmationIfDue(
-    booking: IBooking
+    booking: IBooking,
   ): Promise<{ sent: boolean; reason?: string }> {
     const email = booking.caller?.email || booking.callerEmail;
 
     if (!email) {
-      return { sent: false, reason: "Caller email is required for sending confirmation" };
+      return {
+        sent: false,
+        reason: "Caller email is required for sending confirmation",
+      };
     }
     if (booking.confirmationMailsent) {
-      return { sent: false, reason: `Booking Confirmation already sent for ${booking.bookingId}` };
+      return {
+        sent: false,
+        reason: `Booking Confirmation already sent for ${booking.bookingId}`,
+      };
     }
     if (booking.paymentStatus !== "paid") {
       return { sent: false, reason: "Can't send email for an unpaid booking" };
     }
 
-    await this.sendBookingConfirmationEmail(email, "Booking Confirmation", booking);
+    await this.sendBookingConfirmationEmail(
+      email,
+      "Booking Confirmation",
+      booking,
+    );
 
     booking.confirmationMailsent = true;
     await booking.save();
@@ -142,19 +157,11 @@ ${recipientLinesText}
     name: string,
     email: string,
     subject: string,
-    message: string
+    message: string,
   ) {
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
-
     const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to: process.env.EMAIL_USER,
+      from: "noreply@spreadlovenetwork.com",
+      to: process.env.EMAIL_USER!,
       subject: `${subject} from ${name}`,
       text: `You have received a new contact form submission.
   Name: ${name}
@@ -178,14 +185,20 @@ ${recipientLinesText}
     `,
     };
 
-     try {
-      const mailStatus = await transporter.sendMail(mailOptions);
+    try {
+      const { error } = await resend.emails.send(mailOptions);
+      if (error) {
+        throw new Error(error.message);
+      }
     } catch (error: any) {
-      emailLogger.error("Failed to send email", {
+      emailLogger.error("Failed to send Contactemail", {
         error: error.message,
-        action: "SEND_EMAIL_FAILED",
+        action: "SEND_CONTACT_EMAIL_FAILED",
       });
-      throw new HttpError(502, "Failed to send email. Please try again or contact support.");
+      throw new HttpError(
+        502,
+        "Failed to send Contact email. Please try again or contact support.",
+      );
     }
   }
 }
