@@ -6,6 +6,7 @@ import { generateToken } from "../utils/generateToken";
 import { IAdmin } from "../models/adminModel";
 import { HttpError } from "../utils/httpError";
 import { authLogger } from "../utils/logger";
+import { isProduction } from "../config/env";
 
 class AuthController {
   async registerAdmin(req: Request, res: Response, next: NextFunction) {
@@ -151,9 +152,9 @@ class AuthController {
       res
         .cookie("token", token, {
           httpOnly: true,
-          secure: process.env.NODE_ENV === "production", // only in production with HTTPS
-          sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
-          ...(process.env.NODE_ENV === "production"
+          secure: isProduction, // only in production with HTTPS
+          sameSite: isProduction ? "none" : "strict",
+          ...(isProduction
             ? {
                 domain: ".spreadlovenetwork.com", // match frontend/backend
                 path: "/",
@@ -248,9 +249,9 @@ class AuthController {
       res
         .clearCookie("token", {
           httpOnly: true,
-          secure: process.env.NODE_ENV === "production", // only over HTTPS in production
-          sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
-          ...(process.env.NODE_ENV === "production"
+          secure: isProduction, // only over HTTPS in production
+          sameSite: isProduction ? "none" : "strict",
+          ...(isProduction
             ? {
                 domain: ".spreadlovenetwork.com", // match frontend/backend
                 path: "/",

@@ -2,6 +2,7 @@ import https from "https";
 import { paymentLogger } from "../utils/logger";
 import { IBooking } from "../models/bookingModel";
 import { HttpError } from "../utils/httpError";
+import { env } from "../config/env";
 
 export class PaymentService {
   // Single entry point for resolving a booking's payment link — used by both
@@ -60,7 +61,7 @@ export class PaymentService {
     reference: string
   ): Promise<any> {
     const baseAmount = amount * 100;
-    const secret = process.env.PAYSTACK_SECRET;
+    const secret = env.PAYSTACK_SECRET;
 
     const params = JSON.stringify({
       email,
@@ -162,7 +163,7 @@ export class PaymentService {
   }
 
   async verifyTransaction(reference: string): Promise<any> {
-    const secret = process.env.PAYSTACK_SECRET;
+    const secret = env.PAYSTACK_SECRET;
 
     const options = {
       hostname: "api.paystack.co",

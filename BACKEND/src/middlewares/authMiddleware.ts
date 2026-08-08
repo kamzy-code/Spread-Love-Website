@@ -3,6 +3,7 @@ import { NextFunction, Request, Response } from "express";
 import { adminRole } from "../types/genralTypes";
 import logger from "../utils/logger";
 import { HttpError } from "../utils/httpError";
+import { env } from "../config/env";
 
 export interface AuthRequest extends Request {
   user?: { userId: string; role: adminRole };
@@ -30,7 +31,7 @@ export const authMiddleware = (
     }
 
     // verify the token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as {
+    const decoded = jwt.verify(token, env.JWT_SECRET) as {
       userId: string;
       role: adminRole;
     };

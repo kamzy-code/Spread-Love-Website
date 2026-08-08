@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { classifyError } from "./errorClassifier";
+import { isProduction } from "../config/env";
 
 export function errorHandler(
   err: any,
@@ -17,7 +18,7 @@ export function errorHandler(
 
   res.status(status).json({
     message,
-    error: process.env.NODE_ENV === "production" ? undefined : err,
+    error: isProduction ? undefined : err,
   });
   return;
 }

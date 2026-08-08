@@ -2,8 +2,7 @@ import winston, { createLogger, transports, format } from "winston";
 import DailyRotateFile from "winston-daily-rotate-file";
 import { Logtail } from "@logtail/node";
 import { LogtailTransport } from "@logtail/winston";
-import dotenv from "dotenv";
-dotenv.config();
+import { env, isProduction } from "../config/env";
 
 const { combine, printf, json, timestamp, prettyPrint, splat, errors } = format;
 
@@ -11,8 +10,8 @@ const logFormat = printf(({ level, timestamp, message }) => {
   return `${level} ${timestamp} ${message}`;
 });
 
-export const logtail = new Logtail(process.env.BETTER_STACK_SOURCE as string, {
-  endpoint: process.env.BETTER_STACK_ENDPOINT,
+export const logtail = new Logtail(env.BETTER_STACK_SOURCE as string, {
+  endpoint: env.BETTER_STACK_ENDPOINT,
 });
 
 const logger = createLogger({
@@ -25,7 +24,7 @@ const logger = createLogger({
     prettyPrint()
   ),
   transports: [
-    ...(process.env.NODE_ENV === "production"
+    ...(isProduction
       ? [
           new LogtailTransport(logtail),
           new DailyRotateFile({
@@ -61,7 +60,7 @@ const authLogger = createLogger({
   ),
 
   transports: [
-    ...(process.env.NODE_ENV === "production"
+    ...(isProduction
       ? [
           new LogtailTransport(logtail),
           new DailyRotateFile({
@@ -99,7 +98,7 @@ const adminLogger = createLogger({
   ),
 
   transports: [
-    ...(process.env.NODE_ENV === "production"
+    ...(isProduction
       ? [
           new LogtailTransport(logtail),
           new DailyRotateFile({
@@ -138,7 +137,7 @@ const bookingLogger = createLogger({
   ),
 
   transports: [
-    ...(process.env.NODE_ENV === "production"
+    ...(isProduction
       ? [
           new LogtailTransport(logtail),
           new DailyRotateFile({
@@ -176,7 +175,7 @@ const emailLogger = createLogger({
   ),
 
   transports: [
-    ...(process.env.NODE_ENV === "production"
+    ...(isProduction
       ? [
           new LogtailTransport(logtail),
           new DailyRotateFile({
@@ -214,7 +213,7 @@ const logsLogger = createLogger({
   ),
 
   transports: [
-    ...(process.env.NODE_ENV === "production"
+    ...(isProduction
       ? [
           new LogtailTransport(logtail),
           new DailyRotateFile({
@@ -252,7 +251,7 @@ const paymentLogger = createLogger({
   ),
 
   transports: [
-    ...(process.env.NODE_ENV === "production"
+    ...(isProduction
       ? [
           new LogtailTransport(logtail),
           new DailyRotateFile({

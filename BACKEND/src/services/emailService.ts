@@ -4,8 +4,9 @@ import { isLegacyBooking } from "../utils/bookingShape";
 import { emailLogger } from "../utils/logger";
 import { HttpError } from "../utils/httpError";
 import { Resend } from "resend";
+import { env } from "../config/env";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = new Resend(env.RESEND_API_KEY);
 
 // Normalizes a booking's recipient(s) to a flat list regardless of shape, so
 // the email template only has one code path to render — legacy bookings
@@ -76,7 +77,7 @@ ${recipientLinesText}
       <p>Use the above booking ID to track and manage your booking via the link below.</p>
       <p>
       <a href="${
-        process.env.MANAGE_BOOKING_URL
+        env.MANAGE_BOOKING_URL
       }" style="color: #1a73e8; text-decoration: underline;">
       Manage Your Booking
       </a>
@@ -156,7 +157,7 @@ ${recipientLinesText}
   ) {
     const mailOptions = {
       from: "noreply@spreadlovenetwork.com",
-      to: process.env.EMAIL_USER!,
+      to: env.EMAIL_USER,
       subject: `${subject} from ${name}`,
       text: `You have received a new contact form submission.
   Name: ${name}

@@ -1,11 +1,9 @@
 import app from "./app";
 import { connectDB } from "./config/dbConfig";
 import logger from "./utils/logger";
-import dotenv from "dotenv";
-dotenv.config();
+import { env } from "./config/env";
 
-
-const PORT = process.env.PORT || 5001;
+const PORT = env.PORT;
 async function startServer (){
 //  connect to the database
     await connectDB();
