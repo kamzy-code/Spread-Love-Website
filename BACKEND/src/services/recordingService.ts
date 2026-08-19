@@ -1,0 +1,241 @@
+import mongoose from "mongoose";
+import {
+  S3Client,
+  PutObjectCommand,
+  HeadObjectCommand,
+} from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { Booking } from "../models/bookingModel";
+import { Recording, IRecording } from "../models/recordingModel";
+import { env } from "../config/env";
+import { HttpError } from "../utils/httpError";
+import { recordingLogger } from "../utils/logger";
+
+// Internal security parameter for the upload URL itself — unrelated to the
+// 30-day customer-facing download link decided for Sprint 2.
+const UPLOAD_URL_TTL_SECONDS = 5 * 60;
+
+const EXTENSION_BY_MIME_TYPE: Record<string, string> = {
+  "audio/mpeg": "mp3",
+  "audio/mp4": "m4a",
+  "audio/wav": "wav",
+  "audio/x-m4a": "m4a",
+};
+
+const s3Client = new S3Client({
+  region: env.AWS_REGION,
+  credentials:
+    env.AWS_ACCESS_KEY_ID && env.AWS_SECRET_ACCESS_KEY
+      ? {
+          accessKeyId: env.AWS_ACCESS_KEY_ID,
+          secretAccessKey: env.AWS_SECRET_ACCESS_KEY,
+        }
+      : undefined,
+});
+
+class RecordingService {
+  async requestUploadUrl(
+    userId: string,
+    params: {
+      bookingId: string;
+      recipientId: string;
+      mimeType: string;
+      fileSize: number;
+      recordingId?: string;
+    },
+  ): Promise<{ recordingId: string; s3Key: string; uploadUrl: string }> {
+    const { bookingId, recipientId, mimeType, fileSize, recordingId } = params;
+
+    const booking = await Booking.findById(bookingId);
+    if (!booking) {
+      throw new HttpError(404, "Booking not found");
+    }
+
+    const recipient = booking.recipients?.find(
+      (r) => r._id?.toString() === recipientId,
+    );
+    if (!recipient) {
+      throw new HttpError(404, "Recipient not found on this booking");
+    }
+
+    // Consent gate — the one point where an upload can be blocked before any
+    // bytes move. Checked first, before any S3 interaction or DB write.
+    if (recipient.callRecording !== "yes") {
+      recordingLogger.warn("Upload blocked: recipient has not consented to recording", {
+        bookingId,
+        recipientId,
+        action: "REQUEST_UPLOAD_URL_CONSENT_BLOCKED",
+      });
+      throw new HttpError(
+        403,
+        "Recording upload is blocked: this recipient has not consented to call recording.",
+      );
+    }
+
+    let recording: IRecording;
+    let partNumber: number;
+
+    if (recordingId) {
+      const existing = await Recording.findById(recordingId);
+      if (
+        !existing ||
+        existing.booking.toString() !== bookingId ||
+        existing.recipientId?.toString() !== recipientId
+      ) {
+        throw new HttpError(404, "Recording session not found for this booking/recipient");
+      }
+      if (existing.uploadedBy.toString() !== userId) {
+        throw new HttpError(
+          403,
+          "Only the rep who started this recording can add another part to it",
+        );
+      }
+      if (existing.locked) {
+        throw new HttpError(
+          409,
+          "This recording has already been approved and can no longer accept new parts",
+        );
+      }
+      recording = existing;
+      partNumber = recording.files.length + 1;
+    } else {
+      recording = await Recording.create({
+        booking: new mongoose.Types.ObjectId(bookingId),
+        recipientId: new mongoose.Types.ObjectId(recipientId),
+        uploadedBy: new mongoose.Types.ObjectId(userId),
+        files: [],
+        status: "pending_upload",
+        // Placeholder until the first file is actually confirmed — a
+        // pending_upload session with no files isn't "live" yet, but the
+        // field is required on the schema, so seed it and overwrite for
+        // real at confirm-time.
+        expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      });
+      partNumber = 1;
+    }
+
+    const extension = EXTENSION_BY_MIME_TYPE[mimeType] ?? "bin";
+    const s3Key = `recordings/${bookingId}/${recipientId}/${recording._id}/${partNumber}.${extension}`;
+
+    let uploadUrl: string;
+    try {
+      uploadUrl = await getSignedUrl(
+        s3Client,
+        new PutObjectCommand({
+          Bucket: env.AWS_S3_BUCKET,
+          Key: s3Key,
+          ContentType: mimeType,
+          ContentLength: fileSize,
+        }),
+        { expiresIn: UPLOAD_URL_TTL_SECONDS },
+      );
+    } catch (error: any) {
+      // Only the brand-new-session branch leaves anything to clean up — an
+      // existing session (recordingId was provided) predates this call and
+      // must not be deleted just because signing failed for this one part.
+      if (!recordingId) {
+        await Recording.deleteOne({ _id: recording._id });
+      }
+      recordingLogger.error("Failed to generate upload URL", {
+        bookingId,
+        recipientId,
+        recordingId: recording._id,
+        error: error.message,
+        action: "REQUEST_UPLOAD_URL_SIGNING_FAILED",
+      });
+      throw new HttpError(502, "Could not prepare the upload right now. Please try again shortly.");
+    }
+
+    recordingLogger.info("Upload URL issued", {
+      bookingId,
+      recipientId,
+      recordingId: recording._id,
+      partNumber,
+      action: "REQUEST_UPLOAD_URL_SUCCESS",
+    });
+
+    return { recordingId: recording._id!.toString(), s3Key, uploadUrl };
+  }
+
+  async confirmUpload(userId: string, recordingId: string, s3Key: string): Promise<IRecording> {
+    const recording = await Recording.findById(recordingId);
+    if (!recording) {
+      throw new HttpError(404, "Recording session not found");
+    }
+    if (recording.uploadedBy.toString() !== userId) {
+      throw new HttpError(403, "Only the rep who started this recording can confirm its upload");
+    }
+    if (!s3Key.startsWith(`recordings/${recording.booking.toString()}/`)) {
+      throw new HttpError(400, "s3Key does not belong to this recording");
+    }
+    if (recording.files.some((f) => f.s3Key === s3Key)) {
+      throw new HttpError(409, "This part has already been confirmed");
+    }
+
+    // Verify the upload actually landed in S3 — rather than trust the
+    // client's mimeType/fileSize a second time, read them back from the
+    // object itself. This also means a confirm call without a real prior
+    // upload fails here instead of creating a phantom "uploaded" part.
+    let head;
+    try {
+      head = await s3Client.send(
+        new HeadObjectCommand({ Bucket: env.AWS_S3_BUCKET, Key: s3Key }),
+      );
+    } catch (error: any) {
+      // Distinguish "the object genuinely isn't there yet" (S3 answers with
+      // a real 404/NotFound — a client-side timing issue, safe to surface
+      // as a friendly retry) from anything else (S3 client misconfigured,
+      // network error, etc. — a server-side problem, don't imply the rep
+      // did something wrong).
+      const isGenuineNotFound =
+        error.name === "NotFound" || error?.$metadata?.httpStatusCode === 404;
+
+      recordingLogger.warn("Confirm upload: HeadObject failed", {
+        recordingId,
+        s3Key,
+        error: error.message,
+        isGenuineNotFound,
+        action: "CONFIRM_UPLOAD_HEAD_FAILED",
+      });
+
+      if (isGenuineNotFound) {
+        throw new HttpError(
+          400,
+          "Upload not found — the file may not have finished uploading. Please try again.",
+        );
+      }
+      throw new HttpError(502, "Could not verify the upload right now. Please try again shortly.");
+    }
+
+    const isFirstFile = recording.files.length === 0;
+    const partNumber = recording.files.length + 1;
+
+    recording.files.push({
+      s3Key,
+      s3Bucket: env.AWS_S3_BUCKET as string,
+      mimeType: head.ContentType || "application/octet-stream",
+      fileSize: head.ContentLength || 0,
+      partNumber,
+      uploadedAt: new Date(),
+    });
+
+    if (isFirstFile) {
+      recording.status = "uploaded";
+      recording.expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+    }
+
+    const saved = await recording.save();
+
+    recordingLogger.info("Recording part confirmed", {
+      recordingId,
+      partNumber,
+      isFirstFile,
+      action: "CONFIRM_UPLOAD_SUCCESS",
+    });
+
+    return saved;
+  }
+}
+
+const recordingService = new RecordingService();
+export default recordingService;
