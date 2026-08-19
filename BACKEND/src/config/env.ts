@@ -19,18 +19,19 @@ const envSchema = z.object({
   BETTER_STACK_SOURCE: z.string().optional(),
   BETTER_STACK_ENDPOINT: z.string().optional(),
 
-  // Sprint 2 — Twilio
-  TWILIO_ACCOUNT_SID: z.string().optional(),
-  TWILIO_API_KEY_SID: z.string().optional(),
-  TWILIO_API_KEY_SECRET: z.string().optional(),
-  TWILIO_TWIML_APP_SID: z.string().optional(),
-  TWILIO_CALLER_ID: z.string().optional(),
-
   // Sprint 2 — S3 recording storage
   AWS_ACCESS_KEY_ID: z.string().optional(),
   AWS_SECRET_ACCESS_KEY: z.string().optional(),
   AWS_REGION: z.string().optional(),
   AWS_S3_BUCKET: z.string().optional(),
+
+  // Sprint 2 — WhatChimp (WhatsApp Business API delivery)
+  WHATCHIMP_API_KEY: z.string().optional(),
+  WHATCHIMP_API_BASE_URL: z.string().optional(),
+  WHATCHIMP_RECORDING_TEMPLATE_NAME: z.string().optional(),
+
+  // Base URL used to build the customer-facing recording download link
+  PUBLIC_APP_URL: z.string().optional(),
 });
 
 const parsed = envSchema.safeParse(process.env);
