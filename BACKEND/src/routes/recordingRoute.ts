@@ -1,8 +1,12 @@
 import express from "express";
 import recordingController from "../controllers/recordingController";
 import { authMiddleware, checkRole } from "../middlewares/authMiddleware";
-import { validateRequest } from "../middlewares/validateRequest";
-import { createUploadUrlSchema, confirmUploadSchema } from "../validation/recordingSchemas";
+import { validateRequest, validateQuery } from "../middlewares/validateRequest";
+import {
+  createUploadUrlSchema,
+  confirmUploadSchema,
+  listRecordingsQuerySchema,
+} from "../validation/recordingSchemas";
 
 const router = express.Router();
 
@@ -23,6 +27,24 @@ router.post(
   checkRole("superadmin", "salesrep", "callrep"),
   validateRequest(confirmUploadSchema),
   recordingController.confirmUpload,
+);
+
+// List/detail/playback all open to all three roles at the route level —
+// tiered visibility (call reps scoped to their own uploads) is enforced
+// inside recordingService, not here, so it can't be bypassed per-route.
+router.get(
+  "/",
+  authMiddleware,
+  checkRole("superadmin", "salesrep", "callrep"),
+  validateQuery(listRecordingsQuerySchema),
+  recordingController.listRecordings,
+);
+
+router.get(
+  "/:id/files/:fileId/playback-url",
+  authMiddleware,
+  checkRole("superadmin", "salesrep", "callrep"),
+  recordingController.getPlaybackUrl,
 );
 
 router.use((req, res) => {

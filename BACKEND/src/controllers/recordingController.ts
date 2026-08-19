@@ -33,6 +33,43 @@ class RecordingController {
       return;
     }
   }
+
+  // bookingId/recipientId validated by validateQuery (listRecordingsQuerySchema).
+  async listRecordings(req: AuthRequest, res: Response, next: NextFunction) {
+    const user = req.user!;
+    try {
+      const { bookingId, recipientId } = req.query as {
+        bookingId?: string;
+        recipientId?: string;
+      };
+      const recordings = await recordingService.listRecordings(user.userId, user.role, {
+        bookingId,
+        recipientId,
+      });
+      res.status(200).json({ recordings });
+      return;
+    } catch (error) {
+      next(error);
+      return;
+    }
+  }
+
+  async getPlaybackUrl(req: AuthRequest, res: Response, next: NextFunction) {
+    const user = req.user!;
+    try {
+      const result = await recordingService.getPlaybackUrl(
+        user.userId,
+        user.role,
+        req.params.id,
+        req.params.fileId,
+      );
+      res.status(200).json(result);
+      return;
+    } catch (error) {
+      next(error);
+      return;
+    }
+  }
 }
 
 const recordingController = new RecordingController();

@@ -32,3 +32,8 @@ export const createUploadUrlSchema = z.object({
 export const confirmUploadSchema = z.object({
   s3Key: z.string().min(1, "s3Key is required"),
 });
+
+export const listRecordingsQuerySchema = z.object({
+  bookingId: z.string().optional(),
+  recipientId: z.string().optional(),
+});

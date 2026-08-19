@@ -288,6 +288,9 @@ export default function DetailsPage({ data }: { data: Booking }) {
                   updateRecipientStatusMutation.isPending ||
                   updateLegacyStatusMutation.isPending
                 }
+                bookingId={data._id}
+                currentUserId={user?._id}
+                legacy={legacy}
               />
             ))}
           </div>

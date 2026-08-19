@@ -4,6 +4,7 @@ import { useFetchServices } from "@/hooks/useServices";
 import { formatToYMD } from "@/lib/formatDate";
 import { getStatusColor, getStatusIcon } from "@/lib/getStatusColor";
 import RecipientActionMenu from "./RecipientActionMenu";
+import RecordingsPanel from "./RecordingsPanel";
 
 export interface RecipientEditState {
   _id: string;
@@ -48,6 +49,9 @@ interface RecipientEditCardProps {
   ) => void;
   onUpdateStatus: (status: string) => void;
   statusActionDisabled?: boolean;
+  bookingId: string;
+  currentUserId?: string;
+  legacy?: boolean;
 }
 
 export default function RecipientEditCard({
@@ -57,6 +61,9 @@ export default function RecipientEditCard({
   onChange,
   onUpdateStatus,
   statusActionDisabled,
+  bookingId,
+  currentUserId,
+  legacy,
 }: RecipientEditCardProps) {
   const { data: services = [] } = useFetchServices();
   const handleChange = (
@@ -207,25 +214,15 @@ export default function RecipientEditCard({
           )}
         </div>
 
-        {recipient.callRecording === "yes" && (
-          <div className="flex flex-col space-y-2">
-            <label className="text-gray-700 font-medium">Recording Link:</label>
-            {editForm ? (
-              <input
-                className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent"
-                type="text"
-                name="callRecordingURL"
-                value={recipient.callRecordingURL || ""}
-                onChange={handleChange}
-              />
-            ) : (
-              <p className="py-3 w-full">
-                {recipient.callRecordingURL || "Not available"}
-              </p>
-            )}
-          </div>
-        )}
       </div>
+
+      {recipient.callRecording === "yes" && !legacy && (
+        <RecordingsPanel
+          bookingId={bookingId}
+          recipientId={recipient._id}
+          currentUserId={currentUserId}
+        />
+      )}
 
       {editForm ? (
         <div className="grid grid-cols-1 gap-4">

@@ -391,3 +391,47 @@ export type ServiceFilter = {
   page?: number;
   limit: number;
 };
+
+// Recordings
+export type RecordingStatus = "pending_upload" | "uploaded" | "expired";
+export type DeliveryChannelStatus = "not_sent" | "sent" | "failed";
+
+export interface RecordingFile {
+  _id: string;
+  s3Key: string;
+  s3Bucket: string;
+  mimeType: string;
+  fileSize: number;
+  partNumber: number;
+  uploadedAt: string;
+}
+
+export interface DeliveryStatus {
+  status: DeliveryChannelStatus;
+  sentAt?: string;
+  error?: string;
+  providerMessageId?: string;
+}
+
+export interface Recording {
+  _id: string;
+  booking: string;
+  recipientId?: string;
+  uploadedBy: string;
+  files: RecordingFile[];
+  status: RecordingStatus;
+  locked: boolean;
+  expiresAt: string;
+  deletedAt?: string;
+  reviewed: boolean;
+  reviewedAt?: string;
+  reviewedBy?: string;
+  ratingTemplate?: string;
+  approved: boolean;
+  approvedAt?: string;
+  approvedBy?: string;
+  emailDelivery: DeliveryStatus;
+  whatsappDelivery: DeliveryStatus;
+  createdAt: string;
+  updatedAt: string;
+}

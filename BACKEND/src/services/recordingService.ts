@@ -3,6 +3,7 @@ import {
   S3Client,
   PutObjectCommand,
   HeadObjectCommand,
+  GetObjectCommand,
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { Booking } from "../models/bookingModel";
@@ -10,10 +11,16 @@ import { Recording, IRecording } from "../models/recordingModel";
 import { env } from "../config/env";
 import { HttpError } from "../utils/httpError";
 import { recordingLogger } from "../utils/logger";
+import { adminRole } from "../types/genralTypes";
 
 // Internal security parameter for the upload URL itself — unrelated to the
 // 30-day customer-facing download link decided for Sprint 2.
 const UPLOAD_URL_TTL_SECONDS = 5 * 60;
+
+// Longer than the upload URL's TTL since a QC review session can run long —
+// the frontend re-fetches silently on playback failure rather than
+// surfacing an "expired link" error to the admin.
+const PLAYBACK_URL_TTL_SECONDS = 60 * 60;
 
 const EXTENSION_BY_MIME_TYPE: Record<string, string> = {
   "audio/mpeg": "mp3",
@@ -234,6 +241,59 @@ class RecordingService {
     });
 
     return saved;
+  }
+
+  // Serves both the booking-details panel (filtered by bookingId+recipientId)
+  // and, later, the QC route (unfiltered/status-filtered) off the same
+  // query — tiered visibility is applied here, not left to the caller, so
+  // it can't be bypassed by a client simply omitting a filter.
+  async listRecordings(
+    userId: string,
+    role: adminRole,
+    filters: { bookingId?: string; recipientId?: string },
+  ): Promise<IRecording[]> {
+    const query: Record<string, unknown> = {};
+    if (filters.bookingId) query.booking = filters.bookingId;
+    if (filters.recipientId) query.recipientId = filters.recipientId;
+    if (role === "callrep") query.uploadedBy = userId;
+
+    return Recording.find(query).sort({ createdAt: -1 });
+  }
+
+  async getPlaybackUrl(
+    userId: string,
+    role: adminRole,
+    recordingId: string,
+    fileId: string,
+  ): Promise<{ url: string; expiresIn: number }> {
+    const recording = await Recording.findById(recordingId);
+    // 404 (not 403) for a call rep hitting another rep's recording — doesn't
+    // confirm the recording's existence to someone unauthorized to see it.
+    if (!recording || (role === "callrep" && recording.uploadedBy.toString() !== userId)) {
+      throw new HttpError(404, "Recording not found");
+    }
+
+    const file = recording.files.find((f) => f._id?.toString() === fileId);
+    if (!file) {
+      throw new HttpError(404, "File not found on this recording");
+    }
+
+    try {
+      const url = await getSignedUrl(
+        s3Client,
+        new GetObjectCommand({ Bucket: file.s3Bucket, Key: file.s3Key }),
+        { expiresIn: PLAYBACK_URL_TTL_SECONDS },
+      );
+      return { url, expiresIn: PLAYBACK_URL_TTL_SECONDS };
+    } catch (error: any) {
+      recordingLogger.error("Failed to generate playback URL", {
+        recordingId,
+        fileId,
+        error: error.message,
+        action: "GET_PLAYBACK_URL_FAILED",
+      });
+      throw new HttpError(502, "Could not load this recording right now. Please try again shortly.");
+    }
   }
 }
 
