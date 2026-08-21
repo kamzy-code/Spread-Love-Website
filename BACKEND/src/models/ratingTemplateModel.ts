@@ -40,7 +40,7 @@ const ratingCriterionSchema = new Schema<IRatingCriterion>(
 const ratingTemplateSchema: Schema = new Schema<IRatingTemplate>(
   {
     name: { type: String, required: true },
-    active: { type: Boolean, required: true, default: true },
+    active: { type: Boolean, required: true, default: false },
     criteria: { type: [ratingCriterionSchema], required: true, default: [] },
     passFailThreshold: { type: Number, required: false },
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "Admin", required: true },

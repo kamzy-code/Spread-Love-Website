@@ -435,3 +435,34 @@ export interface Recording {
   createdAt: string;
   updatedAt: string;
 }
+
+// Rating Templates
+export type RatingScaleType = "numeric" | "pass_fail";
+
+export interface RatingCriterion {
+  key: string;
+  label: string;
+  scaleType: RatingScaleType;
+  min?: number;
+  max?: number;
+}
+
+export interface RatingTemplate {
+  _id: string;
+  name: string;
+  active: boolean;
+  criteria: RatingCriterion[];
+  passFailThreshold?: number;
+  createdBy: string;
+  updatedBy?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Same shape for create and update — the backend rejects `active` on both,
+// activation is its own endpoint (useActivateRatingTemplate).
+export type RatingTemplateFormValues = {
+  name: string;
+  criteria: RatingCriterion[];
+  passFailThreshold?: number;
+};
