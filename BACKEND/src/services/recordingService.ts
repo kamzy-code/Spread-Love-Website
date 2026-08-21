@@ -4,6 +4,7 @@ import {
   PutObjectCommand,
   HeadObjectCommand,
   GetObjectCommand,
+  DeleteObjectCommand,
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { Booking } from "../models/bookingModel";
@@ -13,8 +14,7 @@ import { HttpError } from "../utils/httpError";
 import { recordingLogger } from "../utils/logger";
 import { adminRole } from "../types/genralTypes";
 
-// Internal security parameter for the upload URL itself — unrelated to the
-// 30-day customer-facing download link decided for Sprint 2.
+// Internal security parameter for the upload URL itself
 const UPLOAD_URL_TTL_SECONDS = 5 * 60;
 
 // Longer than the upload URL's TTL since a QC review session can run long —
@@ -294,6 +294,67 @@ class RecordingService {
       });
       throw new HttpError(502, "Could not load this recording right now. Please try again shortly.");
     }
+  }
+
+  // Deletes every file belonging to one expired session from S3, then flips
+  // the DB record to "expired" with a deletedAt timestamp — never a hard
+  // delete, so there's still an audit trail of what existed. Per-file
+  // deletion failures are logged and skipped rather than aborting the whole
+  // session, so one bad object doesn't block the rest of the cleanup run.
+  private async expireRecording(recording: IRecording): Promise<void> {
+    for (const file of recording.files) {
+      try {
+        await s3Client.send(
+          new DeleteObjectCommand({ Bucket: file.s3Bucket, Key: file.s3Key }),
+        );
+      } catch (error: any) {
+        recordingLogger.error("Failed to delete expired recording file from S3", {
+          recordingId: recording._id,
+          s3Key: file.s3Key,
+          error: error.message,
+          action: "EXPIRE_RECORDING_S3_DELETE_FAILED",
+        });
+      }
+    }
+
+    recording.status = "expired";
+    recording.deletedAt = new Date();
+    await recording.save();
+  }
+
+  // Entry point for the scheduled cleanup job (BACKEND/src/jobs/
+  // recordingCleanupJob.ts) — Iterates via a cursor rather than loading 
+  // every expired session into memory at once.
+  async cleanupExpiredRecordings(): Promise<{ expired: number; failed: number }> {
+    const cursor = Recording.find({
+      status: "uploaded",
+      expiresAt: { $lte: new Date() },
+    }).cursor();
+
+    let expired = 0;
+    let failed = 0;
+
+    for await (const recording of cursor) {
+      try {
+        await this.expireRecording(recording);
+        expired += 1;
+      } catch (error: any) {
+        failed += 1;
+        recordingLogger.error("Failed to expire recording", {
+          recordingId: recording._id,
+          error: error.message,
+          action: "CLEANUP_EXPIRED_RECORDINGS_FAILED",
+        });
+      }
+    }
+
+    recordingLogger.info("Recording cleanup run complete", {
+      expired,
+      failed,
+      action: "CLEANUP_EXPIRED_RECORDINGS_SUCCESS",
+    });
+
+    return { expired, failed };
   }
 }
 

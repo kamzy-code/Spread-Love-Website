@@ -8,7 +8,8 @@
     "start": "node dist/server.js",
     "migrate:v2": "ts-node src/scripts/migrate-bookings-v2.ts",
     "seed:customers-v2": "ts-node src/scripts/seed-customers-v2.ts",
-    "seed:services": "ts-node src/scripts/seed-services.ts"
+    "seed:services": "ts-node src/scripts/seed-services.ts",
+    "cleanup:recordings": "ts-node src/scripts/run-recording-cleanup.ts"
   },
   "keywords": [],
   "author": "",
@@ -30,6 +31,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongodb": "4.0",
     "mongoose": "^8.15.1",
+    "node-cron": "^4.6.0",
     "resend": "^6.18.1",
     "winston": "^3.17.0",
     "winston-daily-rotate-file": "^5.0.0",
@@ -43,6 +45,7 @@
     "@types/express": "^5.0.2",
     "@types/jsonwebtoken": "^9.0.9",
     "@types/node": "^22.15.23",
+    "@types/node-cron": "^3.0.11",
     "nodemon": "^3.1.10",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.8.3"
