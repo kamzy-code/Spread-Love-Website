@@ -51,6 +51,7 @@ interface RecipientEditCardProps {
   statusActionDisabled?: boolean;
   bookingId: string;
   currentUserId?: string;
+  currentUserRole?: string;
   legacy?: boolean;
 }
 
@@ -63,6 +64,7 @@ export default function RecipientEditCard({
   statusActionDisabled,
   bookingId,
   currentUserId,
+  currentUserRole,
   legacy,
 }: RecipientEditCardProps) {
   const { data: services = [] } = useFetchServices();
@@ -221,6 +223,7 @@ export default function RecipientEditCard({
           bookingId={bookingId}
           recipientId={recipient._id}
           currentUserId={currentUserId}
+          currentUserRole={currentUserRole}
         />
       )}
 

@@ -8,11 +8,14 @@ import {
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { Booking } from "../models/bookingModel";
-import { Recording, IRecording } from "../models/recordingModel";
+import { Recording, IRecording, IRatingValue } from "../models/recordingModel";
+import { IRatingCriterion } from "../models/ratingTemplateModel";
+import ratingTemplateService from "./ratingTemplateService";
 import { env } from "../config/env";
 import { HttpError } from "../utils/httpError";
 import { recordingLogger } from "../utils/logger";
 import { adminRole } from "../types/genralTypes";
+import { computeRatingScore, IRatingScore } from "../utils/ratingScore";
 
 // Internal security parameter for the upload URL itself
 const UPLOAD_URL_TTL_SECONDS = 5 * 60;
@@ -251,13 +254,24 @@ class RecordingService {
     userId: string,
     role: adminRole,
     filters: { bookingId?: string; recipientId?: string },
-  ): Promise<IRecording[]> {
+  ) {
     const query: Record<string, unknown> = {};
     if (filters.bookingId) query.booking = filters.bookingId;
     if (filters.recipientId) query.recipientId = filters.recipientId;
     if (role === "callrep") query.uploadedBy = userId;
 
-    return Recording.find(query).sort({ createdAt: -1 });
+    const recordings = await Recording.find(query).sort({ createdAt: -1 });
+    return recordings.map((r) => this.withScore(r));
+  }
+
+  // Scoring reads the recording's own frozen ratingCriteriaSnapshot, so
+  // this never needs an extra template lookup/query, however many
+  // recordings are in the list.
+  private withScore(recording: IRecording) {
+    return {
+      ...recording.toObject(),
+      score: computeRatingScore(recording.ratingCriteriaSnapshot, recording.ratingValues),
+    };
   }
 
   async getPlaybackUrl(
@@ -294,6 +308,159 @@ class RecordingService {
       });
       throw new HttpError(502, "Could not load this recording right now. Please try again shortly.");
     }
+  }
+
+  // Validates each submitted value against the recording's pinned criteria
+  // snapshot (existence, options/multiple shape, valid option values) and
+  // returns the validated, de-duplicated list. Throws HttpError(400) on the
+  // first problem found.
+  private validateRatingValues(
+    criteria: IRatingCriterion[],
+    ratingValues: { criterionKey: string; value: string | string[] }[],
+  ): IRatingValue[] {
+    const seenKeys = new Set<string>();
+    return ratingValues.map(({ criterionKey, value }) => {
+      if (seenKeys.has(criterionKey)) {
+        throw new HttpError(400, `Duplicate rating value for criterion "${criterionKey}"`);
+      }
+      seenKeys.add(criterionKey);
+
+      const criterion = criteria.find((c) => c.key === criterionKey);
+      if (!criterion) {
+        throw new HttpError(400, `Unknown rating criterion "${criterionKey}"`);
+      }
+
+      if (criterion.type === "text") {
+        if (typeof value !== "string") {
+          throw new HttpError(400, `"${criterion.label}" expects a text value`);
+        }
+        return { criterionKey, value };
+      }
+
+      const optionValues = new Set((criterion.options ?? []).map((o) => o.value));
+
+      if (criterion.multiple) {
+        if (!Array.isArray(value) || value.some((v) => !optionValues.has(v))) {
+          throw new HttpError(400, `"${criterion.label}" expects one or more valid options`);
+        }
+      } else {
+        if (typeof value !== "string" || !optionValues.has(value)) {
+          throw new HttpError(400, `"${criterion.label}" expects a single valid option`);
+        }
+      }
+
+      return { criterionKey, value };
+    });
+  }
+
+  async submitRating(
+    userId: string,
+    recordingId: string,
+    ratingValues: { criterionKey: string; value: string | string[] }[],
+  ): Promise<{ recording: IRecording; score: IRatingScore }> {
+    const recording = await Recording.findById(recordingId);
+    if (!recording) {
+      throw new HttpError(404, "Recording not found");
+    }
+    if (recording.status !== "uploaded") {
+      throw new HttpError(400, "This recording has no confirmed audio to rate yet");
+    }
+    if (recording.approved) {
+      throw new HttpError(409, "This recording is already approved — unapprove it before changing the rating");
+    }
+
+    // First rating pins the template and freezes its criteria; a later
+    // re-rating (before approval) stays against that same snapshot even if
+    // a different template has since been activated.
+    if (!recording.ratingTemplate) {
+      const template = await ratingTemplateService.getActiveTemplate();
+      if (!template) {
+        throw new HttpError(400, "No active rating template is configured");
+      }
+      recording.ratingTemplate = template._id as mongoose.Types.ObjectId;
+      recording.ratingCriteriaSnapshot = template.criteria;
+    }
+
+    recording.ratingValues = this.validateRatingValues(
+      recording.ratingCriteriaSnapshot,
+      ratingValues,
+    );
+    recording.reviewed = true;
+    recording.reviewedAt = new Date();
+    recording.reviewedBy = new mongoose.Types.ObjectId(userId);
+
+    const saved = await recording.save();
+
+    recordingLogger.info("Recording rated", {
+      recordingId,
+      criteriaRated: recording.ratingValues.length,
+      action: "SUBMIT_RATING_SUCCESS",
+    });
+
+    return { recording: saved, score: computeRatingScore(saved.ratingCriteriaSnapshot, saved.ratingValues) };
+  }
+
+  async approveRecording(
+    userId: string,
+    recordingId: string,
+  ): Promise<{ recording: IRecording; score: IRatingScore }> {
+    const recording = await Recording.findById(recordingId);
+    if (!recording) {
+      throw new HttpError(404, "Recording not found");
+    }
+    if (!recording.reviewed) {
+      throw new HttpError(400, "Rate this recording before approving it");
+    }
+
+    const ratedKeys = new Set(recording.ratingValues.map((rv) => rv.criterionKey));
+    const missing = recording.ratingCriteriaSnapshot
+      .filter((c) => c.type === "options" && !ratedKeys.has(c.key))
+      .map((c) => c.label);
+    if (missing.length > 0) {
+      throw new HttpError(400, `Complete the rating for all criteria before approving: ${missing.join(", ")}`);
+    }
+
+    recording.approved = true;
+    recording.approvedAt = new Date();
+    recording.approvedBy = new mongoose.Types.ObjectId(userId);
+    recording.locked = true;
+
+    const saved = await recording.save();
+
+    recordingLogger.info("Recording approved", {
+      recordingId,
+      action: "APPROVE_RECORDING_SUCCESS",
+    });
+
+    return { recording: saved, score: computeRatingScore(saved.ratingCriteriaSnapshot, saved.ratingValues) };
+  }
+
+  async unapproveRecording(
+    userId: string,
+    recordingId: string,
+  ): Promise<{ recording: IRecording; score: IRatingScore }> {
+    const recording = await Recording.findById(recordingId);
+    if (!recording) {
+      throw new HttpError(404, "Recording not found");
+    }
+    if (!recording.approved) {
+      throw new HttpError(400, "This recording is not currently approved");
+    }
+
+    recording.approved = false;
+    recording.approvedAt = undefined;
+    recording.approvedBy = undefined;
+    recording.locked = false;
+
+    const saved = await recording.save();
+
+    recordingLogger.info("Recording unapproved", {
+      recordingId,
+      unapprovedBy: userId,
+      action: "UNAPPROVE_RECORDING_SUCCESS",
+    });
+
+    return { recording: saved, score: computeRatingScore(saved.ratingCriteriaSnapshot, saved.ratingValues) };
   }
 
   // Deletes every file belonging to one expired session from S3, then flips

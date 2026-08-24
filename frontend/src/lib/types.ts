@@ -413,6 +413,11 @@ export interface DeliveryStatus {
   providerMessageId?: string;
 }
 
+export interface RecordingRatingValue {
+  criterionKey: string;
+  value: string | string[];
+}
+
 export interface Recording {
   _id: string;
   booking: string;
@@ -427,13 +432,34 @@ export interface Recording {
   reviewedAt?: string;
   reviewedBy?: string;
   ratingTemplate?: string;
+  // Frozen copy of the template's criteria as of the first rating — what
+  // RateRecordingModal renders against once a recording has been reviewed.
+  ratingCriteriaSnapshot: RatingCriterion[];
+  ratingValues: RecordingRatingValue[];
   approved: boolean;
   approvedAt?: string;
   approvedBy?: string;
+  // Always present on API responses (list/rate/approve/unapprove) — null
+  // until the recording has been rated against at least one criterion.
+  score: RecordingScore | null;
   emailDelivery: DeliveryStatus;
   whatsappDelivery: DeliveryStatus;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface RecordingScoredCriterion {
+  criterionKey: string;
+  label: string;
+  type: CriterionType;
+  value?: string | string[];
+  weight?: number;
+}
+
+export interface RecordingScore {
+  criteria: RecordingScoredCriterion[];
+  averageWeight: number | null;
+  overallScorePercent: number | null;
 }
 
 // Rating Templates

@@ -6,6 +6,7 @@ import {
   createUploadUrlSchema,
   confirmUploadSchema,
   listRecordingsQuerySchema,
+  submitRatingSchema,
 } from "../validation/recordingSchemas";
 
 const router = express.Router();
@@ -45,6 +46,29 @@ router.get(
   authMiddleware,
   checkRole("superadmin", "salesrep", "callrep"),
   recordingController.getPlaybackUrl,
+);
+
+// Rate/approve are QC actions — open to salesreps and superadmins only,
+router.post(
+  "/:id/rate",
+  authMiddleware,
+  checkRole("superadmin", "salesrep"),
+  validateRequest(submitRatingSchema),
+  recordingController.submitRating,
+);
+
+router.put(
+  "/:id/approve",
+  authMiddleware,
+  checkRole("superadmin", "salesrep"),
+  recordingController.approveRecording,
+);
+
+router.put(
+  "/:id/unapprove",
+  authMiddleware,
+  checkRole("superadmin", "salesrep"),
+  recordingController.unapproveRecording,
 );
 
 router.use((req, res) => {

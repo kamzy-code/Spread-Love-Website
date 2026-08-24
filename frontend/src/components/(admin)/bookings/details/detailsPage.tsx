@@ -290,6 +290,7 @@ export default function DetailsPage({ data }: { data: Booking }) {
                 }
                 bookingId={data._id}
                 currentUserId={user?._id}
+                currentUserRole={user?.role}
                 legacy={legacy}
               />
             ))}

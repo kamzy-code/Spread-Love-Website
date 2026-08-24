@@ -37,3 +37,15 @@ export const listRecordingsQuerySchema = z.object({
   bookingId: z.string().optional(),
   recipientId: z.string().optional(),
 });
+
+// Cross-referencing criterionKey/value against the actual template
+// (existence, options/multiple shape, valid option values) happens in
+// recordingService.submitRating — zod can only check the wire shape here.
+export const ratingValueInputSchema = z.object({
+  criterionKey: z.string().min(1, "criterionKey is required"),
+  value: z.union([z.string(), z.array(z.string()).min(1)]),
+});
+
+export const submitRatingSchema = z.object({
+  ratingValues: z.array(ratingValueInputSchema).min(1, "At least one rating value is required"),
+});

@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Recording } from "@/lib/types";
+import { Recording, RecordingRatingValue, RecordingScore } from "@/lib/types";
 import { buildQueryParams } from "@/lib/buildQueryParams";
 import { apiCall } from "@/lib/apiClient";
 
@@ -89,4 +89,34 @@ export const useInvalidateRecordings = () => {
   const queryClient = useQueryClient();
   return (bookingId: string, recipientId: string) =>
     queryClient.invalidateQueries({ queryKey: ["recordings", bookingId, recipientId] });
+};
+
+interface RatingResult {
+  message: string;
+  recording: Recording;
+  score: RecordingScore;
+}
+
+export const useSubmitRating = (recordingId: string) => {
+  return useMutation({
+    mutationFn: (ratingValues: RecordingRatingValue[]): Promise<RatingResult> =>
+      apiCall(`/recordings/${recordingId}/rate`, {
+        method: "POST",
+        body: JSON.stringify({ ratingValues }),
+      }),
+  });
+};
+
+export const useApproveRecording = (recordingId: string) => {
+  return useMutation({
+    mutationFn: (): Promise<RatingResult> =>
+      apiCall(`/recordings/${recordingId}/approve`, { method: "PUT" }),
+  });
+};
+
+export const useUnapproveRecording = (recordingId: string) => {
+  return useMutation({
+    mutationFn: (): Promise<RatingResult> =>
+      apiCall(`/recordings/${recordingId}/unapprove`, { method: "PUT" }),
+  });
 };

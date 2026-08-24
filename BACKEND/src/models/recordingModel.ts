@@ -1,4 +1,5 @@
 import mongoose, { Schema, Document } from "mongoose";
+import { IRatingCriterion, ratingCriterionSchema } from "./ratingTemplateModel";
 
 export type recordingStatus = "pending_upload" | "uploaded" | "expired";
 export type deliveryStatus = "not_sent" | "sent" | "failed";
@@ -61,6 +62,11 @@ export interface IRecording extends Document {
   // Pinned template version — templates are editable, a historical rating
   // shouldn't silently reinterpret against today's criteria.
   ratingTemplate?: mongoose.Types.ObjectId;
+  // Frozen copy of ratingTemplate.criteria as it existed at the FIRST
+  // rating of this session — the actual guard against the comment above.
+  // Scoring always reads this, never the live template, so a later edit to
+  // the template (or even its deletion) can't reinterpret a past rating.
+  ratingCriteriaSnapshot: IRatingCriterion[];
   ratingValues: IRatingValue[];
   approved: boolean;
   approvedAt?: Date;
@@ -124,6 +130,7 @@ const recordingSchema: Schema = new Schema<IRecording>(
       ref: "RatingTemplate",
       required: false,
     },
+    ratingCriteriaSnapshot: { type: [ratingCriterionSchema], required: true, default: [] },
     ratingValues: { type: [ratingValueSchema], required: true, default: [] },
     approved: { type: Boolean, required: true, default: false },
     approvedAt: { type: Date, required: false },

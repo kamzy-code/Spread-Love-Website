@@ -43,7 +43,7 @@ export interface IRatingTemplate extends Document {
   updatedAt: Date;
 }
 
-const ratingOptionSchema = new Schema<IRatingOption>(
+export const ratingOptionSchema = new Schema<IRatingOption>(
   {
     value: { type: String, required: true },
     label: { type: String, required: true },
@@ -53,7 +53,7 @@ const ratingOptionSchema = new Schema<IRatingOption>(
   { _id: false },
 );
 
-const ratingCriterionSchema = new Schema<IRatingCriterion>(
+export const ratingCriterionSchema = new Schema<IRatingCriterion>(
   {
     // Stable machine key used by Recording.ratingValues[].criterionKey — once
     // a criterion is in use, only add/deprecate, never rename in place, or
