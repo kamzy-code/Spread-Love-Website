@@ -3,9 +3,14 @@
 CONTAINER_NAME="local-mongo"
 PORT="27017"
 VOLUME_NAME="mongodb_data"
-# Using your specific internal path requirement:
-INTERNAL_PATH="/data/spread_love" 
-IMAGE="mongodb/mongodb-community-server:latest"
+INTERNAL_PATH="/data/db"
+# mongodb/mongodb-community-server:latest tracks MongoDB's newest release,
+# which on this host's kernel (Docker Desktop's linuxkit VM, 6.19+) hits a
+# known tcmalloc/rseq incompatibility and refuses to start at all (see
+# https://www.mongodb.com/community/forums/t/mongodb-8-x-and-linux-kernel-6-19/337547).
+# mongo:8 is a stable, confirmed-working pin until that's fixed upstream —
+# adjust once Docker Desktop ships a kernel >=7.0.14 or Mongo patches this.
+IMAGE="mongo:8"
 
 echo "Checking for existing MongoDB container..."
 
@@ -21,7 +26,9 @@ if ! docker volume inspect $VOLUME_NAME >/dev/null 2>&1; then
     docker volume create $VOLUME_NAME
 fi
 
-# 3. Start the container with your custom path mapping
+# 3. Start the container — no --dbpath override needed now that
+# INTERNAL_PATH is the image's own default; its normal startup logic
+# handles ownership/init correctly for this path.
 echo "Starting a fresh MongoDB container..."
 docker run \
   --name "$CONTAINER_NAME" \

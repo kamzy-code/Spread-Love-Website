@@ -1,17 +1,35 @@
-import { RatingTemplate, IRatingCriterion } from "../models/ratingTemplateModel";
+import {
+  RatingTemplate,
+  IRatingCriterion,
+  IRatingOption,
+  TIER_WEIGHTS,
+} from "../models/ratingTemplateModel";
 import auditLogService from "./auditLogService";
 import { recordingLogger } from "../utils/logger";
 
+// The API never accepts `weight` directly  —
+// a template author only picks a tier, the server derives the weight, so a
+// tier/weight mismatch can't be submitted.
+type CriterionInput = Omit<IRatingCriterion, "options"> & {
+  options?: Omit<IRatingOption, "weight">[];
+};
+
 type TemplateInput = {
   name: string;
-  criteria: IRatingCriterion[];
-  passFailThreshold?: number;
+  criteria: CriterionInput[];
 };
+
+const deriveWeights = (criteria: CriterionInput[]): IRatingCriterion[] =>
+  criteria.map((c) => ({
+    ...c,
+    options: c.options?.map((o) => ({ ...o, weight: TIER_WEIGHTS[o.tier] })),
+  }));
 
 class RatingTemplateService {
   async createTemplate(data: TemplateInput, changedBy: string) {
     const template = await RatingTemplate.create({
       ...data,
+      criteria: deriveWeights(data.criteria),
       active: false,
       createdBy: changedBy,
     });
@@ -56,20 +74,23 @@ class RatingTemplateService {
     if (!template) return null;
 
     const diffs: { field: string; oldValue: unknown; newValue: unknown }[] = (
-      ["name", "passFailThreshold"] as const
+      ["name"] as const
     )
       .filter((field) => updates[field] !== undefined)
       .map((field) => ({ field, oldValue: template[field], newValue: updates[field] }));
 
-    if (updates.criteria !== undefined) {
+    const resolvedCriteria =
+      updates.criteria !== undefined ? deriveWeights(updates.criteria) : undefined;
+
+    if (resolvedCriteria !== undefined) {
       diffs.push({
         field: "criteria",
         oldValue: JSON.stringify(template.criteria),
-        newValue: JSON.stringify(updates.criteria),
+        newValue: JSON.stringify(resolvedCriteria),
       });
     }
 
-    Object.assign(template, updates);
+    Object.assign(template, { ...updates, criteria: resolvedCriteria ?? template.criteria });
     template.updatedBy = changedBy as any;
     const saved = await template.save();
 

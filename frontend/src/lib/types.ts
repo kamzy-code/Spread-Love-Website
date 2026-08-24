@@ -437,14 +437,25 @@ export interface Recording {
 }
 
 // Rating Templates
-export type RatingScaleType = "numeric" | "pass_fail";
+export type RatingTier = "poor" | "fair" | "good" | "excellent";
+export type CriterionType = "options" | "text";
+
+// As returned by the API — includes the server-derived `weight` per option.
+export interface RatingOption {
+  value: string;
+  label: string;
+  tier: RatingTier;
+  weight: number;
+}
 
 export interface RatingCriterion {
   key: string;
   label: string;
-  scaleType: RatingScaleType;
-  min?: number;
-  max?: number;
+  type: CriterionType;
+  // options-only: select-many (checklist) vs select-one. Ignored for "text".
+  multiple?: boolean;
+  // Present when type === "options", absent for "text".
+  options?: RatingOption[];
 }
 
 export interface RatingTemplate {
@@ -452,17 +463,32 @@ export interface RatingTemplate {
   name: string;
   active: boolean;
   criteria: RatingCriterion[];
-  passFailThreshold?: number;
   createdBy: string;
   updatedBy?: string;
   createdAt: string;
   updatedAt: string;
 }
 
-// Same shape for create and update — the backend rejects `active` on both,
-// activation is its own endpoint (useActivateRatingTemplate).
+// The form/write shape never sends `weight` — the server derives it from
+// `tier` (see ratingTemplateService.ts's TIER_WEIGHTS), so a template author
+// can't submit a tier/weight mismatch. Same shape for create and update —
+// the backend rejects `active` on both, activation is its own endpoint
+// (useActivateRatingTemplate).
+export interface RatingOptionInput {
+  value: string;
+  label: string;
+  tier: RatingTier;
+}
+
+export interface RatingCriterionInput {
+  key: string;
+  label: string;
+  type: CriterionType;
+  multiple?: boolean;
+  options?: RatingOptionInput[];
+}
+
 export type RatingTemplateFormValues = {
   name: string;
-  criteria: RatingCriterion[];
-  passFailThreshold?: number;
+  criteria: RatingCriterionInput[];
 };

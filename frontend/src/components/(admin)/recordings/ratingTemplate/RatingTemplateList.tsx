@@ -89,12 +89,6 @@ export default function RatingTemplateList() {
                 <p>Criteria:</p>
                 <p className="text-brand-start">{template.criteria.length}</p>
               </div>
-              {template.passFailThreshold !== undefined && (
-                <div className="flex justify-between items-center">
-                  <p>Pass Threshold:</p>
-                  <p className="text-brand-start">{template.passFailThreshold}</p>
-                </div>
-              )}
             </div>
 
             <div className="flex gap-2 pt-2">
