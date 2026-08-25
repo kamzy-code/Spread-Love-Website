@@ -68,8 +68,9 @@ class RecordingService {
       throw new HttpError(404, "Recipient not found on this booking");
     }
 
-    // Consent gate — the one point where an upload can be blocked before any
-    // bytes move. Checked first, before any S3 interaction or DB write.
+    // Consent and call-status gates — both checked before any S3
+    // interaction or DB write, so a blocked upload never leaves a stray
+    // pending_upload session behind.
     if (recipient.callRecording !== "yes") {
       recordingLogger.warn("Upload blocked: recipient has not consented to recording", {
         bookingId,
@@ -79,6 +80,22 @@ class RecordingService {
       throw new HttpError(
         403,
         "Recording upload is blocked: this recipient has not consented to call recording.",
+      );
+    }
+
+    // A recording only makes sense for a call that actually happened —
+    // blocks uploads against pending/assigned/rejected/rescheduled/
+    // unsuccessful recipients, not just missing consent.
+    if (recipient.callStatus !== "successful") {
+      recordingLogger.warn("Upload blocked: call has not been completed", {
+        bookingId,
+        recipientId,
+        callStatus: recipient.callStatus,
+        action: "REQUEST_UPLOAD_URL_CALL_STATUS_BLOCKED",
+      });
+      throw new HttpError(
+        403,
+        `Recording upload is blocked: this call hasn't been completed yet (status: ${recipient.callStatus ?? "pending"}).`,
       );
     }
 
