@@ -12,6 +12,7 @@ import {
   Contact,
   Ticket,
   Layers,
+  ClipboardList,
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -53,6 +54,11 @@ const links = [
     label: "Services",
     href: "/admin/services",
     icon: <Layers className="h-5 w-5 mr-3" />,
+  },
+  {
+    label: "Rating Templates",
+    href: "/admin/recordings/rating-template",
+    icon: <ClipboardList className="h-5 w-5 mr-3" />,
   },
   {
     label: "Profile",
@@ -182,7 +188,9 @@ export default function TopNav() {
                     item.label === "Coupons" ||
                     item.label === "Services") &&
                     user?.role === "callrep") ||
-                  ((item.label === "Customers" || item.label === "Logs") &&
+                  ((item.label === "Customers" ||
+                    item.label === "Logs" ||
+                    item.label === "Rating Templates") &&
                     user?.role !== "superadmin")
                     ? "hidden"
                     : ""

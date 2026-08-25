@@ -1,6 +1,6 @@
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
-import { BarChart3, Users, Calendar, User, LogOut, Book, Contact, Ticket, Layers } from "lucide-react";
+import { BarChart3, Users, Calendar, User, LogOut, Book, Contact, Ticket, Layers, ClipboardList } from "lucide-react";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
@@ -36,6 +36,11 @@ const links = [
     label: "Services",
     href: "/admin/services",
     icon: <Layers className="h-5 w-5 mr-3" />,
+  },
+  {
+    label: "Rating Templates",
+    href: "/admin/recordings/rating-template",
+    icon: <ClipboardList className="h-5 w-5 mr-3" />,
   },
   {
     label: "Profile",
@@ -90,7 +95,7 @@ export default function SideNav() {
             } ${
               ((label === "Reps" || label === "Coupons" || label === "Services") &&
                 user?.role === "callrep") ||
-              ((label === "Customers" || label === "Logs") &&
+              ((label === "Customers" || label === "Logs" || label === "Rating Templates") &&
                 user?.role !== "superadmin")
                 ? "hidden"
                 : ""
