@@ -26,7 +26,7 @@ const criteriaSource = (recording: Recording, activeCriteria?: RatingCriterion[]
   recording.reviewed ? recording.ratingCriteriaSnapshot : activeCriteria;
 
 const initialValues = (recording: Recording, criteria: RatingCriterion[]): Record<string, FormValue> => {
-  const byKey = new Map(recording.ratingValues.map((rv) => [rv.criterionKey, rv.value]));
+  const byKey = new Map((recording.ratingValues ?? []).map((rv) => [rv.criterionKey, rv.value]));
   const values: Record<string, FormValue> = {};
   for (const criterion of criteria) {
     const existing = byKey.get(criterion.key);

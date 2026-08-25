@@ -261,17 +261,27 @@ class RecordingService {
     if (role === "callrep") query.uploadedBy = userId;
 
     const recordings = await Recording.find(query).sort({ createdAt: -1 });
-    return recordings.map((r) => this.withScore(r));
+    return recordings.map((r) => this.withScore(r, role));
   }
 
   // Scoring reads the recording's own frozen ratingCriteriaSnapshot, so
   // this never needs an extra template lookup/query, however many
-  // recordings are in the list.
-  private withScore(recording: IRecording) {
-    return {
+  // recordings are in the list. Call reps can see that their own recording
+  // was reviewed/approved (status fields), but not the QC judgment itself —
+  // score, submitted values, criteria snapshot, or who reviewed/approved it.
+  // Only rate/approve/unapprove (superadmin/salesrep-only routes) return the
+  // unredacted shape, and a call rep can never reach those.
+  private withScore(recording: IRecording, role: adminRole) {
+    const withComputedScore = {
       ...recording.toObject(),
       score: computeRatingScore(recording.ratingCriteriaSnapshot, recording.ratingValues),
     };
+
+    if (role !== "callrep") return withComputedScore;
+
+    const { score, ratingValues, ratingCriteriaSnapshot, reviewedBy, approvedBy, ...redacted } =
+      withComputedScore;
+    return redacted;
   }
 
   async getPlaybackUrl(

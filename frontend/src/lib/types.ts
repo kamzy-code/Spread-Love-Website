@@ -430,18 +430,23 @@ export interface Recording {
   deletedAt?: string;
   reviewed: boolean;
   reviewedAt?: string;
+  // reviewedBy/ratingCriteriaSnapshot/ratingValues/approvedBy/score are the
+  // QC judgment itself — listRecordings redacts all five for call reps
+  // (recordingService.withScore), who can see that their own recording was
+  // reviewed/approved but not the rating details or who wrote them. Always
+  // present for superadmin/salesrep, and always present (score possibly
+  // null) on the rate/approve/unapprove responses, which call reps can
+  // never reach.
   reviewedBy?: string;
   ratingTemplate?: string;
   // Frozen copy of the template's criteria as of the first rating — what
   // RateRecordingModal renders against once a recording has been reviewed.
-  ratingCriteriaSnapshot: RatingCriterion[];
-  ratingValues: RecordingRatingValue[];
+  ratingCriteriaSnapshot?: RatingCriterion[];
+  ratingValues?: RecordingRatingValue[];
   approved: boolean;
   approvedAt?: string;
   approvedBy?: string;
-  // Always present on API responses (list/rate/approve/unapprove) — null
-  // until the recording has been rated against at least one criterion.
-  score: RecordingScore | null;
+  score?: RecordingScore | null;
   emailDelivery: DeliveryStatus;
   whatsappDelivery: DeliveryStatus;
   createdAt: string;
