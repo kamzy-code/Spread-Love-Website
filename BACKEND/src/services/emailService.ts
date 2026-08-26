@@ -5,6 +5,13 @@ import { emailLogger } from "../utils/logger";
 import { HttpError } from "../utils/httpError";
 import { Resend } from "resend";
 import { env } from "../config/env";
+import {
+  renderEmailLayout,
+  renderEmailButton,
+  renderInfoBox,
+  renderRecipientCard,
+  emailTextStyles as styles,
+} from "../utils/emailTemplate";
 
 const resend = new Resend(env.RESEND_API_KEY);
 
@@ -41,15 +48,35 @@ class EmailService {
       )
       .join("\n");
 
-    const recipientItemsHtml = recipients
-      .map(
-        (r: any) => `
-        <li style="margin-bottom: 8px;">
-          <strong>${r.recipientName}</strong> — ${r.recipientPhone}, ${r.country}<br/>
-          Call Date: ${format(r.callDate, "yyyy-MM-dd")}
-        </li>`,
+    const recipientCardsHtml = recipients
+      .map((r: any) =>
+        renderRecipientCard({
+          name: r.recipientName,
+          phone: r.recipientPhone,
+          country: r.country,
+          callDate: format(r.callDate, "yyyy-MM-dd"),
+        }),
       )
       .join("");
+
+    const bodyHtml = `
+      <h1 style="${styles.heading}">Booking Confirmed 🎉</h1>
+      <p style="${styles.body}">Dear ${callerName},</p>
+      <p style="${styles.body}">
+        Thank you for your surprise call booking! We're glad to let you know your booking has been
+        <strong>confirmed</strong>.
+      </p>
+      ${renderInfoBox([{ label: "Booking ID", value: booking.bookingId }])}
+      <h2 style="${styles.sectionHeading}">Recipient${recipients.length > 1 ? "s" : ""}</h2>
+      ${recipientCardsHtml}
+      <p style="${styles.body}">
+        Use your booking ID any time to track status or make changes.
+      </p>
+      ${renderEmailButton("Manage Your Booking", env.MANAGE_BOOKING_URL)}
+      <p style="${styles.body}">
+        We look forward to serving you. If you have any questions, just reply to this email.
+      </p>
+    `;
 
     const mailOptions = {
       from: "noreply@spreadlovenetwork.com",
@@ -59,34 +86,14 @@ class EmailService {
   Booking ID: ${booking.bookingId}
   Caller Name: ${callerName}
 ${recipientLinesText}
+
+  Manage your booking: ${env.MANAGE_BOOKING_URL}
   `,
-      html: `
-    <div style="font-family: Arial, sans-serif; color: #222;">
-      <h2>Booking Confirmation</h2>
-      <p>Dear ${callerName},</p>
-      <p>Thank you for your surprise call booking! We are glad to let you know that your booking has been <strong>confirmed</strong>.</p>
-      <p>
-      <strong>Booking ID:</strong>
-      <span style="background: #f3f3f3; padding: 4px 8px; border-radius: 4px; font-weight: bold;">
-        ${booking.bookingId}
-      </span>
-      </p>
-      <ul>
-        ${recipientItemsHtml}
-      </ul>
-      <p>Use the above booking ID to track and manage your booking via the link below.</p>
-      <p>
-      <a href="${
-        env.MANAGE_BOOKING_URL
-      }" style="color: #1a73e8; text-decoration: underline;">
-      Manage Your Booking
-      </a>
-      </p>
-      <p>We look forward to serving you. If you have any questions, reply to this email.</p>
-      <br/>
-      <p>Spread Love Team</p>
-    </div>
-    `,
+      html: renderEmailLayout({
+        title: "Booking Confirmed",
+        preheader: `Your booking ${booking.bookingId} is confirmed — here's everything you need to know.`,
+        bodyHtml,
+      }),
     };
 
     try {
@@ -157,6 +164,19 @@ ${recipientLinesText}
   ): Promise<void> {
     const callerName = booking.caller?.name ?? booking.callerName ?? "Customer";
 
+    const bodyHtml = `
+      <h1 style="${styles.heading}">Your Call Recording Is Ready 🎧</h1>
+      <p style="${styles.body}">Dear ${callerName},</p>
+      <p style="${styles.body}">
+        The recording of your call to <strong>${recipientName}</strong> is ready to listen to and download.
+      </p>
+      ${renderInfoBox([{ label: "Booking ID", value: booking.bookingId }])}
+      ${renderEmailButton("Listen to Your Recording", manageLink)}
+      <p style="${styles.body}">
+        If you have any questions, just reply to this email.
+      </p>
+    `;
+
     const mailOptions = {
       from: "noreply@spreadlovenetwork.com",
       to: to,
@@ -168,27 +188,11 @@ ${manageLink}
 
 Booking ID: ${booking.bookingId}
 `,
-      html: `
-    <div style="font-family: Arial, sans-serif; color: #222;">
-      <h2>Your Call Recording Is Ready</h2>
-      <p>Dear ${callerName},</p>
-      <p>The recording of your call to <strong>${recipientName}</strong> is ready to listen to and download.</p>
-      <p>
-      <a href="${manageLink}" style="color: #1a73e8; text-decoration: underline;">
-      Listen to Your Recording
-      </a>
-      </p>
-      <p>
-      <strong>Booking ID:</strong>
-      <span style="background: #f3f3f3; padding: 4px 8px; border-radius: 4px; font-weight: bold;">
-        ${booking.bookingId}
-      </span>
-      </p>
-      <p>If you have any questions, reply to this email.</p>
-      <br/>
-      <p>Spread Love Team</p>
-    </div>
-    `,
+      html: renderEmailLayout({
+        title: "Your Call Recording Is Ready",
+        preheader: `The recording of your call to ${recipientName} is ready to listen to.`,
+        bodyHtml,
+      }),
     };
 
     try {
@@ -214,6 +218,17 @@ Booking ID: ${booking.bookingId}
     subject: string,
     message: string,
   ) {
+    const bodyHtml = `
+      <h1 style="${styles.heading}">New Contact Submission</h1>
+      <p style="${styles.body}">You've received a new message from the contact form.</p>
+      ${renderInfoBox([
+        { label: "Name", value: name },
+        { label: "Email", value: email },
+      ])}
+      <h2 style="${styles.sectionHeading}">Message</h2>
+      <p style="${styles.body}">${message}</p>
+    `;
+
     const mailOptions = {
       from: "noreply@spreadlovenetwork.com",
       to: env.EMAIL_USER,
@@ -224,20 +239,11 @@ Booking ID: ${booking.bookingId}
 
   ${message}
   `,
-      html: `
-    <div style="font-family: Arial, sans-serif; color: #222;">
-      <h2>Contact Submission</h2>
-      <p>You have received a new contact form submission from;</p>
-      
-      <p>
-      <strong>Name:</strong> ${name}<br/>
-      <strong>Email:</strong> ${email}<br/><br/>
-      
-      ${message}
-      </p>
-      
-    </div>
-    `,
+      html: renderEmailLayout({
+        title: "New Contact Submission",
+        preheader: `New message from ${name} via the contact form.`,
+        bodyHtml,
+      }),
     };
 
     try {
