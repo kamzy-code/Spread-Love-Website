@@ -39,6 +39,20 @@ export function renderEmailButton(label: string, href: string): string {
     </table>`;
 }
 
+// Amber warning callout — visually distinct from renderInfoBox's neutral
+// pink, for things the reader needs to actually act on (e.g. "this expires,
+// download it"), not just reference facts.
+export function renderNoticeBox(text: string): string {
+  return `
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color: #fffbeb; border: 1px solid #fde68a; border-radius: 12px; margin: 20px 0;">
+      <tr>
+        <td style="padding: 14px 18px; font-family: ${FONT_STACK}; font-size: 14px; color: #92400e; line-height: 1.6;">
+          ${text}
+        </td>
+      </tr>
+    </table>`;
+}
+
 // A soft-pink highlighted block for the handful of facts a reader must not
 // miss (booking ID, a link) — label/value pairs, bold values for legibility.
 export function renderInfoBox(rows: { label: string; value: string }[]): string {

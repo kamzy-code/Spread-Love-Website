@@ -639,7 +639,13 @@ class RecordingService {
     const manageLink = `${env.MANAGE_BOOKING_URL}?id=${booking.bookingId}`;
 
     try {
-      await emailService.sendRecordingReadyEmail(to, booking, recipientName, manageLink);
+      await emailService.sendRecordingReadyEmail(
+        to,
+        booking,
+        recipientName,
+        manageLink,
+        recording.expiresAt,
+      );
       recording.emailDelivery = { status: "sent", sentAt: new Date() };
     } catch (error: any) {
       recording.emailDelivery = { status: "failed", error: error.message };

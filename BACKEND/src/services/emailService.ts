@@ -9,6 +9,7 @@ import {
   renderEmailLayout,
   renderEmailButton,
   renderInfoBox,
+  renderNoticeBox,
   renderRecipientCard,
   emailTextStyles as styles,
 } from "../utils/emailTemplate";
@@ -161,8 +162,10 @@ ${recipientLinesText}
     booking: any,
     recipientName: string,
     manageLink: string,
+    expiresAt: Date,
   ): Promise<void> {
     const callerName = booking.caller?.name ?? booking.callerName ?? "Customer";
+    const expiresLabel = format(expiresAt, "MMMM d, yyyy");
 
     const bodyHtml = `
       <h1 style="${styles.heading}">Your Call Recording Is Ready 🎧</h1>
@@ -172,6 +175,9 @@ ${recipientLinesText}
       </p>
       ${renderInfoBox([{ label: "Booking ID", value: booking.bookingId }])}
       ${renderEmailButton("Listen to Your Recording", manageLink)}
+      ${renderNoticeBox(
+        `<strong>This recording is only available until ${expiresLabel}</strong> (30 days from upload) — after that it's permanently deleted from our storage. Please download a copy from the link above if you'd like to keep it.`,
+      )}
       <p style="${styles.body}">
         If you have any questions, just reply to this email.
       </p>
@@ -187,10 +193,12 @@ The recording of your call to ${recipientName} is ready. You can listen to it an
 ${manageLink}
 
 Booking ID: ${booking.bookingId}
+
+This recording is only available until ${expiresLabel} (30 days from upload) — after that it's permanently deleted from our storage. Please download a copy if you'd like to keep it.
 `,
       html: renderEmailLayout({
         title: "Your Call Recording Is Ready",
-        preheader: `The recording of your call to ${recipientName} is ready to listen to.`,
+        preheader: `The recording of your call to ${recipientName} is ready — available until ${expiresLabel}.`,
         bodyHtml,
       }),
     };
