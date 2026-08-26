@@ -16,6 +16,12 @@ import {
 
 const resend = new Resend(env.RESEND_API_KEY);
 
+// Resend's sending domain is noreply@ — a customer hitting "reply" on any
+// of these gets nowhere unless we set a real reply-to. env.EMAIL_USER is
+// the same actively-monitored inbox contact-form submissions already land
+// in, so it doubles as the support address here.
+const SUPPORT_EMAIL = env.EMAIL_USER;
+
 // Normalizes a booking's recipient(s) to a flat list regardless of shape, so
 // the email template only has one code path to render — legacy bookings
 // have exactly one recipient built from the flat fields, v2 bookings carry
@@ -88,13 +94,15 @@ class EmailService {
       </p>
       ${renderEmailButton("Manage Your Booking", env.MANAGE_BOOKING_URL)}
       <p style="${styles.body}">
-        We look forward to serving you. If you have any questions, just reply to this email.
+        We look forward to serving you. If you have any questions, contact us at
+        <a href="mailto:${SUPPORT_EMAIL}" style="color: #9d0057;">${SUPPORT_EMAIL}</a>.
       </p>
     `;
 
     const mailOptions = {
       from: "noreply@spreadlovenetwork.com",
       to: to,
+      replyTo: SUPPORT_EMAIL,
       subject: subject,
       text: `Thank you for your booking! Your booking has been confirmed.
   Booking ID: ${booking.bookingId}
@@ -102,6 +110,8 @@ class EmailService {
 ${recipientLinesText}
 
   Manage your booking: ${env.MANAGE_BOOKING_URL}
+
+  Questions? Contact us at ${SUPPORT_EMAIL}
   `,
       html: renderEmailLayout({
         title: "Booking Confirmed",
@@ -189,40 +199,47 @@ ${recipientLinesText}
       )
       .join("");
 
+    // "call(s)" deliberately, not "every call" — this fires for a single-
+    // recipient booking just as often as a multi-recipient one, and "every
+    // call in your booking" reads oddly when there was only ever one.
     const bodyHtml = `
-      <h1 style="${styles.heading}">All Your Calls Are Complete! 🎉</h1>
+      <h1 style="${styles.heading}">Your Call(s) Are Complete! 🎉</h1>
       <p style="${styles.body}">Dear ${callerName},</p>
       <p style="${styles.body}">
-        Great news — every call in your booking has been <strong>successfully placed</strong>!
+        Great news — your call(s) have been placed <strong>successfully</strong>!
       </p>
       ${renderInfoBox([{ label: "Booking ID", value: booking.bookingId }])}
       <h2 style="${styles.sectionHeading}">Recipient${recipients.length > 1 ? "s" : ""}</h2>
       ${recipientCardsHtml}
       <p style="${styles.body}">
-        If any call was recorded, we'll email you separately once that recording is ready.
+        If a call was recorded, we'll email you separately once that recording is ready.
       </p>
       ${renderEmailButton("Manage Your Booking", env.MANAGE_BOOKING_URL)}
       <p style="${styles.body}">
-        Thank you for spreading love with us! If you have any questions, just reply to this email.
+        Thank you for spreading love with us! If you have any questions, contact us at
+        <a href="mailto:${SUPPORT_EMAIL}" style="color: #9d0057;">${SUPPORT_EMAIL}</a>.
       </p>
     `;
 
     const mailOptions = {
       from: "noreply@spreadlovenetwork.com",
       to: to,
-      subject: "All Your Calls Are Complete!",
+      replyTo: SUPPORT_EMAIL,
+      subject: "Your Call(s) Are Complete!",
       text: `Hi ${callerName},
 
-Great news — every call in your booking has been successfully placed!
+Great news — your call(s) have been placed successfully!
 
 Booking ID: ${booking.bookingId}
 ${recipientLinesText}
 
 Manage your booking: ${env.MANAGE_BOOKING_URL}
+
+Questions? Contact us at ${SUPPORT_EMAIL}
 `,
       html: renderEmailLayout({
-        title: "All Your Calls Are Complete",
-        preheader: `Every call in booking ${booking.bookingId} has been successfully placed.`,
+        title: "Your Call(s) Are Complete",
+        preheader: `Your call(s) in booking ${booking.bookingId} have been placed successfully.`,
         bodyHtml,
       }),
     };
@@ -307,13 +324,15 @@ Manage your booking: ${env.MANAGE_BOOKING_URL}
         `<strong>This recording is only available until ${expiresLabel}</strong> (30 days from upload) — after that it's permanently deleted from our storage. Please download a copy from the link above if you'd like to keep it.`,
       )}
       <p style="${styles.body}">
-        If you have any questions, just reply to this email.
+        If you have any questions, contact us at
+        <a href="mailto:${SUPPORT_EMAIL}" style="color: #9d0057;">${SUPPORT_EMAIL}</a>.
       </p>
     `;
 
     const mailOptions = {
       from: "noreply@spreadlovenetwork.com",
       to: to,
+      replyTo: SUPPORT_EMAIL,
       subject: "Your Call Recording Is Ready",
       text: `Hi ${callerName},
 
@@ -323,6 +342,8 @@ ${manageLink}
 Booking ID: ${booking.bookingId}
 
 This recording is only available until ${expiresLabel} (30 days from upload) — after that it's permanently deleted from our storage. Please download a copy if you'd like to keep it.
+
+Questions? Contact us at ${SUPPORT_EMAIL}
 `,
       html: renderEmailLayout({
         title: "Your Call Recording Is Ready",
@@ -368,6 +389,9 @@ This recording is only available until ${expiresLabel} (30 days from upload) —
     const mailOptions = {
       from: "noreply@spreadlovenetwork.com",
       to: env.EMAIL_USER,
+      // So whoever reads this can just hit reply and land in the
+      // customer's own inbox, not noreply@.
+      replyTo: email,
       subject: `${subject} from ${name}`,
       text: `You have received a new contact form submission.
   Name: ${name}
