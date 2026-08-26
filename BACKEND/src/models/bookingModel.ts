@@ -77,6 +77,7 @@ export interface IBooking extends Document {
   // shared / unchanged across v1 and v2
   contactConsent?: string;
   confirmationMailsent: boolean;
+  allRecipientsSuccessfulMailSent: boolean;
   assignedRep?: mongoose.Types.ObjectId;
   paymentURL?: string;
   paymentStatus: string;
@@ -165,6 +166,7 @@ const bookingSchema: Schema = new Schema<IBooking>(
 
     contactConsent: { type: String, required: false, default: "no" },
     confirmationMailsent: { required: true, type: Boolean, default: false },
+    allRecipientsSuccessfulMailSent: { required: true, type: Boolean, default: false },
     assignedRep: { type: mongoose.Schema.Types.ObjectId, ref: "Admin" },
     paymentStatus: {
       type: String,

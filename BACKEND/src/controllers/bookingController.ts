@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import bookingService from "../services/bookingService";
 import recordingService from "../services/recordingService";
+import emailService from "../services/emailService";
 import { getLeastLoadedRep } from "../utils/getLeastLoadedRep";
 import { callStatus } from "../types/genralTypes";
 import { isLegacyBooking } from "../utils/bookingShape";
@@ -625,6 +626,20 @@ class BookingController {
         });
         next(new HttpError(404, "Booking not found"));
         return;
+      }
+
+      // Best-effort: a failed "all successful" mail must not fail an
+      // already-applied status update response.
+      try {
+        await emailService.sendAllRecipientsSuccessfulEmailIfDue(booking);
+      } catch (emailError: any) {
+        bookingLogger.error(
+          `All-recipients-successful mail failed after status update: ${emailError.message}`,
+          {
+            id: bookingId,
+            action: "UPDATE_BOOKING_STATUS_ALL_SUCCESSFUL_MAIL_FAILED",
+          },
+        );
       }
 
       res.status(201).json({ message: "Status updated" });

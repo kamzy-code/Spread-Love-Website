@@ -182,6 +182,7 @@ class BookingService {
       duplicateOfPaid: match ? true : false,
       contactConsent,
       confirmationMailsent: false,
+      allRecipientsSuccessfulMailSent: false,
       paymentStatus: "pending",
     });
 

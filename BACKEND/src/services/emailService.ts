@@ -33,6 +33,19 @@ const getRecipientsForEmail = (booking: any) => {
   ];
 };
 
+// Strictly "every recipient's call succeeded" — deliberately not the same
+// thing as bookingStatus === "completed" (bookingService.deriveBookingStatus
+// treats successful/unsuccessful/rejected as equally "terminal", so a
+// booking can be "completed" with a failed call in it). This check only
+// ever returns true when nothing went wrong for anyone.
+const areAllRecipientsSuccessful = (booking: any): boolean => {
+  if (isLegacyBooking(booking)) {
+    return booking.status === "successful";
+  }
+  const recipients = booking.recipients ?? [];
+  return recipients.length > 0 && recipients.every((r: any) => r.callStatus === "successful");
+};
+
 class EmailService {
   async sendBookingConfirmationEmail(
     to: string,
@@ -152,6 +165,121 @@ ${recipientLinesText}
       bookingId: booking.bookingId,
       email,
       action: "SEND_BOOKING_CONFIRMATION_MAIL_SUCCESS",
+    });
+
+    return { sent: true };
+  }
+
+  async sendAllRecipientsSuccessfulEmail(to: string, booking: any): Promise<void> {
+    const callerName = booking.caller?.name ?? booking.callerName ?? "Customer";
+    const recipients = getRecipientsForEmail(booking);
+
+    const recipientLinesText = recipients
+      .map((r: any, i: number) => `  Recipient ${i + 1}: ${r.recipientName} — call completed successfully`)
+      .join("\n");
+
+    const recipientCardsHtml = recipients
+      .map((r: any) =>
+        renderRecipientCard({
+          name: r.recipientName,
+          phone: r.recipientPhone,
+          country: r.country,
+          callDate: format(r.callDate, "yyyy-MM-dd"),
+        }),
+      )
+      .join("");
+
+    const bodyHtml = `
+      <h1 style="${styles.heading}">All Your Calls Are Complete! 🎉</h1>
+      <p style="${styles.body}">Dear ${callerName},</p>
+      <p style="${styles.body}">
+        Great news — every call in your booking has been <strong>successfully placed</strong>!
+      </p>
+      ${renderInfoBox([{ label: "Booking ID", value: booking.bookingId }])}
+      <h2 style="${styles.sectionHeading}">Recipient${recipients.length > 1 ? "s" : ""}</h2>
+      ${recipientCardsHtml}
+      <p style="${styles.body}">
+        If any call was recorded, we'll email you separately once that recording is ready.
+      </p>
+      ${renderEmailButton("Manage Your Booking", env.MANAGE_BOOKING_URL)}
+      <p style="${styles.body}">
+        Thank you for spreading love with us! If you have any questions, just reply to this email.
+      </p>
+    `;
+
+    const mailOptions = {
+      from: "noreply@spreadlovenetwork.com",
+      to: to,
+      subject: "All Your Calls Are Complete!",
+      text: `Hi ${callerName},
+
+Great news — every call in your booking has been successfully placed!
+
+Booking ID: ${booking.bookingId}
+${recipientLinesText}
+
+Manage your booking: ${env.MANAGE_BOOKING_URL}
+`,
+      html: renderEmailLayout({
+        title: "All Your Calls Are Complete",
+        preheader: `Every call in booking ${booking.bookingId} has been successfully placed.`,
+        bodyHtml,
+      }),
+    };
+
+    try {
+      const { error } = await resend.emails.send(mailOptions);
+      if (error) {
+        throw new Error(error.message);
+      }
+    } catch (error: any) {
+      emailLogger.error("Failed to send All Recipients Successful email", {
+        error: error.message,
+        action: "SEND_ALL_RECIPIENTS_SUCCESSFUL_EMAIL_FAILED",
+      });
+      throw new HttpError(
+        502,
+        "Failed to send All Recipients Successful email. Please try again or contact support.",
+      );
+    }
+  }
+
+  // Single guarded entry point, same shape as sendBookingConfirmationIfDue —
+  // called (best-effort) from bookingController.updateBookingStatus after
+  // every call-status write, since that's the only place callStatus ever
+  // changes. Cheap to call on every status update: the "not everyone's
+  // successful yet" / "already sent" checks make it a no-op the vast
+  // majority of the time.
+  async sendAllRecipientsSuccessfulEmailIfDue(
+    booking: IBooking,
+  ): Promise<{ sent: boolean; reason?: string }> {
+    const email = booking.caller?.email || booking.callerEmail;
+
+    if (!email) {
+      return {
+        sent: false,
+        reason: "Caller email is required for sending the all-successful mail",
+      };
+    }
+    if (booking.allRecipientsSuccessfulMailSent) {
+      return {
+        sent: false,
+        reason: `All-recipients-successful mail already sent for ${booking.bookingId}`,
+      };
+    }
+    if (!areAllRecipientsSuccessful(booking)) {
+      return { sent: false, reason: "Not every recipient has a successful call yet" };
+    }
+
+    await this.sendAllRecipientsSuccessfulEmail(email, booking);
+
+    booking.allRecipientsSuccessfulMailSent = true;
+    await booking.save();
+
+    emailLogger.info("All-recipients-successful mail sent", {
+      bookingId: booking.bookingId,
+      email,
+      action: "SEND_ALL_RECIPIENTS_SUCCESSFUL_MAIL_SUCCESS",
     });
 
     return { sent: true };
