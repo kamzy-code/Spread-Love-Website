@@ -81,6 +81,14 @@ router.delete(
   recordingController.deleteRecording,
 );
 
+// Delivery — same role set as rate/approve.
+router.post(
+  "/:id/send-email",
+  authMiddleware,
+  checkRole("superadmin", "salesrep"),
+  recordingController.sendRecordingEmail,
+);
+
 router.use((req, res) => {
   res.status(404).json({ message: "Recording route not found" });
 });

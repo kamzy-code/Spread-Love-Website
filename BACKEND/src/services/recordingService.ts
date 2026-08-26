@@ -11,6 +11,7 @@ import { Booking } from "../models/bookingModel";
 import { Recording, IRecording, IRatingValue } from "../models/recordingModel";
 import { IRatingCriterion } from "../models/ratingTemplateModel";
 import ratingTemplateService from "./ratingTemplateService";
+import emailService from "./emailService";
 import { env } from "../config/env";
 import { HttpError } from "../utils/httpError";
 import { recordingLogger } from "../utils/logger";
@@ -337,6 +338,48 @@ class RecordingService {
     }
   }
 
+  // Feeds the public GET /booking/:bookingId response (bookingController) —
+  // the only place an approved recording is exposed to the customer, keyed
+  // by recipientId since a booking can have multiple recipients each with
+  // their own recording. Deliberately narrow: approved + uploaded only,
+  // never an unreviewed or since-deleted/expired recording. Returns an
+  // empty map (no S3 calls at all) when the booking has no approved
+  // recordings yet — the common case for most public lookups.
+  async getApprovedRecordingsByBooking(
+    bookingId: mongoose.Types.ObjectId | string,
+  ): Promise<Map<string, { files: { url: string; partNumber: number }[] }>> {
+    const recordings = await Recording.find({
+      booking: bookingId,
+      approved: true,
+      status: "uploaded",
+    });
+
+    const result = new Map<string, { files: { url: string; partNumber: number }[] }>();
+    if (recordings.length === 0) return result;
+
+    for (const recording of recordings) {
+      if (!recording.recipientId) continue;
+
+      const files = await Promise.all(
+        recording.files
+          .slice()
+          .sort((a, b) => a.partNumber - b.partNumber)
+          .map(async (file) => ({
+            url: await getSignedUrl(
+              s3Client,
+              new GetObjectCommand({ Bucket: file.s3Bucket, Key: file.s3Key }),
+              { expiresIn: PLAYBACK_URL_TTL_SECONDS },
+            ),
+            partNumber: file.partNumber,
+          })),
+      );
+
+      result.set(recording.recipientId.toString(), { files });
+    }
+
+    return result;
+  }
+
   // Validates each submitted value against the recording's pinned criteria
   // snapshot (existence, options/multiple shape, valid option values) and
   // returns the validated, de-duplicated list. Throws HttpError(400) on the
@@ -561,6 +604,56 @@ class RecordingService {
       deletedBy: userId,
       role,
       action: "DELETE_RECORDING_SUCCESS",
+    });
+
+    return saved;
+  }
+
+  // Emails the customer a link to the public /manage page, where their
+  // approved recording is now visible (see bookingController's
+  // getApprovedRecordingsByBooking merge). No "already sent" guard, unlike
+  // booking confirmation — a rep may legitimately need to resend.
+  async sendRecordingEmail(userId: string, recordingId: string): Promise<IRecording> {
+    const recording = await Recording.findById(recordingId);
+    if (!recording) {
+      throw new HttpError(404, "Recording not found");
+    }
+    if (!recording.approved) {
+      throw new HttpError(400, "Only approved recordings can be sent to the customer");
+    }
+
+    const booking = await Booking.findById(recording.booking);
+    if (!booking) {
+      throw new HttpError(404, "Booking not found for this recording");
+    }
+
+    const to = booking.caller?.email || booking.callerEmail;
+    if (!to) {
+      throw new HttpError(400, "This booking has no caller email on file");
+    }
+
+    const recipient = booking.recipients?.find(
+      (r) => r._id?.toString() === recording.recipientId?.toString(),
+    );
+    const recipientName = recipient?.recipientName ?? "your recipient";
+    const manageLink = `${env.MANAGE_BOOKING_URL}?id=${booking.bookingId}`;
+
+    try {
+      await emailService.sendRecordingReadyEmail(to, booking, recipientName, manageLink);
+      recording.emailDelivery = { status: "sent", sentAt: new Date() };
+    } catch (error: any) {
+      recording.emailDelivery = { status: "failed", error: error.message };
+      await recording.save();
+      throw error;
+    }
+
+    const saved = await recording.save();
+
+    recordingLogger.info("Recording-ready email sent", {
+      recordingId,
+      bookingId: booking.bookingId,
+      sentBy: userId,
+      action: "SEND_RECORDING_EMAIL_SUCCESS",
     });
 
     return saved;

@@ -289,6 +289,8 @@ export default function DetailsPage({ data }: { data: Booking }) {
                   updateLegacyStatusMutation.isPending
                 }
                 bookingId={data._id}
+                bookingIdString={data.bookingId}
+                callerPhone={caller.phone}
                 currentUserId={user?._id}
                 currentUserRole={user?.role}
                 legacy={legacy}

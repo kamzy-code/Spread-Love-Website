@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import bookingService from "../services/bookingService";
+import recordingService from "../services/recordingService";
 import { getLeastLoadedRep } from "../utils/getLeastLoadedRep";
 import { callStatus } from "../types/genralTypes";
 import { isLegacyBooking } from "../utils/bookingShape";
@@ -104,10 +105,24 @@ class BookingController {
         return;
       }
 
+      // Merge in any approved recording(s) for this booking's recipients —
+      // the only place a recording is exposed on this fully public route.
+      // Only touches the response, never persisted.
+      const bookingObj: any = booking.toObject();
+      const recordingsByRecipient = await recordingService.getApprovedRecordingsByBooking(
+        booking._id as any,
+      );
+      if (recordingsByRecipient.size > 0 && Array.isArray(bookingObj.recipients)) {
+        bookingObj.recipients = bookingObj.recipients.map((r: any) => ({
+          ...r,
+          recording: recordingsByRecipient.get(r._id?.toString()) ?? null,
+        }));
+      }
+
       // return the booking with a successful message
       res
         .status(200)
-        .json({ message: "Booking fetched successfully", booking });
+        .json({ message: "Booking fetched successfully", booking: bookingObj });
 
       bookingLogger.info("Get booking by BookingId successful", {
         id: booking._id,

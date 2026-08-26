@@ -13,6 +13,7 @@ import {
   useApproveRecording,
   useUnapproveRecording,
   useDeleteRecording,
+  useSendRecordingEmail,
 } from "@/hooks/useRecordings";
 import RateRecordingModal from "../../recordings/RateRecordingModal";
 import DeleteRecordingModal from "../../recordings/DeleteRecordingModal";
@@ -142,7 +143,10 @@ const CAN_REVIEW_ROLES = new Set(["superadmin", "salesrep"]);
 function RecordingCard({
   recording,
   bookingId,
+  bookingIdString,
   recipientId,
+  recipientName,
+  callerPhone,
   isOwner,
   canReview,
   currentUserRole,
@@ -150,7 +154,10 @@ function RecordingCard({
 }: {
   recording: Recording;
   bookingId: string;
+  bookingIdString?: string;
   recipientId: string;
+  recipientName?: string;
+  callerPhone?: string;
   isOwner: boolean;
   canReview: boolean;
   currentUserRole?: string;
@@ -161,6 +168,7 @@ function RecordingCard({
   const approveMutation = useApproveRecording(recording._id);
   const unapproveMutation = useUnapproveRecording(recording._id);
   const deleteMutation = useDeleteRecording(recording._id);
+  const sendEmailMutation = useSendRecordingEmail(recording._id);
 
   const isRemoved = recording.status === "deleted" || recording.status === "expired";
   // Matches recordingService.deleteRecording's own rule: superadmin always,
@@ -194,6 +202,26 @@ function RecordingCard({
     } catch {
       // error surfaced in the modal via deleteMutation.error below
     }
+  };
+
+  const handleSendEmail = async () => {
+    try {
+      await sendEmailMutation.mutateAsync();
+      refresh();
+    } catch {
+      // error surfaced via sendEmailMutation.error below
+    }
+  };
+
+  // No backend call — wa.me just opens WhatsApp with the message prefilled;
+  // nothing confirms the rep actually hits send, so whatsappDelivery is
+  // never updated from this (stays "not_sent" until WhatChimp replaces it).
+  const handleSendWhatsApp = () => {
+    if (!bookingIdString || !callerPhone) return;
+    const manageLink = `${window.location.origin}/manage?id=${bookingIdString}`;
+    const message = `Hi! The recording of your call to ${recipientName ?? "your recipient"} is ready. You can listen to it here: ${manageLink}`;
+    const phone = callerPhone.replace(/[\s-]/g, "");
+    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, "_blank");
   };
 
   return (
@@ -307,6 +335,51 @@ function RecordingCard({
         </div>
       )}
 
+      {canReview && recording.approved && (
+        <div className="pt-2 border-t space-y-2">
+          <p className="text-xs font-medium text-gray-500">Deliver to customer</p>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              className="flex-1 text-sm border border-brand-end text-brand-end rounded-lg py-2 hover:bg-brand-end hover:text-white transition disabled:opacity-50"
+              disabled={sendEmailMutation.isPending}
+              onClick={handleSendEmail}
+            >
+              {sendEmailMutation.isPending ? "Sending..." : "Send Email"}
+            </button>
+
+            {bookingIdString && callerPhone && (
+              <button
+                type="button"
+                className="flex-1 text-sm border border-green-500 text-green-600 rounded-lg py-2 hover:bg-green-500 hover:text-white transition"
+                onClick={handleSendWhatsApp}
+              >
+                Send via WhatsApp
+              </button>
+            )}
+          </div>
+
+          {recording.emailDelivery?.status === "sent" && recording.emailDelivery.sentAt && (
+            <p className="text-xs text-gray-500">
+              Emailed {new Date(recording.emailDelivery.sentAt).toLocaleString()}
+            </p>
+          )}
+          {recording.emailDelivery?.status === "failed" && (
+            <p className="text-xs text-red-600">
+              Last email attempt failed
+              {recording.emailDelivery.error ? `: ${recording.emailDelivery.error}` : ""}
+            </p>
+          )}
+          {sendEmailMutation.error && (
+            <p className="text-xs text-red-600">
+              {sendEmailMutation.error instanceof Error
+                ? sendEmailMutation.error.message
+                : "Failed to send email"}
+            </p>
+          )}
+        </div>
+      )}
+
       {showRatingModal && (
         <RateRecordingModal
           recording={recording}
@@ -332,14 +405,20 @@ function RecordingCard({
 
 interface RecordingsPanelProps {
   bookingId: string;
+  bookingIdString?: string;
+  callerPhone?: string;
   recipientId: string;
+  recipientName?: string;
   currentUserId?: string;
   currentUserRole?: string;
 }
 
 export default function RecordingsPanel({
   bookingId,
+  bookingIdString,
+  callerPhone,
   recipientId,
+  recipientName,
   currentUserId,
   currentUserRole,
 }: RecordingsPanelProps) {
@@ -367,7 +446,10 @@ export default function RecordingsPanel({
           key={recording._id}
           recording={recording}
           bookingId={bookingId}
+          bookingIdString={bookingIdString}
           recipientId={recipientId}
+          recipientName={recipientName}
+          callerPhone={callerPhone}
           isOwner={!!currentUserId && recording.uploadedBy === currentUserId}
           canReview={canReview}
           currentUserRole={currentUserRole}

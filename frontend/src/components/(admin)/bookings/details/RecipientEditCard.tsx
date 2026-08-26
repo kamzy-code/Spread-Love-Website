@@ -50,6 +50,8 @@ interface RecipientEditCardProps {
   onUpdateStatus: (status: string) => void;
   statusActionDisabled?: boolean;
   bookingId: string;
+  bookingIdString?: string;
+  callerPhone?: string;
   currentUserId?: string;
   currentUserRole?: string;
   legacy?: boolean;
@@ -63,6 +65,8 @@ export default function RecipientEditCard({
   onUpdateStatus,
   statusActionDisabled,
   bookingId,
+  bookingIdString,
+  callerPhone,
   currentUserId,
   currentUserRole,
   legacy,
@@ -221,7 +225,10 @@ export default function RecipientEditCard({
       {recipient.callRecording === "yes" && !legacy && (
         <RecordingsPanel
           bookingId={bookingId}
+          bookingIdString={bookingIdString}
+          callerPhone={callerPhone}
           recipientId={recipient._id}
+          recipientName={recipient.recipientName}
           currentUserId={currentUserId}
           currentUserRole={currentUserRole}
         />

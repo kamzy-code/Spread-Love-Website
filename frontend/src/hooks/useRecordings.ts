@@ -127,3 +127,10 @@ export const useDeleteRecording = (recordingId: string) => {
       apiCall(`/recordings/${recordingId}`, { method: "DELETE" }),
   });
 };
+
+export const useSendRecordingEmail = (recordingId: string) => {
+  return useMutation({
+    mutationFn: (): Promise<{ message: string; recording: Recording }> =>
+      apiCall(`/recordings/${recordingId}/send-email`, { method: "POST" }),
+  });
+};

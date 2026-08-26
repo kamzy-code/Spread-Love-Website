@@ -135,6 +135,18 @@ class RecordingController {
       return;
     }
   }
+
+  async sendRecordingEmail(req: AuthRequest, res: Response, next: NextFunction) {
+    const user = req.user!;
+    try {
+      const recording = await recordingService.sendRecordingEmail(user.userId, req.params.id);
+      res.status(200).json({ message: "Recording email sent", recording });
+      return;
+    } catch (error) {
+      next(error);
+      return;
+    }
+  }
 }
 
 const recordingController = new RecordingController();

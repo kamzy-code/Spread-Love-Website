@@ -149,6 +149,65 @@ ${recipientLinesText}
     return { sent: true };
   }
 
+  async sendRecordingReadyEmail(
+    to: string,
+    booking: any,
+    recipientName: string,
+    manageLink: string,
+  ): Promise<void> {
+    const callerName = booking.caller?.name ?? booking.callerName ?? "Customer";
+
+    const mailOptions = {
+      from: "noreply@spreadlovenetwork.com",
+      to: to,
+      subject: "Your Call Recording Is Ready",
+      text: `Hi ${callerName},
+
+The recording of your call to ${recipientName} is ready. You can listen to it and download it from your booking page:
+${manageLink}
+
+Booking ID: ${booking.bookingId}
+`,
+      html: `
+    <div style="font-family: Arial, sans-serif; color: #222;">
+      <h2>Your Call Recording Is Ready</h2>
+      <p>Dear ${callerName},</p>
+      <p>The recording of your call to <strong>${recipientName}</strong> is ready to listen to and download.</p>
+      <p>
+      <a href="${manageLink}" style="color: #1a73e8; text-decoration: underline;">
+      Listen to Your Recording
+      </a>
+      </p>
+      <p>
+      <strong>Booking ID:</strong>
+      <span style="background: #f3f3f3; padding: 4px 8px; border-radius: 4px; font-weight: bold;">
+        ${booking.bookingId}
+      </span>
+      </p>
+      <p>If you have any questions, reply to this email.</p>
+      <br/>
+      <p>Spread Love Team</p>
+    </div>
+    `,
+    };
+
+    try {
+      const { error } = await resend.emails.send(mailOptions);
+      if (error) {
+        throw new Error(error.message);
+      }
+    } catch (error: any) {
+      emailLogger.error("Failed to send Recording Ready email", {
+        error: error.message,
+        action: "SEND_RECORDING_READY_EMAIL_FAILED",
+      });
+      throw new HttpError(
+        502,
+        "Failed to send Recording Ready email. Please try again or contact support.",
+      );
+    }
+  }
+
   async sendContactEmail(
     name: string,
     email: string,

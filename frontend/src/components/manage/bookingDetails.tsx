@@ -9,6 +9,11 @@ import Link from "next/link";
 import { countries } from "@/lib/countries";
 import { useUpdateBookingByCustomer } from "@/hooks/useBookings";
 
+interface RecordingFile {
+  url: string;
+  partNumber: number;
+}
+
 interface RecipientData {
   _id: string;
   recipientName: string;
@@ -21,6 +26,10 @@ interface RecipientData {
   callStatus?: string;
   callRecording?: string;
   callRecordingURL?: string;
+  // Populated server-side (bookingController.getBookingByBookingId) only
+  // once a recording has been QC-approved — see recordingService's
+  // getApprovedRecordingsByBooking.
+  recording?: { files: RecordingFile[] } | null;
 }
 
 interface CallerData {
@@ -338,21 +347,34 @@ export default function BookingDetails({ data }: { data: BookingData }) {
                   </div>
 
                   {!editForm && recipient.callRecording === "yes" && (
-                    <div className="flex flex-col space-y-2">
+                    <div className="flex flex-col space-y-2 lg:col-span-2">
                       <label className="text-gray-700 font-medium">Call Recording:</label>
-                      <p className="py-3 w-full">
-                        {!recipient.callRecordingURL ? (
-                          "Not available"
-                        ) : (
-                          <Link
-                            href={recipient.callRecordingURL}
-                            target="_blank"
-                            className="text-blue-500 hover:underline"
-                          >
-                            {recipient.callRecordingURL}
-                          </Link>
-                        )}
-                      </p>
+                      {recipient.recording?.files?.length ? (
+                        <div className="space-y-2">
+                          {recipient.recording.files.map((file) => (
+                            <audio
+                              key={file.partNumber}
+                              controls
+                              src={file.url}
+                              className="w-full h-10"
+                            />
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="py-3 w-full">
+                          {!recipient.callRecordingURL ? (
+                            "Not available"
+                          ) : (
+                            <Link
+                              href={recipient.callRecordingURL}
+                              target="_blank"
+                              className="text-blue-500 hover:underline"
+                            >
+                              {recipient.callRecordingURL}
+                            </Link>
+                          )}
+                        </p>
+                      )}
                     </div>
                   )}
                 </div>
