@@ -120,3 +120,10 @@ export const useUnapproveRecording = (recordingId: string) => {
       apiCall(`/recordings/${recordingId}/unapprove`, { method: "PUT" }),
   });
 };
+
+export const useDeleteRecording = (recordingId: string) => {
+  return useMutation({
+    mutationFn: (): Promise<{ message: string; recording: Recording }> =>
+      apiCall(`/recordings/${recordingId}`, { method: "DELETE" }),
+  });
+};

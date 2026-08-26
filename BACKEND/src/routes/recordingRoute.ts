@@ -71,6 +71,16 @@ router.put(
   recordingController.unapproveRecording,
 );
 
+// Open to all three roles at the route level — recordingService enforces
+// who's actually allowed to delete a given recording (superadmin always,
+// the uploader only before it's approved).
+router.delete(
+  "/:id",
+  authMiddleware,
+  checkRole("superadmin", "salesrep", "callrep"),
+  recordingController.deleteRecording,
+);
+
 router.use((req, res) => {
   res.status(404).json({ message: "Recording route not found" });
 });

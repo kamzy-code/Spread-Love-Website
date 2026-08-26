@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document } from "mongoose";
 import { IRatingCriterion, ratingCriterionSchema } from "./ratingTemplateModel";
 
-export type recordingStatus = "pending_upload" | "uploaded" | "expired";
+export type recordingStatus = "pending_upload" | "uploaded" | "expired" | "deleted";
 export type deliveryStatus = "not_sent" | "sent" | "failed";
 
 export interface IRecordingFile {
@@ -35,27 +35,16 @@ export interface IDeliveryStatus {
 // without an existing recordingId.
 export interface IRecording extends Document {
   booking: mongoose.Types.ObjectId;
-  // Subdocument _id within booking.recipients — omitted only for the
-  // legacy (v1 flat-shape) booking gap, which the upload UI never triggers.
   recipientId?: mongoose.Types.ObjectId;
-  // The rep who started this session (uploaded part 1). Server-derived from
-  // req.user, never client-supplied. Deliberately NOT booking.assignedRep —
-  // assignedRep is booking-level and singular, and gets overwritten on
-  // reassignment; uploadedBy is stamped once per recording and must survive
-  // a later reassignment for a different recipient on the same booking.
   uploadedBy: mongoose.Types.ObjectId;
   files: IRecordingFile[];
   status: recordingStatus;
   // Set true on approval — blocks adding further parts to an already
-  // QC-approved session (a late part shouldn't silently change something
-  // already signed off on; the rep starts a new session instead).
   locked: boolean;
   // Set once, at the FIRST confirmed file — not pushed out by later parts.
   expiresAt: Date;
-  // Set by the cleanup job when the S3 object(s) are actually deleted —
-  // the audit trail distinguishing "expired, cleanup hasn't run yet" from
-  // "actually deleted".
   deletedAt?: Date;
+  deletedBy?: mongoose.Types.ObjectId;
   reviewed: boolean;
   reviewedAt?: Date;
   reviewedBy?: mongoose.Types.ObjectId;
@@ -116,12 +105,13 @@ const recordingSchema: Schema = new Schema<IRecording>(
     files: { type: [recordingFileSchema], required: true, default: [] },
     status: {
       type: String,
-      enum: ["pending_upload", "uploaded", "expired"],
+      enum: ["pending_upload", "uploaded", "expired", "deleted"],
       default: "pending_upload",
     },
     locked: { type: Boolean, required: true, default: false },
     expiresAt: { type: Date, required: true },
     deletedAt: { type: Date, required: false },
+    deletedBy: { type: mongoose.Schema.Types.ObjectId, ref: "Admin", required: false },
     reviewed: { type: Boolean, required: true, default: false },
     reviewedAt: { type: Date, required: false },
     reviewedBy: { type: mongoose.Schema.Types.ObjectId, ref: "Admin", required: false },

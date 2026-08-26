@@ -119,6 +119,22 @@ class RecordingController {
       return;
     }
   }
+
+  async deleteRecording(req: AuthRequest, res: Response, next: NextFunction) {
+    const user = req.user!;
+    try {
+      const recording = await recordingService.deleteRecording(
+        user.userId,
+        user.role,
+        req.params.id,
+      );
+      res.status(200).json({ message: "Recording deleted", recording });
+      return;
+    } catch (error) {
+      next(error);
+      return;
+    }
+  }
 }
 
 const recordingController = new RecordingController();

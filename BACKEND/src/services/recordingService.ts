@@ -490,30 +490,80 @@ class RecordingService {
     return { recording: saved, score: computeRatingScore(saved.ratingCriteriaSnapshot, saved.ratingValues) };
   }
 
-  // Deletes every file belonging to one expired session from S3, then flips
-  // the DB record to "expired" with a deletedAt timestamp — never a hard
-  // delete, so there's still an audit trail of what existed. Per-file
-  // deletion failures are logged and skipped rather than aborting the whole
-  // session, so one bad object doesn't block the rest of the cleanup run.
-  private async expireRecording(recording: IRecording): Promise<void> {
+  // Shared by expireRecording and deleteRecording — deletes every S3 object
+  // belonging to a recording. Per-file failures are logged and skipped
+  // rather than thrown, so one bad object doesn't block removing the rest.
+  private async removeFilesFromS3(recording: IRecording, failureAction: string): Promise<void> {
     for (const file of recording.files) {
       try {
         await s3Client.send(
           new DeleteObjectCommand({ Bucket: file.s3Bucket, Key: file.s3Key }),
         );
       } catch (error: any) {
-        recordingLogger.error("Failed to delete expired recording file from S3", {
+        recordingLogger.error("Failed to delete recording file from S3", {
           recordingId: recording._id,
           s3Key: file.s3Key,
           error: error.message,
-          action: "EXPIRE_RECORDING_S3_DELETE_FAILED",
+          action: failureAction,
         });
       }
     }
+  }
 
+  // Deletes every file belonging to one expired session from S3, then flips
+  // the DB record to "expired" with a deletedAt timestamp — never a hard
+  // delete, so there's still an audit trail of what existed.
+  private async expireRecording(recording: IRecording): Promise<void> {
+    await this.removeFilesFromS3(recording, "EXPIRE_RECORDING_S3_DELETE_FAILED");
     recording.status = "expired";
     recording.deletedAt = new Date();
     await recording.save();
+  }
+
+  // Manual counterpart to expireRecording — same soft-delete shape (S3
+  // objects removed, DB row kept with deletedAt/deletedBy for audit), but
+  // person-initiated and permission-gated rather than age-triggered:
+  // - superadmin can delete any recording, any time.
+  // - the uploader can delete their own, but only before it's approved —
+  //   once approved, the rating is a signed-off record, not theirs alone
+  //   to remove.
+  async deleteRecording(userId: string, role: adminRole, recordingId: string): Promise<IRecording> {
+    const recording = await Recording.findById(recordingId);
+    if (!recording) {
+      throw new HttpError(404, "Recording not found");
+    }
+    if (recording.status === "deleted" || recording.status === "expired") {
+      throw new HttpError(409, "This recording has already been removed");
+    }
+
+    if (role !== "superadmin") {
+      if (recording.uploadedBy.toString() !== userId) {
+        throw new HttpError(403, "You can only delete recordings you uploaded");
+      }
+      if (recording.approved) {
+        throw new HttpError(
+          403,
+          "This recording has been approved — only a superadmin can delete it now.",
+        );
+      }
+    }
+
+    await this.removeFilesFromS3(recording, "DELETE_RECORDING_S3_DELETE_FAILED");
+
+    recording.status = "deleted";
+    recording.deletedAt = new Date();
+    recording.deletedBy = new mongoose.Types.ObjectId(userId);
+
+    const saved = await recording.save();
+
+    recordingLogger.info("Recording deleted", {
+      recordingId,
+      deletedBy: userId,
+      role,
+      action: "DELETE_RECORDING_SUCCESS",
+    });
+
+    return saved;
   }
 
   // Entry point for the scheduled cleanup job (BACKEND/src/jobs/

@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { Trash2 } from "lucide-react";
 import { Recording, RecordingFile } from "@/lib/types";
 import {
   useRecordings,
@@ -11,8 +12,10 @@ import {
   useInvalidateRecordings,
   useApproveRecording,
   useUnapproveRecording,
+  useDeleteRecording,
 } from "@/hooks/useRecordings";
 import RateRecordingModal from "../../recordings/RateRecordingModal";
+import DeleteRecordingModal from "../../recordings/DeleteRecordingModal";
 
 const MAX_FILE_SIZE_BYTES = 100 * 1024 * 1024;
 
@@ -20,12 +23,14 @@ const statusLabel: Record<Recording["status"], string> = {
   pending_upload: "Pending upload",
   uploaded: "Uploaded",
   expired: "Expired",
+  deleted: "Deleted",
 };
 
 const statusBadgeClass: Record<Recording["status"], string> = {
   pending_upload: "bg-amber-100 text-amber-700",
   uploaded: "bg-green-100 text-green-700",
   expired: "bg-gray-200 text-gray-600",
+  deleted: "bg-red-100 text-red-700",
 };
 
 function AudioPlayer({ recordingId, file }: { recordingId: string; file: RecordingFile }) {
@@ -140,6 +145,7 @@ function RecordingCard({
   recipientId,
   isOwner,
   canReview,
+  currentUserRole,
   refresh,
 }: {
   recording: Recording;
@@ -147,11 +153,20 @@ function RecordingCard({
   recipientId: string;
   isOwner: boolean;
   canReview: boolean;
+  currentUserRole?: string;
   refresh: () => void;
 }) {
   const [showRatingModal, setShowRatingModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const approveMutation = useApproveRecording(recording._id);
   const unapproveMutation = useUnapproveRecording(recording._id);
+  const deleteMutation = useDeleteRecording(recording._id);
+
+  const isRemoved = recording.status === "deleted" || recording.status === "expired";
+  // Matches recordingService.deleteRecording's own rule: superadmin always,
+  // the uploader only before it's approved.
+  const canDelete =
+    !isRemoved && (currentUserRole === "superadmin" || (isOwner && !recording.approved));
 
   const handleApprove = async () => {
     try {
@@ -171,20 +186,44 @@ function RecordingCard({
     }
   };
 
+  const handleDelete = async () => {
+    try {
+      await deleteMutation.mutateAsync();
+      setShowDeleteModal(false);
+      refresh();
+    } catch {
+      // error surfaced in the modal via deleteMutation.error below
+    }
+  };
+
   return (
     <div className="border rounded-md p-3 space-y-2">
       <div className="flex items-center justify-between">
-        <span
-          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusBadgeClass[recording.status]}`}
-        >
-          {statusLabel[recording.status]}
-        </span>
-        {recording.approved && (
-          <span className="text-xs text-green-700 font-medium">QC approved</span>
+        <div className="flex items-center gap-2">
+          <span
+            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusBadgeClass[recording.status]}`}
+          >
+            {statusLabel[recording.status]}
+          </span>
+          {recording.approved && (
+            <span className="text-xs text-green-700 font-medium">QC approved</span>
+          )}
+        </div>
+        {canDelete && (
+          <button
+            type="button"
+            title="Delete recording"
+            className="text-gray-400 hover:text-red-500 transition"
+            onClick={() => setShowDeleteModal(true)}
+          >
+            <Trash2 className="h-4 w-4" />
+          </button>
         )}
       </div>
 
-      {recording.files.length === 0 ? (
+      {recording.status === "deleted" ? (
+        <p className="text-xs text-gray-400 italic">This recording has been deleted.</p>
+      ) : recording.files.length === 0 ? (
         <p className="text-xs text-gray-400 italic">No parts confirmed yet.</p>
       ) : (
         <div className="space-y-2">
@@ -194,7 +233,7 @@ function RecordingCard({
         </div>
       )}
 
-      {recording.locked ? (
+      {isRemoved ? null : recording.locked ? (
         <p className="text-xs text-gray-400 italic">
           Approved — no further parts can be added to this recording.
         </p>
@@ -276,6 +315,17 @@ function RecordingCard({
           onClose={() => setShowRatingModal(false)}
         />
       )}
+
+      {showDeleteModal && (
+        <DeleteRecordingModal
+          onCancel={() => setShowDeleteModal(false)}
+          onConfirm={handleDelete}
+          isPending={deleteMutation.isPending}
+          errorMessage={
+            deleteMutation.error instanceof Error ? deleteMutation.error.message : undefined
+          }
+        />
+      )}
     </div>
   );
 }
@@ -320,6 +370,7 @@ export default function RecordingsPanel({
           recipientId={recipientId}
           isOwner={!!currentUserId && recording.uploadedBy === currentUserId}
           canReview={canReview}
+          currentUserRole={currentUserRole}
           refresh={refresh}
         />
       ))}

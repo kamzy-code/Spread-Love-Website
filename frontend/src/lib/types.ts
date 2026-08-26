@@ -393,7 +393,7 @@ export type ServiceFilter = {
 };
 
 // Recordings
-export type RecordingStatus = "pending_upload" | "uploaded" | "expired";
+export type RecordingStatus = "pending_upload" | "uploaded" | "expired" | "deleted";
 export type DeliveryChannelStatus = "not_sent" | "sent" | "failed";
 
 export interface RecordingFile {
@@ -428,6 +428,7 @@ export interface Recording {
   locked: boolean;
   expiresAt: string;
   deletedAt?: string;
+  deletedBy?: string;
   reviewed: boolean;
   reviewedAt?: string;
   // reviewedBy/ratingCriteriaSnapshot/ratingValues/approvedBy/score are the
