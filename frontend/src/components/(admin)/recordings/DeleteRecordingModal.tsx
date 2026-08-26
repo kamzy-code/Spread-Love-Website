@@ -1,4 +1,5 @@
 "use client";
+import { createPortal } from "react-dom";
 import { motion } from "framer-motion";
 import { Trash2 } from "lucide-react";
 import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
@@ -16,7 +17,13 @@ export default function DeleteRecordingModal({
 }) {
   useLockBodyScroll();
 
-  return (
+  // Portalled to document.body, and both buttons explicitly typed — this
+  // modal is triggered from RecordingsPanel, a DOM descendant of the
+  // booking-details "Update Booking Info" <form>. A <button> with no type
+  // defaults to type="submit"; without the portal, clicking either button
+  // here would natively submit that outer form (see RateRecordingModal.tsx
+  // for the same class of bug in the rating form).
+  return createPortal(
     <div>
       <div className="fixed z-50 bg-black/50 top-0 left-0 right-0 bottom-0"></div>
 
@@ -39,6 +46,7 @@ export default function DeleteRecordingModal({
 
             <div className="w-full flex justify-center items-center gap-4">
               <button
+                type="button"
                 onClick={onCancel}
                 className="btn-secondary flex items-center justify-center mx-auto"
               >
@@ -46,6 +54,7 @@ export default function DeleteRecordingModal({
               </button>
 
               <button
+                type="button"
                 onClick={onConfirm}
                 disabled={isPending}
                 className="rounded-lg px-6 py-2.5 bg-red-500 text-white font-medium hover:bg-red-600 transition disabled:opacity-50 flex items-center justify-center mx-auto"
@@ -56,6 +65,7 @@ export default function DeleteRecordingModal({
           </motion.div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
