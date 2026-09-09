@@ -9,6 +9,7 @@
     "migrate:v2": "ts-node src/scripts/migrate-bookings-v2.ts",
     "seed:customers-v2": "ts-node src/scripts/seed-customers-v2.ts",
     "seed:services": "ts-node src/scripts/seed-services.ts",
+    "backfill:all-recipients-successful-flag": "ts-node src/scripts/backfill-all-recipients-successful-flag.ts",
     "cleanup:recordings": "ts-node src/scripts/run-recording-cleanup.ts"
   },
   "keywords": [],

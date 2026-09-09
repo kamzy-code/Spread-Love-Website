@@ -18,17 +18,16 @@ interface CustomerAggregate {
 async function seed() {
   await connectDB();
 
+  
   const results: CustomerAggregate[] = await Booking.aggregate([
-    { $match: { "caller.email": { $exists: true, $ne: "" } } },
+    { $match: { "caller.email": { $exists: true, $ne: "" }, paymentStatus: "paid" } },
     { $sort: { createdAt: -1 } },
     {
       $group: {
         _id: "$caller.email",
         name: { $first: "$caller.name" },
         phone: { $first: "$caller.phone" },
-        completedBookings: {
-          $sum: { $cond: [{ $eq: ["$bookingStatus", "completed"] }, 1, 0] },
-        },
+        completedBookings: { $sum: 1 },
         lastBookingAt: { $max: "$createdAt" },
       },
     },
