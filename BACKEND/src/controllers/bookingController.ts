@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import bookingService from "../services/bookingService";
 import recordingService from "../services/recordingService";
 import emailService from "../services/emailService";
+import emailQueueService from "../services/emailQueueService";
 import { getLeastLoadedRep } from "../utils/getLeastLoadedRep";
 import { callStatus } from "../types/genralTypes";
 import { isLegacyBooking } from "../utils/bookingShape";
@@ -639,6 +640,11 @@ class BookingController {
             id: bookingId,
             action: "UPDATE_BOOKING_STATUS_ALL_SUCCESSFUL_MAIL_FAILED",
           },
+        );
+        await emailQueueService.enqueue(
+          "all_recipients_successful",
+          booking._id as any,
+          emailError.message,
         );
       }
 

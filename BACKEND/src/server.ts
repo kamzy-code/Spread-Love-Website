@@ -3,6 +3,7 @@ import { connectDB } from "./config/dbConfig";
 import logger from "./utils/logger";
 import { env } from "./config/env";
 import { startRecordingCleanupJob } from "./jobs/recordingCleanupJob";
+import { startEmailQueueJob } from "./jobs/emailQueueJob";
 
 const PORT = env.PORT;
 async function startServer (){
@@ -10,6 +11,7 @@ async function startServer (){
     await connectDB();
 
     startRecordingCleanupJob();
+    startEmailQueueJob();
 
 // start the server
     app.listen(PORT, ()=>{

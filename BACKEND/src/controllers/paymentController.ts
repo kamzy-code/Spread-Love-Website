@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { paymentLogger } from "../utils/logger";
 import paymentService from "../services/paymentService";
 import emailService from "../services/emailService";
+import emailQueueService from "../services/emailQueueService";
 import customerService from "../services/customerService";
 import { getCallerFromBooking } from "../utils/bookingShape";
 import { HttpError } from "../utils/httpError";
@@ -147,6 +148,11 @@ class PaymentController {
               bookingId: booking.bookingId,
               action: "VERIFY_TRANSACTION_CONFIRMATION_MAIL_FAILED",
             }
+          );
+          await emailQueueService.enqueue(
+            "booking_confirmation",
+            booking._id as any,
+            emailError.message,
           );
         }
 
