@@ -284,9 +284,9 @@ export default function RatingTemplateFormModal({
                           </button>
                         </div>
                         {(criterion.options ?? []).map((option, optionIndex) => (
-                          <div key={optionIndex} className="flex gap-2 items-center">
+                          <div key={optionIndex} className="flex flex-col sm:flex-row gap-2 sm:items-center">
                             <input
-                              className="px-2 py-1.5 border border-gray-300 rounded text-sm w-1/4"
+                              className="px-2 py-1.5 border border-gray-300 rounded text-sm w-full sm:w-1/4"
                               type="text"
                               placeholder="value"
                               value={option.value}
@@ -324,7 +324,7 @@ export default function RatingTemplateFormModal({
                               <button
                                 type="button"
                                 onClick={() => removeOption(index, optionIndex)}
-                                className="text-red-500 hover:text-red-700"
+                                className="text-red-500 hover:text-red-700 self-end sm:self-auto"
                               >
                                 <Trash2 className="h-3.5 w-3.5" />
                               </button>
