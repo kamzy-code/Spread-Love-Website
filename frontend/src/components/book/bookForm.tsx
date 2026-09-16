@@ -86,6 +86,10 @@ export default function BookingForm() {
     setIsMounted(true);
   }, []);
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }, [step]);
+
   // Pre-fill the first recipient from a "Book This Service" link (?occassion=&call_type=)
   useEffect(() => {
     if (occassion) setValue("recipients.0.occassion", occassion);
