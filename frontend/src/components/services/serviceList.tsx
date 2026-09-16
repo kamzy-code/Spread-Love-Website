@@ -1,11 +1,11 @@
 "use client";
-import Image from "next/image";
 import { useState } from "react";
 import { MapPin, Globe, XCircle } from "lucide-react";
 import Link from "next/link";
 import { getServiceIcon } from "@/lib/serviceIcons";
 import { useFetchServices } from "@/hooks/useServices";
 import MiniLoader from "../(admin)/ui/miniLoader";
+import ImageWithPlaceholder from "../(admin)/ui/ImageWithPlaceholder";
 
 export const callType = [
   { id: "regular", name: "Regular" },
@@ -104,12 +104,10 @@ function Services() {
               <div key={service._id} className="w-full h-full">
                 <div className="card overflow-hidden hover:shadow-2xl transition-all duration-300 w-full h-full relative flex flex-col">
                   <div>
-                    <Image
-                      width={300}
-                      height={300}
+                    <ImageWithPlaceholder
                       src={service.thumbnail}
                       alt={service.title}
-                      className="w-full h-48 object-cover"
+                      className="w-full h-48"
                     />
                   </div>
 
