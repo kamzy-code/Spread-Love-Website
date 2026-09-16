@@ -7,6 +7,10 @@ export const ALLOWED_RECORDING_MIME_TYPES = [
   "audio/mp4",
   "audio/wav",
   "audio/x-m4a",
+  "audio/aac",
+  "audio/opus",
+  "audio/ogg",
+  "audio/webm",
 ] as const;
 
 // Generous for a phone-call-length recording — revisit if real reps upload

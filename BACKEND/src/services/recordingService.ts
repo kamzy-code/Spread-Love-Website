@@ -31,6 +31,10 @@ const EXTENSION_BY_MIME_TYPE: Record<string, string> = {
   "audio/mp4": "m4a",
   "audio/wav": "wav",
   "audio/x-m4a": "m4a",
+  "audio/aac": "aac",
+  "audio/opus": "opus",
+  "audio/ogg": "ogg",
+  "audio/webm": "webm",
 };
 
 const s3Client = new S3Client({
