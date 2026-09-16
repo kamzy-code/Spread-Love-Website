@@ -4,7 +4,7 @@ import { useState } from "react";
 import { X } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { ServiceCreatePayload, ServicePricing } from "@/lib/types";
-import { useCreateService } from "@/hooks/useServices";
+import { useCreateService, useFetchServiceCategories } from "@/hooks/useServices";
 import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
 import { SERVICE_ICON_OPTIONS } from "@/lib/serviceIcons";
 import PricingFields from "./PricingFields";
@@ -29,6 +29,7 @@ export default function CreateServiceModal({ onClose }: { onClose: () => void })
   useLockBodyScroll();
 
   const mutation = useCreateService();
+  const { data: categoryOptions } = useFetchServiceCategories();
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -99,14 +100,22 @@ export default function CreateServiceModal({ onClose }: { onClose: () => void })
 
             <div className="flex flex-col space-y-2">
               <label className="text-gray-700 font-medium">Category:</label>
-              <input
+              <select
                 className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent"
-                type="text"
                 name="category"
                 value={formData.category}
                 onChange={handleChange}
                 required
-              />
+              >
+                <option value="" disabled>
+                  Select a category
+                </option>
+                {categoryOptions?.map((category) => (
+                  <option key={category} value={category}>
+                    {category}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div className="flex flex-col space-y-2">
