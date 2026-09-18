@@ -17,14 +17,18 @@ const TERMINAL_CALL_STATUSES: callStatus[] = [
   "rejected",
 ];
 
+// "pending" means nothing has happened yet — every recipient still
+// literally "pending". A single rescheduled or assigned recipient means a
+// call attempt already occurred, so the booking is "in_progress" even
+// though rescheduled/assigned aren't terminal statuses either.
 const deriveBookingStatus = (recipients: IRecipient[]): bookingStatusType => {
-  const terminalCount = recipients.filter(
-    (r) => r.callStatus && TERMINAL_CALL_STATUSES.includes(r.callStatus)
-  ).length;
+  const allPending = recipients.every((r) => !r.callStatus || r.callStatus === "pending");
+  if (allPending) return "pending";
 
-  if (terminalCount === 0) return "pending";
-  if (terminalCount === recipients.length) return "completed";
-  return "in_progress";
+  const allTerminal = recipients.every(
+    (r) => r.callStatus && TERMINAL_CALL_STATUSES.includes(r.callStatus)
+  );
+  return allTerminal ? "completed" : "in_progress";
 };
 
 class BookingService {
@@ -706,16 +710,21 @@ class BookingService {
             $ifNull: [
               "$bookingStatus",
               {
-                $cond: [
-                  {
-                    $in: [
-                      "$status",
-                      ["successful", "unsuccessful", "rejected"],
-                    ],
-                  },
-                  "completed",
-                  "pending",
-                ],
+                $switch: {
+                  branches: [
+                    {
+                      case: {
+                        $in: ["$status", ["successful", "unsuccessful", "rejected"]],
+                      },
+                      then: "completed",
+                    },
+                    {
+                      case: { $in: ["$status", [null, "pending"]] },
+                      then: "pending",
+                    },
+                  ],
+                  default: "in_progress",
+                },
               },
             ],
           },
