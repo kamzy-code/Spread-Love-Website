@@ -99,6 +99,7 @@ export interface Booking {
   reuseCount?: number;
   duplicateOfPaid?: boolean;
   customerTier?: "new" | "regular" | "vip" | "diamond";
+  recordingSummary?: RecordingSummary;
 
   // shared / unchanged across v1 and v2
   contactConsent?: string;
@@ -395,6 +396,15 @@ export type ServiceFilter = {
 // Recordings
 export type RecordingStatus = "pending_upload" | "uploaded" | "expired" | "deleted";
 export type DeliveryChannelStatus = "not_sent" | "sent" | "failed";
+
+// Per-booking QC rollup, merged onto each row of the admin booking list —
+// see getRecordingBadge in lib/getRecordingSummaryDisplay.tsx for how this
+// becomes the rated/approved badge shown there.
+export interface RecordingSummary {
+  uploaded: number;
+  reviewed: number;
+  approved: number;
+}
 
 export interface RecordingFile {
   _id: string;

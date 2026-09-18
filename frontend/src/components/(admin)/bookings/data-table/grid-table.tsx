@@ -1,12 +1,18 @@
 import { Booking } from "@/lib/types";
 import { getStatusColor, getStatusIcon } from "@/lib/getStatusColor";
 import { getTierColor, getTierIcon, getTierLabel } from "@/lib/getTierColor";
+import {
+  getRecordingBadge,
+  getRecordingBadgeColor,
+  getRecordingBadgeIcon,
+} from "@/lib/getRecordingSummaryDisplay";
 import { formatToYMD } from "@/lib/formatDate";
 import {
   getDisplayCallerName,
   getDisplayBookingStatus,
   getDisplayTotalPrice,
   getDisplayCustomerTier,
+  getDisplayTotalRecipients,
   getExtraRecipientsLabel,
   getPrimaryRecipient,
 } from "@/lib/bookingDisplay";
@@ -31,6 +37,7 @@ export default function GridItem({
   const tier = getDisplayCustomerTier(booking);
   const recipient = getPrimaryRecipient(booking);
   const extraRecipients = getExtraRecipientsLabel(booking);
+  const recordingBadge = getRecordingBadge(booking.recordingSummary, getDisplayTotalRecipients(booking));
 
   return (
     <div className="">
@@ -72,6 +79,19 @@ export default function GridItem({
               <span className="ml-1 capitalize">{status.replace("_", " ")}</span>
             </div>
           </div>
+
+          {recordingBadge && (
+            <div className="flex justify-end">
+              <span
+                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getRecordingBadgeColor(
+                  recordingBadge.state
+                )}`}
+              >
+                {getRecordingBadgeIcon(recordingBadge.state, true)}
+                <span className="ml-1">{recordingBadge.label}</span>
+              </span>
+            </div>
+          )}
 
           <div className="flex items-center justify-between">
             <div>

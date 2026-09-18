@@ -2,12 +2,13 @@ import { SortOrder, Types } from "mongoose";
 import { Booking, IBooking, ICaller, IRecipient } from "../models/bookingModel";
 import { getLeastLoadedRep } from "../utils/getLeastLoadedRep";
 import { isLegacyBooking } from "../utils/bookingShape";
-import { callStatus, bookingStatusType } from "../types/genralTypes";
+import { callStatus, bookingStatusType, adminRole } from "../types/genralTypes";
 import customerService from "./customerService";
 import couponService from "./couponService";
 import paymentService from "./paymentService";
 import auditLogService from "./auditLogService";
 import serviceService from "./serviceService";
+import recordingService from "./recordingService";
 import { HttpError } from "../utils/httpError";
 import { bookingLogger } from "../utils/logger";
 
@@ -644,10 +645,17 @@ class BookingService {
     );
     const tierByEmail = await customerService.getTiersByEmails(emails);
 
+    const recordingSummaryByBooking = await recordingService.getRecordingSummaryByBookings(
+      bookings.map((b) => b._id as Types.ObjectId),
+      userId,
+      role as adminRole,
+    );
+
     return bookings.map((booking) => {
       const email = (booking.caller?.email ?? booking.callerEmail)?.toLowerCase();
       const customerTier = email ? tierByEmail.get(email) ?? "new" : "new";
-      return { ...booking.toObject(), customerTier };
+      const recordingSummary = recordingSummaryByBooking.get((booking._id as Types.ObjectId).toString());
+      return { ...booking.toObject(), customerTier, recordingSummary };
     });
   }
 

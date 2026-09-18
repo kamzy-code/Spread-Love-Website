@@ -6,10 +6,16 @@ import { formatToYMD } from "@/lib/formatDate";
 import { getStatusColor, getStatusIcon } from "@/lib/getStatusColor";
 import { getTierColor, getTierIcon, getTierLabel } from "@/lib/getTierColor";
 import {
+  getRecordingBadge,
+  getRecordingBadgeColor,
+  getRecordingBadgeIcon,
+} from "@/lib/getRecordingSummaryDisplay";
+import {
   getDisplayCallerName,
   getDisplayBookingStatus,
   getDisplayTotalPrice,
   getDisplayCustomerTier,
+  getDisplayTotalRecipients,
   getExtraRecipientsLabel,
   getPrimaryRecipient,
 } from "@/lib/bookingDisplay";
@@ -145,6 +151,25 @@ export function getColumnsByRole(
         );
       },
     },
+    {
+      id: "recordingStatus",
+      header: "Recording",
+      cell: ({ row }) => {
+        const booking = row.original;
+        const badge = getRecordingBadge(booking.recordingSummary, getDisplayTotalRecipients(booking));
+        if (!badge) return <span className="text-gray-400 text-xs">—</span>;
+        return (
+          <span
+            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getRecordingBadgeColor(
+              badge.state
+            )}`}
+          >
+            {getRecordingBadgeIcon(badge.state, true)}
+            <span className="ml-1">{badge.label}</span>
+          </span>
+        );
+      },
+    },
   ];
 
   const repColumn: ColumnDef<Booking> = {
@@ -214,6 +239,8 @@ export function getColumnLabel(id: string): string {
       return "Rep";
     case "status":
       return "Status";
+    case "recordingStatus":
+      return "Recording";
     case "actions":
       return "Actions";
     default:

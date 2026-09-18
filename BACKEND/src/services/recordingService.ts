@@ -384,6 +384,41 @@ class RecordingService {
     return result;
   }
 
+  // Feeds the admin booking list — one batch query for the whole page
+  // rather than one lookup per row (same pattern bookingService.getAllBooking
+  // already uses for customer tier). Counts only "uploaded" recordings, so
+  // an expired/deleted one doesn't linger as a stale QC indicator.
+  //
+  // Same uploadedBy scoping as listRecordings for callreps — a booking can
+  // have recordings from more than one rep (Decision #7, uploadedBy is
+  // per-recording, not tied to the booking's assignedRep), and a call rep
+  // must not learn even the *count* of a recording they're not allowed to
+  // open (listRecordings 404s them out of it entirely).
+  async getRecordingSummaryByBookings(
+    bookingIds: (mongoose.Types.ObjectId | string)[],
+    userId: string,
+    role: adminRole,
+  ): Promise<Map<string, { uploaded: number; reviewed: number; approved: number }>> {
+    const result = new Map<string, { uploaded: number; reviewed: number; approved: number }>();
+    if (bookingIds.length === 0) return result;
+
+    const query: Record<string, unknown> = { booking: { $in: bookingIds }, status: "uploaded" };
+    if (role === "callrep") query.uploadedBy = userId;
+
+    const recordings = await Recording.find(query, { booking: 1, reviewed: 1, approved: 1 });
+
+    for (const recording of recordings) {
+      const key = recording.booking.toString();
+      const entry = result.get(key) ?? { uploaded: 0, reviewed: 0, approved: 0 };
+      entry.uploaded += 1;
+      if (recording.reviewed) entry.reviewed += 1;
+      if (recording.approved) entry.approved += 1;
+      result.set(key, entry);
+    }
+
+    return result;
+  }
+
   // Validates each submitted value against the recording's pinned criteria
   // snapshot (existence, options/multiple shape, valid option values) and
   // returns the validated, de-duplicated list. Throws HttpError(400) on the

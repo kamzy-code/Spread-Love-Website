@@ -50,3 +50,6 @@ export const getDisplayTotalPrice = (booking: Booking): number =>
 
 export const getDisplayCustomerTier = (booking: Booking): NonNullable<Booking["customerTier"]> =>
   booking.customerTier ?? "new";
+
+export const getDisplayTotalRecipients = (booking: Booking): number =>
+  isLegacyBooking(booking) ? 1 : booking.recipients?.length ?? 0;
