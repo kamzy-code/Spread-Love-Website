@@ -419,6 +419,30 @@ class RecordingService {
     return result;
   }
 
+  // Dashboard QC breakdown (salesrep/superadmin only, gated at the
+  // controller) — same {_id, count} aggregate shape as
+  // bookingService.getBookingStatusBreakdown, so the frontend can consume
+  // both the same way. matchStage is scoped against Recording's own fields
+  // (createdAt, uploadedBy), not the booking's — see the caller for why
+  // those two things aren't the same date range.
+  async getRecordingStats(matchStage: any) {
+    return await Recording.aggregate([
+      { $match: { ...matchStage, status: "uploaded" } },
+      {
+        $project: {
+          effectiveState: {
+            $cond: [
+              { $not: ["$reviewed"] },
+              "pending_review",
+              { $cond: ["$approved", "approved", "rated"] },
+            ],
+          },
+        },
+      },
+      { $group: { _id: "$effectiveState", count: { $sum: 1 } } },
+    ]);
+  }
+
   // Validates each submitted value against the recording's pinned criteria
   // snapshot (existence, options/multiple shape, valid option values) and
   // returns the validated, de-duplicated list. Throws HttpError(400) on the

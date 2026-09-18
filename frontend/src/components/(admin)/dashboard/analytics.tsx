@@ -9,6 +9,8 @@ import {
   Ban,
   Clock,
   PackageCheck,
+  Star,
+  ShieldCheck,
 } from "lucide-react";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import MiniLoader from "../ui/miniLoader";
@@ -84,6 +86,27 @@ export const BOOKING_STATUS_LIST = [
   },
 ];
 
+// Recording QC breakdown — salesrep/superadmin only (see analytics/recordingStats
+// gating on the backend). Distinct from booking/call status above: this counts
+// individual recordings by review state, not bookings or calls.
+export const RECORDING_STATUS_LIST = [
+  {
+    key: "pending_review",
+    label: "Pending Review",
+    icon: <Clock className="h-4 w-4 md:h-6 md:w-6" />,
+  },
+  {
+    key: "rated",
+    label: "Rated",
+    icon: <Star className="h-4 w-4 md:h-6 md:w-6" />,
+  },
+  {
+    key: "approved",
+    label: "Approved",
+    icon: <ShieldCheck className="h-4 w-4 md:h-6 md:w-6" />,
+  },
+];
+
 export default function Analytics({ repId }: { repId?: string }) {
   const { user } = useAdminAuth();
 
@@ -143,6 +166,18 @@ export default function Analytics({ repId }: { repId?: string }) {
     });
   }
 
+  const recordingStatusCounts: Record<string, number> = {};
+
+  RECORDING_STATUS_LIST.forEach((status) => {
+    recordingStatusCounts[status.key] = 0;
+  });
+
+  if (data?.recordingStats) {
+    data.recordingStats.forEach((item: { _id: string; count: number }) => {
+      recordingStatusCounts[item._id] = item.count;
+    });
+  }
+
   // Arriving here from a specific rep's page (repId set) should carry that
   // scoping into the booking list too, not just drop it at the door — the
   // admin is looking at this rep's numbers, so "Pending Calls" should mean
@@ -154,6 +189,16 @@ export default function Analytics({ repId }: { repId?: string }) {
     value: bookingStatusCounts[status.key],
     icon: status.icon,
     href: `/admin/bookings?bookingStatus=${status.key}${repIdParam}`,
+  }));
+
+  // No dedicated cross-booking recordings route exists (client decided
+  // recordings are reviewed from the booking detail page instead — see
+  // plan/pending/sprint_2.md) so these cards have nowhere sensible to link,
+  // unlike the booking/call breakdowns above.
+  const recordingQCCards = RECORDING_STATUS_LIST.map((status) => ({
+    title: status.label,
+    value: recordingStatusCounts[status.key],
+    icon: status.icon,
   }));
 
   const cards: Omit<StatCardData, "hidden">[] = [
@@ -258,6 +303,24 @@ export default function Analytics({ repId }: { repId?: string }) {
           ))}
         </div>
       </div>
+
+      {/* Recording QC — salesrep/superadmin only; reviewing recordings is
+          their job, not call reps'. Backend omits recordingStats entirely
+          for callreps, so this would render all zeros for them even
+          without this guard, but gating the section itself is clearer than
+          showing an empty-looking one. */}
+      {(user?.role === "superadmin" || user?.role === "salesrep") && (
+        <div>
+          <h3 className="text-sm md:text-md font-semibold text-gray-500 mb-3">
+            Recording QC
+          </h3>
+          <div className="grid grid-cols-2 xl:grid-cols-3 gap-6">
+            {recordingQCCards.map((card) => (
+              <StatCard key={card.title} {...card} />
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -956,6 +956,22 @@ class BookingController {
             : ((totalRevenue - prevTotalRevenue) / prevTotalRevenue) * 100;
       }
 
+      // Recording/QC stats — salesrep/superadmin only, since reviewing is
+      // their job, not call reps'. Scoped against Recording's own fields
+      // (uploadedBy, createdAt), not the booking-side matchStage above —
+      // "recordings uploaded in period X" and "calls made in period X" are
+      // genuinely different questions (a call from last month can get
+      // reviewed today), not a bug.
+      let recordingStats = undefined;
+      if (user.role === "superadmin" || user.role === "salesrep") {
+        const recordingMatchStage: any = {};
+        if (repId) recordingMatchStage.uploadedBy = new Types.ObjectId(repId);
+        if (dateRange) {
+          recordingMatchStage.createdAt = { $gte: dateRange.start, $lte: dateRange.end };
+        }
+        recordingStats = await recordingService.getRecordingStats(recordingMatchStage);
+      }
+
       res.status(200).json({
         totalBookings,
         breakdown: analytics,
@@ -966,6 +982,7 @@ class BookingController {
           revenuePercentageIncrease,
         }),
         ...(activeRepsCount !== undefined && { activeRepsCount }),
+        ...(recordingStats !== undefined && { recordingStats }),
       });
 
       bookingLogger.info("Get booking analytics successful", {
