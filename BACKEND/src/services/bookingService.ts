@@ -346,7 +346,6 @@ class BookingService {
     const previousEmail = (booking.caller?.email ?? booking.callerEmail ?? "").toLowerCase();
     const previousCallerName = booking.caller?.name ?? booking.callerName;
     const previousCallerPhone = booking.caller?.phone ?? booking.callerPhone;
-    const previousCallerRelationship = booking.caller?.relationship ?? booking.relationship;
 
     const previousRecipients = isLegacyBooking(booking)
       ? [
@@ -356,6 +355,7 @@ class BookingService {
             callType: booking.callType,
             price: booking.price,
             country: booking.country,
+            relationship: booking.relationship,
           },
         ]
       : (booking.recipients ?? []).map((r) => ({
@@ -364,6 +364,7 @@ class BookingService {
           callType: r.callType,
           price: r.price,
           country: r.country,
+          relationship: r.relationship,
         }));
 
     if (updates.caller) {
@@ -376,9 +377,11 @@ class BookingService {
         booking.callerName = updates.caller.name ?? booking.callerName;
         booking.callerPhone = updates.caller.phone ?? booking.callerPhone;
         booking.callerEmail = updates.caller.email ?? booking.callerEmail;
-        booking.relationship = updates.caller.relationship ?? booking.relationship;
       }
       if (flatUpdate) {
+        // relationship flows through here via `fields.relationship` — same
+        // generic assignment already handling occassion/callType/etc, no
+        // special-casing needed now that it's recipient-side.
         const { _id, ...fields } = flatUpdate;
         Object.assign(booking, fields);
         if (fields.price !== undefined) {
@@ -428,11 +431,6 @@ class BookingService {
     await auditLogService.recordDiffs("booking", booking.bookingId, changedBy, [
       { field: "callerName", oldValue: previousCallerName, newValue: saved.caller?.name ?? saved.callerName },
       { field: "callerPhone", oldValue: previousCallerPhone, newValue: saved.caller?.phone ?? saved.callerPhone },
-      {
-        field: "callerRelationship",
-        oldValue: previousCallerRelationship,
-        newValue: saved.caller?.relationship ?? saved.relationship,
-      },
     ]);
 
     const newRecipients = isLegacyBooking(saved)
@@ -443,6 +441,7 @@ class BookingService {
             callType: saved.callType,
             price: saved.price,
             country: saved.country,
+            relationship: saved.relationship,
           },
         ]
       : (saved.recipients ?? []).map((r) => ({
@@ -451,6 +450,7 @@ class BookingService {
           callType: r.callType,
           price: r.price,
           country: r.country,
+          relationship: r.relationship,
         }));
 
     for (const newR of newRecipients) {
@@ -463,6 +463,7 @@ class BookingService {
         { field: `${prefix}callType`, oldValue: oldR.callType, newValue: newR.callType },
         { field: `${prefix}price`, oldValue: oldR.price, newValue: newR.price },
         { field: `${prefix}country`, oldValue: oldR.country, newValue: newR.country },
+        { field: `${prefix}relationship`, oldValue: oldR.relationship, newValue: newR.relationship },
       ]);
     }
 

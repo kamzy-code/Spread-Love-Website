@@ -11,7 +11,6 @@ export const callerFormSchema = z.object({
   phone: z.string().min(1, "WhatsApp number is required"),
   email: z.email("Enter a valid email"),
   gender: z.string().min(1, "Select a gender"),
-  relationship: z.string().min(1, "Relationship is required"),
 });
 
 export const recipientFormSchema = z.object({
@@ -21,6 +20,7 @@ export const recipientFormSchema = z.object({
   occassion: z.string().min(1, "Select an occasion"),
   callType: z.enum(["regular", "special"]),
   callDate: z.string().min(1, "Select a date"),
+  relationship: z.string().min(1, "Relationship is required"),
   message: z
     .string()
     .min(1, "Message is required")

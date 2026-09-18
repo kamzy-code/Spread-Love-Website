@@ -32,6 +32,7 @@ export const getPrimaryRecipient = (booking: Booking): BookingRecipientData => {
     callStatus: booking.status,
     callRecording: booking.callRecording,
     callRecordingURL: booking.callRecordingURL,
+    relationship: booking.relationship,
   };
 };
 

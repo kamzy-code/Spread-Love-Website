@@ -88,23 +88,6 @@ export default function CallerEditFields({
             </p>
           )}
         </div>
-
-        <div className="flex flex-col space-y-2">
-          <label className="text-gray-700 font-medium">Relationship:</label>
-          {editForm ? (
-            <input
-              className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent"
-              type="text"
-              name="relationship"
-              value={caller.relationship}
-              onChange={onChange}
-              required
-              placeholder="Who is the caller to the recipient?"
-            />
-          ) : (
-            <p className="py-3 w-full">{caller.relationship}</p>
-          )}
-        </div>
       </div>
     </div>
   );

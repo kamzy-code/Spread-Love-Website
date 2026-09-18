@@ -16,6 +16,7 @@ import {
 } from "@/lib/bookingOptions";
 import { BookingFormValues } from "@/lib/bookingValidation";
 import { FormField, FormSelect, FormTextArea } from "./FormFields";
+import { RelationshipSelect } from "./RelationshipSelect";
 
 interface RecipientCardProps {
   index: number;
@@ -109,6 +110,18 @@ export const RecipientCard: React.FC<RecipientCardProps> = ({
           {...register(`recipients.${index}.callDate`)}
         />
       </div>
+
+      <Controller
+        control={control}
+        name={`recipients.${index}.relationship`}
+        render={({ field, fieldState }) => (
+          <RelationshipSelect
+            value={field.value}
+            onChange={field.onChange}
+            error={fieldState.error?.message}
+          />
+        )}
+      />
 
       <Controller
         control={control}

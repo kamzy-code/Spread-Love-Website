@@ -11,10 +11,6 @@ export const callerSchema = z.object({
     .email("Caller email must be valid")
     .min(1, "Caller email is required"),
   gender: z.enum(["male", "female", "prefer_not_to_say"]),
-  // RELATIONSHIP_OPTIONS drives the frontend dropdown, but "Other" lets the
-  // caller type a free-text relationship — so this stays a plain string
-  // rather than a strict enum.
-  relationship: z.string().min(1, "Relationship is required"),
 });
 
 export const recipientSchema = z.object({
@@ -29,6 +25,11 @@ export const recipientSchema = z.object({
   callType: z.enum(["regular", "special"]),
   callDate: z.coerce.date(),
   price: z.coerce.number().nonnegative("Price must be non-negative"),
+  // RELATIONSHIP_OPTIONS drives the frontend dropdown, but "Other" lets the
+  // caller type a free-text relationship — so this stays a plain string
+  // rather than a strict enum. Per-recipient since a multi-recipient
+  // booking can have a different relationship for each one.
+  relationship: z.string().min(1, "Relationship is required"),
   message: z
     .string()
     .optional()
@@ -87,7 +88,6 @@ export const updateCallerByCustomerSchema = z
     phone: z.string().min(1),
     email: z.email().min(1),
     gender: z.enum(["male", "female", "prefer_not_to_say"]),
-    relationship: z.string().min(1),
   })
   .partial();
 
@@ -111,6 +111,7 @@ export const updateRecipientByCustomerSchema = z
       .refine((val) => !val || wordCount(val) <= SPECIAL_INSTRUCTION_WORD_LIMIT, {
         message: `Special instruction must be ${SPECIAL_INSTRUCTION_WORD_LIMIT} words or fewer`,
       }),
+    relationship: z.string().min(1),
   })
   .partial({
     recipientName: true,
@@ -119,6 +120,7 @@ export const updateRecipientByCustomerSchema = z
     callDate: true,
     message: true,
     specialInstruction: true,
+    relationship: true,
   });
 
 export const updateBookingByCustomerSchema = z
@@ -143,7 +145,6 @@ export const updateCallerByAdminSchema = z
     phone: z.string().min(1),
     email: z.email().min(1),
     gender: z.enum(["male", "female", "prefer_not_to_say"]),
-    relationship: z.string().min(1),
   })
   .partial();
 
@@ -168,6 +169,7 @@ export const updateRecipientByAdminSchema = z
         message: `Special instruction must be ${SPECIAL_INSTRUCTION_WORD_LIMIT} words or fewer`,
       }),
     callRecordingURL: z.string(),
+    relationship: z.string().min(1),
   })
   .partial({
     recipientName: true,
@@ -180,6 +182,7 @@ export const updateRecipientByAdminSchema = z
     message: true,
     specialInstruction: true,
     callRecordingURL: true,
+    relationship: true,
   });
 
 export const updateBookingByAdminSchema = z

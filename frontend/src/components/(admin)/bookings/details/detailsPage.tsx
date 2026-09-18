@@ -28,7 +28,6 @@ const buildCallerState = (booking: Booking): CallerFormState => ({
   phone: booking.caller?.phone ?? booking.callerPhone ?? "",
   email: booking.caller?.email ?? booking.callerEmail ?? "",
   gender: booking.caller?.gender ?? "",
-  relationship: booking.caller?.relationship ?? booking.relationship ?? "",
 });
 
 const buildRecipientsState = (booking: Booking): RecipientEditState[] => {
@@ -50,6 +49,7 @@ const buildRecipientsState = (booking: Booking): RecipientEditState[] => {
     callStatus: r.callStatus,
     callRecording: r.callRecording,
     callRecordingURL: r.callRecordingURL,
+    relationship: r.relationship ?? "",
   }));
 };
 
@@ -172,6 +172,7 @@ export default function DetailsPage({ data }: { data: Booking }) {
         message: r.message,
         specialInstruction: r.specialInstruction,
         callRecordingURL: r.callRecordingURL,
+        relationship: r.relationship,
       })),
     };
 

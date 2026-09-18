@@ -26,6 +26,7 @@ interface RecipientData {
   callStatus?: string;
   callRecording?: string;
   callRecordingURL?: string;
+  relationship?: string;
   // Populated server-side (bookingController.getBookingByBookingId) only
   // once a recording has been QC-approved — see recordingService's
   // getApprovedRecordingsByBooking.
@@ -36,7 +37,6 @@ interface CallerData {
   name: string;
   phone: string;
   email: string;
-  relationship: string;
   gender?: "male" | "female" | "prefer_not_to_say";
 }
 
@@ -126,6 +126,7 @@ export default function BookingDetails({ data }: { data: BookingData }) {
             callDate: recipient.callDate,
             message: recipient.message,
             specialInstruction: recipient.specialInstruction,
+            relationship: recipient.relationship,
           })),
         },
       });
@@ -219,23 +220,6 @@ export default function BookingDetails({ data }: { data: BookingData }) {
                   <p className="py-3 w-full">{caller.email}</p>
                 )}
               </div>
-
-              <div className="flex flex-col space-y-2">
-                <label className="text-gray-700 font-medium">Relationship:</label>
-                {editForm ? (
-                  <input
-                    className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent placeholder:text-gray-400"
-                    type="text"
-                    name="relationship"
-                    value={caller.relationship}
-                    onChange={handleCallerChange}
-                    required
-                    placeholder="Who are you to the recipient?"
-                  />
-                ) : (
-                  <p className="py-3 w-full">{caller.relationship}</p>
-                )}
-              </div>
             </div>
           </div>
 
@@ -327,6 +311,23 @@ export default function BookingDetails({ data }: { data: BookingData }) {
                         without paying the difference. Server strips this field
                         even if sent, so it's read-only here to match. */}
                     <p className="py-3 w-full">{recipient.occassion}</p>
+                  </div>
+
+                  <div className="flex flex-col space-y-2">
+                    <label className="text-gray-700 font-medium">Relationship:</label>
+                    {editForm ? (
+                      <input
+                        className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent placeholder:text-gray-400"
+                        type="text"
+                        name="relationship"
+                        value={recipient.relationship || ""}
+                        onChange={(e) => handleRecipientChange(index, e)}
+                        required
+                        placeholder="Who are you to this recipient?"
+                      />
+                    ) : (
+                      <p className="py-3 w-full">{recipient.relationship}</p>
+                    )}
                   </div>
 
                   <div className="flex flex-col space-y-2">

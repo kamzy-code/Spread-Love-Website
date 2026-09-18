@@ -46,6 +46,9 @@ export interface BookingCallerData {
   phone: string;
   email: string;
   gender?: "male" | "female" | "prefer_not_to_say";
+  // Deprecated 2026-09-18 — moved to BookingRecipientData.relationship.
+  // Still present on old documents (never cleared), so kept optional here
+  // rather than removed.
   relationship?: string;
 }
 
@@ -63,6 +66,7 @@ export interface BookingRecipientData {
   callStatus?: string;
   callRecording?: string;
   callRecordingURL?: string;
+  relationship?: string;
 }
 
 export interface Booking {
@@ -116,7 +120,6 @@ export interface BookingCaller {
   phone: string;
   email: string;
   gender: "male" | "female" | "prefer_not_to_say" | "";
-  relationship: string;
 }
 
 export interface BookingRecipient {
@@ -130,6 +133,7 @@ export interface BookingRecipient {
   message?: string;
   specialInstruction?: string;
   callRecording?: "yes" | "no";
+  relationship: string;
 }
 
 export interface CreateBookingPayload {
@@ -167,7 +171,6 @@ export interface CustomerUpdateCaller {
   phone?: string;
   email?: string;
   gender?: "male" | "female" | "prefer_not_to_say";
-  relationship?: string;
 }
 
 export interface CustomerUpdateRecipient {
@@ -178,6 +181,7 @@ export interface CustomerUpdateRecipient {
   callDate?: string;
   message?: string;
   specialInstruction?: string;
+  relationship?: string;
 }
 
 export interface CustomerBookingUpdatePayload {
@@ -194,7 +198,6 @@ export interface AdminUpdateCaller {
   phone?: string;
   email?: string;
   gender?: "male" | "female" | "prefer_not_to_say";
-  relationship?: string;
 }
 
 export interface AdminUpdateRecipient {
@@ -209,6 +212,7 @@ export interface AdminUpdateRecipient {
   message?: string;
   specialInstruction?: string;
   callRecordingURL?: string;
+  relationship?: string;
 }
 
 export interface AdminBookingUpdatePayload {

@@ -20,6 +20,7 @@ export interface RecipientEditState {
   callStatus?: string;
   callRecording?: string;
   callRecordingURL?: string;
+  relationship?: string;
 }
 
 const getCallStatusMessage = (status?: string) => {
@@ -217,6 +218,23 @@ export default function RecipientEditCard({
             />
           ) : (
             <p className="py-3 w-full">{formatToYMD(recipient.callDate || "")}</p>
+          )}
+        </div>
+
+        <div className="flex flex-col space-y-2">
+          <label className="text-gray-700 font-medium">Relationship:</label>
+          {editForm ? (
+            <input
+              className="px-4 py-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-brand-end focus:border-transparent"
+              type="text"
+              name="relationship"
+              value={recipient.relationship ?? ""}
+              onChange={handleChange}
+              required
+              placeholder="Who is the caller to this recipient?"
+            />
+          ) : (
+            <p className="py-3 w-full">{recipient.relationship}</p>
           )}
         </div>
 

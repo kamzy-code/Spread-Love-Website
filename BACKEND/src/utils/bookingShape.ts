@@ -16,5 +16,4 @@ export const getCallerFromBooking = (
   email: booking.caller?.email ?? booking.callerEmail ?? "",
   phone: booking.caller?.phone ?? booking.callerPhone ?? "",
   gender: booking.caller?.gender,
-  relationship: booking.caller?.relationship,
 });

@@ -31,13 +31,14 @@ const emptyRecipient = () => ({
   occassion: "",
   callType: "regular" as const,
   callDate: "",
+  relationship: "",
   message: "",
   specialInstruction: "",
   callRecording: "no" as const,
 });
 
 const defaultValues: BookingFormValues = {
-  caller: { name: "", phone: "", email: "", gender: "", relationship: "" },
+  caller: { name: "", phone: "", email: "", gender: "" },
   recipients: [emptyRecipient()],
   contactConsent: "no",
 };

@@ -20,6 +20,10 @@ export interface ICaller {
   phone: string;
   email: string;
   gender?: genderType;
+  // Deprecated 2026-09-18 — relationship moved to IRecipient since it
+  // differs per recipient on a multi-recipient booking. Left in place
+  // (never written to by new code) rather than removed, matching this
+  // codebase's pattern for retired fields (see callRecordingURL below).
   relationship?: string;
 }
 
@@ -39,6 +43,9 @@ export interface IRecipient {
   callStatus?: callStatus;
   callRecording?: string;
   callRecordingURL?: string;
+  // Moved from ICaller.relationship 2026-09-18 — relationship to the
+  // caller can differ per recipient on a multi-recipient booking.
+  relationship?: string;
 }
 
 export interface IBooking extends Document {
@@ -93,6 +100,7 @@ const callerSchema = new Schema<ICaller>(
     phone: { type: String, required: true },
     email: { type: String, required: true },
     gender: { type: String, enum: ["male", "female", "prefer_not_to_say"], required: false },
+    // Deprecated — see ICaller.relationship above.
     relationship: { type: String, required: false },
   },
   { _id: false },
@@ -115,6 +123,7 @@ const recipientSchema = new Schema<IRecipient>({
   },
   callRecording: { type: String, required: false, default: "no" },
   callRecordingURL: { type: String, required: false, default: "" },
+  relationship: { type: String, required: false },
 });
 
 const bookingSchema: Schema = new Schema<IBooking>(
