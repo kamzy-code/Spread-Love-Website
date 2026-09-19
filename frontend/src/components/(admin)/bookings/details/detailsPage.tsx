@@ -91,6 +91,7 @@ export default function DetailsPage({ data }: { data: Booking }) {
   const invalidate = () => {
     queryClient.invalidateQueries({ queryKey: ["booking", data._id] });
     queryClient.invalidateQueries({ queryKey: ["auditLogs", "booking", data.bookingId] });
+    queryClient.invalidateQueries({ queryKey: ["bookings"] });
   };
 
   const handleCallerChange = (

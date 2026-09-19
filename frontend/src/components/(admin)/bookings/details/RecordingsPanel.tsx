@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { Trash2 } from "lucide-react";
 import { Recording, RecordingFile } from "@/lib/types";
 import {
@@ -424,8 +425,13 @@ export default function RecordingsPanel({
 }: RecordingsPanelProps) {
   const { data: recordings = [], isLoading, isError } = useRecordings(bookingId, recipientId);
   const invalidate = useInvalidateRecordings();
+  const queryClient = useQueryClient();
 
-  const refresh = () => invalidate(bookingId, recipientId);
+  const refresh = () => {
+    invalidate(bookingId, recipientId);
+    queryClient.invalidateQueries({ queryKey: ["booking", bookingId] });
+    queryClient.invalidateQueries({ queryKey: ["bookings"] });
+  };
   const canReview = !!currentUserRole && CAN_REVIEW_ROLES.has(currentUserRole);
 
   return (
