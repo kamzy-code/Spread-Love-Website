@@ -21,6 +21,40 @@ import DeleteRecordingModal from "../../recordings/DeleteRecordingModal";
 
 const MAX_FILE_SIZE_BYTES = 100 * 1024 * 1024;
 
+const ALLOWED_AUDIO_MIME_TYPES = new Set([
+  "audio/mpeg",
+  "audio/mp4",
+  "audio/wav",
+  "audio/x-m4a",
+  "audio/aac",
+  "audio/opus",
+  "audio/ogg",
+  "audio/webm",
+]);
+
+// Some iOS Files-app items report a blank `type` — map the filename
+// extension back to an allowed MIME in that case (iPhone voice memos are
+// audio/x-m4a). Values must stay inside ALLOWED_AUDIO_MIME_TYPES.
+const MIME_BY_EXTENSION: Record<string, string> = {
+  ".m4a": "audio/x-m4a",
+  ".mp3": "audio/mpeg",
+  ".wav": "audio/wav",
+  ".aac": "audio/aac",
+  ".opus": "audio/opus",
+  ".ogg": "audio/ogg",
+  ".webm": "audio/webm",
+};
+
+const resolveMimeType = (file: File): string => {
+  const type = file.type.trim().toLowerCase();
+  if (type) return type;
+  const name = file.name.toLowerCase();
+  for (const [ext, mime] of Object.entries(MIME_BY_EXTENSION)) {
+    if (name.endsWith(ext)) return mime;
+  }
+  return "";
+};
+
 const statusLabel: Record<Recording["status"], string> = {
   pending_upload: "Pending upload",
   uploaded: "Uploaded",
@@ -86,6 +120,16 @@ function UploadInput({
     const file = e.target.files?.[0];
     if (!file) return;
 
+    const mimeType = resolveMimeType(file);
+    if (!ALLOWED_AUDIO_MIME_TYPES.has(mimeType)) {
+      setStatus("error");
+      setErrorMessage(
+        "Unsupported audio format. Please upload an MP3, M4A, WAV, AAC, OGG, OPUS, or WebM file."
+      );
+      if (inputRef.current) inputRef.current.value = "";
+      return;
+    }
+
     if (file.size > MAX_FILE_SIZE_BYTES) {
       setStatus("error");
       setErrorMessage("That file is larger than the 100MB limit.");
@@ -100,7 +144,7 @@ function UploadInput({
       const { recordingId: sessionId, s3Key, uploadUrl } = await requestUploadUrl.mutateAsync({
         bookingId,
         recipientId,
-        mimeType: file.type,
+        mimeType,
         fileSize: file.size,
         recordingId,
       });
@@ -124,7 +168,6 @@ function UploadInput({
       <input
         ref={inputRef}
         type="file"
-        accept="audio/*"
         disabled={status === "uploading"}
         onChange={handleFileChange}
         className="text-sm file:mr-3 file:rounded-md file:border-0 file:bg-brand-end/10 file:px-3 file:py-2 file:text-brand-end file:font-medium disabled:opacity-50"
