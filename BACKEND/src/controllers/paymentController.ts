@@ -93,10 +93,19 @@ class PaymentController {
       return;
     }
 
+    // A booking's stored paymentReference is the canonical Paystack
+    // transaction for it (initializePaymentForBooking rewrites it on every
+    // initialize). Callers sometimes pass the bookingId instead — harmless
+    // for first-payment bookings (they're equal), but once a booking is
+    // re-used the reference diverges (SLN-xxxx-rN). Verifying the stale
+    // bookingId would ask Paystack about the old failed transaction and
+    // clobber the real status/reference, so always verify the stored
+    // reference when one exists.
+    const effectiveReference =
+      booking.paymentReference || (reference as string);
+
     try {
-      const result = await paymentService.verifyTransaction(
-        reference as string
-      );
+      const result = await paymentService.verifyTransaction(effectiveReference);
 
       const expectedAmount = booking.totalPrice ?? Number(booking.price);
 
@@ -108,12 +117,13 @@ class PaymentController {
         const wasPaid = booking.paymentStatus === "paid";
 
         booking.paymentStatus = "paid";
-        booking.paymentReference = reference as string;
+        booking.paymentReference = effectiveReference;
 
         await booking.save();
 
         paymentLogger.info("Transaction verification success", {
           reference,
+          effectiveReference,
           action: "VERIFY_TRANSACTION_SUCCESS",
         });
 
@@ -165,14 +175,19 @@ class PaymentController {
       } else if (result.status && result.data.status === "failed") {
         paymentLogger.warn("Transaction not successful", {
           reference,
+          effectiveReference,
           result,
           action: "VERIFY_TRANSACTION_FAILED",
         });
 
-        booking.paymentStatus = "failed";
-        booking.paymentReference = reference as string;
+        // Never let a failed verification of a stale/wrong reference
+        // downgrade a booking that is already confirmed paid.
+        if (booking.paymentStatus !== "paid") {
+          booking.paymentStatus = "failed";
+          booking.paymentReference = effectiveReference;
 
-        await booking.save();
+          await booking.save();
+        }
 
         res.status(200).json({
           message: "Transaction not successful",
@@ -182,13 +197,17 @@ class PaymentController {
       } else {
         paymentLogger.warn(`Transaction not successful`, {
           reference,
+          effectiveReference,
           result,
           action: "VERIFY_TRANSACTION_FAILED",
         });
 
-        booking.paymentStatus = "pending";
+        // Same guard as above — don't regress a paid booking to pending.
+        if (booking.paymentStatus !== "paid") {
+          booking.paymentStatus = "pending";
 
-        await booking.save();
+          await booking.save();
+        }
 
         res.status(400).json({
           message: `Transaction not successful`,

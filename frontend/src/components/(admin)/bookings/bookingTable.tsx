@@ -91,7 +91,9 @@ export default function BookingTable() {
 
   useEffect(() => {
     if (selectedBooking && verifyTransactionAction) {
-      verifyTransactionMutation.mutateAsync(selectedBooking?.bookingId as string);
+      verifyTransactionMutation.mutateAsync(
+        selectedBooking?.paymentReference || selectedBooking.bookingId
+      );
       setShowActionStatusModal(true);
       queryClient.invalidateQueries({
         queryKey: ["booking", selectedBooking?._id],
