@@ -36,13 +36,24 @@ app.use(
     exposedHeaders: ["Content-Disposition"], // needed for frontend CSV export filenames
   })
 );
-app.use(express.json());
+app.use(
+  express.json({
+    // Capture the raw body buffer so the Paystack webhook handler can recompute
+    // the HMAC SHA-512 signature over the exact bytes Paystack delivered.
+    verify: (req, _res, buf) => {
+      (req as any).rawBody = buf;
+    },
+  })
+);
 app.use(cookieParser());
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100, // Limit each IP to 100 requests per windowMs
   message: { message: "Too many requests. Please try again in a few minutes." },
+  // Paystack webhook retries can burst from the same IP; signature
+  // verification is the auth barrier, rate limiting adds nothing here.
+  skip: (req) => req.originalUrl === "/api/payment/webhook",
 });
 app.use("/api", limiter);
 

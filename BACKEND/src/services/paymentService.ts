@@ -1,10 +1,89 @@
 import https from "https";
+import crypto from "crypto";
 import { paymentLogger } from "../utils/logger";
-import { IBooking } from "../models/bookingModel";
+import { Booking, IBooking } from "../models/bookingModel";
+import customerService from "./customerService";
+import emailService from "./emailService";
+import emailQueueService from "./emailQueueService";
+import { getCallerFromBooking } from "../utils/bookingShape";
 import { HttpError } from "../utils/httpError";
 import { env } from "../config/env";
 
 export class PaymentService {
+  // The single write path that transitions a booking to paid, shared by the
+  // customer-facing verify endpoint, the Paystack webhook, and any admin
+  // re-verify. Atomic: only the first concurrent writer wins, so tier +
+  // confirmation email side-effects fire exactly once even under Paystack's
+  // retry delivery or a verify/webhook race. Returns a document whose
+  // paymentStatus is "paid" (the winner's doc, or a fresh read for the loser).
+  async markBookingPaid(
+    booking: IBooking,
+    reference: string
+  ): Promise<IBooking> {
+    const flipped = await Booking.findOneAndUpdate(
+      { _id: booking._id, paymentStatus: { $ne: "paid" } },
+      { $set: { paymentStatus: "paid", paymentReference: reference } },
+      { new: true }
+    );
+
+    if (!flipped) {
+      // Already paid by a concurrent delivery — no-op, but still return a
+      // fresh doc so callers never respond with a stale in-memory status.
+      paymentLogger.info("Payment already confirmed for booking", {
+        bookingId: booking.bookingId,
+        reference,
+        action: "MARK_BOOKING_PAID_ALREADY_PAID",
+      });
+      return (await Booking.findById(booking._id)) ?? booking;
+    }
+
+    paymentLogger.info("Booking marked paid", {
+      bookingId: flipped.bookingId,
+      reference,
+      reuseCount: flipped.reuseCount,
+      action: "MARK_BOOKING_PAID_SUCCESS",
+    });
+
+    // Customer tiering is keyed off payment confirmation — only fired on the
+    // actual pending/failed -> paid transition, so redeliveries never
+    // double-count.
+    try {
+      await customerService.recordPaidBooking(getCallerFromBooking(flipped));
+    } catch (tierError: any) {
+      paymentLogger.error(
+        `Customer tier recording failed after payment confirmed: ${tierError.message}`,
+        {
+          bookingId: flipped.bookingId,
+          reference,
+          action: "MARK_BOOKING_PAID_TIER_HOOK_FAILED",
+        }
+      );
+    }
+
+    // Best-effort: a failed confirmation email must not fail the payment
+    // acknowledgement back to Paystack / the verify response. Failure is
+    // queued for retry instead.
+    try {
+      await emailService.sendBookingConfirmationIfDue(flipped);
+    } catch (emailError: any) {
+      paymentLogger.error(
+        `Confirmation mail failed after payment confirmed: ${emailError.message}`,
+        {
+          bookingId: flipped.bookingId,
+          reference,
+          action: "MARK_BOOKING_PAID_CONFIRMATION_MAIL_FAILED",
+        }
+      );
+      await emailQueueService.enqueue(
+        "booking_confirmation",
+        flipped._id as any,
+        emailError.message,
+      );
+    }
+
+    return flipped;
+  }
+
   // Single entry point for resolving a booking's payment link — used by both
   // the customer checkout flow and the admin "complete payment" action, so
   // amount/reference logic only lives in one place.
@@ -160,6 +239,30 @@ export class PaymentService {
       req.write(params);
       req.end();
     });
+  }
+
+  // Paystack signs webhooks with the merchant secret (or a dedicated webhook
+  // secret) using HMAC SHA-512 over the raw request body, delivered in the
+  // x-paystack-signature header. Verify before trusting any event.
+  verifyWebhookSignature(rawBody: Buffer, signature: string): boolean {
+    if (!rawBody || !signature || !/^[a-f0-9]{128}$/i.test(signature)) {
+      return false;
+    }
+
+    const secret =
+      env.PAYSTACK_WEBHOOK_SECRET || env.PAYSTACK_SECRET;
+
+    const expected = crypto
+      .createHmac("sha512", secret)
+      .update(rawBody)
+      .digest("hex");
+
+    // Buffers are both 128 hex chars here (guarded above), so this never
+    // throws on length mismatch.
+    return crypto.timingSafeEqual(
+      Buffer.from(expected),
+      Buffer.from(signature)
+    );
   }
 
   async verifyTransaction(reference: string): Promise<any> {

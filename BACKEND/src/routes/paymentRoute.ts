@@ -21,6 +21,10 @@ router.post(
   paymentController.initializeTransaction
 );
 
+// Paystack server-to-server callback — no client auth (Paystack's HMAC
+// signature header is the auth barrier). Registered before the 404 fallback.
+router.post("/webhook", paymentController.handleWebhook);
+
 router.use((req, res) => {
   res.status(404).json({ message: "Payment route not found" });
 });

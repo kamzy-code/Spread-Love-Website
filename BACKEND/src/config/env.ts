@@ -16,6 +16,9 @@ const envSchema = z.object({
 
   PAYSTACK_SECRET: z.string().min(1, "PAYSTACK_SECRET is required"),
 
+  // Optional dedicated webhook signing key — falls back to PAYSTACK_SECRET
+  PAYSTACK_WEBHOOK_SECRET: z.string().optional(),
+
   BETTER_STACK_SOURCE: z.string().optional(),
   BETTER_STACK_ENDPOINT: z.string().optional(),
 
