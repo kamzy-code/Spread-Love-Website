@@ -6,11 +6,13 @@ import { formatToYMD } from "@/lib/formatDate";
 import { deepEqual } from "@/lib/hasBookingChanged";
 import { getStatusColor, getStatusIcon } from "@/lib/getStatusColor";
 import Link from "next/link";
+import { Download } from "lucide-react";
 import { countries } from "@/lib/countries";
 import { useUpdateBookingByCustomer } from "@/hooks/useBookings";
 
 interface RecordingFile {
   url: string;
+  downloadUrl: string;
   partNumber: number;
 }
 
@@ -353,12 +355,24 @@ export default function BookingDetails({ data }: { data: BookingData }) {
                       {recipient.recording?.files?.length ? (
                         <div className="space-y-2">
                           {recipient.recording.files.map((file) => (
-                            <audio
+                            <div
                               key={file.partNumber}
-                              controls
-                              src={file.url}
-                              className="w-full h-10"
-                            />
+                              className="flex items-center gap-2"
+                            >
+                              <audio
+                                controls
+                                src={file.url}
+                                className="w-full h-10 flex-1"
+                              />
+                              <a
+                                href={file.downloadUrl}
+                                download
+                                className="inline-flex shrink-0 items-center gap-1 text-sm text-brand-end hover:underline"
+                              >
+                                <Download className="h-4 w-4" />
+                                Download
+                              </a>
+                            </div>
                           ))}
                         </div>
                       ) : (

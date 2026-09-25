@@ -37,6 +37,12 @@ const EXTENSION_BY_MIME_TYPE: Record<string, string> = {
   "audio/webm": "webm",
 };
 
+// Download filename for a recording part 
+const buildDownloadFilename = (mimeType: string, partNumber: number): string => {
+  const ext = EXTENSION_BY_MIME_TYPE[mimeType] ?? "mp3";
+  return `call-recording-part-${partNumber}.${ext}`;
+};
+
 const s3Client = new S3Client({
   region: env.AWS_REGION,
   credentials:
@@ -311,7 +317,7 @@ class RecordingService {
     role: adminRole,
     recordingId: string,
     fileId: string,
-  ): Promise<{ url: string; expiresIn: number }> {
+  ): Promise<{ url: string; downloadUrl: string; expiresIn: number }> {
     const recording = await Recording.findById(recordingId);
     // 404 (not 403) for a call rep hitting another rep's recording — doesn't
     // confirm the recording's existence to someone unauthorized to see it.
@@ -325,12 +331,23 @@ class RecordingService {
     }
 
     try {
+      const { s3Bucket, s3Key, mimeType, partNumber } = file;
       const url = await getSignedUrl(
         s3Client,
-        new GetObjectCommand({ Bucket: file.s3Bucket, Key: file.s3Key }),
+        new GetObjectCommand({ Bucket: s3Bucket, Key: s3Key }),
         { expiresIn: PLAYBACK_URL_TTL_SECONDS },
       );
-      return { url, expiresIn: PLAYBACK_URL_TTL_SECONDS };
+
+      const downloadUrl = await getSignedUrl(
+        s3Client,
+        new GetObjectCommand({
+          Bucket: s3Bucket,
+          Key: s3Key,
+          ResponseContentDisposition: `attachment; filename="${buildDownloadFilename(mimeType, partNumber)}"`,
+        }),
+        { expiresIn: PLAYBACK_URL_TTL_SECONDS },
+      );
+      return { url, downloadUrl, expiresIn: PLAYBACK_URL_TTL_SECONDS };
     } catch (error: any) {
       recordingLogger.error("Failed to generate playback URL", {
         recordingId,
@@ -351,14 +368,14 @@ class RecordingService {
   // recordings yet — the common case for most public lookups.
   async getApprovedRecordingsByBooking(
     bookingId: mongoose.Types.ObjectId | string,
-  ): Promise<Map<string, { files: { url: string; partNumber: number }[] }>> {
+  ): Promise<Map<string, { files: { url: string; downloadUrl: string; partNumber: number }[] }>> {
     const recordings = await Recording.find({
       booking: bookingId,
       approved: true,
       status: "uploaded",
     });
 
-    const result = new Map<string, { files: { url: string; partNumber: number }[] }>();
+    const result = new Map<string, { files: { url: string; downloadUrl: string; partNumber: number }[] }>();
     if (recordings.length === 0) return result;
 
     for (const recording of recordings) {
@@ -368,14 +385,26 @@ class RecordingService {
         recording.files
           .slice()
           .sort((a, b) => a.partNumber - b.partNumber)
-          .map(async (file) => ({
-            url: await getSignedUrl(
+          .map(async (file) => {
+            const downloadUrl = await getSignedUrl(
               s3Client,
-              new GetObjectCommand({ Bucket: file.s3Bucket, Key: file.s3Key }),
+              new GetObjectCommand({
+                Bucket: file.s3Bucket,
+                Key: file.s3Key,
+                ResponseContentDisposition: `attachment; filename="${buildDownloadFilename(file.mimeType, file.partNumber)}"`,
+              }),
               { expiresIn: PLAYBACK_URL_TTL_SECONDS },
-            ),
-            partNumber: file.partNumber,
-          })),
+            );
+            return {
+              url: await getSignedUrl(
+                s3Client,
+                new GetObjectCommand({ Bucket: file.s3Bucket, Key: file.s3Key }),
+                { expiresIn: PLAYBACK_URL_TTL_SECONDS },
+              ),
+              downloadUrl,
+              partNumber: file.partNumber,
+            };
+          }),
       );
 
       result.set(recording.recipientId.toString(), { files });
@@ -385,15 +414,10 @@ class RecordingService {
   }
 
   // Feeds the admin booking list — one batch query for the whole page
-  // rather than one lookup per row (same pattern bookingService.getAllBooking
-  // already uses for customer tier). Counts only "uploaded" recordings, so
+  // rather than one lookup per row. Counts only "uploaded" recordings, so
   // an expired/deleted one doesn't linger as a stale QC indicator.
-  //
-  // Same uploadedBy scoping as listRecordings for callreps — a booking can
-  // have recordings from more than one rep (Decision #7, uploadedBy is
-  // per-recording, not tied to the booking's assignedRep), and a call rep
-  // must not learn even the *count* of a recording they're not allowed to
-  // open (listRecordings 404s them out of it entirely).
+  
+  // Same uploadedBy scoping as listRecordings for callreps 
   async getRecordingSummaryByBookings(
     bookingIds: (mongoose.Types.ObjectId | string)[],
     userId: string,

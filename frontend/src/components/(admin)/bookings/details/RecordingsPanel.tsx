@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { Trash2 } from "lucide-react";
+import { Trash2, Download } from "lucide-react";
 import { Recording, RecordingFile } from "@/lib/types";
 import {
   useRecordings,
@@ -82,7 +82,17 @@ function AudioPlayer({ recordingId, file }: { recordingId: string; file: Recordi
 
   return (
     <div className="flex flex-col gap-1">
-      <span className="text-xs text-gray-500">Part {file.partNumber}</span>
+      <div className="flex items-center justify-between">
+        <span className="text-xs text-gray-500">Part {file.partNumber}</span>
+        <a
+          href={data.downloadUrl}
+          download
+          className="inline-flex items-center gap-1 text-xs text-brand-end hover:underline"
+        >
+          <Download className="h-3 w-3" />
+          Download
+        </a>
+      </div>
       <audio
         controls
         src={data.url}

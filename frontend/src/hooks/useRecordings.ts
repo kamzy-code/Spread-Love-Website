@@ -59,7 +59,7 @@ export const useConfirmUpload = () => {
 export const useRecordingPlaybackUrl = (recordingId: string, fileId: string) => {
   return useQuery({
     queryKey: ["recording-playback-url", recordingId, fileId],
-    queryFn: (): Promise<{ url: string; expiresIn: number }> =>
+    queryFn: (): Promise<{ url: string; downloadUrl: string; expiresIn: number }> =>
       apiCall(`/recordings/${recordingId}/files/${fileId}/playback-url`),
     enabled: !!recordingId && !!fileId,
     staleTime: 0,
