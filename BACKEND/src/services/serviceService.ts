@@ -7,12 +7,18 @@ type PricingUpdate = Partial<IServicePricing>;
 class ServiceService {
   // Public/booking-form facing — active services only.
   async listActiveServices() {
-    return Service.find({ active: true }).sort({ createdAt: 1 });
+    return Service.find({ active: true }).sort({ createdAt: 1, _id: 1 });
   }
 
   // Admin management — everything, including deactivated services.
+  // The _id tiebreaker is mandatory here: skip/limit pagination over a
+  // non-unique sort key (createdAt) returns overlapping/gapped pages when
+  // multiple services share a timestamp.
   async listAllServices(searchQuery: any, skip: number, limit: number) {
-    return Service.find(searchQuery).sort({ createdAt: 1 }).skip(skip).limit(limit);
+    return Service.find(searchQuery)
+      .sort({ createdAt: 1, _id: 1 })
+      .skip(skip)
+      .limit(limit);
   }
 
   async countTotalServices(searchQuery: any) {

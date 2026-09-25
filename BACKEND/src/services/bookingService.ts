@@ -628,7 +628,10 @@ class BookingService {
         : query;
 
     const bookings = await Booking.find(baseQuery)
-      .sort({ [sortParam]: sortOrder })
+      // The _id tiebreaker (same direction as the primary sort) makes the
+      // order total — without it, skip/limit pagination over a non-unique
+      // sort key like callDate skips and duplicates rows across pages.
+      .sort({ [sortParam]: sortOrder, _id: sortOrder })
       .skip(skip)
       .limit(limit)
       .populate({
