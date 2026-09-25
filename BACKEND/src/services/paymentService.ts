@@ -101,7 +101,13 @@ export class PaymentService {
       throw new HttpError(400, "Booking has no valid price");
     }
 
-    if (booking.paymentURL) {
+    const regenerate = booking.paymentStatus === "failed";
+
+    if (regenerate) {
+      booking.reuseCount = (booking.reuseCount || 0) + 1;
+    }
+
+    if (!regenerate && booking.paymentURL) {
       paymentLogger.info("Returning cached payment URL", {
         bookingId: booking.bookingId,
         action: "INITIALIZE_PAYMENT_FOR_BOOKING_CACHED",
@@ -110,9 +116,9 @@ export class PaymentService {
     }
 
     // Paystack references are single-use. First-time initialize uses the
-    // bookingId; once a booking has been re-used (contents replaced,
-    // reuseCount > 0), mint a fresh reference instead of reusing one that
-    // may already be spent.
+    // bookingId; once a booking has been re-used (contents replaced or the
+    // previous payment failed, reuseCount > 0), mint a fresh reference
+    // instead of reusing one that may already be spent.
     const reference =
       booking.reuseCount > 0
         ? `${booking.bookingId}-r${booking.reuseCount}`

@@ -1,4 +1,5 @@
 import express from "express";
+import { authMiddleware, checkRole } from "../middlewares/authMiddleware";
 import paymentController from "../controllers/paymentController";
 import { validateQuery, validateParams } from "../middlewares/validateRequest";
 import {
@@ -19,6 +20,15 @@ router.post(
   validateParams(initializeTransactionParamsSchema),
   validateQuery(initializeTransactionQuerySchema),
   paymentController.initializeTransaction
+);
+
+// Admin-only: emails the customer their payment link.
+router.post(
+  "/send-link/:bookingId",
+  authMiddleware,
+  checkRole("superadmin", "salesrep"),
+  validateParams(initializeTransactionParamsSchema),
+  paymentController.sendPaymentLinkEmail
 );
 
 // Paystack server-to-server callback — no client auth (Paystack's HMAC

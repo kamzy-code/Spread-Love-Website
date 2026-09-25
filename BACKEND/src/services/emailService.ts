@@ -137,6 +137,76 @@ ${recipientLinesText}
     }
   }
 
+  // Payment-recovery link for an unpaid booking — admin-triggered (the
+  // Complete Payment modal's "Send via Email"),
+  async sendPaymentLinkEmail(booking: any, paymentLink: string): Promise<void> {
+    const to = booking.caller?.email || booking.callerEmail;
+
+    if (!to) {
+      throw new HttpError(400, "Caller email is required to send the payment link");
+    }
+
+    const callerName = booking.caller?.name ?? booking.callerName ?? "Customer";
+    const amount = booking.totalPrice ?? Number(booking.price) ?? 0;
+
+    const bodyHtml = `
+      <h1 style="${styles.heading}">Complete Your Payment</h1>
+      <p style="${styles.body}">Dear ${callerName},</p>
+      <p style="${styles.body}">
+        You have a pending booking with Spread Love Network, and it isn't paid yet.
+        Complete your payment using the button below so we can get your call
+        underway.
+      </p>
+      ${renderInfoBox([
+        { label: "Booking ID", value: booking.bookingId },
+        { label: "Amount", value: `₦${Number(amount).toLocaleString()}` },
+      ])}
+      ${renderEmailButton("Complete Payment", paymentLink)}
+      <p style="${styles.body}">
+        If you have any questions, contact us at
+        <a href="mailto:${SUPPORT_EMAIL}" style="color: #9d0057;">${SUPPORT_EMAIL}</a>.
+      </p>
+    `;
+
+    const mailOptions = {
+      from: "noreply@spreadlovenetwork.com",
+      to: to,
+      replyTo: SUPPORT_EMAIL,
+      subject: `Complete your payment — Booking ${booking.bookingId}`,
+      text: `Hi ${callerName},
+You have a pending booking with Spread Love Network, and it isn't paid yet.
+Complete your payment here: ${paymentLink}
+
+Booking ID: ${booking.bookingId}
+Amount: ₦${Number(amount).toLocaleString()}
+
+Questions? Contact us at ${SUPPORT_EMAIL}
+`,
+      html: renderEmailLayout({
+        title: "Complete Your Payment",
+        preheader: `Booking ${booking.bookingId} is awaiting payment — here's your link.`,
+        bodyHtml,
+      }),
+    };
+
+    try {
+      const { error } = await resend.emails.send(mailOptions);
+      if (error) {
+        throw new Error(error.message);
+      }
+    } catch (error: any) {
+      emailLogger.error("Failed to send payment link email", {
+        bookingId: booking.bookingId,
+        error: error.message,
+        action: "SEND_PAYMENT_LINK_EMAIL_FAILED",
+      });
+      throw new HttpError(
+        502,
+        "Failed to send the payment link email. Please try again or contact support.",
+      );
+    }
+  }
+
   // Single guarded entry point for sending the confirmation email — used by
   // both the standalone /email/confirm/:bookingId route (admin resend) and
   // the payment-verify flow (automatic send on successful payment), so the

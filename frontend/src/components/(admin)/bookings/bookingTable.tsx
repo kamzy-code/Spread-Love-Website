@@ -309,9 +309,13 @@ export default function BookingTable() {
 
         {showCompletePaymentModal &&
           !completePaymentMutation.error &&
-          completePaymentMutation.isSuccess && completePaymentAction && (
+          completePaymentMutation.isSuccess &&
+          completePaymentAction &&
+          selectedBooking && (
             <CompletePaymentModal
               paymentLink={completePaymentMutation.data.authorization_url}
+              bookingId={selectedBooking.bookingId}
+              callerPhone={selectedBooking.caller?.phone ?? selectedBooking.callerPhone}
               setShowPaymentModal={(val: boolean) => {
                 setShowCompletePaymentModal(val);
                 setCompletePaymentAction(val);

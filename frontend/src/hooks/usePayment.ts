@@ -46,3 +46,19 @@ export const useVerifyTransaction = () => {
     },
   });
 };
+
+// Admin "Complete Payment" modal: emails the customer the payment link
+// (backend regenerates a fresh reference if the previous one failed). Returns
+// the resolved { authorization_url } so the modal can update its copy link.
+export const useSendPaymentLinkEmail = () => {
+  return useMutation({
+    mutationFn: (bookingId: string) =>
+      apiCall(`/payment/send-link/${bookingId}`, { method: "POST" }),
+
+    retry: 1,
+
+    onError: (error) => {
+      console.error(error.message || "Failed to send payment link email");
+    },
+  });
+};

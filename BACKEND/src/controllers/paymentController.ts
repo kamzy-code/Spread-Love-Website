@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction } from "express";
+import { AuthRequest } from "../middlewares/authMiddleware";
 import { paymentLogger } from "../utils/logger";
 import paymentService from "../services/paymentService";
+import emailService from "../services/emailService";
 import { HttpError } from "../utils/httpError";
 import bookingService from "../services/bookingService";
 import { Booking } from "../models/bookingModel";
@@ -62,6 +64,67 @@ class PaymentController {
 
       next(error);
       return;
+    }
+  }
+
+  // Auth-protected (authMiddleware + checkRole on the route) — sends a live
+  // payment link to the caller and returns the resolved URL so the admin UI
+  // can refresh its copy/WhatsApp link.
+  async sendPaymentLinkEmail(req: AuthRequest, res: Response, next: NextFunction) {
+    const { bookingId } = req.params;
+
+    try {
+      const booking = await bookingService.getBookingByBookingId(bookingId);
+
+      if (!booking) {
+        paymentLogger.warn("Send payment link failed: Booking not found", {
+          bookingId,
+          action: "SEND_PAYMENT_LINK_EMAIL_FAILED",
+        });
+        next(new HttpError(404, "Booking not found"));
+        return;
+      }
+
+      const to = booking.caller?.email || booking.callerEmail;
+
+      if (!to) {
+        paymentLogger.warn("Send payment link failed: Booking has no caller email", {
+          bookingId,
+          action: "SEND_PAYMENT_LINK_EMAIL_FAILED",
+        });
+        next(new HttpError(400, "Booking has no caller email"));
+        return;
+      }
+
+      if (booking.paymentStatus === "paid") {
+        paymentLogger.warn("Send payment link refused: Booking already paid", {
+          bookingId,
+          action: "SEND_PAYMENT_LINK_EMAIL_REFUSED_ALREADY_PAID",
+        });
+        next(new HttpError(400, "Booking is already paid"));
+        return;
+      }
+
+      const data = await paymentService.initializePaymentForBooking(booking, to);
+      await emailService.sendPaymentLinkEmail(booking, data.authorization_url);
+
+      paymentLogger.info("Payment link email sent", {
+        bookingId,
+        email: to,
+        action: "SEND_PAYMENT_LINK_EMAIL_SUCCESS",
+      });
+
+      res.status(200).json({
+        message: "Payment link sent to the caller's email",
+        data,
+      });
+    } catch (error: any) {
+      paymentLogger.error(`Send payment link email failed: ${error.message}`, {
+        bookingId,
+        error: error.message,
+        action: "SEND_PAYMENT_LINK_EMAIL_FAILED",
+      });
+      next(error);
     }
   }
 
