@@ -4,6 +4,7 @@ import logger from "./utils/logger";
 import { env } from "./config/env";
 import { startRecordingCleanupJob } from "./jobs/recordingCleanupJob";
 import { startEmailQueueJob } from "./jobs/emailQueueJob";
+import { startAbandonedBookingCleanupJob } from "./jobs/abandonedBookingCleanupJob";
 
 const PORT = env.PORT;
 async function startServer (){
@@ -12,6 +13,7 @@ async function startServer (){
 
     startRecordingCleanupJob();
     startEmailQueueJob();
+    startAbandonedBookingCleanupJob();
 
 // start the server
     app.listen(PORT, ()=>{

@@ -822,6 +822,136 @@ class BookingService {
     ]);
   }
 
+  // Scheduled job (jobs/abandonedBookingCleanupJob.ts) — retires superseded
+  // bookings whose payment can no longer arrive, without re-creating the
+  // orphaned-payment class of bugs: a booking is only deleted once its Paystack
+  // reference is provably dead (verify => failed/abandoned) or was never
+  // minted. A late success is HEALED (markBookingPaid) instead of deleted, and
+  // anything still pending/unverifiable is left for the next run so the intact
+  // reference keeps matching late webhooks. Iterates via cursor like
+  // recordingService.cleanupExpiredRecordings.
+  async cleanupAbandonedBookings(options?: {
+    ageDays?: number;
+    dryRun?: boolean;
+  }): Promise<{
+    healed: number;
+    deleted: number;
+    skipped: number;
+    failed: number;
+  }> {
+    const ageDays = options?.ageDays ?? 7;
+    const dryRun = options?.dryRun ?? false;
+
+    const cutoff = new Date(Date.now() - ageDays * 24 * 60 * 60 * 1000);
+
+    const cursor = Booking.find({
+      bookingStatus: "abandoned",
+      supersededAt: { $lte: cutoff },
+    }).cursor();
+
+    let healed = 0;
+    let deleted = 0;
+    let skipped = 0;
+    let failed = 0;
+
+    for await (const booking of cursor) {
+      const reference = booking.paymentReference;
+
+      if (!reference) {
+        // No reference was ever minted, so nothing can ever be charged
+        // against this booking — safe to delete outright.
+        if (dryRun) {
+          bookingLogger.info("Abandoned cleanup (dry-run): would delete (no reference)", {
+            bookingId: booking.bookingId,
+            supersededAt: booking.supersededAt,
+            action: "CLEANUP_ABANDONED_DRY_DELETE",
+          });
+          skipped += 1;
+          continue;
+        }
+        await Booking.deleteOne({ _id: booking._id });
+        deleted += 1;
+        continue;
+      }
+
+      let status: string | undefined;
+      try {
+        status = (await paymentService.verifyTransaction(reference))?.data?.status;
+      } catch (error: any) {
+        bookingLogger.warn(
+          "Abandoned cleanup: verify failed, leaving booking for next run",
+          {
+            bookingId: booking.bookingId,
+            reference,
+            error: error.message,
+            action: "CLEANUP_ABANDONED_VERIFY_ERROR",
+          }
+        );
+        skipped += 1;
+        continue;
+      }
+
+      if (status === "success") {
+        if (dryRun) {
+          bookingLogger.info("Abandoned cleanup (dry-run): would heal as paid", {
+            bookingId: booking.bookingId,
+            reference,
+            action: "CLEANUP_ABANDONED_DRY_HEAL",
+          });
+          skipped += 1;
+          continue;
+        }
+        // A webhook-missed late payment finally confirmed — credit instead of
+        // deleting (markBookingPaid revives the booking out of "abandoned").
+        bookingLogger.info("Abandoned cleanup healed a late payment", {
+          bookingId: booking.bookingId,
+          reference,
+          action: "CLEANUP_ABANDONED_HEALED",
+        });
+        await paymentService.markBookingPaid(booking, reference);
+        healed += 1;
+        continue;
+      }
+
+      if (status === "failed" || status === "abandoned") {
+        if (dryRun) {
+          bookingLogger.info("Abandoned cleanup (dry-run): would delete (dead reference)", {
+            bookingId: booking.bookingId,
+            reference,
+            status,
+            action: "CLEANUP_ABANDONED_DRY_DELETE",
+          });
+          skipped += 1;
+          continue;
+        }
+        await Booking.deleteOne({ _id: booking._id });
+        deleted += 1;
+        continue;
+      }
+
+      // pending/processing/unreachable — the reference may still be payable,
+      // keep it matchable and retry on the next run.
+      bookingLogger.info("Abandoned cleanup: payment still possible, keeping booking", {
+        bookingId: booking.bookingId,
+        reference,
+        status,
+        action: "CLEANUP_ABANDONED_SKIPPED_PENDING",
+      });
+      skipped += 1;
+    }
+
+    bookingLogger.info("Abandoned-booking cleanup run complete", {
+      healed,
+      deleted,
+      skipped,
+      failed,
+      dryRun,
+      action: "CLEANUP_ABANDONED_SUCCESS",
+    });
+
+    return { healed, deleted, skipped, failed };
+  }
+
   async getTotalBookingsCount(matchStage: any) {
     return await Booking.countDocuments(matchStage);
   }
