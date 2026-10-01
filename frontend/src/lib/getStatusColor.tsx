@@ -1,4 +1,4 @@
-import { AlertCircle, Calendar, CheckCircle, XCircle } from "lucide-react";  
+import { AlertCircle, Archive, Calendar, CheckCircle, XCircle } from "lucide-react";  
   
   export const getStatusIcon = (status: string, resize?: boolean) => {
     switch (status) {
@@ -13,6 +13,8 @@ import { AlertCircle, Calendar, CheckCircle, XCircle } from "lucide-react";
       case "rejected":
       case "unsuccessful":
         return <XCircle className={`${resize ? 'h-3 w-3' : 'h-5 w-5'} text-red-500`} />;
+      case "abandoned":
+        return <Archive className={`${resize ? 'h-3 w-3' : 'h-5 w-5'} text-gray-500`} />;
       default:
         return <AlertCircle className={`${resize ? 'h-3 w-3' : 'h-5 w-5'} text-gray-500`} />;
     }
@@ -31,6 +33,8 @@ import { AlertCircle, Calendar, CheckCircle, XCircle } from "lucide-react";
       case "rejected":
       case "unsuccessful":
         return `${useCase === "badge" ? "bg-red-100" : ""} text-red-800`;
+      case "abandoned":
+        return `${useCase === "badge" ? "bg-gray-100" : ""} text-gray-500`;
       default:
         return `${useCase === "badge" ? "bg-gray-100" : ""} text-gray-800`;
     }

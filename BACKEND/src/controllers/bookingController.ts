@@ -40,17 +40,19 @@ class BookingController {
     });
 
     try {
-      const { bookingId, paymentURL } = await bookingService.checkoutBooking(
-        caller,
-        recipients,
-        contactConsent,
-        couponCode
-      );
+      const { bookingId, paymentURL, alreadyPaid } =
+        await bookingService.checkoutBooking(
+          caller,
+          recipients,
+          contactConsent,
+          couponCode
+        );
 
       res.status(201).json({
         message: "Booking created successfully",
         bookingId,
         paymentURL,
+        alreadyPaid: alreadyPaid ?? false,
       });
       bookingLogger.info("Booking checkout successful", {
         bookingId,

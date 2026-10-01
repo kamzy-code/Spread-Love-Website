@@ -45,6 +45,7 @@ interface CallerData {
 interface BookingData {
   bookingId: string;
   bookingStatus?: string;
+  supersededBy?: string;
   caller: CallerData;
   recipients: RecipientData[];
 }
@@ -165,6 +166,20 @@ export default function BookingDetails({ data }: { data: BookingData }) {
                 {overallStatus}
               </p>
             </div>
+
+            {overallStatus === "abandoned" && (
+              <p className="text-xs text-gray-500 mt-1">
+                This booking was replaced by your latest booking
+                {data.supersededBy ? (
+                  <>
+                    {" "}
+                    (<span className="font-medium">{data.supersededBy}</span>)
+                  </>
+                ) : (
+                  "."
+                )}
+              </p>
+            )}
           </div>
         </div>
 

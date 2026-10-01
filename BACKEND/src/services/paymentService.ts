@@ -6,6 +6,7 @@ import customerService from "./customerService";
 import emailService from "./emailService";
 import emailQueueService from "./emailQueueService";
 import { getCallerFromBooking } from "../utils/bookingShape";
+import { deriveBookingStatus } from "../utils/bookingStatus";
 import { HttpError } from "../utils/httpError";
 import { env } from "../config/env";
 
@@ -20,9 +21,18 @@ export class PaymentService {
     booking: IBooking,
     reference: string
   ): Promise<IBooking> {
+    // A superseded ("abandoned") booking can still be paid late via its
+    // intact reference — revive it so it re-enters the work queue.
+    const derivedStatus = booking.recipients?.length
+      ? deriveBookingStatus(booking.recipients)
+      : undefined;
+
+    const set: any = { paymentStatus: "paid", paymentReference: reference };
+    if (derivedStatus) set.bookingStatus = derivedStatus;
+
     const flipped = await Booking.findOneAndUpdate(
       { _id: booking._id, paymentStatus: { $ne: "paid" } },
-      { $set: { paymentStatus: "paid", paymentReference: reference } },
+      { $set: set },
       { new: true }
     );
 

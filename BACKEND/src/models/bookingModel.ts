@@ -80,6 +80,9 @@ export interface IBooking extends Document {
   // duplicate detection and re-use counting for v2 bookings
   reuseCount: number;
   duplicateOfPaid?: boolean;
+  // Set when a checkout supersedes this booking — points at the replacement bookingId. 
+  supersededBy?: string;
+  supersededAt?: Date;
 
   // shared / unchanged across v1 and v2
   contactConsent?: string;
@@ -164,7 +167,7 @@ const bookingSchema: Schema = new Schema<IBooking>(
     },
     bookingStatus: {
       type: String,
-      enum: ["pending", "in_progress", "completed"],
+      enum: ["pending", "in_progress", "completed", "abandoned"],
       required: false,
     },
     totalPrice: { type: Number, required: false },
@@ -172,6 +175,8 @@ const bookingSchema: Schema = new Schema<IBooking>(
     discountAmount: { type: Number, required: false },
     reuseCount: { type: Number, required: true, default: 0 },
     duplicateOfPaid: { type: Boolean, required: false, default: false },
+    supersededBy: { type: String, required: false },
+    supersededAt: { type: Date, required: false },
 
     contactConsent: { type: String, required: false, default: "no" },
     confirmationMailsent: { required: true, type: Boolean, default: false },

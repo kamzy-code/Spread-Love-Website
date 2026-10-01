@@ -2,7 +2,8 @@ import { SortOrder, Types } from "mongoose";
 import { Booking, IBooking, ICaller, IRecipient } from "../models/bookingModel";
 import { getLeastLoadedRep } from "../utils/getLeastLoadedRep";
 import { isLegacyBooking } from "../utils/bookingShape";
-import { callStatus, bookingStatusType, adminRole } from "../types/genralTypes";
+import { callStatus, adminRole } from "../types/genralTypes";
+import { deriveBookingStatus } from "../utils/bookingStatus";
 import customerService from "./customerService";
 import couponService from "./couponService";
 import paymentService from "./paymentService";
@@ -11,26 +12,6 @@ import serviceService from "./serviceService";
 import recordingService from "./recordingService";
 import { HttpError } from "../utils/httpError";
 import { bookingLogger } from "../utils/logger";
-
-const TERMINAL_CALL_STATUSES: callStatus[] = [
-  "successful",
-  "unsuccessful",
-  "rejected",
-];
-
-// "pending" means nothing has happened yet — every recipient still
-// literally "pending". A single rescheduled or assigned recipient means a
-// call attempt already occurred, so the booking is "in_progress" even
-// though rescheduled/assigned aren't terminal statuses either.
-const deriveBookingStatus = (recipients: IRecipient[]): bookingStatusType => {
-  const allPending = recipients.every((r) => !r.callStatus || r.callStatus === "pending");
-  if (allPending) return "pending";
-
-  const allTerminal = recipients.every(
-    (r) => r.callStatus && TERMINAL_CALL_STATUSES.includes(r.callStatus)
-  );
-  return allTerminal ? "completed" : "in_progress";
-};
 
 class BookingService {
   // Looks for a booking from the same caller within the last 60 minutes that
@@ -42,6 +23,9 @@ class BookingService {
 
     const candidates = await Booking.find({
       createdAt: { $gte: sixtyMinutesAgo },
+      // A superseded booking (status "abandoned") must never be recycled —
+      // it already belongs to a newer checkout attempt.
+      bookingStatus: { $ne: "abandoned" },
       $or: [
         { "caller.phone": caller.phone, "caller.email": caller.email },
         { callerPhone: caller.phone, callerEmail: caller.email },
@@ -141,40 +125,90 @@ class BookingService {
 
     const match = await this.findReusableMatch(caller, recipients);
 
-    // unpaid near-duplicate: re-use the existing bookingId/_id, replace its
-    // contents, and force the next payment initialize to mint a fresh
-    // Paystack reference (references are single-use).
+    let supersededBooking: IBooking | null = null;
+
     if (match && match.paymentStatus !== "paid") {
-      match.caller = caller;
-      match.recipients = recipients;
-      match.totalPrice = totalPrice;
-      match.couponCode = appliedCouponCode;
-      match.discountAmount = discountAmount || undefined;
-      match.bookingStatus = "pending";
-      match.contactConsent = contactConsent;
-      match.reuseCount = (match.reuseCount || 0) + 1;
-      match.paymentURL = "";
-      match.paymentStatus = "pending";
-      // A reuse fully replaces the booking's content with a new checkout
-      // attempt — Mongoose's `timestamps` option marks createdAt immutable
-      // by default, so a plain assignment is silently dropped; `set()` with
-      // overwriteImmutable is required to actually move it off the original
-      // (possibly stale, e.g. from a prior day) attempt.
-      match.set("createdAt", new Date(), undefined, { overwriteImmutable: true });
-      const saved = await match.save();
-      if (appliedCouponCode) await couponService.incrementUsage(appliedCouponCode);
+      if (match.paymentReference) {
+        let paystackStatus: string | undefined;
+        try {
+          const verification = await paymentService.verifyTransaction(
+            match.paymentReference
+          );
+          paystackStatus = verification?.data?.status;
+        } catch (error: any) {
+          bookingLogger.warn(
+            "Verify before re-use failed — superseding to stay safe",
+            {
+              bookingId: match.bookingId,
+              reference: match.paymentReference,
+              error: error.message,
+              action: "CREATE_BOOKING_REUSE_VERIFY_ERROR",
+            }
+          );
+          paystackStatus = undefined;
+        }
 
-      bookingLogger.info("Booking re-used for unpaid near-duplicate", {
-        bookingId: saved.bookingId,
-        reuseCount: saved.reuseCount,
-        action: "CREATE_BOOKING_REUSED",
-      });
+        if (paystackStatus === "success") {
+          // The "first attempt" actually completed — credit this booking and
+          // hand it back instead of opening a second payment.
+          const paidBooking = await paymentService.markBookingPaid(
+            match,
+            match.paymentReference
+          );
+          bookingLogger.info(
+            "Checkout candidate already paid — credited, no new payment",
+            {
+              bookingId: paidBooking.bookingId,
+              reference: match.paymentReference,
+              action: "CREATE_BOOKING_REUSE_ALREADY_PAID",
+            }
+          );
+          return paidBooking;
+        }
 
-      return saved;
+        if (paystackStatus !== "failed") {
+          supersededBooking = match;
+        }
+      }
+
+      if (!supersededBooking) {
+        // provably dead (or never initialized): re-use the existing
+        // bookingId/_id, replace its contents, and force the next payment
+        // initialize to mint a fresh Paystack reference (references are
+        // single-use).
+        match.caller = caller;
+        match.recipients = recipients;
+        match.totalPrice = totalPrice;
+        match.couponCode = appliedCouponCode;
+        match.discountAmount = discountAmount || undefined;
+        match.bookingStatus = "pending";
+        match.contactConsent = contactConsent;
+        match.reuseCount = (match.reuseCount || 0) + 1;
+        match.paymentURL = "";
+        match.paymentStatus = "pending";
+        // A reuse fully replaces the booking's content with a new checkout
+        // attempt — Mongoose's `timestamps` option marks createdAt immutable
+        // by default, so a plain assignment is silently dropped; `set()` with
+        // overwriteImmutable is required to actually move it off the original
+        // (possibly stale, e.g. from a prior day) attempt.
+        match.set("createdAt", new Date(), undefined, { overwriteImmutable: true });
+        const saved = await match.save();
+        if (appliedCouponCode) await couponService.incrementUsage(appliedCouponCode);
+
+        bookingLogger.info("Booking re-used for unpaid near-duplicate", {
+          bookingId: saved.bookingId,
+          reuseCount: saved.reuseCount,
+          action: "CREATE_BOOKING_REUSED",
+        });
+
+        return saved;
+      }
     }
 
-    // paid near-duplicate: don't touch the paid booking — create a new one
-    // and flag it for rep/admin visibility.
+    // paid near-duplicate (don't touch the paid booking), supersede (old
+    // booking is superseded below), or no candidate — create a new booking
+    // and flag it for rep/admin visibility when it duplicates a paid one.
+    const duplicateOfPaid = match ? match.paymentStatus === "paid" : false;
     const newBooking = await Booking.create({
       bookingId,
       caller,
@@ -184,12 +218,28 @@ class BookingService {
       discountAmount: discountAmount || undefined,
       bookingStatus: "pending",
       reuseCount: 0,
-      duplicateOfPaid: match ? true : false,
+      duplicateOfPaid,
       contactConsent,
       confirmationMailsent: false,
       allRecipientsSuccessfulMailSent: false,
       paymentStatus: "pending",
     });
+
+    // a superseded booking stays fully tracked: status flips to abandoned and
+    // points at its replacement, but its original paymentReference/paymentURL
+    // are deliberately left in place for late-payment resolution.
+    if (supersededBooking) {
+      supersededBooking.bookingStatus = "abandoned";
+      supersededBooking.supersededBy = newBooking.bookingId;
+      supersededBooking.supersededAt = new Date();
+      await supersededBooking.save();
+
+      bookingLogger.info("Booking superseded by a fresh checkout", {
+        bookingId: supersededBooking.bookingId,
+        supersededBy: newBooking.bookingId,
+        action: "CREATE_BOOKING_SUPERSEDED",
+      });
+    }
 
     // assign booking to a rep if Booking was created successfully
     if (newBooking) {
@@ -254,6 +304,21 @@ class BookingService {
       throw new HttpError(500, "Failed to create booking");
     }
 
+    // createBooking can resolve to a booking that is already paid (a previous
+    // attempt verified as success). No new Paystack transaction — surface it
+    // so the frontend shows the confirmed state instead of a pay page.
+    if (booking.paymentStatus === "paid") {
+      bookingLogger.info("Checkout resolved to an already-paid booking", {
+        bookingId: booking.bookingId,
+        action: "CHECKOUT_BOOKING_ALREADY_PAID",
+      });
+      return {
+        bookingId: booking.bookingId,
+        paymentURL: "",
+        alreadyPaid: true,
+      };
+    }
+
     const paymentData = await paymentService.initializePaymentForBooking(
       booking,
       booking.caller?.email || caller.email
@@ -267,6 +332,7 @@ class BookingService {
     return {
       bookingId: booking.bookingId,
       paymentURL: paymentData.authorization_url,
+      alreadyPaid: false,
     };
   }
 
@@ -286,7 +352,7 @@ class BookingService {
     const disallowedStatus = ["successful"];
     const isBookingLocked = isLegacyBooking(booking)
       ? disallowedStatus.includes(booking.status as string)
-      : booking.bookingStatus === "completed";
+      : booking.bookingStatus === "completed" || booking.bookingStatus === "abandoned";
 
     if (isBookingLocked) {
       bookingLogger.warn("Update booking by customer blocked: booking locked", {
@@ -571,7 +637,12 @@ class BookingService {
 
     const oldCallStatus = recipient.callStatus;
     recipient.callStatus = newStatus;
-    booking.bookingStatus = deriveBookingStatus(booking.recipients!);
+    // "abandoned" is a lifecycle override set by the checkout supersede path
+    // — sticky, so a rep touching call statuses must not resurrect a
+    // superseded booking. Only a late payment (markBookingPaid) revives it.
+    if (booking.bookingStatus !== "abandoned") {
+      booking.bookingStatus = deriveBookingStatus(booking.recipients!);
+    }
 
     const saved = await booking.save();
 

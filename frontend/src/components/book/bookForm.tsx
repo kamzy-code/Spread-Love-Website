@@ -191,6 +191,17 @@ export default function BookingForm() {
     }
   }, [checkoutMutation.isSuccess, checkoutMutation.data]);
 
+  // Backend can short-circuit checkout when the previous attempt actually
+  // completed (it verified and credited the earlier reference): it returns
+  // alreadyPaid with no paymentURL, so show the confirmed state instead of a
+  // pay page — the customer is not asked to pay twice.
+  useEffect(() => {
+    if (checkoutMutation.isSuccess && checkoutMutation.data?.alreadyPaid) {
+      setBookingId(checkoutMutation.data.bookingId);
+      setBookingStatus("completed");
+    }
+  }, [checkoutMutation.isSuccess, checkoutMutation.data]);
+
   // Verify transaction on return from Paystack
   useEffect(() => {
     if (reference) {
@@ -221,7 +232,7 @@ export default function BookingForm() {
             reference && bookingStatus !== "completed" ? "" : "card"
           } p-6 md:p-8 ${reference ? "w-full md:w-[70%]" : "w-full"}`}
         >
-          {reference ? (
+          {reference || bookingStatus === "completed" ? (
             <div>
               {bookingStatus === "completed" ? (
                 <BookingSuccess bookingId={bookingId} />

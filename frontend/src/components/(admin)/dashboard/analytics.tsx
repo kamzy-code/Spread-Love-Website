@@ -11,6 +11,7 @@ import {
   PackageCheck,
   Star,
   ShieldCheck,
+  Archive,
 } from "lucide-react";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import MiniLoader from "../ui/miniLoader";
@@ -83,6 +84,11 @@ export const BOOKING_STATUS_LIST = [
     key: "completed",
     label: "Completed",
     icon: <PackageCheck className="h-4 w-4 md:h-6 md:w-6" />,
+  },
+  {
+    key: "abandoned",
+    label: "Abandoned",
+    icon: <Archive className="h-4 w-4 md:h-6 md:w-6" />,
   },
 ];
 

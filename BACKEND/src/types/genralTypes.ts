@@ -40,6 +40,6 @@ export const RELATIONSHIP_OPTIONS = [
   "Other",
 ] as const;
 
-export type bookingStatusType = "pending" | "in_progress" | "completed";
+export type bookingStatusType = "pending" | "in_progress" | "completed" | "abandoned";
 export type genderType = "male" | "female" | "prefer_not_to_say";
 export type RelationshipOption = (typeof RELATIONSHIP_OPTIONS)[number];

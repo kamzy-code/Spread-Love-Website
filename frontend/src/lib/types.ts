@@ -96,12 +96,14 @@ export interface Booking {
   // v2 nested shape
   caller?: BookingCallerData;
   recipients?: BookingRecipientData[];
-  bookingStatus?: "pending" | "in_progress" | "completed";
+  bookingStatus?: "pending" | "in_progress" | "completed" | "abandoned";
   totalPrice?: number;
   couponCode?: string;
   discountAmount?: number;
   reuseCount?: number;
   duplicateOfPaid?: boolean;
+  supersededBy?: string;
+  supersededAt?: string;
   customerTier?: "new" | "regular" | "vip" | "diamond";
   recordingSummary?: RecordingSummary;
 
@@ -147,6 +149,9 @@ export interface CreateBookingResponse {
   message: string;
   bookingId: string;
   paymentURL: string;
+  // True when backtrack resolved to an already-paid booking: no new payment
+  // to open, the caller is confirmed.
+  alreadyPaid?: boolean;
 }
 
 export interface CouponValidationResponse {
