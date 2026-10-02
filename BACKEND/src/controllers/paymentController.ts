@@ -153,7 +153,12 @@ class PaymentController {
 
       res.status(200).json({
         message: "Payment link sent to the caller's email",
-        data,
+        // Response is scoped to the link only — the raw Paystack payload
+        // (e.g. access_code) isn't something this endpoint's callers need.
+        data: {
+          paymentReference: booking.paymentReference,
+          authorization_url: data.authorization_url,
+        },
       });
     } catch (error: any) {
       paymentLogger.error(`Send payment link email failed: ${error.message}`, {

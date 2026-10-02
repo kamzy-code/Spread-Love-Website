@@ -147,7 +147,7 @@ ${recipientLinesText}
     }
 
     const callerName = booking.caller?.name ?? booking.callerName ?? "Customer";
-    const amount = booking.totalPrice ?? Number(booking.price) ?? 0;
+    const amount = (booking.totalPrice ?? Number(booking.price)) || 0;
 
     const bodyHtml = `
       <h1 style="${styles.heading}">Complete Your Payment</h1>

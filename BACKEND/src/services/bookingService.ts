@@ -205,63 +205,84 @@ class BookingService {
       }
     }
 
-    // paid near-duplicate (don't touch the paid booking), supersede (old
-    // booking is superseded below), or no candidate — create a new booking
-    // and flag it for rep/admin visibility when it duplicates a paid one.
+    // paid near-duplicate (don't touch the paid booking), supersede (the old
+    // booking is claimed below), or no candidate — create a new booking and
+    // flag it for rep/admin visibility when it duplicates a paid one.
     const duplicateOfPaid = match ? match.paymentStatus === "paid" : false;
-    const newBooking = await Booking.create({
-      bookingId,
-      caller,
-      recipients,
-      totalPrice,
-      couponCode: appliedCouponCode,
-      discountAmount: discountAmount || undefined,
-      bookingStatus: "pending",
-      reuseCount: 0,
-      duplicateOfPaid,
-      contactConsent,
-      confirmationMailsent: false,
-      allRecipientsSuccessfulMailSent: false,
-      paymentStatus: "pending",
-    });
 
-    // a superseded booking stays fully tracked: status flips to abandoned and
-    // points at its replacement, but its original paymentReference/paymentURL
-    // are deliberately left in place for late-payment resolution.
-    if (supersededBooking) {
-      // Atomic "claim" of the supersede marker: under two concurrent identical
-      // checkouts only the first writer wins — a second one finds the booking
-      // already abandoned and leaves its supersededBy pointing at the earlier
-      // successor instead of silently overwriting the linkback.
-      const superseded = await Booking.findOneAndUpdate(
-        { _id: supersededBooking._id, bookingStatus: { $ne: "abandoned" } },
-        {
-          $set: {
-            bookingStatus: "abandoned",
-            supersededBy: newBooking.bookingId,
-            supersededAt: new Date(),
-          },
-        },
-        { new: true }
-      );
-
-      if (superseded) {
-        bookingLogger.info("Booking superseded by a fresh checkout", {
-          bookingId: superseded.bookingId,
-          supersededBy: newBooking.bookingId,
-          action: "CREATE_BOOKING_SUPERSEDED",
-        });
-      } else {
-        bookingLogger.warn(
-          "Checkout candidate already superseded by a concurrent checkout — keeping existing linkback",
+    // Claim the supersede marker BEFORE creating the replacement. Two writes
+    // can't be atomic here; claim-then-create narrows a crash to "old booking
+    // abandoned pointing at a not-yet-created id" — recoverable, the customer
+    // re-submits and gets a fresh booking via the reuse path. The inverse
+    // order would leave BOTH bookings live on a crash.
+    const supersedeClaim = supersededBooking
+      ? await Booking.findOneAndUpdate(
+          { _id: supersededBooking._id, bookingStatus: { $ne: "abandoned" } },
           {
-            bookingId: supersededBooking.bookingId,
-            supersededBy: supersededBooking.supersededBy,
-            newBookingId: newBooking.bookingId,
-            action: "CREATE_BOOKING_SUPERSEDE_RACE",
+            $set: {
+              bookingStatus: "abandoned",
+              supersededBy: bookingId,
+              supersededAt: new Date(),
+            },
+          },
+          { new: true }
+        )
+      : null;
+
+    if (supersededBooking && supersedeClaim) {
+      bookingLogger.info("Booking superseded by a fresh checkout", {
+        bookingId: supersedeClaim.bookingId,
+        supersededBy: bookingId,
+        action: "CREATE_BOOKING_SUPERSEDED",
+      });
+    } else if (supersededBooking) {
+      bookingLogger.warn(
+        "Checkout candidate already superseded by a concurrent checkout — keeping existing linkback",
+        {
+          bookingId: supersededBooking.bookingId,
+          supersededBy: supersededBooking.supersededBy,
+          newBookingId: bookingId,
+          action: "CREATE_BOOKING_SUPERSEDE_RACE",
+        }
+      );
+    }
+
+    let newBooking: IBooking;
+    try {
+      newBooking = await Booking.create({
+        bookingId,
+        caller,
+        recipients,
+        totalPrice,
+        couponCode: appliedCouponCode,
+        discountAmount: discountAmount || undefined,
+        bookingStatus: "pending",
+        reuseCount: 0,
+        duplicateOfPaid,
+        contactConsent,
+        confirmationMailsent: false,
+        allRecipientsSuccessfulMailSent: false,
+        paymentStatus: "pending",
+      });
+    } catch (createError: any) {
+      // Roll back our own claim so the old booking isn't left pointing at a
+      // booking that never came into existence — and only if we actually won
+      // (supersededBy still points at our id). Never undo a concurrent
+      // writer's claim, and never regress a booking that got paid meanwhile.
+      if (supersedeClaim) {
+        await Booking.findOneAndUpdate(
+          {
+            _id: supersedeClaim._id,
+            supersededBy: bookingId,
+            paymentStatus: { $ne: "paid" },
+          },
+          {
+            $set: { bookingStatus: "pending" },
+            $unset: { supersededBy: "", supersededAt: "" },
           }
         );
       }
+      throw createError;
     }
 
     // assign booking to a rep if Booking was created successfully
@@ -891,87 +912,102 @@ class BookingService {
     for await (const booking of cursor) {
       const reference = booking.paymentReference;
 
-      if (!reference) {
-        // No reference was ever minted, so nothing can ever be charged
-        // against this booking — safe to delete outright.
-        if (dryRun) {
-          bookingLogger.info("Abandoned cleanup (dry-run): would delete (no reference)", {
-            bookingId: booking.bookingId,
-            supersededAt: booking.supersededAt,
-            action: "CLEANUP_ABANDONED_DRY_DELETE",
-          });
-          skipped += 1;
-          continue;
-        }
-        await Booking.deleteOne({ _id: booking._id });
-        deleted += 1;
-        continue;
-      }
-
-      let status: string | undefined;
+      // Best-effort per booking: any DB mutation that throws is counted as
+      // failed and the run moves on — a single stuck document must not take
+      // the whole scheduled job down (a network blip mid-delete already
+      // increments failed; a re-run retries it).
       try {
-        status = (await paymentService.verifyTransaction(reference))?.data?.status;
-      } catch (error: any) {
-        bookingLogger.warn(
-          "Abandoned cleanup: verify failed, leaving booking for next run",
-          {
-            bookingId: booking.bookingId,
-            reference,
-            error: error.message,
-            action: "CLEANUP_ABANDONED_VERIFY_ERROR",
+        if (!reference) {
+          // No reference was ever minted, so nothing can ever be charged
+          // against this booking — safe to delete outright.
+          if (dryRun) {
+            bookingLogger.info("Abandoned cleanup (dry-run): would delete (no reference)", {
+              bookingId: booking.bookingId,
+              supersededAt: booking.supersededAt,
+              action: "CLEANUP_ABANDONED_DRY_DELETE",
+            });
+            skipped += 1;
+            continue;
           }
-        );
-        skipped += 1;
-        continue;
-      }
+          await Booking.deleteOne({ _id: booking._id });
+          deleted += 1;
+          continue;
+        }
 
-      if (status === "success") {
-        if (dryRun) {
-          bookingLogger.info("Abandoned cleanup (dry-run): would heal as paid", {
-            bookingId: booking.bookingId,
-            reference,
-            action: "CLEANUP_ABANDONED_DRY_HEAL",
-          });
+        let status: string | undefined;
+        try {
+          status = (await paymentService.verifyTransaction(reference))?.data?.status;
+        } catch (error: any) {
+          bookingLogger.warn(
+            "Abandoned cleanup: verify failed, leaving booking for next run",
+            {
+              bookingId: booking.bookingId,
+              reference,
+              error: error.message,
+              action: "CLEANUP_ABANDONED_VERIFY_ERROR",
+            }
+          );
           skipped += 1;
           continue;
         }
-        // A webhook-missed late payment finally confirmed — credit instead of
-        // deleting (markBookingPaid revives the booking out of "abandoned").
-        bookingLogger.info("Abandoned cleanup healed a late payment", {
+
+        if (status === "success") {
+          if (dryRun) {
+            bookingLogger.info("Abandoned cleanup (dry-run): would heal as paid", {
+              bookingId: booking.bookingId,
+              reference,
+              action: "CLEANUP_ABANDONED_DRY_HEAL",
+            });
+            skipped += 1;
+            continue;
+          }
+          // A webhook-missed late payment finally confirmed — credit instead
+          // of deleting (markBookingPaid revives the booking out of
+          // "abandoned").
+          bookingLogger.info("Abandoned cleanup healed a late payment", {
+            bookingId: booking.bookingId,
+            reference,
+            action: "CLEANUP_ABANDONED_HEALED",
+          });
+          await paymentService.markBookingPaid(booking, reference);
+          healed += 1;
+          continue;
+        }
+
+        if (status === "failed" || status === "abandoned") {
+          if (dryRun) {
+            bookingLogger.info("Abandoned cleanup (dry-run): would delete (dead reference)", {
+              bookingId: booking.bookingId,
+              reference,
+              status,
+              action: "CLEANUP_ABANDONED_DRY_DELETE",
+            });
+            skipped += 1;
+            continue;
+          }
+          await Booking.deleteOne({ _id: booking._id });
+          deleted += 1;
+          continue;
+        }
+
+        // pending/processing/unreachable — the reference may still be payable,
+        // keep it matchable and retry on the next run.
+        bookingLogger.info("Abandoned cleanup: payment still possible, keeping booking", {
           bookingId: booking.bookingId,
           reference,
-          action: "CLEANUP_ABANDONED_HEALED",
+          status,
+          action: "CLEANUP_ABANDONED_SKIPPED_PENDING",
         });
-        await paymentService.markBookingPaid(booking, reference);
-        healed += 1;
-        continue;
+        skipped += 1;
+      } catch (error: any) {
+        failed += 1;
+        bookingLogger.error("Abandoned cleanup: mutation failed for booking", {
+          bookingId: booking.bookingId,
+          reference: booking.paymentReference,
+          error: error.message,
+          action: "CLEANUP_ABANDONED_MUTATION_FAILED",
+        });
       }
-
-      if (status === "failed" || status === "abandoned") {
-        if (dryRun) {
-          bookingLogger.info("Abandoned cleanup (dry-run): would delete (dead reference)", {
-            bookingId: booking.bookingId,
-            reference,
-            status,
-            action: "CLEANUP_ABANDONED_DRY_DELETE",
-          });
-          skipped += 1;
-          continue;
-        }
-        await Booking.deleteOne({ _id: booking._id });
-        deleted += 1;
-        continue;
-      }
-
-      // pending/processing/unreachable — the reference may still be payable,
-      // keep it matchable and retry on the next run.
-      bookingLogger.info("Abandoned cleanup: payment still possible, keeping booking", {
-        bookingId: booking.bookingId,
-        reference,
-        status,
-        action: "CLEANUP_ABANDONED_SKIPPED_PENDING",
-      });
-      skipped += 1;
     }
 
     bookingLogger.info("Abandoned-booking cleanup run complete", {

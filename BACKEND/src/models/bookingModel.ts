@@ -194,4 +194,9 @@ const bookingSchema: Schema = new Schema<IBooking>(
   { timestamps: true },
 );
 
+// Daily abandoned-booking cleanup scans bookingStatus="abandoned" past a
+// supersededAt cutoff — this compound index keeps that cursor (and the admin
+// bookingStatus filter prefix) off a full collection scan.
+bookingSchema.index({ bookingStatus: 1, supersededAt: 1 });
+
 export const Booking = mongoose.model<IBooking>("Booking", bookingSchema);
