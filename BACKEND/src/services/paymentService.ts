@@ -115,6 +115,7 @@ export class PaymentService {
 
     if (regenerate) {
       booking.reuseCount = (booking.reuseCount || 0) + 1;
+      booking.paymentStatus = "pending";
     }
 
     if (!regenerate && booking.paymentURL) {

@@ -229,16 +229,39 @@ class BookingService {
     // points at its replacement, but its original paymentReference/paymentURL
     // are deliberately left in place for late-payment resolution.
     if (supersededBooking) {
-      supersededBooking.bookingStatus = "abandoned";
-      supersededBooking.supersededBy = newBooking.bookingId;
-      supersededBooking.supersededAt = new Date();
-      await supersededBooking.save();
+      // Atomic "claim" of the supersede marker: under two concurrent identical
+      // checkouts only the first writer wins — a second one finds the booking
+      // already abandoned and leaves its supersededBy pointing at the earlier
+      // successor instead of silently overwriting the linkback.
+      const superseded = await Booking.findOneAndUpdate(
+        { _id: supersededBooking._id, bookingStatus: { $ne: "abandoned" } },
+        {
+          $set: {
+            bookingStatus: "abandoned",
+            supersededBy: newBooking.bookingId,
+            supersededAt: new Date(),
+          },
+        },
+        { new: true }
+      );
 
-      bookingLogger.info("Booking superseded by a fresh checkout", {
-        bookingId: supersededBooking.bookingId,
-        supersededBy: newBooking.bookingId,
-        action: "CREATE_BOOKING_SUPERSEDED",
-      });
+      if (superseded) {
+        bookingLogger.info("Booking superseded by a fresh checkout", {
+          bookingId: superseded.bookingId,
+          supersededBy: newBooking.bookingId,
+          action: "CREATE_BOOKING_SUPERSEDED",
+        });
+      } else {
+        bookingLogger.warn(
+          "Checkout candidate already superseded by a concurrent checkout — keeping existing linkback",
+          {
+            bookingId: supersededBooking.bookingId,
+            supersededBy: supersededBooking.supersededBy,
+            newBookingId: newBooking.bookingId,
+            action: "CREATE_BOOKING_SUPERSEDE_RACE",
+          }
+        );
+      }
     }
 
     // assign booking to a rep if Booking was created successfully
@@ -611,6 +634,19 @@ class BookingService {
     const booking = await this.getBookingById(bookingId, userId, role);
     if (!booking) return null;
 
+    // A superseded booking is a dead end — its customer re-checked-out and was
+    // handed a fresh booking. Refuse call-status writes so a rep doesn't work
+    // a ghost; if a late payment later revives it via markBookingPaid the
+    // status leaves "abandoned" and this gate re-opens on its own.
+    if (booking.bookingStatus === "abandoned") {
+      bookingLogger.warn("Update call status refused: booking superseded", {
+        bookingId,
+        supersededBy: booking.supersededBy,
+        action: "UPDATE_CALL_STATUS_REFUSED_ABANDONED",
+      });
+      return null;
+    }
+
     if (isLegacyBooking(booking) || !recipientId) {
       const oldStatus = booking.status;
       booking.status = newStatus;
@@ -637,12 +673,10 @@ class BookingService {
 
     const oldCallStatus = recipient.callStatus;
     recipient.callStatus = newStatus;
-    // "abandoned" is a lifecycle override set by the checkout supersede path
-    // — sticky, so a rep touching call statuses must not resurrect a
-    // superseded booking. Only a late payment (markBookingPaid) revives it.
-    if (booking.bookingStatus !== "abandoned") {
-      booking.bookingStatus = deriveBookingStatus(booking.recipients!);
-    }
+    // "abandoned" never reaches here: the gate at the top of this method
+    // refuses superseded bookings entirely. Only a late payment
+    // (markBookingPaid) revives one, re-deriving this same status.
+    booking.bookingStatus = deriveBookingStatus(booking.recipients!);
 
     const saved = await booking.save();
 

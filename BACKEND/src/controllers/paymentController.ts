@@ -37,6 +37,28 @@ class PaymentController {
         return;
       }
 
+      // A superseded booking keeps its old paymentReference/paymentURL alive
+      // purposely (for late-payment resolution), but its link must never be
+      // re-issued: paying it would revive a booking the customer already
+      // replaced, doubling the service commitment.
+      if (booking.bookingStatus === "abandoned") {
+        paymentLogger.warn(
+          "Initialize refused: booking was superseded",
+          {
+            bookingId,
+            supersededBy: booking.supersededBy,
+            action: "INITIALIZE_TRANSACTION_REFUSED_SUPERSEDED",
+          }
+        );
+        next(
+          new HttpError(
+            409,
+            `This booking was replaced by a newer booking - ${booking.supersededBy}. Send the payment link from the latest booking instead.`
+          )
+        );
+        return;
+      }
+
       const data = await paymentService.initializePaymentForBooking(
         booking,
         email as string
@@ -102,6 +124,21 @@ class PaymentController {
           action: "SEND_PAYMENT_LINK_EMAIL_REFUSED_ALREADY_PAID",
         });
         next(new HttpError(400, "Booking is already paid"));
+        return;
+      }
+
+      if (booking.bookingStatus === "abandoned") {
+        paymentLogger.warn("Send payment link refused: booking was superseded", {
+          bookingId,
+          supersededBy: booking.supersededBy,
+          action: "SEND_PAYMENT_LINK_EMAIL_REFUSED_SUPERSEDED",
+        });
+        next(
+          new HttpError(
+            409,
+            `This booking was replaced by a newer booking - ${booking.supersededBy}. Send the payment link from the latest booking instead.`
+          )
+        );
         return;
       }
 

@@ -761,7 +761,7 @@ class BookingController {
       // check if the booking has a status that's part of the disallowed statuses and return error message without saving the updated booking object.
       const isBlocked = isLegacyBooking(booking)
         ? disallowedStatuses.includes(currentStatus as string)
-        : currentStatus === "completed";
+        : currentStatus === "completed" || currentStatus === "abandoned";
 
       if (isBlocked) {
         bookingLogger.warn(

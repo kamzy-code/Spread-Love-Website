@@ -30,7 +30,7 @@ async function run() {
   const bookings = await Booking.find({
     reuseCount: { $gte: 1 },
     paymentStatus: { $ne: "paid" },
-  }).select("bookingId paymentReference reuseCount totalPrice price");
+  }).select("bookingId paymentReference reuseCount totalPrice price recipients");
 
   console.log(`Candidate bookings (recycled, unpaid): ${bookings.length}`);
 
