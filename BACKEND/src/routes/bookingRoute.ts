@@ -1,11 +1,14 @@
 import express from "express";
 import bookingController from "../controllers/bookingController";
+import messageSuggestionController from "../controllers/messageSuggestionController";
+import { suggestMessageLimiter } from "../middlewares/aiRateLimit";
 import { authMiddleware, checkRole } from "../middlewares/authMiddleware";
 import { validateRequest, validateQuery, validateParams } from "../middlewares/validateRequest";
 import {
   assignCallToRepQuerySchema,
   bookingIdParamSchema,
   createBookingSchema,
+  suggestMessageParamsSchema,
   updateBookingByAdminSchema,
   updateBookingByCustomerSchema,
   updateBookingStatusSchema,
@@ -62,6 +65,17 @@ router.put(
   checkRole("superadmin", "salesrep", "callrep"),
   validateRequest(updateBookingStatusSchema),
   bookingController.updateBookingStatus
+);
+
+// AI-drafted message for a recipient whose customer left the message blank.
+// Draft only — nothing is saved to the booking.
+router.post(
+  "/admin/:bookingId/recipients/:recipientId/suggest-message",
+  authMiddleware,
+  checkRole("superadmin", "salesrep", "callrep"),
+  validateParams(suggestMessageParamsSchema),
+  suggestMessageLimiter,
+  messageSuggestionController.suggestMessage
 );
 
 router.put(

@@ -79,6 +79,11 @@ export const bookingIdParamSchema = z.object({
   bookingId: z.string().regex(/^[0-9a-fA-F]{24}$/, "Invalid booking ID"),
 });
 
+export const suggestMessageParamsSchema = z.object({
+  bookingId: z.string().regex(/^[0-9a-fA-F]{24}$/, "Invalid booking ID"),
+  recipientId: z.string().regex(/^[0-9a-fA-F]{24}$/, "Invalid recipient ID"),
+});
+
 // Customer self-service update — deliberately a smaller field set than
 // createBookingSchema. Never includes callStatus/price/callRecordingURL —
 // those are rep/system-owned, not customer-editable.

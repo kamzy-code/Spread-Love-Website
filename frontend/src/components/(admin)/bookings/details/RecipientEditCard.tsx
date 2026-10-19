@@ -5,6 +5,8 @@ import { formatToYMD } from "@/lib/formatDate";
 import { getStatusColor, getStatusIcon } from "@/lib/getStatusColor";
 import RecipientActionMenu from "./RecipientActionMenu";
 import RecordingsPanel from "./RecordingsPanel";
+import MessageSuggestion from "./MessageSuggestion";
+import { isBlankMessage } from "@/lib/blankMessage";
 
 export interface RecipientEditState {
   _id: string;
@@ -76,6 +78,10 @@ export default function RecipientEditCard({
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
   ) => onChange(index, e);
+
+  // Legacy (v1) bookings have no per-recipient id to address, so no
+  // suggestion there — they keep showing the stored "None" as before.
+  const showSuggestion = isBlankMessage(recipient.message) && !legacy;
 
   return (
     <div className="border rounded-lg p-4 md:p-6 space-y-4">
@@ -280,7 +286,10 @@ export default function RecipientEditCard({
         </div>
       ) : (
         <div className="space-y-3">
-          {recipient.message && (
+          {showSuggestion && (
+            <MessageSuggestion bookingId={bookingId} recipientId={recipient._id} />
+          )}
+          {recipient.message && !showSuggestion && (
             <div>
               <h4 className="font-medium text-gray-700 mb-1">Message</h4>
               <p className="p-3 gradient-background-soft rounded-md text-gray-700 text-sm">

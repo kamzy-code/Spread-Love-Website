@@ -37,6 +37,7 @@
     "mongodb": "4.0",
     "mongoose": "^8.15.1",
     "node-cron": "^4.6.0",
+    "openai": "^7.39.0",
     "resend": "^6.18.1",
     "winston": "^3.17.0",
     "winston-daily-rotate-file": "^5.0.0",

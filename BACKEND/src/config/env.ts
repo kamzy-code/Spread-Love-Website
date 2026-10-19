@@ -33,6 +33,13 @@ const envSchema = z.object({
   WHATCHIMP_API_BASE_URL: z.string().optional(),
   WHATCHIMP_RECORDING_TEMPLATE_NAME: z.string().optional(),
 
+  // AI message suggestions (Gemini via its OpenAI-compatible endpoint).
+  // Optional so the server boots without it — the feature answers 503 until
+  // a key is set. GEMINI_MODEL overrides the default pinned in
+  // messageSuggestionService.
+  GEMINI_API_KEY: z.string().optional(),
+  GEMINI_MODEL: z.string().optional(),
+
   // Base URL used to build the customer-facing recording download link
   PUBLIC_APP_URL: z.string().optional(),
 });
