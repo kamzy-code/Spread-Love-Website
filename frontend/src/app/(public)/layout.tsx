@@ -4,6 +4,7 @@ import Navbar from "@/components/ui/navbar";
 import Footer from "@/components/ui/footer";
 import Providers from "./providers";
 import Script from "next/script";
+import TawkWidget from "@/components/ui/tawkWidget";
 
 export const metadata: Metadata = {
   title: {
@@ -47,6 +48,8 @@ export default function RootLayout({
   gtag('js', new Date());
 
   gtag('config', 'G-XMGKXZXTKD');`}</Script>
+
+      <TawkWidget />
     </Providers>
   );
 }
