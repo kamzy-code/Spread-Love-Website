@@ -13,6 +13,7 @@ import auditLogRouter from "./routes/auditLogRoute";
 import serviceRouter from "./routes/serviceRoute";
 import recordingRouter from "./routes/recordingRoute";
 import ratingTemplateRouter from "./routes/ratingTemplateRoute";
+import bookingPopupRouter from "./routes/bookingPopupRoute";
 import rateLimit from "express-rate-limit";
 import cookieParser from "cookie-parser";
 import { errorHandler } from "./middlewares/errorHandler";
@@ -90,6 +91,7 @@ app.use("/api/audit-log", auditLogRouter);
 app.use("/api/service", serviceRouter);
 app.use("/api/recordings", recordingRouter);
 app.use("/api/rating-templates", ratingTemplateRouter);
+app.use("/api/booking-popup", bookingPopupRouter);
 
 app.use((req, res) => {
   res.status(404).json({ message: "Route not found" });

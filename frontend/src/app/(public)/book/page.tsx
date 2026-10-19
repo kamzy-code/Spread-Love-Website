@@ -1,5 +1,6 @@
 import BookHero from "@/components/book/bookHero";
 import BookingForm from "@/components/book/bookForm";
+import BookingPopup from "@/components/book/BookingPopup";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -39,6 +40,8 @@ export default function BookingPage() {
       <section className="gradient-background-soft">
         <BookingForm />
       </section>
+
+      <BookingPopup />
     </main>
   );
 }

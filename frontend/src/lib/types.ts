@@ -302,7 +302,7 @@ export interface LogFile {
 }
 
 // Audit log — superadmin-only view of admin-made edits to protected fields
-export type AuditEntity = "booking" | "service" | "coupon" | "rep";
+export type AuditEntity = "booking" | "service" | "coupon" | "rep" | "popup";
 
 export type AuditLogEntry = {
   _id: string;
@@ -543,3 +543,20 @@ export type RatingTemplateFormValues = {
   name: string;
   criteria: RatingCriterionInput[];
 };
+
+// Booking-form pop-up. The public endpoint only ever returns copy while the
+// pop-up is enabled; `version` identifies the current copy so a dismissal
+// only sticks until the copy is edited.
+export type PublicBookingPopup =
+  | { enabled: false }
+  | { enabled: true; title: string; body: string; version: string };
+
+export interface AdminBookingPopup {
+  enabled: boolean;
+  title: string;
+  body: string;
+  updatedAt: string | null;
+}
+
+export type BookingPopupPayload = Pick<AdminBookingPopup, "enabled" | "title" | "body">;
+

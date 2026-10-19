@@ -4,7 +4,7 @@ import mongoose, { Schema, Document } from "mongoose";
 // features (customer email, service prices, coupons, reps) rather than a
 // bespoke log per feature. Read access is superadmin-only — enforced in
 // the route, not here.
-export type auditEntity = "booking" | "service" | "coupon" | "rep" | "ratingTemplate";
+export type auditEntity = "booking" | "service" | "coupon" | "rep" | "ratingTemplate" | "popup";
 
 export interface IAuditLog extends Document {
   entity: auditEntity;
@@ -20,7 +20,7 @@ const auditLogSchema: Schema = new Schema<IAuditLog>(
   {
     entity: {
       type: String,
-      enum: ["booking", "service", "coupon", "rep", "ratingTemplate"],
+      enum: ["booking", "service", "coupon", "rep", "ratingTemplate", "popup"],
       required: true,
     },
     entityId: { type: String, required: true },

@@ -37,3 +37,8 @@ export const GENDER_OPTIONS = [
 
 export const MESSAGE_WORD_LIMIT = 200;
 export const SPECIAL_INSTRUCTION_WORD_LIMIT = 70;
+
+// Booking-form pop-up limits — must stay in sync with
+// BACKEND/src/validation/bookingPopupSchemas.ts.
+export const POPUP_TITLE_MAX_CHARS = 80;
+export const POPUP_BODY_WORD_LIMIT = 120;
