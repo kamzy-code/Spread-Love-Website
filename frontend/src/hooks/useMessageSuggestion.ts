@@ -1,16 +1,19 @@
 import { useMutation } from "@tanstack/react-query";
 import { apiCall } from "@/lib/apiClient";
+import type { SuggestedMessage } from "@/lib/types";
 
-// Draft-only: the endpoint generates text for a recipient whose customer left
-// the message blank and saves nothing, so there's no cache to invalidate.
+// Generates a draft and the backend saves it on the recipient
 export const useSuggestMessage = (bookingId: string, recipientId: string) => {
   return useMutation({
-    mutationFn: async (): Promise<string> => {
+    mutationFn: async (): Promise<SuggestedMessage> => {
       const data = await apiCall(
         `/booking/admin/${bookingId}/recipients/${recipientId}/suggest-message`,
         { method: "POST" },
       );
-      return data.data.message as string;
+      return {
+        text: data.data.message as string,
+        generatedAt: data.data.generatedAt as string,
+      };
     },
   });
 };

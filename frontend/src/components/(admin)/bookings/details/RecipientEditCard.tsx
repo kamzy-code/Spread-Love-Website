@@ -6,7 +6,7 @@ import { getStatusColor, getStatusIcon } from "@/lib/getStatusColor";
 import RecipientActionMenu from "./RecipientActionMenu";
 import RecordingsPanel from "./RecordingsPanel";
 import MessageSuggestion from "./MessageSuggestion";
-import { isBlankMessage } from "@/lib/blankMessage";
+import type { SuggestedMessage } from "@/lib/types";
 
 export interface RecipientEditState {
   _id: string;
@@ -18,6 +18,7 @@ export interface RecipientEditState {
   callDate: string;
   price: number;
   message?: string;
+  suggestedMessage?: SuggestedMessage;
   specialInstruction?: string;
   callStatus?: string;
   callRecording?: string;
@@ -80,8 +81,8 @@ export default function RecipientEditCard({
   ) => onChange(index, e);
 
   // Legacy (v1) bookings have no per-recipient id to address, so no
-  // suggestion there — they keep showing the stored "None" as before.
-  const showSuggestion = isBlankMessage(recipient.message) && !legacy;
+  // suggestion there — they keep showing the stored message as before.
+  const showSuggestion = !legacy;
 
   return (
     <div className="border rounded-lg p-4 md:p-6 space-y-4">
@@ -287,7 +288,12 @@ export default function RecipientEditCard({
       ) : (
         <div className="space-y-3">
           {showSuggestion && (
-            <MessageSuggestion bookingId={bookingId} recipientId={recipient._id} />
+            <MessageSuggestion
+              bookingId={bookingId}
+              recipientId={recipient._id}
+              customerMessage={recipient.message}
+              savedSuggestion={recipient.suggestedMessage}
+            />
           )}
           {recipient.message && !showSuggestion && (
             <div>

@@ -52,6 +52,11 @@ export interface BookingCallerData {
   relationship?: string;
 }
 
+export interface SuggestedMessage {
+  text: string;
+  generatedAt: string;
+}
+
 export interface BookingRecipientData {
   _id: string;
   recipientName: string;
@@ -62,6 +67,8 @@ export interface BookingRecipientData {
   callDate: string;
   price: number;
   message?: string;
+  // Staff-only AI draft; never present on customer-facing reads.
+  suggestedMessage?: SuggestedMessage;
   specialInstruction?: string;
   callStatus?: string;
   callRecording?: string;

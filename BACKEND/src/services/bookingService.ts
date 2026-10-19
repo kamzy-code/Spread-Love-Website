@@ -13,6 +13,10 @@ import recordingService from "./recordingService";
 import { HttpError } from "../utils/httpError";
 import { bookingLogger } from "../utils/logger";
 
+// Fields hidden from customer-facing reads (schema `select: false`) that staff
+// reads must opt back into.
+const ADMIN_ONLY_FIELDS = "+recipients.suggestedMessage";
+
 class BookingService {
   // Looks for a booking from the same caller within the last 60 minutes that
   // has a recipient matching (name + phone + callType) one of the newly
@@ -613,17 +617,59 @@ class BookingService {
       return await Booking.findOne({
         _id: new Types.ObjectId(bookingId),
         assignedRep: userId,
-      }).populate({
-        path: "assignedRep",
-        select: "-__v -createdAt -updatedAt", // Optional: exclude sensitive fields
-      });
+      })
+        .select(ADMIN_ONLY_FIELDS)
+        .populate({
+          path: "assignedRep",
+          select: "-__v -createdAt -updatedAt", // Optional: exclude sensitive fields
+        });
     }
 
     // return the booking if the Id matches regardless of the role
-    return await Booking.findById(bookingId).populate({
-      path: "assignedRep",
-      select: "-__v -createdAt -updatedAt", // Optional: exclude sensitive fields
+    return await Booking.findById(bookingId)
+      .select(ADMIN_ONLY_FIELDS)
+      .populate({
+        path: "assignedRep",
+        select: "-__v -createdAt -updatedAt", // Optional: exclude sensitive fields
+      });
+  }
+
+  // Persists a rep-generated suggestion on one recipient. A targeted $set (not
+  // load + save) so it can't clobber a concurrent status/edit write, and it
+  // only ever touches `suggestedMessage` — never the customer's `message`.
+  async saveRecipientSuggestion(
+    bookingId: string,
+    bookingCode: string,
+    recipientId: string,
+    userId: string,
+    text: string,
+    previousText: string,
+  ) {
+    const generatedAt = new Date();
+    const result = await Booking.updateOne(
+      { _id: new Types.ObjectId(bookingId), "recipients._id": new Types.ObjectId(recipientId) },
+      {
+        $set: {
+          "recipients.$.suggestedMessage": {
+            text,
+            generatedAt,
+            generatedBy: new Types.ObjectId(userId),
+          },
+        },
+      },
+    );
+    if (result.matchedCount === 0) return null;
+
+    await auditLogService.record({
+      entity: "booking",
+      entityId: bookingCode,
+      field: `recipient.${recipientId}.suggestedMessage`,
+      oldValue: previousText,
+      newValue: text,
+      changedBy: userId,
     });
+
+    return { generatedAt };
   }
 
   // Read-only variant of getBookingById for admin display — returns a plain

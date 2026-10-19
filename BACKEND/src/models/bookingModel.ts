@@ -27,6 +27,14 @@ export interface ICaller {
   relationship?: string;
 }
 
+// AI-drafted response a rep generated for a recipient. Stored separately from
+// `message` — the customer's own words are never overwritten.
+export interface ISuggestedMessage {
+  text: string;
+  generatedAt: Date;
+  generatedBy: mongoose.Types.ObjectId;
+}
+
 export interface IRecipient {
   _id?: mongoose.Types.ObjectId;
   recipientName: string;
@@ -39,6 +47,7 @@ export interface IRecipient {
   callDate: Date;
   price: number;
   message?: string;
+  suggestedMessage?: ISuggestedMessage;
   specialInstruction?: string;
   callStatus?: callStatus;
   callRecording?: string;
@@ -109,6 +118,15 @@ const callerSchema = new Schema<ICaller>(
   { _id: false },
 );
 
+const suggestedMessageSchema = new Schema<ISuggestedMessage>(
+  {
+    text: { type: String, required: true },
+    generatedAt: { type: Date, required: true },
+    generatedBy: { type: mongoose.Schema.Types.ObjectId, ref: "Admin", required: true },
+  },
+  { _id: false },
+);
+
 const recipientSchema = new Schema<IRecipient>({
   recipientName: { type: String, required: true },
   recipientPhone: { type: String, required: true },
@@ -118,6 +136,9 @@ const recipientSchema = new Schema<IRecipient>({
   callDate: { type: Date, required: true },
   price: { type: Number, required: true },
   message: { type: String, required: false, default: "" },
+  // select:false keeps staff-only AI drafts out of every customer-facing read
+  // (manage-booking page etc.); admin reads opt in with "+recipients.suggestedMessage".
+  suggestedMessage: { type: suggestedMessageSchema, required: false, select: false },
   specialInstruction: { type: String, required: false, default: "" },
   callStatus: {
     type: String,

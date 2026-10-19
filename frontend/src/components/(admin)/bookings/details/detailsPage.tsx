@@ -45,6 +45,7 @@ const buildRecipientsState = (booking: Booking): RecipientEditState[] => {
     callDate: r.callDate,
     price: r.price,
     message: r.message ?? "",
+    suggestedMessage: r.suggestedMessage,
     specialInstruction: r.specialInstruction ?? "",
     callStatus: r.callStatus,
     callRecording: r.callRecording,
